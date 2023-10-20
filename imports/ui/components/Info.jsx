@@ -1,6 +1,6 @@
 import React from "react";
 import { useFind, useSubscribe } from "meteor/react-meteor-data";
-import { LinksCollection } from "../api/links";
+import { LinksCollection } from "../../api/links";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -44,7 +44,7 @@ export const Info = () => {
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
-        strokeWidth={ 2 }
+        strokeWidth={2}
       >
         <path
           strokeLinecap="round"
@@ -57,12 +57,11 @@ export const Info = () => {
   }));
 
   return (
-    <div
-      className="rounded-lg bg-gray-200 overflow-hidden shadow divide-y divide-gray-200 sm:divide-y-0 sm:grid sm:grid-cols-2 sm:gap-px">
-      { actions.map((action, actionIdx) => (
+    <div className="rounded-lg bg-gray-200 overflow-hidden shadow divide-y divide-gray-200 sm:divide-y-0 sm:grid sm:grid-cols-2 sm:gap-px">
+      {actions.map((action, actionIdx) => (
         <div
-          key={ action.title }
-          className={ classNames(
+          key={action.title}
+          className={classNames(
             actionIdx === 0
               ? "rounded-tl-lg rounded-tr-lg sm:rounded-tr-none"
               : "",
@@ -72,35 +71,35 @@ export const Info = () => {
               ? "rounded-bl-lg rounded-br-lg sm:rounded-bl-none"
               : "",
             "relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-500"
-          ) }
+          )}
         >
           <div>
             <span
-              className={ classNames(
+              className={classNames(
                 action.iconBackground,
                 action.iconForeground,
                 "rounded-lg inline-flex p-3 ring-4 ring-white"
-              ) }
+              )}
             >
-              { action.icon }
+              {action.icon}
             </span>
           </div>
 
           <div className="mt-8">
             <h3 className="text-lg font-medium">
               <a
-                href={ action.href }
+                href={action.href}
                 target="_blank"
                 className="focus:outline-none"
               >
-                {/* Extend touch target to entire panel */ }
-                <span className="absolute inset-0" aria-hidden="true"/>
-                { action.title }
+                {/* Extend touch target to entire panel */}
+                <span className="absolute inset-0" aria-hidden="true" />
+                {action.title}
               </a>
             </h3>
           </div>
         </div>
-      )) }
+      ))}
     </div>
   );
 };
