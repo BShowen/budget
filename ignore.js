@@ -10,19 +10,17 @@ const Account = {
 };
 
 const Budget = {
-  userId: ID, // The user id of a user
-  month: String,
-  year: Number,
+  createdAt: Date, // The date this budget was created
   income: {
     incomeExpected: Number, // Total income expected this month.
     incomeReceived: [Transaction], //Income received this month.
   },
-  budgetCategories: [Category],
+  categories: [Category],
 };
 
 const Category = {
   name: String, // Name of this category. Groceries, Mortgage, Vehicles, etc.
-  amount: Number, // The amount budgeted for this category.
+  balance: Number, // The amount budgeted for this category.
   ledgers: [Ledger], //Can have multiple ledgers for any category.
 };
 
@@ -32,9 +30,13 @@ const Ledger = {
 };
 
 const Transaction = {
-  loggedBy: ID, // The userId of the person who logged this transaction.
-  date: Date, // The date of this transaction.
+  loggedBy: {
+    userId: ID, // The userId of the person who logged this transaction.
+    firstName: String,
+    lastName: String,
+  },
+  createdAt: Date, // The date of this transaction.
   name: String, // Transaction name
   type: String, // Expense or Income
-  amount: String, // Dollar amount
+  amount: Number, // Dollar amount
 };
