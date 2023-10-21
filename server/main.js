@@ -1,38 +1,23 @@
 import { Meteor } from "meteor/meteor";
 import { Accounts } from "meteor/accounts-base";
-import { TestCollection } from "../imports/api/testCollection/testCollection";
-import "/imports/api/testCollection/server/publications.js";
+import { UserCollection } from "../imports/api/Users/Users";
+import "/imports/startup/server";
+import "/imports/api/Users/server/publications.js";
 
-const SEED_USERNAME = "user";
-const SEED_PASSWORD = "pass";
-
-function insertTestData({ vehicle, model, user }) {
-  TestCollection.insert({ vehicle, model, userId: user._id });
-}
+const SEED_EMAIL = "bshowen@me.com";
+const SEED_PASSWORD = "123123123";
+const SEED_FIRST_NAME = "bradley";
+const SEED_LAST_NAME = "showen";
 
 Meteor.startup(() => {
-  if (!Accounts.findUserByUsername(SEED_USERNAME)) {
+  if (!Accounts.findUserByEmail(SEED_EMAIL)) {
     Accounts.createUser({
-      username: SEED_USERNAME,
+      email: SEED_EMAIL,
       password: SEED_PASSWORD,
+      profile: {
+        firstName: SEED_FIRST_NAME,
+        lastName: SEED_LAST_NAME,
+      },
     });
-  }
-
-  const user = Accounts.findUserByUsername(SEED_USERNAME);
-
-  // If the Links collection is empty, add some data.
-  if (TestCollection.find().count() === 0) {
-    [
-      {
-        vehicle: "Honda",
-        model: "Insight",
-      },
-      {
-        vehicle: "Ford",
-        model: "Ranger",
-      },
-    ].map((testData) =>
-      TestCollection.insert({ ...testData, userId: user._id })
-    );
   }
 });

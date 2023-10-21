@@ -1,25 +1,40 @@
 import React from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Outlet, redirect } from "react-router-dom";
 
 import { Dashboard } from "../imports/ui/components/Dashboard";
 import { LoginForm } from "../imports/ui/components/LoginForm";
-import { Logout } from "../imports/ui/components/Logout";
+import { logout } from "../imports/ui/util/logout";
+
+function authenticate() {
+  if (!Meteor.userId()) {
+    return redirect("/login");
+  }
+  return null;
+}
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <LoginForm />,
-  },
-  {
-    path: "/dashboard",
-    element: <Dashboard />,
+    element: <Outlet />,
+    loader: authenticate,
+    children: [
+      // Routes defined in this array are protected.
+      {
+        index: true,
+        element: <Dashboard />,
+      },
+    ],
   },
   {
     path: "/signup",
-    element: <h1>Signup</h1>,
+    element: <h1>To-do: Implement signup form.</h1>,
+  },
+  {
+    path: "/login",
+    element: <LoginForm />,
   },
   {
     path: "/logout",
-    element: <Logout />,
+    loader: logout,
   },
 ]);
