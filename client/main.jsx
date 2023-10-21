@@ -1,18 +1,23 @@
-import React from "react";
+import React, { StrictMode } from "react";
 import { Meteor } from "meteor/meteor";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 
-import { router } from "../imports/startup/client/routes.js";
+import { router } from "./routes.js";
 
-function AppRoot({ router }) {
+function App({ router }) {
   return (
-    <React.StrictMode>
+    <div className="w-full lg:w-3/4 mx-auto overflow-hidden">
       <RouterProvider router={router} />
-    </React.StrictMode>
+    </div>
   );
 }
 
 Meteor.startup(() => {
-  render(<AppRoot router={router} />, document.getElementById("app"));
+  const root = createRoot(document.getElementById("app"));
+  root.render(
+    <StrictMode>
+      <App router={router} />
+    </StrictMode>
+  );
 });
