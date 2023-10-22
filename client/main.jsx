@@ -4,12 +4,13 @@ import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 
 import { router } from "./routes.js";
+import { Layout } from "../imports/ui/pages/Layout.jsx";
 
 function App({ router }) {
   return (
-    <div className="w-full lg:w-3/4 mx-auto overflow-hidden">
+    <Layout>
       <RouterProvider router={router} />
-    </div>
+    </Layout>
   );
 }
 
