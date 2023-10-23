@@ -81,12 +81,116 @@ Meteor.startup(() => {
             {
               // ledger
               name: "eating out",
+              startingBalance: 100,
               transactions: [
                 {
                   createdAt: new Date(),
                   type: "expense",
                   name: "Steak n Shake",
                   amount: 4.85,
+                  loggedBy: {
+                    userId: user._id,
+                    firstName: user.profile.firstName,
+                    lastName: user.profile.lastName,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          // category
+          name: "vehicles",
+          startingBalance: 330.0,
+          ledgers: [
+            {
+              // ledger
+              name: "gas",
+              startingBalance: 190,
+              transactions: [
+                {
+                  createdAt: new Date(),
+                  type: "expense",
+                  name: "circle-k",
+                  amount: 50.0,
+                  loggedBy: {
+                    userId: user._id,
+                    firstName: user.profile.firstName,
+                    lastName: user.profile.lastName,
+                  },
+                },
+                {
+                  createdAt: new Date(),
+                  type: "expense",
+                  name: "wawa",
+                  amount: 35.0,
+                  loggedBy: {
+                    userId: user._id,
+                    firstName: user.profile.firstName,
+                    lastName: user.profile.lastName,
+                  },
+                },
+              ],
+            },
+            {
+              // ledger
+              name: "insurance",
+              startingBalance: 170.0,
+              transactions: [
+                {
+                  createdAt: new Date(),
+                  type: "expense",
+                  name: "state farm",
+                  amount: 70.0,
+                  loggedBy: {
+                    userId: user._id,
+                    firstName: user.profile.firstName,
+                    lastName: user.profile.lastName,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          // category
+          name: "utilities",
+          startingBalance: 330.0,
+          ledgers: [
+            {
+              // ledger
+              name: "internet",
+              startingBalance: 85.0,
+              transactions: [],
+            },
+            {
+              // ledger
+              name: "electric",
+              startingBalance: 180.0,
+              transactions: [
+                {
+                  createdAt: new Date(),
+                  type: "expense",
+                  name: "duke energy",
+                  amount: 180.0,
+                  loggedBy: {
+                    userId: user._id,
+                    firstName: user.profile.firstName,
+                    lastName: user.profile.lastName,
+                  },
+                },
+              ],
+            },
+            {
+              // ledger
+              name: "water",
+              startingBalance: 11.5,
+              transactions: [
+                {
+                  createdAt: new Date(),
+                  type: "expense",
+                  name: "orange county",
+                  amount: 11.5,
                   loggedBy: {
                     userId: user._id,
                     firstName: user.profile.firstName,
