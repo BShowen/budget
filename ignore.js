@@ -15,13 +15,13 @@ const Budget = {
     incomeExpected: Number, // Total income expected this month.
     incomeReceived: [Transaction], //Income received this month.
   },
-  categories: [Category],
+  envelopes: [Envelope],
 };
 
-const Category = {
-  name: String, // Name of this category. Groceries, Mortgage, Vehicles, etc.
-  balance: Number, // The amount budgeted for this category.
-  ledgers: [Ledger], //Can have multiple ledgers for any category.
+const Envelope = {
+  name: String, // Name of this envelope. Groceries, Mortgage, Vehicles, etc.
+  balance: Number, // The amount budgeted for this envelope.
+  ledgers: [Ledger], //Can have multiple ledgers for any envelope.
 };
 
 const Ledger = {

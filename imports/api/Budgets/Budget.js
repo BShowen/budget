@@ -20,6 +20,10 @@ const TransactionSchema = new SimpleSchema({
     type: Number,
     min: 0,
   },
+  notes: {
+    type: String,
+    optional: true,
+  },
 });
 
 const LedgerSchema = new SimpleSchema({
@@ -32,7 +36,7 @@ const LedgerSchema = new SimpleSchema({
   "transactions.$": TransactionSchema,
 });
 
-const CategorySchema = new SimpleSchema({
+const EnvelopeSchema = new SimpleSchema({
   name: String,
   startingBalance: Number,
   ledgers: { type: Array, optional: true },
@@ -45,8 +49,8 @@ const BudgetSchema = new SimpleSchema({
   "income.expected": Number,
   "income.received": { type: Array, optional: true },
   "income.received.$": TransactionSchema,
-  categories: { type: Array, optional: true },
-  "categories.$": CategorySchema,
+  envelopes: { type: Array, optional: true },
+  "envelopes.$": EnvelopeSchema,
 });
 
 Budgets.attachSchema(BudgetSchema);
