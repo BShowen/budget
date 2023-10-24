@@ -2,7 +2,6 @@ import { Meteor } from "meteor/meteor";
 import { Accounts } from "meteor/accounts-base";
 import { BudgetCollection } from "../imports/api/Budgets/Budget";
 import "/imports/startup/server";
-import "/imports/api/Users/server/publications.js";
 import "/imports/api/Budgets/server/publications.js";
 
 const SEED_EMAIL = "bshowen@me.com";
@@ -43,7 +42,7 @@ Meteor.startup(() => {
           },
         ],
       },
-      categories: [
+      envelopes: [
         {
           // category
           name: "food",
@@ -70,6 +69,18 @@ Meteor.startup(() => {
                   type: "expense",
                   name: "Walmart",
                   amount: 35.0,
+                  loggedBy: {
+                    userId: user._id,
+                    firstName: user.profile.firstName,
+                    lastName: user.profile.lastName,
+                  },
+                },
+                {
+                  createdAt: new Date(),
+                  type: "income",
+                  name: "Walmart",
+                  amount: 35.0,
+                  notes: "Refund for purchase",
                   loggedBy: {
                     userId: user._id,
                     firstName: user.profile.firstName,
@@ -201,6 +212,47 @@ Meteor.startup(() => {
             },
           ],
         },
+        {
+          // category
+          name: "Food",
+          startingBalance: 100.0,
+          ledgers: [
+            {
+              // ledger
+              name: "Groceries",
+              transactions: [
+                {
+                  createdAt: new Date(),
+                  type: "expense",
+                  name: "publix",
+                  amount: 25.0,
+                  loggedBy: {
+                    userId: user._id,
+                    firstName: user.profile.firstName,
+                    lastName: user.profile.lastName,
+                  },
+                },
+              ],
+            },
+            {
+              // ledger
+              name: "Eating out",
+              transactions: [
+                {
+                  createdAt: new Date(),
+                  type: "expense",
+                  name: "wendy's",
+                  amount: 10.0,
+                  loggedBy: {
+                    userId: user._id,
+                    firstName: user.profile.firstName,
+                    lastName: user.profile.lastName,
+                  },
+                },
+              ],
+            },
+          ],
+        },
       ],
     });
 
@@ -223,7 +275,7 @@ Meteor.startup(() => {
           },
         ],
       },
-      categories: [
+      envelopes: [
         {
           // category
           name: "food",
@@ -263,7 +315,7 @@ Meteor.startup(() => {
           },
         ],
       },
-      categories: [
+      envelopes: [
         {
           // category
           name: "food",
