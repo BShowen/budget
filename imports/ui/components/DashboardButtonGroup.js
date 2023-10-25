@@ -9,7 +9,7 @@ export const DashboardButtonGroup = ({ active, setActiveTab }) => {
     <div
       key={btnText}
       onClick={setActiveTab.bind(null, btnText)}
-      className="basis-0 grow text-white font-bold flex flex-row justify-center items-center"
+      className="basis-0 grow text-white font-bold flex flex-row justify-center items-center md:hover:cursor-pointer"
     >
       <h2 className="">{cap(btnText)}</h2>
     </div>
