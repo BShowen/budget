@@ -7,12 +7,12 @@ import { DashboardContext } from "../pages/Dashboard";
 import { cap } from ".././util/cap";
 
 export function TransactionForm({ ledgers }) {
-  const [transactionType, setTransactionType] = useState("expense"); //expense or income
   const [active, setActiveTab] = useState("expense"); //expense or income
   const { toggleModal } = useContext(DashboardContext);
 
   function submit(e) {
     const formData = new FormData(e.target.parentElement.parentElement);
+    formData.set("type", active);
     console.log(Object.fromEntries(formData.entries()));
   }
 
@@ -35,19 +35,19 @@ export function TransactionForm({ ledgers }) {
           <InputGroup>
             <InputContainer>
               <label className="w-1/2" htmlFor="date">
-                <p>Date</p>
+                <p className="font-semibold">Date</p>
               </label>
               <input
                 type="date"
                 name="createdAt"
                 required
                 id="date"
-                className="w-1/2 focus:ring-0 border-0"
+                className="px-0 w-1/2 focus:ring-0 border-0"
               />
             </InputContainer>
             <InputContainer>
               <label className="w-1/2" htmlFor="amount">
-                <p>Amount</p>
+                <p className="font-semibold">Amount</p>
               </label>
               <input
                 type="number"
@@ -58,12 +58,14 @@ export function TransactionForm({ ledgers }) {
                 name="amount"
                 id="amount"
                 min={0}
-                className="w-1/2 text-end focus:ring-0 border-0"
+                className="px-0 w-1/2 text-end focus:ring-0 border-0"
               />
             </InputContainer>
             <InputContainer options={{ border: false }}>
               <label className="w-1/2" htmlFor="merchant">
-                <p>{active === "expense" ? "Merchant" : "Source"}</p>
+                <p className="font-semibold">
+                  {active === "expense" ? "Merchant" : "Source"}
+                </p>
               </label>
               <input
                 type="text"
@@ -71,13 +73,16 @@ export function TransactionForm({ ledgers }) {
                 required
                 id="merchant"
                 name="name"
-                className="w-1/2 text-end focus:ring-0 border-0"
+                className="px-0 w-1/2 text-end focus:ring-0 border-0"
               />
             </InputContainer>
           </InputGroup>
           <InputGroup>
             <InputContainer options={{ border: false }}>
-              <select className="w-full focus:ring-0 border-0" name="ledgerId">
+              <select
+                className="px-0 w-full focus:ring-0 border-0"
+                name="ledgerId"
+              >
                 {ledgers.map((ledger) => (
                   <option key={ledger._id} value={ledger._id}>
                     {ledger.name}
@@ -92,7 +97,7 @@ export function TransactionForm({ ledgers }) {
                 type="text"
                 placeholder="Add a note"
                 name="note"
-                className="w-full focus:ring-0 border-0"
+                className="px-0 text-left w-full focus:ring-0 border-0"
               />
             </InputContainer>
           </InputGroup>

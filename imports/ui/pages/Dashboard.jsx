@@ -55,7 +55,7 @@ export const Dashboard = () => {
       </div>
 
       <div
-        className="fixed bottom-8 right-8 w-10 h-10 bg-white rounded-full flex flex-row justify-center items-center"
+        className="fixed bottom-5 right-7 w-14 h-14 bg-white rounded-full flex flex-row justify-center items-center"
         onClick={() => setModalOpen((prev) => !prev)}
       >
         <BsFillPlusCircleFill className="text-sky-700 w-full h-full" />
