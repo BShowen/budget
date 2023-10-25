@@ -28,5 +28,8 @@
       "server": "server/main.js"
     },
     "testModule": "tests/main.js"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.6"
   }
 }
