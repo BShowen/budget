@@ -9,7 +9,13 @@ import { reduceTransactions } from "../util/reduceTransactions";
 import { Ledger } from "./Ledger";
 import { reduceLedgers } from "../util/reduceLedgers";
 
-export const Envelope = ({ name, startingBalance, ledgers, activeTab }) => {
+export const Envelope = ({
+  name,
+  startingBalance,
+  ledgers,
+  activeTab,
+  addItemHandler,
+}) => {
   // If this envelope has an envelope that has a starting balance, then it is
   // an allocatedEnvelope. Otherwise it is an unallocatedEnvelope
   const envelopeType = (ledgers || []).some((ledger) => ledger.startingBalance)
@@ -36,7 +42,7 @@ export const Envelope = ({ name, startingBalance, ledgers, activeTab }) => {
 
   return (
     // Envelope container
-    <div className="bg-white rounded-lg shadow-md flex flex-col items-stretch px-2 pt-1 gap-2 relative">
+    <div className="bg-white rounded-lg shadow-md flex flex-col items-stretch px-2 pt-1 gap-2 relative z-0">
       {envelopeType === "unallocated" ? (
         <EnvelopeProgress percent={progress} />
       ) : (
@@ -53,14 +59,17 @@ export const Envelope = ({ name, startingBalance, ledgers, activeTab }) => {
         activeTab={activeTab}
         progress={progress}
       />
-      <EnvelopeFooter displayBalance={displayBalance} />
+      <EnvelopeFooter
+        displayBalance={displayBalance}
+        addItemHandler={addItemHandler}
+      />
     </div>
   );
 };
 
 function EnvelopeHeader({ name, activeTab }) {
   return (
-    <div className="flex flex-row justify-between p-1 px-2 h-8 rounded-md overflow-hidden items-center">
+    <div className="flex flex-row justify-between p-1 px-2 h-8 rounded-md overflow-hidden items-center z-20">
       <h1 className="font-bold">{cap(name)}</h1>
       <h2 className="font-semibold">{cap(activeTab)}</h2>
     </div>
@@ -69,7 +78,7 @@ function EnvelopeHeader({ name, activeTab }) {
 
 function EnvelopeBody({ ledgers, activeTab }) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 z-20">
       {ledgers.map((ledger, i) => {
         return <Ledger key={i} {...ledger} activeTab={activeTab} />;
       })}
@@ -77,10 +86,15 @@ function EnvelopeBody({ ledgers, activeTab }) {
   );
 }
 
-function EnvelopeFooter({ displayBalance }) {
+function EnvelopeFooter({ displayBalance, addItemHandler }) {
   return (
-    <div className="flex flex-row justify-between py-1">
-      <p className="font-normal lg:hover:cursor-pointer">Add item</p>
+    <div className="flex flex-row justify-between py-1 z-20">
+      <p
+        className="font-normal lg:hover:cursor-pointer"
+        onClick={addItemHandler}
+      >
+        Add item
+      </p>
       <h2 className="font-medium">{decimal(displayBalance)}</h2>
     </div>
   );
@@ -90,7 +104,7 @@ function EnvelopeProgress({ percent, overrideBgColor }) {
   const defaultBgColor = "bg-sky-500/30";
   const bgColor = overrideBgColor ? overrideBgColor : defaultBgColor;
   return (
-    <div className="w-full top-0 bottom-0 absolute left-0 right-0 rounded-lg overflow-hidden">
+    <div className="w-full top-0 bottom-0 absolute left-0 right-0 rounded-lg overflow-hidden z-10">
       <div
         className={`${bgColor} h-full transition-width duration-300 ease-in-out delay-[10ms]`}
         style={{ width: `${percent}%` }}

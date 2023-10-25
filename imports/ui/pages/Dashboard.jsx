@@ -6,9 +6,9 @@ import { BudgetCollection } from "../../api/Budgets/Budget";
 // Components
 import { DashboardHeader } from "../components/DashboardHeader";
 import { Envelope } from "../components/Envelope";
+import { Modal } from "../components/Modal";
 
 export const Dashboard = () => {
-  // const user = useTracker(Meteor.user);
   const { loading, budget } = useTracker(() => {
     const noData = { loading: false, budget: {} };
     const handler = Meteor.subscribe("budgets");
@@ -23,6 +23,7 @@ export const Dashboard = () => {
     };
   });
   const [activeTab, setActiveTab] = useState("planned"); // "planned", "spent", "remaining"
+  const [isModalOpen, setModalOpen] = useState(false);
 
   return loading ? (
     <p>Loading...</p>
@@ -37,9 +38,21 @@ export const Dashboard = () => {
       <div className="py-8 px-2 flex flex-col items-stretch gap-5">
         {/* Categories container */}
         {budget.envelopes.map((category, i) => {
-          return <Envelope key={i} {...category} activeTab={activeTab} />;
+          return (
+            <Envelope
+              key={i}
+              {...category}
+              activeTab={activeTab}
+              addItemHandler={() => setModalOpen(!isModalOpen)}
+            />
+          );
         })}
       </div>
+      <Modal isOpen={isModalOpen} onClose={() => setModalOpen((prev) => !prev)}>
+        <div className="flex flex-row justify-center w-full h-2/4 items-center border-2 border-slate-200">
+          Child Component
+        </div>
+      </Modal>
     </div>
   );
 };
