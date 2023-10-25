@@ -11,7 +11,7 @@ const TransactionSchema = new SimpleSchema({
   "loggedBy.firstName": String,
   "loggedBy.lastName": String,
   createdAt: Date,
-  name: String,
+  merchant: String,
   type: {
     type: String,
     allowedValues: ["income", "expense"],
@@ -20,7 +20,7 @@ const TransactionSchema = new SimpleSchema({
     type: Number,
     min: 0,
   },
-  notes: {
+  note: {
     type: String,
     optional: true,
   },

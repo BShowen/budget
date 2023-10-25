@@ -40,7 +40,7 @@ Meteor.startup(() => {
               lastName: user.profile.lastName,
             },
             createdAt: new Date(),
-            name: "Paycheck",
+            merchant: "Paycheck",
             type: "income",
             amount: 1000.5,
           },
@@ -61,7 +61,7 @@ Meteor.startup(() => {
                 {
                   createdAt: new Date(),
                   type: "expense",
-                  name: "publix",
+                  merchant: "publix",
                   amount: 50.0,
                   loggedBy: {
                     userId: user._id,
@@ -72,7 +72,7 @@ Meteor.startup(() => {
                 {
                   createdAt: new Date(),
                   type: "expense",
-                  name: "walmart",
+                  merchant: "walmart",
                   amount: 35.0,
                   loggedBy: {
                     userId: user._id,
@@ -83,7 +83,7 @@ Meteor.startup(() => {
                 {
                   createdAt: new Date(),
                   type: "income",
-                  name: "walmart",
+                  merchant: "walmart",
                   amount: 35.0,
                   notes: "Refund for purchase",
                   loggedBy: {
@@ -103,7 +103,7 @@ Meteor.startup(() => {
                 {
                   createdAt: new Date(),
                   type: "expense",
-                  name: "Steak n Shake",
+                  merchant: "Steak n Shake",
                   amount: 4.85,
                   loggedBy: {
                     userId: user._id,
@@ -129,7 +129,7 @@ Meteor.startup(() => {
                 {
                   createdAt: new Date(),
                   type: "expense",
-                  name: "circle-k",
+                  merchant: "circle-k",
                   amount: 50.0,
                   loggedBy: {
                     userId: user._id,
@@ -140,7 +140,7 @@ Meteor.startup(() => {
                 {
                   createdAt: new Date(),
                   type: "expense",
-                  name: "wawa",
+                  merchant: "wawa",
                   amount: 35.0,
                   loggedBy: {
                     userId: user._id,
@@ -159,7 +159,7 @@ Meteor.startup(() => {
                 {
                   createdAt: new Date(),
                   type: "expense",
-                  name: "state farm",
+                  merchant: "state farm",
                   amount: 70.0,
                   loggedBy: {
                     userId: user._id,
@@ -192,7 +192,7 @@ Meteor.startup(() => {
                 {
                   createdAt: new Date(),
                   type: "expense",
-                  name: "duke energy",
+                  merchant: "duke energy",
                   amount: 180.0,
                   loggedBy: {
                     userId: user._id,
@@ -211,7 +211,7 @@ Meteor.startup(() => {
                 {
                   createdAt: new Date(),
                   type: "expense",
-                  name: "orange county",
+                  merchant: "orange county",
                   amount: 11.5,
                   loggedBy: {
                     userId: user._id,
@@ -236,7 +236,7 @@ Meteor.startup(() => {
                 {
                   createdAt: new Date(),
                   type: "expense",
-                  name: "publix",
+                  merchant: "publix",
                   amount: 25.0,
                   loggedBy: {
                     userId: user._id,
@@ -254,7 +254,7 @@ Meteor.startup(() => {
                 {
                   createdAt: new Date(),
                   type: "expense",
-                  name: "wendy's",
+                  merchant: "wendy's",
                   amount: 10.0,
                   loggedBy: {
                     userId: user._id,
