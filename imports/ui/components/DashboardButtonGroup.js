@@ -1,24 +1,38 @@
 import React from "react";
 
+// Utils
+import { cap } from ".././util/cap";
+
 export const DashboardButtonGroup = ({ active, setActiveTab }) => {
-  const buttonList = ["Planned", "Spent", "Remaining"].map((btnText) => {
-    return (
-      <button
-        key={btnText}
-        // onClick={() => setActiveTab(i)}
-        onClick={setActiveTab.bind(null, btnText.toLowerCase())}
-        className={`rounded-md text-white font-bold ${
-          active === btnText.toLowerCase() ? "bg-sky-500" : ""
-        }`}
-      >
-        {btnText}
-      </button>
-    );
-  });
+  const slugList = ["planned", "spent", "remaining"];
+  const buttonList = slugList.map((btnText) => (
+    <div
+      key={btnText}
+      onClick={setActiveTab.bind(null, btnText)}
+      className="basis-0 grow text-white font-bold flex flex-row justify-center items-center"
+    >
+      <h2 className="">{cap(btnText)}</h2>
+    </div>
+  ));
+
+  const index = slugList.indexOf(active);
 
   return (
-    <div className="w-full grid grid-cols-3 gap-1 p-1 bg-sky-700 rounded-md h-9">
-      {buttonList}
+    <div className="w-full flex flex-row justify-start p-1 bg-sky-700 rounded-md h-9 relative z-0">
+      <Slider index={index} />
+      <div className="absolute top-0 bottom-0 left-0 right-0 flex flex-row flex-nowrap z-3">
+        {buttonList}
+      </div>
     </div>
   );
 };
+
+function Slider({ index }) {
+  const position =
+    index === 0 ? "left-0" : index === 1 ? "left-1/3" : "left-2/3";
+  return (
+    <div
+      className={`${position} w-1/3 relative z-2 h-7 rounded-md bg-sky-500 transition-all duration-250`}
+    />
+  );
+}
