@@ -1,7 +1,7 @@
 import React from "react";
 import { createBrowserRouter, Outlet, redirect } from "react-router-dom";
 
-import { Dashboard } from "../imports/ui/components/Dashboard";
+import { Dashboard } from "../imports/ui/pages/Dashboard";
 import { LoginForm } from "../imports/ui/components/LoginForm";
 import { logout } from "../imports/ui/util/logout";
 
