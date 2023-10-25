@@ -27,6 +27,7 @@ const TransactionSchema = new SimpleSchema({
 });
 
 const LedgerSchema = new SimpleSchema({
+  _id: String,
   name: String,
   startingBalance: {
     type: Number,

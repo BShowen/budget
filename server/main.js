@@ -1,5 +1,6 @@
 import { Meteor } from "meteor/meteor";
 import { Accounts } from "meteor/accounts-base";
+import { Mongo } from "meteor/mongo";
 import { BudgetCollection } from "../imports/api/Budgets/Budget";
 import "/imports/startup/server";
 import "/imports/api/Budgets/server/publications.js";
@@ -17,11 +18,14 @@ Meteor.startup(() => {
       profile: {
         firstName: SEED_FIRST_NAME,
         lastName: SEED_LAST_NAME,
-        account: null,
       },
     });
   }
   const user = Accounts.findUserByEmail(SEED_EMAIL);
+
+  const newId = () => {
+    return new Mongo.ObjectID().valueOf();
+  };
   if (!BudgetCollection.find().count()) {
     const budgetIdOne = BudgetCollection.insert({
       //A single budget for the month
@@ -50,13 +54,14 @@ Meteor.startup(() => {
           ledgers: [
             {
               // ledger
+              _id: newId(),
               name: "groceries",
               startingBalance: 400.0,
               transactions: [
                 {
                   createdAt: new Date(),
                   type: "expense",
-                  name: "Publix",
+                  name: "publix",
                   amount: 50.0,
                   loggedBy: {
                     userId: user._id,
@@ -67,7 +72,7 @@ Meteor.startup(() => {
                 {
                   createdAt: new Date(),
                   type: "expense",
-                  name: "Walmart",
+                  name: "walmart",
                   amount: 35.0,
                   loggedBy: {
                     userId: user._id,
@@ -78,7 +83,7 @@ Meteor.startup(() => {
                 {
                   createdAt: new Date(),
                   type: "income",
-                  name: "Walmart",
+                  name: "walmart",
                   amount: 35.0,
                   notes: "Refund for purchase",
                   loggedBy: {
@@ -91,6 +96,7 @@ Meteor.startup(() => {
             },
             {
               // ledger
+              _id: newId(),
               name: "eating out",
               startingBalance: 100,
               transactions: [
@@ -116,6 +122,7 @@ Meteor.startup(() => {
           ledgers: [
             {
               // ledger
+              _id: newId(),
               name: "gas",
               startingBalance: 190,
               transactions: [
@@ -145,6 +152,7 @@ Meteor.startup(() => {
             },
             {
               // ledger
+              _id: newId(),
               name: "insurance",
               startingBalance: 170.0,
               transactions: [
@@ -170,12 +178,14 @@ Meteor.startup(() => {
           ledgers: [
             {
               // ledger
+              _id: newId(),
               name: "internet",
               startingBalance: 85.0,
               transactions: [],
             },
             {
               // ledger
+              _id: newId(),
               name: "electric",
               startingBalance: 180.0,
               transactions: [
@@ -194,6 +204,7 @@ Meteor.startup(() => {
             },
             {
               // ledger
+              _id: newId(),
               name: "water",
               startingBalance: 11.5,
               transactions: [
@@ -214,12 +225,13 @@ Meteor.startup(() => {
         },
         {
           // category
-          name: "Food",
+          name: "food",
           startingBalance: 100.0,
           ledgers: [
             {
               // ledger
-              name: "Groceries",
+              _id: newId(),
+              name: "groceries",
               transactions: [
                 {
                   createdAt: new Date(),
@@ -236,7 +248,8 @@ Meteor.startup(() => {
             },
             {
               // ledger
-              name: "Eating out",
+              _id: newId(),
+              name: "eating out",
               transactions: [
                 {
                   createdAt: new Date(),
@@ -256,98 +269,18 @@ Meteor.startup(() => {
       ],
     });
 
-    const budgetIdTwo = BudgetCollection.insert({
-      //A single budget for the month
-      createdAt: new Date("08-08-1992"),
-      income: {
-        expected: 1000.5,
-        received: [
-          {
-            loggedBy: {
-              userId: user._id,
-              firstName: user.profile.firstName,
-              lastName: user.profile.lastName,
-            },
-            createdAt: new Date(),
-            name: "Paycheck",
-            type: "income",
-            amount: 1000.5,
-          },
-        ],
-      },
-      envelopes: [
-        {
-          // category
-          name: "food",
-          startingBalance: 500.0,
-          ledgers: [
-            {
-              // ledger
-              name: "groceries",
-              transactions: [],
-            },
-            {
-              // ledger
-              name: "eating out",
-              transactions: [],
-            },
-          ],
-        },
-      ],
-    });
-
-    const budgetIdThree = BudgetCollection.insert({
-      //A single budget for the month
-      createdAt: new Date("08-08-1973"),
-      income: {
-        expected: 1000.5,
-        received: [
-          {
-            loggedBy: {
-              userId: user._id,
-              firstName: user.profile.firstName,
-              lastName: user.profile.lastName,
-            },
-            createdAt: new Date(),
-            name: "Paycheck",
-            type: "income",
-            amount: 1000.5,
-          },
-        ],
-      },
-      envelopes: [
-        {
-          // category
-          name: "food",
-          startingBalance: 500.0,
-          ledgers: [
-            {
-              // ledger
-              name: "groceries",
-              transactions: [],
-            },
-            {
-              // ledger
-              name: "eating out",
-              transactions: [],
-            },
-          ],
-        },
-      ],
-    });
-
     Meteor.users.update(
       { _id: user._id },
       {
         $set: {
-          budgetIdList: [budgetIdTwo, budgetIdThree],
+          budgetIdList: [budgetIdOne],
         },
       }
     );
 
-    Meteor.users.update(
-      { _id: user._id },
-      { $push: { budgetIdList: { $each: [budgetIdOne], $position: 0 } } }
-    );
+    // Meteor.users.update(
+    //   { _id: user._id },
+    //   { $push: { budgetIdList: { $each: [budgetIdOne], $position: 0 } } }
+    // );
   }
 });
