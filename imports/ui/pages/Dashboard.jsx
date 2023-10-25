@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { createContext, useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 import { BudgetCollection } from "../../api/Budgets/Budget";
@@ -7,7 +7,10 @@ import { BudgetCollection } from "../../api/Budgets/Budget";
 import { DashboardHeader } from "../components/DashboardHeader";
 import { Envelope } from "../components/Envelope";
 import { Modal } from "../components/Modal";
+import { TransactionForm } from "../components/TransactionForm";
+import { BsFillPlusCircleFill } from "react-icons/bs";
 
+export const DashboardContext = createContext(null);
 export const Dashboard = () => {
   const { loading, budget } = useTracker(() => {
     const noData = { loading: false, budget: {} };
@@ -28,7 +31,7 @@ export const Dashboard = () => {
   return loading ? (
     <p>Loading...</p>
   ) : (
-    <div className="w-full">
+    <div className="w-full pb-12">
       <DashboardHeader
         setActiveTab={setActiveTab}
         activeTab={activeTab}
@@ -43,15 +46,30 @@ export const Dashboard = () => {
               key={i}
               {...category}
               activeTab={activeTab}
-              addItemHandler={() => setModalOpen(!isModalOpen)}
+              addItemHandler={() => {
+                alert("Need to implement");
+              }}
             />
           );
         })}
       </div>
+
+      <div
+        className="fixed bottom-8 right-8 w-10 h-10 bg-white rounded-full flex flex-row justify-center items-center"
+        onClick={() => setModalOpen((prev) => !prev)}
+      >
+        <BsFillPlusCircleFill className="text-sky-700 w-full h-full" />
+      </div>
       <Modal isOpen={isModalOpen} onClose={() => setModalOpen((prev) => !prev)}>
-        <div className="flex flex-row justify-center w-full h-2/4 items-center border-2 border-slate-200">
-          Child Component
-        </div>
+        <DashboardContext.Provider
+          value={{ toggleModal: () => setModalOpen((prev) => !prev) }}
+        >
+          <TransactionForm
+            ledgers={budget.envelopes.reduce((acc, envelope) => {
+              return [...acc, ...envelope.ledgers];
+            }, [])}
+          />
+        </DashboardContext.Provider>
       </Modal>
     </div>
   );
