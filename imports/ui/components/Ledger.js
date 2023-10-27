@@ -27,7 +27,12 @@ export const Ledger = ({ _id, name, startingBalance, activeTab }) => {
   const { expense, income } = reduceTransactions({ transactions });
   const spent = expense - income;
 
-  const remaining = startingBalance - spent;
+  // If startingBalance is undefined, that means this ledger belongs to
+  // an unallocated envelope. In this case the remaining balance should be
+  // undefined because we need a starting balance in order to have a remaining
+  // balance.
+  const remaining = startingBalance ? startingBalance - spent : undefined;
+
   const displayBalance =
     activeTab === "spent"
       ? spent
