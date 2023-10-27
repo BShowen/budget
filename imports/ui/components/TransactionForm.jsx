@@ -1,5 +1,9 @@
 import { Meteor } from "meteor/meteor";
+import { useTracker } from "meteor/react-meteor-data";
 import React, { useContext, useState } from "react";
+
+// Collections
+import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
 
 // Context
 import { DashboardContext } from "../pages/Dashboard";
@@ -7,7 +11,11 @@ import { DashboardContext } from "../pages/Dashboard";
 // Utils
 import { cap } from ".././util/cap";
 
-export function TransactionForm({ ledgers, budgetId }) {
+export function TransactionForm() {
+  const { ledgers } = useTracker(() => {
+    const ledgers = LedgerCollection.find().fetch();
+    return { ledgers };
+  });
   const [active, setActiveTab] = useState("expense"); //expense or income
   const { toggleModal } = useContext(DashboardContext);
 

@@ -10,14 +10,4 @@ Meteor.publish("ledgers", function () {
     return [];
   }
   return LedgerCollection.find();
-
-  const ledger = LedgerCollection.findOne({ _id: ledgerId });
-  // Populate the ledger.transactions field
-  const populatedLedgerTransactions = TransactionCollection.find({
-    _id: { $in: ledger.transactions },
-  }).fetch();
-  ledger.transactions = populatedLedgerTransactions;
-
-  this.added("ledgers", ledger._id, ledger);
-  this.ready();
 });

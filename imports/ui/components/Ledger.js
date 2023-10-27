@@ -13,26 +13,18 @@ import { Progress } from "./Progress";
 import { LedgerCollection } from "/imports/api/Ledger/LedgerCollection";
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 
-export const Ledger = ({
-  _id,
-  name,
-  startingBalance,
-  transactions,
-  activeTab,
-}) => {
-  const { data } = useTracker(() => {
-    // Find the Ledger
+export const Ledger = ({ _id, name, startingBalance, activeTab }) => {
+  const { transactions } = useTracker(() => {
+    // Get the ledger that contains the transactions for this component.
     const ledger = LedgerCollection.findOne({ _id });
-    // Extract transactionId's from ledger
-    const transactionIdList = ledger.transactions;
-    // Find and return all transaction documents
+    // Get the transactions in the ledger.
     const transactions = TransactionCollection.find({
-      _id: { $in: transactionIdList },
+      _id: { $in: ledger.transactions },
     }).fetch();
-    return { data: transactions };
+    return { transactions };
   });
 
-  const { expense, income } = reduceTransactions({ transactions: data });
+  const { expense, income } = reduceTransactions({ transactions });
   const spent = expense - income;
 
   const remaining = startingBalance - spent;

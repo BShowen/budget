@@ -18,8 +18,12 @@ Meteor.publish("budgets", function () {
   // This should be changed to "Return the budget with the month/year same as today"
   const budgetId = user.budgetIdList[0];
 
-  const budget = populateBudget(BudgetCollection.findOne({ _id: budgetId }));
-
+  const budget = BudgetCollection.findOne({ _id: budgetId });
   this.added("budgets", budget._id, budget);
   this.ready();
+
+  // const budget = populateBudget(BudgetCollection.findOne({ _id: budgetId }));
+
+  // this.added("budgets", budget._id, budget);
+  // this.ready();
 });

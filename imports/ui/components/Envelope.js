@@ -1,22 +1,45 @@
 import React from "react";
+import { useTracker } from "meteor/react-meteor-data";
+
+// Collections
+import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
+import { EnvelopeCollection } from "../../api/Envelope/EnvelopCollection";
+import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 
 // Utils
 import { cap } from "../util/cap";
 import { decimal } from "../util/decimal";
-import { reduceTransactions } from "../util/reduceTransactions";
+import { reduceLedgers } from "../util/reduceLedgers";
 
 // Components
 import { Ledger } from "./Ledger";
-import { reduceLedgers } from "../util/reduceLedgers";
 
 export const Envelope = ({
+  _id,
   name,
   startingBalance,
-  ledgers,
   activeTab,
   addItemHandler,
 }) => {
-  // If this envelope has an envelope that has a starting balance, then it is
+  const { ledgers } = useTracker(() => {
+    // Get the envelope that contains the transactions for this component.
+    const envelope = EnvelopeCollection.findOne({ _id });
+    // Get the ledgers in the envelope
+    const ledgers = LedgerCollection.find({
+      _id: { $in: envelope.ledgers },
+    }).fetch();
+    // Populate the ledger.transactions field so balances can be calculated in
+    // this component.
+    ledgers.forEach((ledger) => {
+      const populatedTransactions = TransactionCollection.find({
+        _id: { $in: ledger.transactions },
+      }).fetch();
+      ledger.transactions = populatedTransactions;
+    });
+
+    return { ledgers };
+  });
+  // If this envelope has a ledger that has a starting balance, then it is
   // an allocatedEnvelope. Otherwise it is an unallocatedEnvelope
   const envelopeType = (ledgers || []).some((ledger) => ledger.startingBalance)
     ? "allocated"

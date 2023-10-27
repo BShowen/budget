@@ -1,7 +1,10 @@
 import React, { createContext, useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
+
+// Collections
 import { BudgetCollection } from "../../api/Budget/BudgetCollection";
+import { EnvelopeCollection } from "../../api/Envelope/EnvelopCollection";
 
 // Components
 import { DashboardHeader } from "../components/DashboardHeader";
@@ -12,25 +15,41 @@ import { BsFillPlusCircleFill } from "react-icons/bs";
 
 export const DashboardContext = createContext(null);
 export const Dashboard = () => {
-  const { loading, budget } = useTracker(() => {
-    const noData = { loading: false, budget: {} };
+  const {
+    loading,
+    data: { budget, envelopes },
+  } = useTracker(() => {
     const budgetHandler = Meteor.subscribe("budgets");
+    const envelopeHandler = Meteor.subscribe("envelopes");
     const ledgerHandler = Meteor.subscribe("ledgers");
     const transactionHandler = Meteor.subscribe("transactions");
     if (
       budgetHandler.ready() &&
+      envelopeHandler.ready() &&
       ledgerHandler.ready() &&
       transactionHandler.ready()
     ) {
-      const data = BudgetCollection.find({}).fetch();
+      // BudgetCollection contains only the budget for this month. It does NOT
+      // contain multiple documents. The publisher (on the server) returns only
+      // the budget for this month.
+      const budget = BudgetCollection.findOne();
+      // Get the envelopes for this budget.
+      const envelopes = EnvelopeCollection.find({
+        _id: { $in: budget.envelopes },
+      }).fetch();
+
       return {
         loading: false,
-        budget: data[0],
+        data: {
+          budget,
+          envelopes,
+        },
       };
     } else {
-      return { ...noData, loading: true };
+      return { loading: true, data: { budget: {}, envelopes: {} } };
     }
   });
+
   const [activeTab, setActiveTab] = useState("planned"); // "planned", "spent", "remaining"
   const [isModalOpen, setModalOpen] = useState(false);
 
@@ -46,7 +65,7 @@ export const Dashboard = () => {
 
       <div className="py-8 px-2 flex flex-col items-stretch gap-5">
         {/* Categories container */}
-        {budget.envelopes.map((category, i) => {
+        {envelopes.map((category, i) => {
           return (
             <Envelope
               key={i}
@@ -70,12 +89,7 @@ export const Dashboard = () => {
         <DashboardContext.Provider
           value={{ toggleModal: () => setModalOpen((prev) => !prev) }}
         >
-          <TransactionForm
-            ledgers={budget.envelopes.reduce((acc, envelope) => {
-              return [...acc, ...envelope.ledgers];
-            }, [])}
-            budgetId={budget._id}
-          />
+          <TransactionForm />
         </DashboardContext.Provider>
       </Modal>
     </div>
