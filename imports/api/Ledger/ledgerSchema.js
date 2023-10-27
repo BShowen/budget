@@ -2,7 +2,6 @@ import SimpleSchema from "simpl-schema";
 import { transactionSchema } from "../Transaction/transactionSchema";
 
 export const ledgerSchema = new SimpleSchema({
-  _id: String,
   name: String,
   startingBalance: {
     type: Number,

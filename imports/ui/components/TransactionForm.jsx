@@ -15,7 +15,6 @@ export function TransactionForm({ ledgers, budgetId }) {
     const formData = new FormData(e.target.parentElement.parentElement);
     formData.set("createdAt", `${formData.get("createdAt")}T00:00:00`);
     formData.set("type", active);
-    formData.set("budgetId", budgetId);
     try {
       Meteor.call(
         "transaction.createTransaction",

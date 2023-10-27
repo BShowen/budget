@@ -1,4 +1,5 @@
 import React from "react";
+import { useTracker } from "meteor/react-meteor-data";
 
 // Utils
 import { cap } from "../util/cap";
@@ -8,8 +9,30 @@ import { reduceTransactions } from "../util/reduceTransactions";
 // Components
 import { Progress } from "./Progress";
 
-export const Ledger = ({ name, startingBalance, transactions, activeTab }) => {
-  const { expense, income } = reduceTransactions({ transactions });
+// Collections
+import { LedgerCollection } from "/imports/api/Ledger/LedgerCollection";
+import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
+
+export const Ledger = ({
+  _id,
+  name,
+  startingBalance,
+  transactions,
+  activeTab,
+}) => {
+  const { data } = useTracker(() => {
+    // Find the Ledger
+    const ledger = LedgerCollection.findOne({ _id });
+    // Extract transactionId's from ledger
+    const transactionIdList = ledger.transactions;
+    // Find and return all transaction documents
+    const transactions = TransactionCollection.find({
+      _id: { $in: transactionIdList },
+    }).fetch();
+    return { data: transactions };
+  });
+
+  const { expense, income } = reduceTransactions({ transactions: data });
   const spent = expense - income;
 
   const remaining = startingBalance - spent;

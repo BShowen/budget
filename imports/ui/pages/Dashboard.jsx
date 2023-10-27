@@ -14,16 +14,22 @@ export const DashboardContext = createContext(null);
 export const Dashboard = () => {
   const { loading, budget } = useTracker(() => {
     const noData = { loading: false, budget: {} };
-    const handler = Meteor.subscribe("budgets");
-    if (!handler.ready()) {
+    const budgetHandler = Meteor.subscribe("budgets");
+    const ledgerHandler = Meteor.subscribe("ledgers");
+    const transactionHandler = Meteor.subscribe("transactions");
+    if (
+      budgetHandler.ready() &&
+      ledgerHandler.ready() &&
+      transactionHandler.ready()
+    ) {
+      const data = BudgetCollection.find({}).fetch();
+      return {
+        loading: false,
+        budget: data[0],
+      };
+    } else {
       return { ...noData, loading: true };
     }
-
-    const data = BudgetCollection.find({}).fetch();
-    return {
-      loading: false,
-      budget: data[0],
-    };
   });
   const [activeTab, setActiveTab] = useState("planned"); // "planned", "spent", "remaining"
   const [isModalOpen, setModalOpen] = useState(false);
