@@ -1,9 +1,11 @@
 import { Meteor } from "meteor/meteor";
 import { Accounts } from "meteor/accounts-base";
-import { Mongo } from "meteor/mongo";
-import { BudgetCollection } from "../imports/api/Budgets/Budget";
 import "/imports/startup/server";
-import "/imports/api/Budgets/server/publications.js";
+import "/imports/api/Budget/server/publications";
+import { BudgetCollection } from "../imports/api/Budget/BudgetCollection";
+import { EnvelopeCollection } from "../imports/api/Envelope/EnvelopCollection";
+import { LedgerCollection } from "../imports/api/Ledger/LedgerCollection";
+import { TransactionCollection } from "../imports/api/Transaction/TransactionCollection";
 
 const SEED_EMAIL = "bshowen@me.com";
 const SEED_PASSWORD = "123123123";
@@ -23,9 +25,6 @@ Meteor.startup(() => {
   }
   const user = Accounts.findUserByEmail(SEED_EMAIL);
 
-  const newId = () => {
-    return new Mongo.ObjectID().valueOf();
-  };
   if (!BudgetCollection.find().count()) {
     const budgetIdOne = BudgetCollection.insert({
       //A single budget for the month
@@ -33,7 +32,7 @@ Meteor.startup(() => {
       income: {
         expected: 1000.5,
         received: [
-          {
+          TransactionCollection.insert({
             loggedBy: {
               userId: user._id,
               firstName: user.profile.firstName,
@@ -43,22 +42,19 @@ Meteor.startup(() => {
             merchant: "Paycheck",
             type: "income",
             amount: 1000.5,
-          },
+          }),
         ],
       },
       envelopes: [
-        {
-          // category
+        EnvelopeCollection.insert({
           name: "food",
           startingBalance: 500.0,
           ledgers: [
-            {
-              // ledger
-              _id: newId(),
+            LedgerCollection.insert({
               name: "groceries",
               startingBalance: 400.0,
               transactions: [
-                {
+                TransactionCollection.insert({
                   createdAt: new Date(),
                   type: "expense",
                   merchant: "publix",
@@ -68,8 +64,8 @@ Meteor.startup(() => {
                     firstName: user.profile.firstName,
                     lastName: user.profile.lastName,
                   },
-                },
-                {
+                }),
+                TransactionCollection.insert({
                   createdAt: new Date(),
                   type: "expense",
                   merchant: "walmart",
@@ -79,8 +75,8 @@ Meteor.startup(() => {
                     firstName: user.profile.firstName,
                     lastName: user.profile.lastName,
                   },
-                },
-                {
+                }),
+                TransactionCollection.insert({
                   createdAt: new Date(),
                   type: "income",
                   merchant: "walmart",
@@ -91,16 +87,14 @@ Meteor.startup(() => {
                     firstName: user.profile.firstName,
                     lastName: user.profile.lastName,
                   },
-                },
+                }),
               ],
-            },
-            {
-              // ledger
-              _id: newId(),
+            }),
+            LedgerCollection.insert({
               name: "eating out",
               startingBalance: 100,
               transactions: [
-                {
+                TransactionCollection.insert({
                   createdAt: new Date(),
                   type: "expense",
                   merchant: "Steak n Shake",
@@ -110,23 +104,20 @@ Meteor.startup(() => {
                     firstName: user.profile.firstName,
                     lastName: user.profile.lastName,
                   },
-                },
+                }),
               ],
-            },
+            }),
           ],
-        },
-        {
-          // category
+        }),
+        EnvelopeCollection.insert({
           name: "vehicles",
           startingBalance: 330.0,
           ledgers: [
-            {
-              // ledger
-              _id: newId(),
+            LedgerCollection.insert({
               name: "gas",
               startingBalance: 190,
               transactions: [
-                {
+                TransactionCollection.insert({
                   createdAt: new Date(),
                   type: "expense",
                   merchant: "circle-k",
@@ -136,8 +127,8 @@ Meteor.startup(() => {
                     firstName: user.profile.firstName,
                     lastName: user.profile.lastName,
                   },
-                },
-                {
+                }),
+                TransactionCollection.insert({
                   createdAt: new Date(),
                   type: "expense",
                   merchant: "wawa",
@@ -147,16 +138,14 @@ Meteor.startup(() => {
                     firstName: user.profile.firstName,
                     lastName: user.profile.lastName,
                   },
-                },
+                }),
               ],
-            },
-            {
-              // ledger
-              _id: newId(),
+            }),
+            LedgerCollection.insert({
               name: "insurance",
               startingBalance: 170.0,
               transactions: [
-                {
+                TransactionCollection.insert({
                   createdAt: new Date(),
                   type: "expense",
                   merchant: "state farm",
@@ -166,30 +155,25 @@ Meteor.startup(() => {
                     firstName: user.profile.firstName,
                     lastName: user.profile.lastName,
                   },
-                },
+                }),
               ],
-            },
+            }),
           ],
-        },
-        {
-          // category
+        }),
+        EnvelopeCollection.insert({
           name: "utilities",
           startingBalance: 330.0,
           ledgers: [
-            {
-              // ledger
-              _id: newId(),
+            LedgerCollection.insert({
               name: "internet",
               startingBalance: 85.0,
               transactions: [],
-            },
-            {
-              // ledger
-              _id: newId(),
+            }),
+            LedgerCollection.insert({
               name: "electric",
               startingBalance: 180.0,
               transactions: [
-                {
+                TransactionCollection.insert({
                   createdAt: new Date(),
                   type: "expense",
                   merchant: "duke energy",
@@ -199,16 +183,14 @@ Meteor.startup(() => {
                     firstName: user.profile.firstName,
                     lastName: user.profile.lastName,
                   },
-                },
+                }),
               ],
-            },
-            {
-              // ledger
-              _id: newId(),
+            }),
+            LedgerCollection.insert({
               name: "water",
               startingBalance: 11.5,
               transactions: [
-                {
+                TransactionCollection.insert({
                   createdAt: new Date(),
                   type: "expense",
                   merchant: "orange county",
@@ -218,22 +200,19 @@ Meteor.startup(() => {
                     firstName: user.profile.firstName,
                     lastName: user.profile.lastName,
                   },
-                },
+                }),
               ],
-            },
+            }),
           ],
-        },
-        {
-          // category
+        }),
+        EnvelopeCollection.insert({
           name: "food",
           startingBalance: 100.0,
           ledgers: [
-            {
-              // ledger
-              _id: newId(),
+            LedgerCollection.insert({
               name: "groceries",
               transactions: [
-                {
+                TransactionCollection.insert({
                   createdAt: new Date(),
                   type: "expense",
                   merchant: "publix",
@@ -243,15 +222,13 @@ Meteor.startup(() => {
                     firstName: user.profile.firstName,
                     lastName: user.profile.lastName,
                   },
-                },
+                }),
               ],
-            },
-            {
-              // ledger
-              _id: newId(),
+            }),
+            LedgerCollection.insert({
               name: "eating out",
               transactions: [
-                {
+                TransactionCollection.insert({
                   createdAt: new Date(),
                   type: "expense",
                   merchant: "wendy's",
@@ -261,11 +238,11 @@ Meteor.startup(() => {
                     firstName: user.profile.firstName,
                     lastName: user.profile.lastName,
                   },
-                },
+                }),
               ],
-            },
+            }),
           ],
-        },
+        }),
       ],
     });
 
@@ -277,10 +254,5 @@ Meteor.startup(() => {
         },
       }
     );
-
-    // Meteor.users.update(
-    //   { _id: user._id },
-    //   { $push: { budgetIdList: { $each: [budgetIdOne], $position: 0 } } }
-    // );
   }
 });
