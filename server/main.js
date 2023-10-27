@@ -1,7 +1,6 @@
 import { Meteor } from "meteor/meteor";
 import { Accounts } from "meteor/accounts-base";
 import "/imports/startup/server";
-import "/imports/api/Budget/server/publications";
 import { BudgetCollection } from "../imports/api/Budget/BudgetCollection";
 import { EnvelopeCollection } from "../imports/api/Envelope/EnvelopCollection";
 import { LedgerCollection } from "../imports/api/Ledger/LedgerCollection";
