@@ -1,3 +1,4 @@
+import { Meteor } from "meteor/meteor";
 import React, { useContext, useState } from "react";
 
 // Context
@@ -6,14 +7,23 @@ import { DashboardContext } from "../pages/Dashboard";
 // Utils
 import { cap } from ".././util/cap";
 
-export function TransactionForm({ ledgers }) {
+export function TransactionForm({ ledgers, budgetId }) {
   const [active, setActiveTab] = useState("expense"); //expense or income
   const { toggleModal } = useContext(DashboardContext);
 
   function submit(e) {
     const formData = new FormData(e.target.parentElement.parentElement);
+    formData.set("createdAt", `${formData.get("createdAt")}T00:00:00`);
     formData.set("type", active);
-    console.log(Object.fromEntries(formData.entries()));
+    formData.set("budgetId", budgetId);
+    try {
+      Meteor.call(
+        "transaction.createTransaction",
+        Object.fromEntries(formData.entries())
+      );
+    } catch (error) {
+      console.lgo("Error ----> ", error);
+    }
   }
 
   return (
@@ -72,7 +82,7 @@ export function TransactionForm({ ledgers }) {
                 placeholder="Name"
                 required
                 id="merchant"
-                name="name"
+                name="merchant"
                 className="px-0 w-1/2 text-end focus:ring-0 border-0"
               />
             </InputContainer>

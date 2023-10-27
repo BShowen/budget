@@ -1,7 +1,7 @@
 import React, { createContext, useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
-import { BudgetCollection } from "../../api/Budgets/Budget";
+import { BudgetCollection } from "../../api/Budget/BudgetCollection";
 
 // Components
 import { DashboardHeader } from "../components/DashboardHeader";
@@ -68,6 +68,7 @@ export const Dashboard = () => {
             ledgers={budget.envelopes.reduce((acc, envelope) => {
               return [...acc, ...envelope.ledgers];
             }, [])}
+            budgetId={budget._id}
           />
         </DashboardContext.Provider>
       </Modal>
