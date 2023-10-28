@@ -10,6 +10,7 @@ import { DashboardContext } from "../pages/Dashboard";
 
 // Utils
 import { cap } from ".././util/cap";
+import { dates } from "../util/dates";
 
 export function TransactionForm() {
   const { ledgers } = useTracker(() => {
@@ -57,6 +58,7 @@ export function TransactionForm() {
               <input
                 type="date"
                 name="createdAt"
+                defaultValue={dates.format({ forHtml: true })}
                 required
                 id="date"
                 className="px-0 w-1/2 focus:ring-0 border-0"
