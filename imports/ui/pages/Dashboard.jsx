@@ -1,10 +1,4 @@
 import React, { createContext, useState } from "react";
-import { Meteor } from "meteor/meteor";
-import { useTracker } from "meteor/react-meteor-data";
-
-// Collections
-import { BudgetCollection } from "../../api/Budget/BudgetCollection";
-import { EnvelopeCollection } from "../../api/Envelope/EnvelopCollection";
 
 // Components
 import { DashboardHeader } from "../components/DashboardHeader";
@@ -14,48 +8,11 @@ import { TransactionForm } from "../components/TransactionForm";
 import { BsFillPlusCircleFill } from "react-icons/bs";
 
 export const DashboardContext = createContext(null);
-export const Dashboard = () => {
-  const {
-    loading,
-    data: { budget, envelopes },
-  } = useTracker(() => {
-    const budgetHandler = Meteor.subscribe("budgets");
-    const envelopeHandler = Meteor.subscribe("envelopes");
-    const ledgerHandler = Meteor.subscribe("ledgers");
-    const transactionHandler = Meteor.subscribe("transactions");
-    if (
-      budgetHandler.ready() &&
-      envelopeHandler.ready() &&
-      ledgerHandler.ready() &&
-      transactionHandler.ready()
-    ) {
-      // BudgetCollection contains only the budget for this month. It does NOT
-      // contain multiple documents. The publisher (on the server) returns only
-      // the budget for this month.
-      const budget = BudgetCollection.findOne();
-      // Get the envelopes for this budget.
-      const envelopes = EnvelopeCollection.find({
-        _id: { $in: budget.envelopes },
-      }).fetch();
-
-      return {
-        loading: false,
-        data: {
-          budget,
-          envelopes,
-        },
-      };
-    } else {
-      return { loading: true, data: { budget: {}, envelopes: {} } };
-    }
-  });
-
+export const Dashboard = ({ budget, envelopes }) => {
   const [activeTab, setActiveTab] = useState("planned"); // "planned", "spent", "remaining"
   const [isModalOpen, setModalOpen] = useState(false);
 
-  return loading ? (
-    <p>Loading...</p>
-  ) : (
+  return (
     <div className="w-full pb-12">
       <DashboardHeader
         setActiveTab={setActiveTab}

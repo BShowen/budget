@@ -205,17 +205,28 @@ Meteor.startup(() => {
           ],
         }),
         EnvelopeCollection.insert({
-          name: "food",
+          name: "bradley - personal",
           startingBalance: 100.0,
           ledgers: [
             LedgerCollection.insert({
-              name: "groceries",
+              name: "subscriptions",
               transactions: [
                 TransactionCollection.insert({
                   createdAt: new Date(),
                   type: "expense",
-                  merchant: "publix",
-                  amount: 25.0,
+                  merchant: "youtube",
+                  amount: 15.8,
+                  loggedBy: {
+                    userId: user._id,
+                    firstName: user.profile.firstName,
+                    lastName: user.profile.lastName,
+                  },
+                }),
+                TransactionCollection.insert({
+                  createdAt: new Date(),
+                  type: "expense",
+                  merchant: "stumptown",
+                  amount: 17.0,
                   loggedBy: {
                     userId: user._id,
                     firstName: user.profile.firstName,
@@ -225,13 +236,13 @@ Meteor.startup(() => {
               ],
             }),
             LedgerCollection.insert({
-              name: "eating out",
+              name: "misc",
               transactions: [
                 TransactionCollection.insert({
                   createdAt: new Date(),
                   type: "expense",
-                  merchant: "wendy's",
-                  amount: 10.0,
+                  merchant: "amazon",
+                  amount: 13.58,
                   loggedBy: {
                     userId: user._id,
                     firstName: user.profile.firstName,

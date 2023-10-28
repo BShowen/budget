@@ -22,6 +22,9 @@ export const Envelope = ({
   addItemHandler,
 }) => {
   const { ledgers } = useTracker(() => {
+    if (!Meteor.userId()) {
+      return {};
+    }
     // Get the envelope that contains the transactions for this component.
     const envelope = EnvelopeCollection.findOne({ _id });
     // Get the ledgers in the envelope

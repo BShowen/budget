@@ -15,6 +15,7 @@ import { TransactionCollection } from "../../api/Transaction/TransactionCollecti
 
 export const Ledger = ({ _id, name, startingBalance, activeTab }) => {
   const { transactions } = useTracker(() => {
+    if (!Meteor.userId()) return {};
     // Get the ledger that contains the transactions for this component.
     const ledger = LedgerCollection.findOne({ _id });
     // Get the transactions in the ledger.
