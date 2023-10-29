@@ -67,6 +67,17 @@ export const LedgerTransactions = ({ isOpen, onClose, ledgerId }) => {
     return { transactions, income, expense };
   });
 
+  const [percentSpent, setPercentSpent] = useState(0);
+
+  useEffect(() => {
+    // After component mounts, update the percentSpent so it animates from zero
+    // to percentSpent.
+    const percentSpent = ledger.startingBalance
+      ? (spent / ledger.startingBalance) * 100
+      : (spent / envelope.startingBalance) * 100;
+    setPercentSpent(percentSpent);
+  }, [ledger, envelope]);
+
   if (!isOpen) return null;
 
   const spent = expense - income;
@@ -74,10 +85,6 @@ export const LedgerTransactions = ({ isOpen, onClose, ledgerId }) => {
   const remaining = ledger.startingBalance
     ? ledger.startingBalance - spent
     : envelope.startingBalance - (envelope.expense - envelope.income);
-
-  const percentSpent = ledger.startingBalance
-    ? (spent / ledger.startingBalance) * 100
-    : (spent / envelope.startingBalance) * 100;
 
   const logo =
     remaining == 0 ? (
