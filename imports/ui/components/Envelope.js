@@ -3,14 +3,13 @@ import { useTracker } from "meteor/react-meteor-data";
 
 // Collections
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
-import { EnvelopeCollection } from "../../api/Envelope/EnvelopCollection";
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 import { Progress } from "./Progress";
 
 // Utils
 import { cap } from "../util/cap";
 import { decimal } from "../util/decimal";
-import { reduceLedgers } from "../util/reduceLedgers";
+import { reduceTransactions } from "../util/reduceTransactions";
 
 // Components
 import { Ledger } from "./Ledger";
@@ -24,28 +23,25 @@ export const Envelope = ({
   addItemHandler,
 }) => {
   const { ledgers } = useTracker(() => {
-    if (!Meteor.userId()) {
-      return {};
-    }
-    // Get the envelope that contains the transactions for this component.
-    const envelope = EnvelopeCollection.findOne({ _id });
-    // Get the ledgers in the envelope
+    if (!Meteor.userId()) return {};
+    // Return the ledgers that belong to this envelope
     const ledgers = LedgerCollection.find({
-      _id: { $in: envelope.ledgers },
+      envelopeId: _id,
     }).fetch();
-    // Populate the ledger.transactions field so balances can be calculated in
-    // this component.
-    ledgers.forEach((ledger) => {
-      const populatedTransactions = TransactionCollection.find({
-        _id: { $in: ledger.transactions },
-      }).fetch();
-      ledger.transactions = populatedTransactions;
-    });
 
     return { ledgers };
   });
 
-  const { expense, income } = reduceLedgers({ ledgers });
+  const { transactions } = useTracker(() => {
+    if (!Meteor.userId()) return {};
+    // Return the transactions that are in this envelope
+    const transactions = TransactionCollection.find({
+      envelopeId: _id,
+    }).fetch();
+    return { transactions };
+  });
+
+  const { expense, income } = reduceTransactions({ transactions });
   const spent = expense - income;
 
   const remaining = startingBalance - spent;
@@ -72,7 +68,7 @@ export const Envelope = ({
         isAllocated={isAllocated}
         progress={progress}
       />
-      <EnvelopeBody ledgers={ledgers} activeTab={activeTab} envelopeId={_id} />
+      <EnvelopeBody ledgers={ledgers} activeTab={activeTab} />
       <EnvelopeFooter
         displayBalance={displayBalance}
         addItemHandler={addItemHandler}
@@ -91,18 +87,11 @@ function EnvelopeHeader({ name, activeTab, isAllocated, progress }) {
   );
 }
 
-function EnvelopeBody({ ledgers, activeTab, envelopeId }) {
+function EnvelopeBody({ ledgers, activeTab }) {
   return (
     <div className="flex flex-col gap-2 z-20">
       {ledgers.map((ledger, i) => {
-        return (
-          <Ledger
-            key={i}
-            {...ledger}
-            activeTab={activeTab}
-            envelopeId={envelopeId}
-          />
-        );
+        return <Ledger key={i} {...ledger} activeTab={activeTab} />;
       })}
     </div>
   );

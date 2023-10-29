@@ -279,6 +279,7 @@ Meteor.startup(() => {
       }),
       LedgerCollection.insert({
         budgetId: budgetId,
+        envelopeId: env4,
         name: "misc",
       }),
     ];

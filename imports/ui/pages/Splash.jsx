@@ -29,12 +29,14 @@ export const Splash = () => {
     const envelopeHandler = Meteor.subscribe("envelopes");
     const ledgerHandler = Meteor.subscribe("ledgers");
     const transactionHandler = Meteor.subscribe("transactions");
+    const paycheckHandler = Meteor.subscribe("paychecks");
     if (
       Meteor.userId() &&
       budgetHandler.ready() &&
       envelopeHandler.ready() &&
       ledgerHandler.ready() &&
-      transactionHandler.ready()
+      transactionHandler.ready() &&
+      paycheckHandler.ready()
     ) {
       // BudgetCollection contains only the budget for this month. It does NOT
       // contain multiple documents. The publisher (on the server) returns only
@@ -42,7 +44,7 @@ export const Splash = () => {
       const budget = BudgetCollection.findOne();
       // Get the envelopes for this budget.
       const envelopes = EnvelopeCollection.find({
-        _id: { $in: budget.envelopes },
+        budgetId: budget._id,
       }).fetch();
 
       return {

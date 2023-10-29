@@ -15,25 +15,22 @@ export const Dashboard = ({ budget, envelopes }) => {
   const [formState, setFormState] = useState(false);
   const [ledgerState, setLedgerState] = useState({
     isOpen: false,
-    ledger: {},
-    envelopeId: undefined,
+    ledgerId: undefined,
   });
 
   const dashboardContext = {
     toggleForm: () => {
       setFormState((prev) => !prev);
     },
-    toggleLedger: ({ ledger, envelopeId }) => {
+    toggleLedger: ({ ledgerId }) => {
       setLedgerState((prev) => {
         return {
           ...prev,
           isOpen: !prev.isOpen,
-          ledger: !prev.isOpen ? ledger : {},
-          envelopeId: !prev.isOpen ? envelopeId : undefined,
+          ledgerId: !prev.isOpen ? ledgerId : undefined,
         };
       });
     },
-    envelopeId: ledgerState.envelopeId,
   };
 
   return (
@@ -78,7 +75,7 @@ export const Dashboard = ({ budget, envelopes }) => {
           <LedgerTransactions
             isOpen={ledgerState.isOpen}
             onClose={dashboardContext.toggleLedger}
-            ledger={ledgerState.ledger}
+            ledgerId={ledgerState.ledgerId}
           />
         )}
       </DashboardContext.Provider>

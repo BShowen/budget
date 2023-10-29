@@ -16,7 +16,6 @@ import "react-circular-progressbar/dist/styles.css";
 
 // Utils
 import { cap } from "../util/cap";
-import { reduceLedgers } from "../util/reduceLedgers";
 import { reduceTransactions } from "../util/reduceTransactions";
 import { decimal } from "../util/decimal";
 import { dates } from "../util/dates";
@@ -29,59 +28,56 @@ import { IoIosArrowBack } from "react-icons/io";
 import { HiMinus, HiPlus } from "react-icons/hi";
 import { BiDollar, BiCheck, BiX } from "react-icons/bi";
 
-export const LedgerTransactions = ({ isOpen, onClose, ledger }) => {
-  const { toggleLedger, envelopeId } = useContext(DashboardContext);
-  const { transactions, envelope } = useTracker(() => {
+export const LedgerTransactions = ({ isOpen, onClose, ledgerId }) => {
+  const { toggleLedger } = useContext(DashboardContext);
+  const { envelope } = useTracker(() => {
     if (!Meteor.userId() || !isOpen) return {};
-
-    const envelope = EnvelopeCollection.findOne({ _id: envelopeId });
-    const allLedgers = LedgerCollection.find({
-      _id: { $in: envelope.ledgers },
+    // Get the ledger so I can get the envelope by ledger.envelopeId.
+    const ledger = LedgerCollection.findOne({ _id: ledgerId });
+    // Get the envelope so I can get all transactions in the envelope.
+    const envelope = EnvelopeCollection.findOne({ _id: ledger.envelopeId });
+    // Get all the transactions the are in this envelope.
+    const envelopeTransactionList = TransactionCollection.find({
+      envelopeId: envelope._id,
     }).fetch();
-    envelope.ledgers = allLedgers;
-    envelope.ledgers.forEach((ledger) => {
-      const populatedTransactions = TransactionCollection.find({
-        _id: { $in: ledger.transactions },
-      }).fetch();
-      ledger.transactions = populatedTransactions;
+    // Income and expense for the envelope
+    const { income, expense } = reduceTransactions({
+      transactions: envelopeTransactionList,
     });
-    const { income, expense } = reduceLedgers({ ledgers: envelope.ledgers });
-    envelope.expense = expense;
-    envelope.income = income;
 
-    // Find the ledger in order to render it's transactions.
-    const reactiveLedger = LedgerCollection.findOne({ _id: ledger._id });
-    const transactions = TransactionCollection.find({
-      _id: { $in: reactiveLedger.transactions },
-    }).fetch();
-    return { transactions, envelope };
+    envelope.income = income;
+    envelope.expense = expense;
+
+    return { envelope };
   }, []);
 
-  const [percentSpent, setPercentSpent] = useState(0);
-  const [{ income, expense }, setIncomeExpense] = useState({
-    income: 0,
-    expense: 0,
+  const { ledger } = useTracker(() => {
+    if (!Meteor.userId() || !isOpen) return {};
+    const ledger = LedgerCollection.findOne({ _id: ledgerId });
+    return { ledger };
   });
 
-  useEffect(() => {
-    const spent = expense - income;
-    const percentSpent = ledger.startingBalance
-      ? (spent / ledger.startingBalance) * 100
-      : (spent / envelope.startingBalance) * 100;
-    setPercentSpent(percentSpent);
-  }, [income, expense]);
-
-  useEffect(() => {
-    if (!transactions) return;
-    setIncomeExpense(reduceTransactions({ transactions }));
-  }, [transactions]);
+  const { transactions, income, expense } = useTracker(() => {
+    if (!Meteor.userId() || !isOpen) return {};
+    const transactions = TransactionCollection.find({
+      ledgerId: ledgerId,
+    }).fetch();
+    // income and expense for this ledger
+    const { income, expense } = reduceTransactions({ transactions });
+    return { transactions, income, expense };
+  });
 
   if (!isOpen) return null;
 
   const spent = expense - income;
+
   const remaining = ledger.startingBalance
     ? ledger.startingBalance - spent
     : envelope.startingBalance - (envelope.expense - envelope.income);
+
+  const percentSpent = ledger.startingBalance
+    ? (spent / ledger.startingBalance) * 100
+    : (spent / envelope.startingBalance) * 100;
 
   const logo =
     remaining == 0 ? (

@@ -18,20 +18,18 @@ import { DashboardContext } from "../pages/Dashboard";
 
 export const Ledger = ({
   _id,
+  envelopeId,
   name,
   startingBalance,
   activeTab,
-  envelopeId,
 }) => {
-  const { transactions, ledger } = useTracker(() => {
+  const { transactions } = useTracker(() => {
     if (!Meteor.userId()) return {};
-    // Get the ledger that contains the transactions for this component.
-    const ledger = LedgerCollection.findOne({ _id });
     // Get the transactions in the ledger.
     const transactions = TransactionCollection.find({
-      _id: { $in: ledger.transactions },
+      ledgerId: _id,
     }).fetch();
-    return { transactions, ledger };
+    return { transactions };
   });
   const { toggleLedger } = useContext(DashboardContext);
 
@@ -71,7 +69,7 @@ export const Ledger = ({
 
   return (
     <div
-      onClick={() => toggleLedger({ ledger, envelopeId })}
+      onClick={() => toggleLedger({ ledgerId: _id })}
       className="flex flex-row justify-between items-center px-2 bg-slate-100 rounded-md py-1 lg:hover:cursor-pointer h-8 relative"
     >
       <h2 className="font-semibold">{cap(name)}</h2>
