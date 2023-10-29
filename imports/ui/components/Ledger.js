@@ -42,7 +42,7 @@ export const Ledger = ({
   // an unallocated envelope. In this case the remaining balance should be
   // undefined because we need a starting balance in order to have a remaining
   // balance.
-  const remaining = startingBalance || undefined;
+  const remaining = startingBalance ? startingBalance - spent : undefined;
 
   const displayBalance = calculateDisplayBalance();
   function calculateDisplayBalance() {
@@ -58,14 +58,13 @@ export const Ledger = ({
 
   const progress = calculateProgress();
   function calculateProgress() {
-    const balance = startingBalance;
     let progress = undefined;
     if (activeTab === "planned") {
       progress = 0;
     } else if (activeTab === "spent") {
-      progress = (spent / balance) * 100;
+      progress = (spent / startingBalance) * 100;
     } else if (activeTab === "remaining") {
-      progress = (remaining / balance) * 100;
+      progress = remaining ? (remaining / startingBalance) * 100 : 0;
     }
     return Number.parseInt(progress.toFixed(0));
   }
