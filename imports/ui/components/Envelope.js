@@ -72,11 +72,7 @@ export const Envelope = ({
         isAllocated={isAllocated}
         progress={progress}
       />
-      <EnvelopeBody
-        ledgers={ledgers}
-        activeTab={activeTab}
-        startingEnvelopeBalance={startingBalance}
-      />
+      <EnvelopeBody ledgers={ledgers} activeTab={activeTab} envelopeId={_id} />
       <EnvelopeFooter
         displayBalance={displayBalance}
         addItemHandler={addItemHandler}
@@ -95,11 +91,18 @@ function EnvelopeHeader({ name, activeTab, isAllocated, progress }) {
   );
 }
 
-function EnvelopeBody({ ledgers, activeTab, startingEnvelopeBalance }) {
+function EnvelopeBody({ ledgers, activeTab, envelopeId }) {
   return (
     <div className="flex flex-col gap-2 z-20">
       {ledgers.map((ledger, i) => {
-        return <Ledger key={i} {...ledger} activeTab={activeTab} />;
+        return (
+          <Ledger
+            key={i}
+            {...ledger}
+            activeTab={activeTab}
+            envelopeId={envelopeId}
+          />
+        );
       })}
     </div>
   );

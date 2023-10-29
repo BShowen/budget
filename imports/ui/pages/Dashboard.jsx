@@ -16,21 +16,24 @@ export const Dashboard = ({ budget, envelopes }) => {
   const [ledgerState, setLedgerState] = useState({
     isOpen: false,
     ledger: {},
+    envelopeId: undefined,
   });
 
   const dashboardContext = {
     toggleForm: () => {
       setFormState((prev) => !prev);
     },
-    toggleLedger: ({ ledger }) => {
+    toggleLedger: ({ ledger, envelopeId }) => {
       setLedgerState((prev) => {
         return {
           ...prev,
           isOpen: !prev.isOpen,
           ledger: !prev.isOpen ? ledger : {},
+          envelopeId: !prev.isOpen ? envelopeId : undefined,
         };
       });
     },
+    envelopeId: ledgerState.envelopeId,
   };
 
   return (

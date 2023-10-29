@@ -16,7 +16,13 @@ import { TransactionCollection } from "../../api/Transaction/TransactionCollecti
 // Context
 import { DashboardContext } from "../pages/Dashboard";
 
-export const Ledger = ({ _id, name, startingBalance, activeTab }) => {
+export const Ledger = ({
+  _id,
+  name,
+  startingBalance,
+  activeTab,
+  envelopeId,
+}) => {
   const { transactions, ledger } = useTracker(() => {
     if (!Meteor.userId()) return {};
     // Get the ledger that contains the transactions for this component.
@@ -66,7 +72,7 @@ export const Ledger = ({ _id, name, startingBalance, activeTab }) => {
 
   return (
     <div
-      onClick={() => toggleLedger({ ledger })}
+      onClick={() => toggleLedger({ ledger, envelopeId })}
       className="flex flex-row justify-between items-center px-2 bg-slate-100 rounded-md py-1 lg:hover:cursor-pointer h-8 relative"
     >
       <h2 className="font-semibold">{cap(name)}</h2>

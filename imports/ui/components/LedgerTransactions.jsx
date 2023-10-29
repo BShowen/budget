@@ -4,6 +4,7 @@ import { useTracker } from "meteor/react-meteor-data";
 // Collections
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
+import { EnvelopeCollection } from "../../api/Envelope/EnvelopCollection";
 
 // Components
 import { Modal } from "./Modal";
@@ -15,6 +16,7 @@ import "react-circular-progressbar/dist/styles.css";
 
 // Utils
 import { cap } from "../util/cap";
+import { reduceLedgers } from "../util/reduceLedgers";
 import { reduceTransactions } from "../util/reduceTransactions";
 import { decimal } from "../util/decimal";
 import { dates } from "../util/dates";
@@ -25,19 +27,36 @@ import { DashboardContext } from "../pages/Dashboard";
 // Icons
 import { IoIosArrowBack } from "react-icons/io";
 import { HiMinus, HiPlus } from "react-icons/hi";
-import { BiDollar } from "react-icons/bi";
+import { BiDollar, BiCheck, BiX } from "react-icons/bi";
 
 export const LedgerTransactions = ({ isOpen, onClose, ledger }) => {
-  const { toggleLedger } = useContext(DashboardContext);
-  const { transactions } = useTracker(() => {
+  const { toggleLedger, envelopeId } = useContext(DashboardContext);
+  const { transactions, envelope } = useTracker(() => {
     if (!Meteor.userId() || !isOpen) return {};
+
+    const envelope = EnvelopeCollection.findOne({ _id: envelopeId });
+    const allLedgers = LedgerCollection.find({
+      _id: { $in: envelope.ledgers },
+    }).fetch();
+    envelope.ledgers = allLedgers;
+    envelope.ledgers.forEach((ledger) => {
+      const populatedTransactions = TransactionCollection.find({
+        _id: { $in: ledger.transactions },
+      }).fetch();
+      ledger.transactions = populatedTransactions;
+    });
+    const { income, expense } = reduceLedgers({ ledgers: envelope.ledgers });
+    envelope.expense = expense;
+    envelope.income = income;
+
     // Find the ledger in order to render it's transactions.
     const reactiveLedger = LedgerCollection.findOne({ _id: ledger._id });
     const transactions = TransactionCollection.find({
       _id: { $in: reactiveLedger.transactions },
     }).fetch();
-    return { transactions };
+    return { transactions, envelope };
   }, []);
+
   const [percentSpent, setPercentSpent] = useState(0);
   const [{ income, expense }, setIncomeExpense] = useState({
     income: 0,
@@ -46,7 +65,10 @@ export const LedgerTransactions = ({ isOpen, onClose, ledger }) => {
 
   useEffect(() => {
     const spent = expense - income;
-    setPercentSpent((spent / ledger.startingBalance) * 100);
+    const percentSpent = ledger.startingBalance
+      ? (spent / ledger.startingBalance) * 100
+      : (spent / envelope.startingBalance) * 100;
+    setPercentSpent(percentSpent);
   }, [income, expense]);
 
   useEffect(() => {
@@ -59,7 +81,20 @@ export const LedgerTransactions = ({ isOpen, onClose, ledger }) => {
   const spent = expense - income;
   const remaining = ledger.startingBalance
     ? ledger.startingBalance - spent
-    : undefined;
+    : envelope.startingBalance - (envelope.expense - envelope.income);
+
+  const logo =
+    remaining == 0 ? (
+      <BiCheck className="text-4xl text-emerald-400" />
+    ) : remaining < 0 ? (
+      <BiX className="text-5xl text-rose-400" />
+    ) : (
+      <BiDollar
+        className={`text-3xl ${
+          spent > ledger.startingBalance ? "text-rose-400" : "text-emerald-400"
+        }`}
+      />
+    );
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -76,8 +111,9 @@ export const LedgerTransactions = ({ isOpen, onClose, ledger }) => {
           <div className="bg-sky-700/50 grid grid-cols-12 rounded-lg w-11/12 mx-auto p-1 px-2 h-14 relative">
             <div className="col-start-1 col-span-6 h-fit text-start">
               <h2 className="text-xl font-bold">{cap(ledger.name)}</h2>
+              {/* prettier-ignore */}
               <p className="text-xs font-semibold">
-                {decimal(spent)} spent of ${decimal(ledger.startingBalance)}
+                {`${decimal(spent)} spent of ${decimal(ledger.startingBalance || envelope.startingBalance)}`}
               </p>
             </div>
             <div className="col-start-8 col-span-3 text-end h-fit">
@@ -94,25 +130,16 @@ export const LedgerTransactions = ({ isOpen, onClose, ledger }) => {
               <div className="w-[70px] h-[70px] rounded-full ">
                 <CircularProgressbarWithChildren
                   value={percentSpent}
-                  // circleRatio={0.75}
                   background
                   backgroundPadding={6}
                   styles={buildStyles({
                     backgroundColor: "#0387C5",
                     pathColor:
-                      spent > ledger.startingBalance ? "#fb7185" : "#34d399", //green
+                      spent > ledger.startingBalance ? "#fb7185" : "#34d399",
                     trailColor: "transparent",
                   })}
-                  // text={`${Math.floor(percentSpent)}%`}
                 >
-                  {/* <BiDollar className="text-2xl text-rose-400" /> */}
-                  <BiDollar
-                    className={`text-3xl ${
-                      spent > ledger.startingBalance
-                        ? "text-rose-400"
-                        : "text-emerald-400"
-                    }`}
-                  />
+                  {logo}
                 </CircularProgressbarWithChildren>
               </div>
             </div>
