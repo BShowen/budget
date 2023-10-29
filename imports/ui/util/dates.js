@@ -23,7 +23,21 @@ export const dates = (() => {
     });
   }
 
-  function format(args = {}) {
+  function forTransaction(date) {
+    if (!(date instanceof Date)) {
+      throw new Error(`${date} must be instance of Date.`);
+    }
+
+    return date.toLocaleString("en-us", { month: "short", day: "numeric" });
+  }
+
+  function format(date, args = {}) {
+    if (!(date instanceof Date)) {
+      // If only the options object is provided
+      args = date;
+      date = undefined;
+    }
+
     const defaultOptions = {
       forHtml: false,
       forPageHeader: false,
@@ -45,7 +59,7 @@ export const dates = (() => {
     )[0];
 
     if (formatOption === undefined) {
-      throw new Error(`Invalid format option: ${JSON.stringify(args)}`);
+      throw new Error(`Invalid format option: ${JSON.stringify(options)}`);
     }
 
     switch (formatOption) {
@@ -54,8 +68,7 @@ export const dates = (() => {
       case "forPageHeader":
         return forPageHeader();
       case "forTransaction":
-        // Not implemented
-        break;
+        return forTransaction(date);
     }
   }
 

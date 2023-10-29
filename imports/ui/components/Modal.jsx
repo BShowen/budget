@@ -24,7 +24,7 @@ export function Modal({ isOpen, onClose, children }) {
         onClick={(e) => {
           e.stopPropagation();
         }}
-        className="bg-slate-100 w-full rounded-t-xl absolute bottom-0 overflow-scroll"
+        className="bg-slate-100 w-full absolute bottom-0 overflow-scroll"
       >
         {children}
       </div>

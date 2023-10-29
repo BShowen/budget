@@ -51,7 +51,6 @@ Meteor.startup(() => {
           ledgers: [
             LedgerCollection.insert({
               name: "groceries",
-              startingBalance: 400.0,
               transactions: [
                 TransactionCollection.insert({
                   createdAt: new Date(),
@@ -91,7 +90,6 @@ Meteor.startup(() => {
             }),
             LedgerCollection.insert({
               name: "eating out",
-              startingBalance: 100,
               transactions: [
                 TransactionCollection.insert({
                   createdAt: new Date(),
