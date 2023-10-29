@@ -42,11 +42,6 @@ export const Envelope = ({
 
     return { ledgers };
   });
-  // If this envelope has a ledger that has a starting balance, then it is
-  // an allocatedEnvelope. Otherwise it is an unallocatedEnvelope
-  const envelopeType = (ledgers || []).some((ledger) => ledger.startingBalance)
-    ? "allocated"
-    : "unallocated";
 
   const { expense, income } = reduceLedgers({ ledgers });
   const spent = expense - income;
@@ -69,21 +64,11 @@ export const Envelope = ({
   return (
     // Envelope container
     <div className="bg-white rounded-lg shadow-md flex flex-col items-stretch px-2 pt-1 gap-2 relative z-0">
-      {envelopeType === "unallocated" ? (
-        <EnvelopeProgress percent={progress} />
-      ) : (
-        ""
-      )}
-      <EnvelopeHeader
-        name={name}
-        activeTab={activeTab}
-        progress={progress}
-        envelopeType={envelopeType}
-      />
+      <EnvelopeHeader name={name} activeTab={activeTab} />
       <EnvelopeBody
         ledgers={ledgers}
         activeTab={activeTab}
-        progress={progress}
+        startingEnvelopeBalance={startingBalance}
       />
       <EnvelopeFooter
         displayBalance={displayBalance}
@@ -102,11 +87,32 @@ function EnvelopeHeader({ name, activeTab }) {
   );
 }
 
-function EnvelopeBody({ ledgers, activeTab }) {
+function EnvelopeBody({ ledgers, activeTab, startingEnvelopeBalance }) {
+  const { income, expense } = reduceLedgers({ ledgers });
+  const envelopeBalance =
+    Number.parseFloat(startingEnvelopeBalance.toFixed(2)) -
+    Number.parseFloat(expense.toFixed(2)) +
+    Number.parseFloat(income.toFixed(2));
+
+  const ledgerBalances = divideAndRoundToNearestTens(
+    envelopeBalance,
+    ledgers.length
+  );
+
   return (
     <div className="flex flex-col gap-2 z-20">
       {ledgers.map((ledger, i) => {
-        return <Ledger key={i} {...ledger} activeTab={activeTab} />;
+        return (
+          <Ledger
+            key={i}
+            {...ledger}
+            activeTab={activeTab}
+            startingEnvelopeBalance={startingEnvelopeBalance}
+            envelopeIncome={income}
+            envelopeExpense={expense}
+            envelopeBalance={ledgerBalances[i]}
+          />
+        );
       })}
     </div>
   );
@@ -126,15 +132,23 @@ function EnvelopeFooter({ displayBalance, addItemHandler }) {
   );
 }
 
-function EnvelopeProgress({ percent, overrideBgColor }) {
-  const defaultBgColor = "bg-sky-500/30";
-  const bgColor = overrideBgColor ? overrideBgColor : defaultBgColor;
-  return (
-    <div className="w-full top-0 bottom-0 absolute left-0 right-0 rounded-lg overflow-hidden z-10">
-      <div
-        className={`${bgColor} h-full transition-width duration-300 ease-in-out delay-[10ms]`}
-        style={{ width: `${percent}%` }}
-      ></div>
-    </div>
-  );
+function divideAndRoundToNearestTens(balance, n) {
+  const baseProduct = (balance / n).toFixed(2);
+  const balances = [];
+  if ((baseProduct * n).toFixed(2) == balance) {
+    for (let i = 0; i < n; i++) {
+      balances.push(baseProduct);
+    }
+    return balances;
+  } else {
+    for (let i = 0; i < n; i++) {
+      if (i === 0) {
+        const product = ((baseProduct * 100 + 1) / 100).toFixed(2);
+        balances.push(product);
+      } else {
+        balances.push(baseProduct);
+      }
+    }
+    return balances;
+  }
 }

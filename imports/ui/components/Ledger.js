@@ -16,7 +16,14 @@ import { TransactionCollection } from "../../api/Transaction/TransactionCollecti
 // Context
 import { DashboardContext } from "../pages/Dashboard";
 
-export const Ledger = ({ _id, name, startingBalance, activeTab }) => {
+export const Ledger = ({
+  _id,
+  name,
+  startingBalance,
+  activeTab,
+  startingEnvelopeBalance,
+  envelopeBalance,
+}) => {
   const { transactions, ledger } = useTracker(() => {
     if (!Meteor.userId()) return {};
     // Get the ledger that contains the transactions for this component.
@@ -36,26 +43,36 @@ export const Ledger = ({ _id, name, startingBalance, activeTab }) => {
   // an unallocated envelope. In this case the remaining balance should be
   // undefined because we need a starting balance in order to have a remaining
   // balance.
-  const remaining = startingBalance ? startingBalance - spent : undefined;
+  const remaining = startingBalance ? startingBalance - spent : envelopeBalance;
+  function calculateRemainingBalance() {
+    if (startingBalance) {
+    } else {
+    }
+  }
 
-  const displayBalance =
-    activeTab === "spent"
-      ? spent
-      : activeTab === "remaining"
-      ? remaining
-      : startingBalance;
+  const displayBalance = calculateDisplayBalance();
+  function calculateDisplayBalance() {
+    switch (activeTab) {
+      case "planned":
+        return startingBalance;
+      case "spent":
+        return spent;
+      case "remaining":
+        return remaining;
+    }
+  }
 
   const progress = calculateProgress();
-
   function calculateProgress() {
-    // If startingBalance is zero then progress should always be zero.
-    if (!startingBalance) return 0;
-    const progress =
-      activeTab === "spent"
-        ? (spent / startingBalance) * 100
-        : activeTab === "remaining"
-        ? (remaining / startingBalance) * 100
-        : 0;
+    const balance = startingBalance || startingEnvelopeBalance;
+    let progress = undefined;
+    if (activeTab === "planned") {
+      progress = 0;
+    } else if (activeTab === "spent") {
+      progress = (spent / balance) * 100;
+    } else if (activeTab === "remaining") {
+      progress = (remaining / balance) * 100;
+    }
     return Number.parseInt(progress.toFixed(0));
   }
 
