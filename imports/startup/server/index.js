@@ -1,13 +1,14 @@
 import { Meteor } from "meteor/meteor";
 
-// Publications
+// Methods
 import "/imports/api/Transaction/transactionMethods";
 
-// Methods
+// Publications
 import "/imports/api/Budget/server/publications";
 import "/imports/api/Envelope/server/publications";
 import "/imports/api/Ledger/server/publications";
 import "/imports/api/Transaction/server/publications";
+import "/imports/api/Paycheck/server/publications";
 
 Meteor.users.deny({
   update() {

@@ -1,9 +1,7 @@
 import SimpleSchema from "simpl-schema";
 
-export const transactionSchema = new SimpleSchema({
+export const paycheckSchema = new SimpleSchema({
   budgetId: String, // The budget this document belongs to.
-  envelopeId: String, // The envelope this document belongs to.
-  ledgerId: String, // The ledger this document belongs to.
   loggedBy: Object,
   "loggedBy.userId": {
     type: String,
@@ -12,11 +10,7 @@ export const transactionSchema = new SimpleSchema({
   "loggedBy.firstName": String,
   "loggedBy.lastName": String,
   createdAt: Date,
-  merchant: String,
-  type: {
-    type: String,
-    allowedValues: ["income", "expense"],
-  },
+  source: String,
   amount: {
     type: Number,
     min: 0,

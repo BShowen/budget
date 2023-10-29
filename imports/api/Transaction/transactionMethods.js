@@ -1,7 +1,4 @@
 import { TransactionCollection } from "./TransactionCollection";
-import { BudgetCollection } from "../Budget/BudgetCollection";
-import { populateBudget } from "../Budget/server/util/populateBudget";
-import { LedgerCollection } from "../Ledger/LedgerCollection";
 
 Meteor.methods({
   "transaction.createTransaction"(input) {
@@ -11,7 +8,6 @@ Meteor.methods({
 
     try {
       const user = Meteor.user();
-      const { ledgerId } = input;
 
       input.loggedBy = {
         userId: user._id,
@@ -23,11 +19,8 @@ Meteor.methods({
       TransactionCollection.simpleSchema().validate({
         ...input,
       });
-      const transactionId = TransactionCollection.insert(input);
-      LedgerCollection.update(
-        { _id: ledgerId },
-        { $push: { transactions: transactionId } }
-      );
+
+      TransactionCollection.insert(input);
     } catch (error) {
       console.log(error);
       if (error.error === "validation-error") {
