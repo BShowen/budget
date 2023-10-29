@@ -110,7 +110,7 @@ Meteor.startup(() => {
         EnvelopeCollection.insert({
           name: "vehicles",
           isAllocated: true,
-          startingBalance: 330.0,
+          startingBalance: 360.0,
           ledgers: [
             LedgerCollection.insert({
               name: "gas",
@@ -162,7 +162,7 @@ Meteor.startup(() => {
         EnvelopeCollection.insert({
           name: "utilities",
           isAllocated: true,
-          startingBalance: 330.0,
+          startingBalance: 276.5,
           ledgers: [
             LedgerCollection.insert({
               name: "internet",
