@@ -3,6 +3,7 @@ import { useTracker } from "meteor/react-meteor-data";
 
 // Collections
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
+import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
 
 // Components
 import { Modal } from "./Modal";
@@ -30,8 +31,10 @@ export const LedgerTransactions = ({ isOpen, onClose, ledger }) => {
   const { toggleLedger } = useContext(DashboardContext);
   const { transactions } = useTracker(() => {
     if (!Meteor.userId() || !isOpen) return {};
+    // Find the ledger in order to render it's transactions.
+    const reactiveLedger = LedgerCollection.findOne({ _id: ledger._id });
     const transactions = TransactionCollection.find({
-      _id: { $in: ledger.transactions },
+      _id: { $in: reactiveLedger.transactions },
     }).fetch();
     return { transactions };
   }, []);

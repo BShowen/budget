@@ -53,7 +53,6 @@ export const Dashboard = ({ budget, envelopes }) => {
                 addItemHandler={() => {
                   alert("Need to implement");
                 }}
-                toggleLedger={dashboardContext.toggleLedger}
               />
             );
           })}
