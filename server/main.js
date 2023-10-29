@@ -47,7 +47,6 @@ Meteor.startup(() => {
       envelopes: [
         EnvelopeCollection.insert({
           name: "food",
-          isAllocated: false,
           startingBalance: 500.0,
           ledgers: [
             LedgerCollection.insert({
@@ -109,7 +108,6 @@ Meteor.startup(() => {
         }),
         EnvelopeCollection.insert({
           name: "vehicles",
-          isAllocated: true,
           startingBalance: 330.0,
           ledgers: [
             LedgerCollection.insert({
@@ -161,7 +159,6 @@ Meteor.startup(() => {
         }),
         EnvelopeCollection.insert({
           name: "utilities",
-          isAllocated: true,
           startingBalance: 330.0,
           ledgers: [
             LedgerCollection.insert({
@@ -207,7 +204,6 @@ Meteor.startup(() => {
         }),
         EnvelopeCollection.insert({
           name: "bradley - personal",
-          isAllocated: false,
           startingBalance: 100.0,
           ledgers: [
             LedgerCollection.insert({
