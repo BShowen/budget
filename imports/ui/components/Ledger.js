@@ -16,14 +16,7 @@ import { TransactionCollection } from "../../api/Transaction/TransactionCollecti
 // Context
 import { DashboardContext } from "../pages/Dashboard";
 
-export const Ledger = ({
-  _id,
-  name,
-  startingBalance,
-  activeTab,
-  startingEnvelopeBalance,
-  envelopeBalance,
-}) => {
+export const Ledger = ({ _id, name, startingBalance, activeTab }) => {
   const { transactions, ledger } = useTracker(() => {
     if (!Meteor.userId()) return {};
     // Get the ledger that contains the transactions for this component.
@@ -43,12 +36,7 @@ export const Ledger = ({
   // an unallocated envelope. In this case the remaining balance should be
   // undefined because we need a starting balance in order to have a remaining
   // balance.
-  const remaining = startingBalance ? startingBalance - spent : envelopeBalance;
-  function calculateRemainingBalance() {
-    if (startingBalance) {
-    } else {
-    }
-  }
+  const remaining = startingBalance || undefined;
 
   const displayBalance = calculateDisplayBalance();
   function calculateDisplayBalance() {
@@ -64,7 +52,7 @@ export const Ledger = ({
 
   const progress = calculateProgress();
   function calculateProgress() {
-    const balance = startingBalance || startingEnvelopeBalance;
+    const balance = startingBalance;
     let progress = undefined;
     if (activeTab === "planned") {
       progress = 0;

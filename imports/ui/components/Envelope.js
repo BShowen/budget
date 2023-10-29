@@ -88,31 +88,10 @@ function EnvelopeHeader({ name, activeTab }) {
 }
 
 function EnvelopeBody({ ledgers, activeTab, startingEnvelopeBalance }) {
-  const { income, expense } = reduceLedgers({ ledgers });
-  const envelopeBalance =
-    Number.parseFloat(startingEnvelopeBalance.toFixed(2)) -
-    Number.parseFloat(expense.toFixed(2)) +
-    Number.parseFloat(income.toFixed(2));
-
-  const ledgerBalances = divideAndRoundToNearestTens(
-    envelopeBalance,
-    ledgers.length
-  );
-
   return (
     <div className="flex flex-col gap-2 z-20">
       {ledgers.map((ledger, i) => {
-        return (
-          <Ledger
-            key={i}
-            {...ledger}
-            activeTab={activeTab}
-            startingEnvelopeBalance={startingEnvelopeBalance}
-            envelopeIncome={income}
-            envelopeExpense={expense}
-            envelopeBalance={ledgerBalances[i]}
-          />
-        );
+        return <Ledger key={i} {...ledger} activeTab={activeTab} />;
       })}
     </div>
   );
