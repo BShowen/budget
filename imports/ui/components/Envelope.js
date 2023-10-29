@@ -5,6 +5,7 @@ import { useTracker } from "meteor/react-meteor-data";
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
 import { EnvelopeCollection } from "../../api/Envelope/EnvelopCollection";
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
+import { Progress } from "./Progress";
 
 // Utils
 import { cap } from "../util/cap";
@@ -19,6 +20,7 @@ export const Envelope = ({
   name,
   startingBalance,
   activeTab,
+  isAllocated,
   addItemHandler,
 }) => {
   const { ledgers } = useTracker(() => {
@@ -64,7 +66,12 @@ export const Envelope = ({
   return (
     // Envelope container
     <div className="bg-white rounded-lg shadow-md flex flex-col items-stretch px-2 pt-1 gap-2 relative z-0">
-      <EnvelopeHeader name={name} activeTab={activeTab} />
+      <EnvelopeHeader
+        name={name}
+        activeTab={activeTab}
+        isAllocated={isAllocated}
+        progress={progress}
+      />
       <EnvelopeBody
         ledgers={ledgers}
         activeTab={activeTab}
@@ -78,11 +85,12 @@ export const Envelope = ({
   );
 };
 
-function EnvelopeHeader({ name, activeTab }) {
+function EnvelopeHeader({ name, activeTab, isAllocated, progress }) {
   return (
-    <div className="flex flex-row justify-between p-1 px-2 h-8 rounded-md overflow-hidden items-center z-20">
-      <h1 className="font-bold">{cap(name)}</h1>
-      <h2 className="font-semibold">{cap(activeTab)}</h2>
+    <div className="flex flex-row justify-between p-1 px-2 h-8 rounded-md overflow-hidden items-center relative z-0 w-full">
+      <h1 className="font-bold relative z-50">{cap(name)}</h1>
+      <h2 className="font-semibold relative z-50">{cap(activeTab)}</h2>
+      {!isAllocated && <Progress percent={progress} />}
     </div>
   );
 }
