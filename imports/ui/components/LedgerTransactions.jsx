@@ -29,7 +29,7 @@ import { HiMinus, HiPlus } from "react-icons/hi";
 import { BiDollar, BiCheck, BiX } from "react-icons/bi";
 
 export const LedgerTransactions = ({ isOpen, onClose, ledgerId }) => {
-  const { toggleLedger } = useContext(DashboardContext);
+  const { toggleLedger, toggleForm } = useContext(DashboardContext);
   const { envelope } = useTracker(() => {
     if (!Meteor.userId() || !isOpen) return {};
     // Get the ledger so I can get the envelope by ledger.envelopeId.
@@ -149,7 +149,22 @@ export const LedgerTransactions = ({ isOpen, onClose, ledgerId }) => {
           </div>
         </div>
         <div className="bg-slate-100 p-2">
-          <div className="bg-white shadow-md py-0 rounded-lg px-3">
+          <div className="bg-white shadow-md py-0 pb-2 rounded-lg px-3">
+            <div className="w-full flex flex-row justify-between items-center py-2 px-1 h-12">
+              <div>
+                <h2 className="font-bold text-gray-400 text-md">
+                  Transactions this month
+                </h2>
+              </div>
+              <div>
+                <a
+                  onClick={() => toggleForm({ ledgerId })}
+                  className="text-sky-500 font-bold"
+                >
+                  Add transaction
+                </a>
+              </div>
+            </div>
             {transactions.map((transaction, i) => {
               const border = i === 0 ? "" : "border-t";
               const [month, day] = dates

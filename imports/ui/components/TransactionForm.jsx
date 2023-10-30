@@ -15,7 +15,7 @@ import { DashboardContext } from "../pages/Dashboard";
 import { cap } from ".././util/cap";
 import { dates } from "../util/dates";
 
-export function TransactionForm({ isOpen, onClose }) {
+export function TransactionForm({ isOpen, onClose, defaultLedgerSelection }) {
   const { toggleForm } = useContext(DashboardContext);
   const { ledgers } = useTracker(() => {
     // const ledgers = LedgerCollection.find({ budgetId: budgetId }).fetch();
@@ -36,7 +36,6 @@ export function TransactionForm({ isOpen, onClose }) {
     formData.set("budgetId", budgetId);
     formData.set("envelopeId", envelopeId);
     try {
-      console.log(Object.fromEntries(formData.entries()));
       Meteor.call(
         "transaction.createTransaction",
         Object.fromEntries(formData.entries())
@@ -114,6 +113,7 @@ export function TransactionForm({ isOpen, onClose }) {
                 <select
                   className="px-0 w-full focus:ring-0 border-0"
                   name="ledgerId"
+                  defaultValue={defaultLedgerSelection}
                 >
                   {ledgers.map((ledger) => (
                     <option key={ledger._id} value={ledger._id}>
