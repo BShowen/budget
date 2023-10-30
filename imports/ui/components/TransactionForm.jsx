@@ -14,6 +14,7 @@ import { DashboardContext } from "../pages/Dashboard";
 // Utils
 import { cap } from ".././util/cap";
 import { dates } from "../util/dates";
+import { formatDollarAmount } from "../util/formatDollarAmount";
 
 export function TransactionForm({ isOpen, onClose, defaultLedgerSelection }) {
   const { toggleForm } = useContext(DashboardContext);
@@ -23,6 +24,7 @@ export function TransactionForm({ isOpen, onClose, defaultLedgerSelection }) {
     return { ledgers };
   });
   const [active, setActiveTab] = useState("expense"); //expense or income
+  const [formData, setFormData] = useState({});
 
   function submit(e) {
     const formData = new FormData(e.target.parentElement.parentElement);
@@ -41,7 +43,7 @@ export function TransactionForm({ isOpen, onClose, defaultLedgerSelection }) {
         Object.fromEntries(formData.entries())
       );
     } catch (error) {
-      console.lgo("Error ----> ", error);
+      console.log("Error ----> ", error);
     }
   }
 
@@ -81,13 +83,29 @@ export function TransactionForm({ isOpen, onClose, defaultLedgerSelection }) {
                   <p className="font-semibold">Amount</p>
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   inputMode="decimal"
                   pattern="[0-9]*"
                   placeholder="$0.00"
                   required
                   name="amount"
                   id="amount"
+                  value={formData.amount || ""}
+                  onInput={(e) => {
+                    const name = e.target.name;
+                    const value = e.target.value;
+                    if (name === "amount") {
+                      setFormData((prev) => ({
+                        ...prev,
+                        [name]: formatDollarAmount(value),
+                      }));
+                    } else {
+                      setFormData((prev) => ({
+                        ...prev,
+                        [name]: value,
+                      }));
+                    }
+                  }}
                   min={0}
                   className="px-0 w-1/2 text-end focus:ring-0 border-0"
                 />
@@ -115,11 +133,15 @@ export function TransactionForm({ isOpen, onClose, defaultLedgerSelection }) {
                   name="ledgerId"
                   defaultValue={defaultLedgerSelection}
                 >
-                  {ledgers.map((ledger) => (
-                    <option key={ledger._id} value={ledger._id}>
-                      {ledger.name}
-                    </option>
-                  ))}
+                  {ledgers
+                    .sort((a, b) => {
+                      return a.name.charCodeAt(0) - b.name.charCodeAt(0);
+                    })
+                    .map((ledger) => (
+                      <option key={ledger._id} value={ledger._id}>
+                        {ledger.name}
+                      </option>
+                    ))}
                 </select>
               </InputContainer>
             </InputGroup>
