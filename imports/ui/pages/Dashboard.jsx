@@ -61,16 +61,7 @@ export const Dashboard = ({ budget, envelopes }) => {
         {/* Categories container */}
         <DashboardContext.Provider value={dashboardContext}>
           {envelopes.map((category, i) => {
-            return (
-              <Envelope
-                key={i}
-                {...category}
-                activeTab={activeTab}
-                addItemHandler={() => {
-                  alert("Need to implement");
-                }}
-              />
-            );
+            return <Envelope key={i} {...category} activeTab={activeTab} />;
           })}
         </DashboardContext.Provider>
       </div>

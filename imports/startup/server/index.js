@@ -2,6 +2,7 @@ import { Meteor } from "meteor/meteor";
 
 // Methods
 import "/imports/api/Transaction/transactionMethods";
+import "/imports/api/Ledger/ledgerMethods";
 
 // Publications
 import "/imports/api/Budget/server/publications";

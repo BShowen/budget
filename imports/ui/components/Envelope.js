@@ -1,4 +1,5 @@
-import React from "react";
+import { Meteor } from "meteor/meteor";
+import React, { useEffect, useState } from "react";
 import { useTracker } from "meteor/react-meteor-data";
 
 // Collections
@@ -10,6 +11,7 @@ import { Progress } from "./Progress";
 import { cap } from "../util/cap";
 import { decimal } from "../util/decimal";
 import { reduceTransactions } from "../util/reduceTransactions";
+import { formatDollarAmount } from "../util/formatDollarAmount";
 
 // Components
 import { Ledger } from "./Ledger";
@@ -20,7 +22,6 @@ export const Envelope = ({
   startingBalance,
   activeTab,
   isAllocated,
-  addItemHandler,
 }) => {
   const { ledgers } = useTracker(() => {
     if (!Meteor.userId()) return {};
@@ -61,7 +62,7 @@ export const Envelope = ({
 
   return (
     // Envelope container
-    <div className="bg-white rounded-lg shadow-md flex flex-col items-stretch px-2 pt-1 gap-2 relative z-0">
+    <div className="bg-white rounded-lg shadow-md flex flex-col items-stretch px-2 pt-1 pb-2 gap-2 relative z-0">
       <EnvelopeHeader
         name={name}
         activeTab={activeTab}
@@ -69,10 +70,7 @@ export const Envelope = ({
         progress={progress}
       />
       <EnvelopeBody ledgers={ledgers} activeTab={activeTab} />
-      <EnvelopeFooter
-        displayBalance={displayBalance}
-        addItemHandler={addItemHandler}
-      />
+      <EnvelopeFooter displayBalance={displayBalance} envelopeId={_id} />
     </div>
   );
 };
@@ -97,37 +95,146 @@ function EnvelopeBody({ ledgers, activeTab }) {
   );
 }
 
-function EnvelopeFooter({ displayBalance, addItemHandler }) {
-  return (
-    <div className="flex flex-row justify-between py-1 z-20">
+function EnvelopeFooter({ displayBalance, envelopeId }) {
+  const [isForm, setFormState] = useState(false);
+  const toggleForm = () => {
+    setFormState((prev) => !prev);
+  };
+  const component = isForm ? (
+    <NewLedgerForm toggleForm={toggleForm} envelopeId={envelopeId} />
+  ) : (
+    <div className="w-full flex flex-row justify-between items-center">
       <p
+        onClick={() => {
+          if (!isForm) {
+            toggleForm();
+          }
+        }}
         className="font-normal lg:hover:cursor-pointer"
-        onClick={addItemHandler}
       >
         Add item
       </p>
       <h2 className="font-medium">{decimal(displayBalance)}</h2>
     </div>
   );
+
+  return (
+    <div
+      className={`flex flex-row items-center px-2 h-8 rounded-md ${
+        isForm ? "bg-slate-100" : ""
+      }`}
+    >
+      {component}
+    </div>
+  );
 }
 
-function divideAndRoundToNearestTens(balance, n) {
-  const baseProduct = (balance / n).toFixed(2);
-  const balances = [];
-  if ((baseProduct * n).toFixed(2) == balance) {
-    for (let i = 0; i < n; i++) {
-      balances.push(baseProduct);
-    }
-    return balances;
-  } else {
-    for (let i = 0; i < n; i++) {
-      if (i === 0) {
-        const product = ((baseProduct * 100 + 1) / 100).toFixed(2);
-        balances.push(product);
-      } else {
-        balances.push(baseProduct);
+function NewLedgerForm({ toggleForm, envelopeId }) {
+  const [state, setState] = useState({
+    envelopeId: envelopeId,
+    name: "",
+    startingBalance: "",
+  });
+  const [timeoutId, setTimeoutId] = useState(null);
+
+  useEffect(() => {
+    // Close the form when the escape key is pressed
+    function handleKeyDown(e) {
+      const key = e.key.toLowerCase();
+      if (key === "escape") {
+        toggleForm();
       }
     }
-    return balances;
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  function handleInput(e) {
+    const name = e.target.name;
+    const value =
+      name === "startingBalance"
+        ? formatDollarAmount(e.target.value)
+        : e.target.value;
+    setState((prev) => ({ ...prev, [name]: value }));
   }
+
+  function handleSubmit() {
+    if (state.name) {
+      // Submit
+      try {
+        Meteor.call("ledger.createLedger", state);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    // Reset the form state
+    setState((prev) => ({
+      ...prev,
+      name: "",
+      startingBalance: "",
+    }));
+    toggleForm();
+  }
+
+  function handleKeyDown(e) {
+    // Submit form when enter key is pressed
+    if (e.key === "Enter") {
+      e.preventDefault(); // Prevent the default form submission
+      handleSubmit(); // Trigger your form submission logic
+    }
+  }
+
+  return (
+    <div className="w-full h-full">
+      <form className="w-full flex flex-row justify-between h-full">
+        <input
+          className="focus:ring-0 border-0 w-1/3 h-full p-0 m-0 bg-inherit font-semibold"
+          name="name"
+          placeholder="Item name"
+          autoFocus
+          value={state.name}
+          onInput={handleInput}
+          onKeyDown={handleKeyDown}
+          // onFocus get clear the timeout that is stored in state
+          onFocus={() => clearTimeout(timeoutId)}
+          // onBlur start a timeout and store its ID in state
+          onBlur={() => setTimeoutId(setTimeout(handleSubmit, 10))}
+        />
+        <input
+          className="focus:ring-0 border-0 w-1/3 h-full p-0 m-0 bg-inherit text-right"
+          name="startingBalance"
+          placeholder="$0.00"
+          pattern="[0-9]*"
+          value={state.startingBalance}
+          onInput={handleInput}
+          onKeyDown={handleKeyDown}
+          // onFocus get clear the timeout that is stored in state
+          onFocus={() => clearTimeout(timeoutId)}
+          // onBlur start a timeout and store its ID in state
+          onBlur={() => setTimeoutId(setTimeout(handleSubmit, 10))}
+        />
+      </form>
+    </div>
+  );
 }
+
+// function divideAndRoundToNearestTens(balance, n) {
+//   const baseProduct = (balance / n).toFixed(2);
+//   const balances = [];
+//   if ((baseProduct * n).toFixed(2) == balance) {
+//     for (let i = 0; i < n; i++) {
+//       balances.push(baseProduct);
+//     }
+//     return balances;
+//   } else {
+//     for (let i = 0; i < n; i++) {
+//       if (i === 0) {
+//         const product = ((baseProduct * 100 + 1) / 100).toFixed(2);
+//         balances.push(product);
+//       } else {
+//         balances.push(baseProduct);
+//       }
+//     }
+//     return balances;
+//   }
+// }
