@@ -41,23 +41,28 @@ export const Envelope = ({
     }).fetch();
     return { transactions };
   });
+  const calculatedEnvelopeBalance =
+    startingBalance ||
+    ledgers.reduce((total, ledger) => {
+      return total + ledger.startingBalance;
+    }, 0);
 
   const { expense, income } = reduceTransactions({ transactions });
   const spent = expense - income;
 
-  const remaining = startingBalance - spent;
+  const remaining = calculatedEnvelopeBalance - spent;
   const displayBalance =
     activeTab === "spent"
       ? spent
       : activeTab === "remaining"
       ? remaining
-      : startingBalance;
+      : calculatedEnvelopeBalance;
 
   const progress =
     activeTab === "spent"
-      ? (spent / startingBalance) * 100
+      ? (spent / calculatedEnvelopeBalance) * 100
       : activeTab === "remaining"
-      ? (remaining / startingBalance) * 100
+      ? (remaining / calculatedEnvelopeBalance) * 100
       : 0;
 
   return (

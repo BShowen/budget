@@ -58,14 +58,12 @@ Meteor.startup(() => {
         budgetId: budgetId,
         name: "vehicles",
         isAllocated: true,
-        startingBalance: 360.0,
       }),
       // Utilities envelope
       EnvelopeCollection.insert({
         budgetId: budgetId,
         name: "utilities",
         isAllocated: true,
-        startingBalance: 276.5,
       }),
       // Personal envelope
       EnvelopeCollection.insert({
