@@ -30,8 +30,10 @@ export const Splash = () => {
     const ledgerHandler = Meteor.subscribe("ledgers");
     const transactionHandler = Meteor.subscribe("transactions");
     const paycheckHandler = Meteor.subscribe("paychecks");
+    const userDataHandler = Meteor.subscribe("userData");
     if (
       Meteor.userId() &&
+      userDataHandler.ready() &&
       budgetHandler.ready() &&
       envelopeHandler.ready() &&
       ledgerHandler.ready() &&
