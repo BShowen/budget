@@ -1,5 +1,4 @@
 import SimpleSchema from "simpl-schema";
-import { transactionSchema } from "../Transaction/transactionSchema";
 
 export const ledgerSchema = new SimpleSchema({
   budgetId: String, // The budget this document belongs to.
