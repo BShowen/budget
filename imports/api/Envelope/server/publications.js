@@ -3,13 +3,10 @@ import { Meteor } from "meteor/meteor";
 // Collections
 import { EnvelopeCollection } from "../EnvelopCollection";
 
-Meteor.publish("envelopes", function () {
-  if (!this.userId) {
+Meteor.publish("envelopes", function (budgetId) {
+  if (!this.userId || !budgetId) {
     return [];
   }
-
-  // get the user.budgetIdList
   const user = Meteor.user();
-
-  return EnvelopeCollection.find();
+  return EnvelopeCollection.find({ accountId: user.accountId, budgetId });
 });

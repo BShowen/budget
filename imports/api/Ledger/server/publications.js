@@ -2,12 +2,12 @@ import { Meteor } from "meteor/meteor";
 
 // Collections
 import { LedgerCollection } from "../LedgerCollection";
-import { TransactionCollection } from "../../Transaction/TransactionCollection";
 
 // Return all ledgers associated with a Budget
-Meteor.publish("ledgers", function () {
-  if (!this.userId) {
+Meteor.publish("ledgers", function (budgetId) {
+  if (!this.userId || !budgetId) {
     return [];
   }
-  return LedgerCollection.find();
+  const user = Meteor.user();
+  return LedgerCollection.find({ accountId: user.accountId, budgetId });
 });

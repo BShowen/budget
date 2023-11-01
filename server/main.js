@@ -40,13 +40,32 @@ Meteor.startup(() => {
       }
     );
 
-    const clientDate = new Date(); // Date received from the client
-    const serverDate = new Date(
-      Date.UTC(clientDate.getFullYear(), clientDate.getMonth(), 1, 0, 0, 0, 0)
+    // Random budgets
+    BudgetCollection.insert({
+      accountId,
+      createdAt: new Date(2023, 8, 1, 0, 0, 0, 0),
+      income: {
+        expected: 500,
+      },
+    });
+    BudgetCollection.insert({
+      accountId,
+      createdAt: new Date(2023, 7, 1, 0, 0, 0, 0),
+      income: {
+        expected: 700,
+      },
+    });
+
+    // Date received from the client
+    const clientDate = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth(),
+      1
     );
+
     const budgetId = BudgetCollection.insert({
       accountId,
-      createdAt: serverDate,
+      createdAt: clientDate,
       income: {
         expected: 1000.5,
       },

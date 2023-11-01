@@ -17,20 +17,18 @@ import { BsFillPlusCircleFill } from "react-icons/bs";
 export const DashboardContext = createContext(null);
 export const Dashboard = () => {
   const { budget } = useTracker(() => {
-    // BudgetCollection contains only the budget for this month. It does NOT
-    // contain multiple documents. The publisher (on the server) returns only
-    // the budget for this month.
+    // BudgetCollection will never container more than one document.
+    // This is on purpose because the budget publication returns one document.
     const budget = BudgetCollection.findOne();
-
     return {
       budget,
     };
   });
+
   const { envelopes } = useTracker(() => {
-    // BudgetCollection contains only the budget for this month. It does NOT
-    // contain multiple documents. The publisher (on the server) returns only
-    // the budget for this month.
-    const budget = BudgetCollection.findOne();
+    if (!budget) {
+      return { envelopes: {} };
+    }
     // Get the envelopes for this budget.
     const envelopes = EnvelopeCollection.find({
       budgetId: budget._id,

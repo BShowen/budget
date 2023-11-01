@@ -3,24 +3,18 @@ import { Meteor } from "meteor/meteor";
 // Collections
 import { BudgetCollection } from "../BudgetCollection";
 
-Meteor.publish("budgets", function () {
-  if (!this.userId) {
+Meteor.publish("budget", function (date) {
+  console.log({ date });
+  // Return the budget specified by the date
+  if (!this.userId || !date) {
     return [];
   }
 
   // get the user.budgetIdList
   const user = Meteor.user();
 
-  //Always return the most recent budget
-  // This should be changed to "Return the budget with the month/year same as today"
-  const budgetId = user.budgetIdList[0];
-
-  const budget = BudgetCollection.findOne({ _id: budgetId });
-  this.added("budgets", budget._id, budget);
-  this.ready();
-
-  // const budget = populateBudget(BudgetCollection.findOne({ _id: budgetId }));
-
-  // this.added("budgets", budget._id, budget);
-  // this.ready();
+  return BudgetCollection.find({
+    accountId: user.accountId,
+    createdAt: date,
+  });
 });

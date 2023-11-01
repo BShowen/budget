@@ -11,7 +11,7 @@
 // application feel more like a native app when used on mobile devices, which is
 // my target audience.
 
-import React from "react";
+import React, { createContext, useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 
@@ -19,22 +19,38 @@ import { useTracker } from "meteor/react-meteor-data";
 import { Dashboard } from "./Dashboard";
 import { LoginForm } from "../components/LoginForm";
 
+// Collections
+import { BudgetCollection } from "../../api/Budget/BudgetCollection";
+
+export const RootContext = createContext(null);
 export const Splash = () => {
+  const [date, setDate] = useState(
+    new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+  );
+  // useTracker to get the budget list
+  const { budget } = useTracker(() => {
+    // get the most recent budget and return it
+    const budgetHandler = Meteor.subscribe("budget", date);
+    if (Meteor.userId() && budgetHandler.ready()) {
+      return { budget: BudgetCollection.findOne() };
+    } else {
+      return { budget: undefined };
+    }
+  });
+
   const { loading } = useTracker(() => {
-    const budgetHandler = Meteor.subscribe("budgets");
-    const envelopeHandler = Meteor.subscribe("envelopes");
-    const ledgerHandler = Meteor.subscribe("ledgers");
-    const transactionHandler = Meteor.subscribe("transactions");
-    const paycheckHandler = Meteor.subscribe("paychecks");
-    const userDataHandler = Meteor.subscribe("userData");
+    const envelopeHandler = Meteor.subscribe("envelopes", budget?._id);
+    const ledgerHandler = Meteor.subscribe("ledgers", budget?._id);
+    const transactionHandler = Meteor.subscribe("transactions", budget?._id);
+    const paycheckHandler = Meteor.subscribe("paychecks", budget?._id);
+    const userDataHandler = Meteor.subscribe("userData", budget?._id);
     if (
       Meteor.userId() &&
-      userDataHandler.ready() &&
-      budgetHandler.ready() &&
       envelopeHandler.ready() &&
       ledgerHandler.ready() &&
       transactionHandler.ready() &&
-      paycheckHandler.ready()
+      paycheckHandler.ready() &&
+      userDataHandler.ready()
     ) {
       return { loading: false };
     } else {
@@ -45,12 +61,18 @@ export const Splash = () => {
   if (!Meteor.userId()) {
     // User is not logged in. Render login screen.
     return <LoginForm />;
-  } else if (Meteor.userId() && loading) {
+  } else if (loading) {
     return <p>Loading...</p>;
-  } else if (Meteor.userId() && !loading) {
-    return <Dashboard />;
+  } else if (!loading && budget) {
+    return (
+      <RootContext.Provider value={{ setDate }}>
+        <Dashboard />
+      </RootContext.Provider>
+    );
+  } else if (!loading && !budget) {
+    return <p>No budget</p>;
   } else {
-    console.log("Something went wrong....");
+    console.log("Someting went wrong...");
     return "";
   }
 };
