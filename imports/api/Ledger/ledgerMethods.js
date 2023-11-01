@@ -2,7 +2,7 @@ import { Meteor } from "meteor/meteor";
 
 // Collections
 import { LedgerCollection } from "./LedgerCollection";
-import { EnvelopeCollection } from "../Envelope/EnvelopCollection";
+import { EnvelopeCollection } from "../Envelope/EnvelopeCollection";
 
 Meteor.methods({
   "ledger.createLedger"(input) {

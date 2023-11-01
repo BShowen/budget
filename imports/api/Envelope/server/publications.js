@@ -1,7 +1,7 @@
 import { Meteor } from "meteor/meteor";
 
 // Collections
-import { EnvelopeCollection } from "../EnvelopCollection";
+import { EnvelopeCollection } from "../EnvelopeCollection";
 
 Meteor.publish("envelopes", function (budgetId) {
   if (!this.userId || !budgetId) {

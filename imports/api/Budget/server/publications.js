@@ -4,7 +4,6 @@ import { Meteor } from "meteor/meteor";
 import { BudgetCollection } from "../BudgetCollection";
 
 Meteor.publish("budget", function (date) {
-  console.log({ date });
   // Return the budget specified by the date
   if (!this.userId || !date) {
     return [];

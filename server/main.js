@@ -2,11 +2,12 @@ import { Meteor } from "meteor/meteor";
 import { Accounts } from "meteor/accounts-base";
 import "/imports/startup/server";
 import { BudgetCollection } from "../imports/api/Budget/BudgetCollection";
-import { EnvelopeCollection } from "../imports/api/Envelope/EnvelopCollection";
+import { EnvelopeCollection } from "../imports/api/Envelope/EnvelopeCollection";
 import { LedgerCollection } from "../imports/api/Ledger/LedgerCollection";
 import { TransactionCollection } from "../imports/api/Transaction/TransactionCollection";
 import { PaycheckCollection } from "../imports/api/Paycheck/PaycheckCollection";
 import { AccountCollection } from "../imports/api/Account/AccountCollection";
+import { TagCollection } from "../imports/api/Tag/TagCollection";
 
 const SEED_EMAIL = "bshowen@me.com";
 const SEED_PASSWORD = "123123123";
@@ -39,6 +40,9 @@ Meteor.startup(() => {
         },
       }
     );
+
+    // Create a single tag
+    TagCollection.insert({ accountId, name: "eating out" });
 
     // Random budgets
     BudgetCollection.insert({
