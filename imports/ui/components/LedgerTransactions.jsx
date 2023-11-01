@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useRef } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 
@@ -285,7 +285,7 @@ function FilterByTags({ tagIdList, toggleTag, activeFilterTags }) {
   return (
     <div className="bg-white shadow-md py-2 rounded-lg px-3 flex flex-row items-center">
       <div
-        className={`w-full flex flex-col gap-2 justify-start overflow-hidden transition-height duration-150 ${
+        className={`w-full flex flex-col gap-2 justify-start overflow-hidden ${
           expanded ? "h-auto" : "h-8"
         }`}
       >

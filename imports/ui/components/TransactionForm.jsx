@@ -1,6 +1,6 @@
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 
 // Components
 import { Modal } from "./Modal";
@@ -16,6 +16,10 @@ import { DashboardContext } from "../pages/Dashboard";
 import { cap } from ".././util/cap";
 import { dates } from "../util/dates";
 import { formatDollarAmount } from "../util/formatDollarAmount";
+
+// Icons
+import { CgHashtag } from "react-icons/cg";
+import { TfiAngleDown, TfiAngleUp } from "react-icons/tfi";
 
 export function TransactionForm({ isOpen, onClose, defaultLedgerSelection }) {
   const { toggleForm } = useContext(DashboardContext);
@@ -40,7 +44,6 @@ export function TransactionForm({ isOpen, onClose, defaultLedgerSelection }) {
     formData.set("envelopeId", envelopeId);
     const tags = formData.getAll("tags");
     const formDataObject = { ...Object.fromEntries(formData.entries()), tags };
-
     try {
       Meteor.call("transaction.createTransaction", formDataObject);
     } catch (error) {
@@ -111,7 +114,7 @@ export function TransactionForm({ isOpen, onClose, defaultLedgerSelection }) {
                   className="px-0 w-1/2 text-end focus:ring-0 border-0"
                 />
               </InputContainer>
-              <InputContainer>
+              <InputContainer options={{ border: false }}>
                 <label className="w-1/2" htmlFor="merchant">
                   <p className="font-semibold">
                     {active === "expense" ? "Merchant" : "Source"}
@@ -126,10 +129,14 @@ export function TransactionForm({ isOpen, onClose, defaultLedgerSelection }) {
                   className="px-0 w-1/2 text-end focus:ring-0 border-0"
                 />
               </InputContainer>
+            </InputGroup>
+
+            <InputGroup>
               <InputContainer options={{ border: false }}>
                 <TagSelection isOpen={isOpen} />
               </InputContainer>
             </InputGroup>
+
             <InputGroup>
               <InputContainer options={{ border: false }}>
                 <select
@@ -149,6 +156,7 @@ export function TransactionForm({ isOpen, onClose, defaultLedgerSelection }) {
                 </select>
               </InputContainer>
             </InputGroup>
+
             <InputGroup>
               <InputContainer options={{ border: false }}>
                 <input
@@ -234,28 +242,73 @@ function Slider({ index }) {
 function TagSelection({ isOpen }) {
   const { tags } = useTracker(() => {
     if (!Meteor.userId() || !isOpen) return {};
-    const tags = TagCollection.find({
-      accountId: Meteor.user().accountId,
-    }).fetch();
+    const tags = TagCollection.find(
+      {
+        accountId: Meteor.user().accountId,
+      },
+      { sort: { name: 1 } }
+    ).fetch();
     return { tags };
   });
+  const [expanded, setExpanded] = useState(false);
+  const toggleExpanded = () => {
+    setExpanded((prev) => !prev);
+  };
 
   return (
-    <div className="w-full flex flex-row justify-between items-center">
-      <label className="w-1/2" htmlFor="tags">
-        <p className="font-semibold">Tag</p>
-      </label>
-      <select
-        multiple
-        className="px-0 w-1/2 focus:ring-0 border-0 text-right pe-10"
-        name="tags"
+    <div
+      className={`w-full flex flex-col gap-2 justify-start overflow-hidden ${
+        expanded ? "h-auto" : "h-10"
+      }`}
+    >
+      <div
+        className="w-full flex flex-row justify-between items-center h-full"
+        onClick={toggleExpanded}
       >
-        {tags.map((tag) => (
-          <option key={tag._id} value={tag._id}>
-            {tag.name}
-          </option>
-        ))}
-      </select>
+        <div className="flex items-center">
+          <CgHashtag className="text-lg text-gray-700" />
+          <p className="font-semibold">Tags</p>
+        </div>
+        <div className="w-7 h-7 lg:hover:cursor-pointer flex flex-row justify-center items-center text-xl">
+          {expanded ? (
+            <TfiAngleUp className="text-inherit" />
+          ) : (
+            <TfiAngleDown className="text-inherit" />
+          )}
+        </div>
+      </div>
+      {expanded && (
+        <div className="w-full flex flex-row flex-wrap gap-2 flex-start items-center text-grey-700 pb-2">
+          {tags.map((tag) => (
+            <TagInput key={tag._id} tag={tag} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TagInput({ tag }) {
+  const [checked, setChecked] = useState(false);
+  const toggleChecked = () => setChecked((prev) => !prev);
+
+  return (
+    <div
+      key={tag._id}
+      className={`transition-all duration-75 no-tap-button text-md font-semibold border-2 border-sky-500 px-2 rounded-full min-w-max text-gray-700 ${
+        checked ? "bg-sky-500 text-white" : ""
+      }`}
+      onClick={toggleChecked}
+    >
+      <p>{cap(tag.name)}</p>
+      <input
+        className="hidden"
+        type="checkbox"
+        value={tag._id}
+        checked={checked}
+        onChange={toggleChecked}
+        name="tags"
+      />
     </div>
   );
 }
