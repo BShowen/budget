@@ -41,8 +41,11 @@ Meteor.startup(() => {
       }
     );
 
-    // Create a single tag
-    TagCollection.insert({ accountId, name: "eating out" });
+    // Create some tags
+    TagCollection.insert({ accountId, name: "fast food" });
+    TagCollection.insert({ accountId, name: "groceries" });
+    TagCollection.insert({ accountId, name: "coffee" });
+    TagCollection.insert({ accountId, name: "impulse" });
 
     // Random budgets
     BudgetCollection.insert({

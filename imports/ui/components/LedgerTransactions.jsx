@@ -1,10 +1,11 @@
 import React, { useState, useContext, useEffect } from "react";
+import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 
 // Collections
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
-import { EnvelopeCollection } from "../../api/Envelope/EnvelopCollection";
+import { EnvelopeCollection } from "../../api/Envelope/EnvelopeCollection";
 
 // Components
 import { Modal } from "./Modal";

@@ -7,6 +7,7 @@ import { Modal } from "./Modal";
 
 // Collections
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
+import { TagCollection } from "../../api/Tag/TagCollection";
 
 // Context
 import { DashboardContext } from "../pages/Dashboard";
@@ -37,11 +38,11 @@ export function TransactionForm({ isOpen, onClose, defaultLedgerSelection }) {
     );
     formData.set("budgetId", budgetId);
     formData.set("envelopeId", envelopeId);
+    const tags = formData.getAll("tags");
+    const formDataObject = { ...Object.fromEntries(formData.entries()), tags };
+
     try {
-      Meteor.call(
-        "transaction.createTransaction",
-        Object.fromEntries(formData.entries())
-      );
+      Meteor.call("transaction.createTransaction", formDataObject);
     } catch (error) {
       console.log("Error ----> ", error);
     }
@@ -110,7 +111,7 @@ export function TransactionForm({ isOpen, onClose, defaultLedgerSelection }) {
                   className="px-0 w-1/2 text-end focus:ring-0 border-0"
                 />
               </InputContainer>
-              <InputContainer options={{ border: false }}>
+              <InputContainer>
                 <label className="w-1/2" htmlFor="merchant">
                   <p className="font-semibold">
                     {active === "expense" ? "Merchant" : "Source"}
@@ -124,6 +125,9 @@ export function TransactionForm({ isOpen, onClose, defaultLedgerSelection }) {
                   name="merchant"
                   className="px-0 w-1/2 text-end focus:ring-0 border-0"
                 />
+              </InputContainer>
+              <InputContainer options={{ border: false }}>
+                <TagSelection isOpen={isOpen} />
               </InputContainer>
             </InputGroup>
             <InputGroup>
@@ -224,5 +228,34 @@ function Slider({ index }) {
     <div
       className={`${position} w-2/4 relative z-2 h-7 rounded-md bg-sky-500 transition-all duration-250`}
     />
+  );
+}
+
+function TagSelection({ isOpen }) {
+  const { tags } = useTracker(() => {
+    if (!Meteor.userId() || !isOpen) return {};
+    const tags = TagCollection.find({
+      accountId: Meteor.user().accountId,
+    }).fetch();
+    return { tags };
+  });
+
+  return (
+    <div className="w-full flex flex-row justify-between items-center">
+      <label className="w-1/2" htmlFor="tags">
+        <p className="font-semibold">Tag</p>
+      </label>
+      <select
+        multiple
+        className="px-0 w-1/2 focus:ring-0 border-0 text-right pe-10"
+        name="tags"
+      >
+        {tags.map((tag) => (
+          <option key={tag._id} value={tag._id}>
+            {tag.name}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 }

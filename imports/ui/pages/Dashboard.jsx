@@ -3,7 +3,7 @@ import { useTracker } from "meteor/react-meteor-data";
 
 // Collections
 import { BudgetCollection } from "../../api/Budget/BudgetCollection";
-import { EnvelopeCollection } from "../../api/Envelope/EnvelopCollection";
+import { EnvelopeCollection } from "../../api/Envelope/EnvelopeCollection";
 
 // Components
 import { DashboardHeader } from "../components/DashboardHeader";

@@ -42,4 +42,12 @@ export const transactionSchema = new SimpleSchema({
     type: String,
     optional: true,
   },
+  tags: {
+    type: Array,
+    optional: true,
+  },
+  "tags.$": {
+    type: String,
+    regEx: SimpleSchema.RegEx.Id,
+  },
 });

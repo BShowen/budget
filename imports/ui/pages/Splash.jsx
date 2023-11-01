@@ -21,6 +21,7 @@ import { LoginForm } from "../components/LoginForm";
 
 // Collections
 import { BudgetCollection } from "../../api/Budget/BudgetCollection";
+import { TagCollection } from "../../api/Tag/TagCollection";
 
 export const RootContext = createContext(null);
 export const Splash = () => {
@@ -44,13 +45,15 @@ export const Splash = () => {
     const transactionHandler = Meteor.subscribe("transactions", budget?._id);
     const paycheckHandler = Meteor.subscribe("paychecks", budget?._id);
     const userDataHandler = Meteor.subscribe("userData", budget?._id);
+    const tagHandler = Meteor.subscribe("tags");
     if (
       Meteor.userId() &&
       envelopeHandler.ready() &&
       ledgerHandler.ready() &&
       transactionHandler.ready() &&
       paycheckHandler.ready() &&
-      userDataHandler.ready()
+      userDataHandler.ready() &&
+      tagHandler.ready()
     ) {
       return { loading: false };
     } else {
@@ -72,7 +75,7 @@ export const Splash = () => {
   } else if (!loading && !budget) {
     return <p>No budget</p>;
   } else {
-    console.log("Someting went wrong...");
+    console.log("Something went wrong...");
     return "";
   }
 };

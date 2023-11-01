@@ -1,3 +1,4 @@
+import { Meteor } from "meteor/meteor";
 import { TransactionCollection } from "./TransactionCollection";
 
 Meteor.methods({
@@ -5,14 +6,18 @@ Meteor.methods({
     if (!this.userId) {
       return [];
     }
-
+    // Extract the tagIds.
     try {
       const user = Meteor.user();
 
-      input.loggedBy = {
-        userId: user._id,
-        firstName: user.profile.firstName,
-        lastName: user.profile.lastName,
+      input = {
+        ...input,
+        accountId: user.accountId,
+        loggedBy: {
+          userId: user._id,
+          firstName: user.profile.firstName,
+          lastName: user.profile.lastName,
+        },
       };
 
       TransactionCollection.simpleSchema().clean(input, { mutate: true });
