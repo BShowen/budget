@@ -16,7 +16,10 @@ export const dates = (() => {
   }
 
   // Format a date to be used as the page header date.
-  function forPageHeader() {
+  function forPageHeader(date) {
+    if (!(date instanceof Date)) {
+      throw new Error(`${date} must be instance of Date.`);
+    }
     return date.toLocaleString("en-us", {
       month: "long",
       year: "numeric",
@@ -66,7 +69,7 @@ export const dates = (() => {
       case "forHtml":
         return forHtml();
       case "forPageHeader":
-        return forPageHeader();
+        return forPageHeader(date);
       case "forTransaction":
         return forTransaction(date);
     }
