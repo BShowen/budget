@@ -11,9 +11,6 @@ import { Envelope } from "../components/Envelope";
 import { TransactionForm } from "../components/TransactionForm";
 import { LedgerTransactions } from "../components/LedgerTransactions";
 
-// Icons
-import { BsFillPlusCircleFill } from "react-icons/bs";
-
 export const DashboardContext = createContext(null);
 export const Dashboard = () => {
   const { budget } = useTracker(() => {
@@ -91,13 +88,6 @@ export const Dashboard = () => {
             return <Envelope key={i} {...category} activeTab={activeTab} />;
           })}
         </DashboardContext.Provider>
-      </div>
-
-      <div
-        className="fixed bottom-5 right-7 w-14 h-14 bg-white rounded-full flex flex-row justify-center items-center z-20"
-        onClick={() => dashboardContext.toggleForm()}
-      >
-        <BsFillPlusCircleFill className="text-sky-700 w-full h-full" />
       </div>
 
       <DashboardContext.Provider value={dashboardContext}>

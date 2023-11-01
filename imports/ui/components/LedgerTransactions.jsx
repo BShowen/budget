@@ -30,6 +30,7 @@ import { IoIosArrowBack } from "react-icons/io";
 import { HiMinus, HiPlus } from "react-icons/hi";
 import { BiDollar, BiCheck, BiX } from "react-icons/bi";
 import { TfiAngleDown, TfiAngleUp } from "react-icons/tfi";
+import { BsFillPlusCircleFill } from "react-icons/bs";
 
 export const LedgerTransactions = ({ isOpen, onClose, ledgerId }) => {
   const { toggleLedger, toggleForm } = useContext(DashboardContext);
@@ -249,6 +250,13 @@ export const LedgerTransactions = ({ isOpen, onClose, ledgerId }) => {
               })}
           </div>
         </div>
+      </div>
+
+      <div
+        className="fixed bottom-4 right-4 w-14 h-14 bg-white rounded-full flex flex-row justify-center items-center z-20"
+        onClick={() => toggleForm({ ledgerId })}
+      >
+        <BsFillPlusCircleFill className="text-sky-700 w-full h-full" />
       </div>
     </Modal>
   );
