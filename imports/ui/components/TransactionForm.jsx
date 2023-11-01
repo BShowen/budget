@@ -53,7 +53,7 @@ export function TransactionForm({ isOpen, onClose, defaultLedgerSelection }) {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <div className="overscroll-none bg-slate-100 fixed top-0 bottom-0 w-full">
+      <div className="overscroll-none bg-slate-100 h-full w-full">
         <div className="w-full bg-sky-500 p-2 flex flex-col justify-start">
           <div className="w-full px-1 py-2 grid grid-cols-12 font-bold text-center">
             <h2 className="col-start-4 col-end-10">Add transaction</h2>

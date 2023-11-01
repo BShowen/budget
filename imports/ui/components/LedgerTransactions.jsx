@@ -131,7 +131,7 @@ export const LedgerTransactions = ({ isOpen, onClose, ledgerId }) => {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <div className="overflow-scroll fixed top-0 bottom-0 bg-slate-100 w-full">
+      <div className="overflow-scroll bg-slate-100 w-full">
         <div className="bg-sky-500 text-white px-1 pt-3 pb-8 z-50 sticky top-0">
           <div
             className="text-left text-xl font-bold pb-3 px-2 flex flex-row items-center justify-start"
