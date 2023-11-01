@@ -102,11 +102,13 @@ export const Dashboard = () => {
 
       <DashboardContext.Provider value={dashboardContext}>
         <div className="relative z-40">
-          <TransactionForm
-            isOpen={formState.isOpen}
-            onClose={dashboardContext.toggleForm}
-            defaultLedgerSelection={formState.ledgerId}
-          />
+          {formState.isOpen && (
+            <TransactionForm
+              isOpen={formState.isOpen}
+              onClose={dashboardContext.toggleForm}
+              defaultLedgerSelection={formState.ledgerId}
+            />
+          )}
         </div>
         <div className="relative z-30">
           {ledgerState.isOpen && (

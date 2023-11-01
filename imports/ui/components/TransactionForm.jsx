@@ -1,6 +1,6 @@
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 // Components
 import { Modal } from "./Modal";
