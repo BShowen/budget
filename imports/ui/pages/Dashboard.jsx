@@ -1,4 +1,9 @@
 import React, { createContext, useState } from "react";
+import { useTracker } from "meteor/react-meteor-data";
+
+// Collections
+import { BudgetCollection } from "../../api/Budget/BudgetCollection";
+import { EnvelopeCollection } from "../../api/Envelope/EnvelopCollection";
 
 // Components
 import { DashboardHeader } from "../components/DashboardHeader";
@@ -10,7 +15,31 @@ import { LedgerTransactions } from "../components/LedgerTransactions";
 import { BsFillPlusCircleFill } from "react-icons/bs";
 
 export const DashboardContext = createContext(null);
-export const Dashboard = ({ budget, envelopes }) => {
+export const Dashboard = () => {
+  const { budget } = useTracker(() => {
+    // BudgetCollection contains only the budget for this month. It does NOT
+    // contain multiple documents. The publisher (on the server) returns only
+    // the budget for this month.
+    const budget = BudgetCollection.findOne();
+
+    return {
+      budget,
+    };
+  });
+  const { envelopes } = useTracker(() => {
+    // BudgetCollection contains only the budget for this month. It does NOT
+    // contain multiple documents. The publisher (on the server) returns only
+    // the budget for this month.
+    const budget = BudgetCollection.findOne();
+    // Get the envelopes for this budget.
+    const envelopes = EnvelopeCollection.find({
+      budgetId: budget._id,
+    }).fetch();
+
+    return {
+      envelopes,
+    };
+  });
   const [activeTab, setActiveTab] = useState("planned"); // "planned", "spent", "remaining"
   const [formState, setFormState] = useState({
     isOpen: false,

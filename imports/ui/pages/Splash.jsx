@@ -15,16 +15,12 @@ import React from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 
-// Collections
-import { BudgetCollection } from "../../api/Budget/BudgetCollection";
-import { EnvelopeCollection } from "../../api/Envelope/EnvelopCollection";
-
 // Components
 import { Dashboard } from "./Dashboard";
 import { LoginForm } from "../components/LoginForm";
 
 export const Splash = () => {
-  const { loading, data } = useTracker(() => {
+  const { loading } = useTracker(() => {
     const budgetHandler = Meteor.subscribe("budgets");
     const envelopeHandler = Meteor.subscribe("envelopes");
     const ledgerHandler = Meteor.subscribe("ledgers");
@@ -40,24 +36,9 @@ export const Splash = () => {
       transactionHandler.ready() &&
       paycheckHandler.ready()
     ) {
-      // BudgetCollection contains only the budget for this month. It does NOT
-      // contain multiple documents. The publisher (on the server) returns only
-      // the budget for this month.
-      const budget = BudgetCollection.findOne();
-      // Get the envelopes for this budget.
-      const envelopes = EnvelopeCollection.find({
-        budgetId: budget._id,
-      }).fetch();
-
-      return {
-        loading: false,
-        data: {
-          budget,
-          envelopes,
-        },
-      };
+      return { loading: false };
     } else {
-      return { loading: true, data: undefined };
+      return { loading: true };
     }
   });
 
@@ -66,8 +47,8 @@ export const Splash = () => {
     return <LoginForm />;
   } else if (Meteor.userId() && loading) {
     return <p>Loading...</p>;
-  } else if (Meteor.userId() && !loading && data) {
-    return <Dashboard {...data} />;
+  } else if (Meteor.userId() && !loading) {
+    return <Dashboard />;
   } else {
     console.log("Something went wrong....");
     return "";
