@@ -26,13 +26,13 @@ Meteor.startup(() => {
   const user = Accounts.findUserByEmail(SEED_EMAIL);
 
   if (!BudgetCollection.find().count()) {
-    const today = new Date();
-    const createdAt = new Date(
-      Date.UTC(today.getFullYear(), today.getMonth(), 1)
+    const clientDate = new Date(); // Date received from the client
+    const serverDate = new Date(
+      Date.UTC(clientDate.getFullYear(), clientDate.getMonth(), 1, 0, 0, 0, 0)
     );
     const budgetId = BudgetCollection.insert({
       //A single budget for the month
-      createdAt: createdAt,
+      createdAt: serverDate,
       income: {
         expected: 1000.5,
       },
