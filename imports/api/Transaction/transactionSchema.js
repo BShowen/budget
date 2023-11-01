@@ -1,9 +1,26 @@
 import SimpleSchema from "simpl-schema";
 
 export const transactionSchema = new SimpleSchema({
-  budgetId: String, // The budget this document belongs to.
-  envelopeId: String, // The envelope this document belongs to.
-  ledgerId: String, // The ledger this document belongs to.
+  accountId: {
+    //The account this document belongs to
+    type: String,
+    regEx: SimpleSchema.RegEx.Id,
+  },
+  budgetId: {
+    // The budget this document belongs to.
+    type: String,
+    regEx: SimpleSchema.RegEx.Id,
+  },
+  envelopeId: {
+    // The envelope this document belongs to.
+    type: String,
+    regEx: SimpleSchema.RegEx.Id,
+  },
+  ledgerId: {
+    // The ledger this document belongs to.
+    type: String,
+    regEx: SimpleSchema.RegEx.Id,
+  },
   loggedBy: Object,
   "loggedBy.userId": {
     type: String,

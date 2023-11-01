@@ -3,9 +3,6 @@ import { Meteor } from "meteor/meteor";
 // Collections
 import { BudgetCollection } from "../BudgetCollection";
 
-// Utils
-import { populateBudget } from "./util/populateBudget";
-
 Meteor.publish("budgets", function () {
   if (!this.userId) {
     return [];

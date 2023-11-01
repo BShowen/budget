@@ -6,6 +6,7 @@ import { EnvelopeCollection } from "../imports/api/Envelope/EnvelopCollection";
 import { LedgerCollection } from "../imports/api/Ledger/LedgerCollection";
 import { TransactionCollection } from "../imports/api/Transaction/TransactionCollection";
 import { PaycheckCollection } from "../imports/api/Paycheck/PaycheckCollection";
+import { AccountCollection } from "../imports/api/Account/AccountCollection";
 
 const SEED_EMAIL = "bshowen@me.com";
 const SEED_PASSWORD = "123123123";
@@ -25,13 +26,26 @@ Meteor.startup(() => {
   }
   const user = Accounts.findUserByEmail(SEED_EMAIL);
 
-  if (!BudgetCollection.find().count()) {
+  if (!AccountCollection.find().count()) {
+    // Create a new account
+    const accountId = AccountCollection.insert({});
+
+    // Assign the user to the new account
+    Meteor.users.update(
+      { _id: user._id },
+      {
+        $set: {
+          accountId,
+        },
+      }
+    );
+
     const clientDate = new Date(); // Date received from the client
     const serverDate = new Date(
       Date.UTC(clientDate.getFullYear(), clientDate.getMonth(), 1, 0, 0, 0, 0)
     );
     const budgetId = BudgetCollection.insert({
-      //A single budget for the month
+      accountId,
       createdAt: serverDate,
       income: {
         expected: 1000.5,
@@ -39,6 +53,7 @@ Meteor.startup(() => {
     });
 
     const paycheckId = PaycheckCollection.insert({
+      accountId,
       budgetId: budgetId,
       createdAt: new Date(),
       source: "Paycheck",
@@ -52,6 +67,7 @@ Meteor.startup(() => {
     const [env1, env2, env3, env4] = [
       // Food envelope
       EnvelopeCollection.insert({
+        accountId,
         budgetId: budgetId,
         name: "food",
         isAllocated: false,
@@ -59,18 +75,21 @@ Meteor.startup(() => {
       }),
       // Vehicles envelope
       EnvelopeCollection.insert({
+        accountId,
         budgetId: budgetId,
         name: "vehicles",
         isAllocated: true,
       }),
       // Utilities envelope
       EnvelopeCollection.insert({
+        accountId,
         budgetId: budgetId,
         name: "utilities",
         isAllocated: true,
       }),
       // Personal envelope
       EnvelopeCollection.insert({
+        accountId,
         budgetId: budgetId,
         name: "bradley - personal",
         isAllocated: false,
@@ -81,11 +100,13 @@ Meteor.startup(() => {
     // Ledgers for Food envelope
     const [env1_ledger1, env1_ledger2] = [
       LedgerCollection.insert({
+        accountId,
         budgetId: budgetId,
         envelopeId: env1,
         name: "groceries",
       }),
       LedgerCollection.insert({
+        accountId,
         budgetId: budgetId,
         envelopeId: env1,
         name: "eating out",
@@ -94,6 +115,7 @@ Meteor.startup(() => {
     // Transactions for edgers in the Food envelope
     const env1_ledger1_transactions = [
       TransactionCollection.insert({
+        accountId,
         budgetId: budgetId,
         envelopeId: env1,
         ledgerId: env1_ledger1,
@@ -108,6 +130,7 @@ Meteor.startup(() => {
         },
       }),
       TransactionCollection.insert({
+        accountId,
         budgetId: budgetId,
         envelopeId: env1,
         ledgerId: env1_ledger1,
@@ -122,6 +145,7 @@ Meteor.startup(() => {
         },
       }),
       TransactionCollection.insert({
+        accountId,
         budgetId: budgetId,
         envelopeId: env1,
         ledgerId: env1_ledger1,
@@ -139,6 +163,7 @@ Meteor.startup(() => {
     ];
     const env1_ledger2_transactions = [
       TransactionCollection.insert({
+        accountId,
         budgetId: budgetId,
         envelopeId: env1,
         ledgerId: env1_ledger2,
@@ -157,12 +182,14 @@ Meteor.startup(() => {
     // Ledgers for Vehicle envelope
     const [env2_ledger1, env2_ledger2] = [
       LedgerCollection.insert({
+        accountId,
         budgetId: budgetId,
         envelopeId: env2,
         name: "gas",
         startingBalance: 190,
       }),
       LedgerCollection.insert({
+        accountId,
         budgetId: budgetId,
         envelopeId: env2,
         name: "insurance",
@@ -172,6 +199,7 @@ Meteor.startup(() => {
     // Transactions for ledgers in the Vehicle envelope
     const env2_ledger1_transactions = [
       TransactionCollection.insert({
+        accountId,
         budgetId: budgetId,
         envelopeId: env2,
         ledgerId: env2_ledger1,
@@ -186,6 +214,7 @@ Meteor.startup(() => {
         },
       }),
       TransactionCollection.insert({
+        accountId,
         budgetId: budgetId,
         envelopeId: env2,
         ledgerId: env2_ledger1,
@@ -202,6 +231,7 @@ Meteor.startup(() => {
     ];
     const env2_ledger2_transactions = [
       TransactionCollection.insert({
+        accountId,
         budgetId: budgetId,
         envelopeId: env2,
         ledgerId: env2_ledger2,
@@ -220,18 +250,21 @@ Meteor.startup(() => {
     // Ledgers for Utilities envelope
     const [env3_ledger1, env3_ledger2, env3_ledger3] = [
       LedgerCollection.insert({
+        accountId,
         budgetId: budgetId,
         envelopeId: env3,
         name: "internet",
         startingBalance: 85.0,
       }),
       LedgerCollection.insert({
+        accountId,
         budgetId: budgetId,
         envelopeId: env3,
         name: "electric",
         startingBalance: 180.0,
       }),
       LedgerCollection.insert({
+        accountId,
         budgetId: budgetId,
         envelopeId: env3,
         name: "water",
@@ -241,6 +274,7 @@ Meteor.startup(() => {
     // Transactions for ledgers in the Utilities envelope
     const env3_ledger2_transactions = [
       TransactionCollection.insert({
+        accountId,
         budgetId: budgetId,
         envelopeId: env3,
         ledgerId: env3_ledger2,
@@ -257,6 +291,7 @@ Meteor.startup(() => {
     ];
     const env3_ledger_3_transactions = [
       TransactionCollection.insert({
+        accountId,
         budgetId: budgetId,
         envelopeId: env3,
         ledgerId: env3_ledger3,
@@ -275,11 +310,13 @@ Meteor.startup(() => {
     // Ledgers for the Personal envelope
     const [env4_ledger1, env4_ledger2] = [
       LedgerCollection.insert({
+        accountId,
         budgetId: budgetId,
         envelopeId: env4,
         name: "subscriptions",
       }),
       LedgerCollection.insert({
+        accountId,
         budgetId: budgetId,
         envelopeId: env4,
         name: "misc",
@@ -288,6 +325,7 @@ Meteor.startup(() => {
     // Transactions for ledgers in the Personal envelope
     const env4_ledger1_transactions = [
       TransactionCollection.insert({
+        accountId,
         budgetId: budgetId,
         ledgerId: env4_ledger1,
         envelopeId: env4,
@@ -302,6 +340,7 @@ Meteor.startup(() => {
         },
       }),
       TransactionCollection.insert({
+        accountId,
         budgetId: budgetId,
         ledgerId: env4_ledger1,
         envelopeId: env4,
@@ -318,6 +357,7 @@ Meteor.startup(() => {
     ];
     const env4_ledger2_transactions = [
       TransactionCollection.insert({
+        accountId,
         budgetId: budgetId,
         ledgerId: env4_ledger2,
         envelopeId: env4,
@@ -332,14 +372,5 @@ Meteor.startup(() => {
         },
       }),
     ];
-
-    Meteor.users.update(
-      { _id: user._id },
-      {
-        $set: {
-          budgetIdList: [budgetId],
-        },
-      }
-    );
   }
 });

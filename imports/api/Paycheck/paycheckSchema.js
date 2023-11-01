@@ -1,7 +1,16 @@
 import SimpleSchema from "simpl-schema";
 
 export const paycheckSchema = new SimpleSchema({
-  budgetId: String, // The budget this document belongs to.
+  accountId: {
+    //The account this document belongs to
+    type: String,
+    regEx: SimpleSchema.RegEx.Id,
+  },
+  budgetId: {
+    // The budget this document belongs to.
+    type: String,
+    regEx: SimpleSchema.RegEx.Id,
+  },
   loggedBy: Object,
   "loggedBy.userId": {
     type: String,

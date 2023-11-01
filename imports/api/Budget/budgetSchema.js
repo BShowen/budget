@@ -1,8 +1,11 @@
 import SimpleSchema from "simpl-schema";
 
 export const budgetSchema = new SimpleSchema({
-  // owners: { type: Array }, //There can be multiple budget owners. i.e. shared accounts
-  // "owners.$": String, //ref user who can manage this budget.
+  accountId: {
+    //The account this document belongs to
+    type: String,
+    regEx: SimpleSchema.RegEx.Id,
+  },
   createdAt: Date,
   income: Object,
   "income.expected": Number,
