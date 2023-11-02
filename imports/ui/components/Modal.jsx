@@ -16,7 +16,7 @@ export function Modal({ isOpen, onClose, children }) {
   return (
     <div
       onClick={onClose}
-      className="lg:w-3/5 w-full mx-auto fixed top-0 bottom-0 backdrop-blur-sm overscroll-none z-50"
+      className="lg:w-3/5 w-full mx-auto fixed top-0 bottom-0 left-0  right-0 backdrop-blur-sm overscroll-none z-50"
     >
       <div
         onClick={(e) => {
