@@ -1,6 +1,7 @@
 import { Meteor } from "meteor/meteor";
+import { Random } from "meteor/random";
 import { useTracker } from "meteor/react-meteor-data";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 
 // Components
 import { Modal } from "./Modal";
@@ -20,6 +21,7 @@ import { formatDollarAmount } from "../util/formatDollarAmount";
 // Icons
 import { CgHashtag } from "react-icons/cg";
 import { TfiAngleDown, TfiAngleUp } from "react-icons/tfi";
+import { AiOutlinePlusCircle } from "react-icons/ai";
 
 export function TransactionForm({ isOpen, onClose, defaultLedgerSelection }) {
   const { toggleForm } = useContext(DashboardContext);
@@ -43,7 +45,12 @@ export function TransactionForm({ isOpen, onClose, defaultLedgerSelection }) {
     formData.set("budgetId", budgetId);
     formData.set("envelopeId", envelopeId);
     const tags = formData.getAll("tags");
-    const formDataObject = { ...Object.fromEntries(formData.entries()), tags };
+    const newTags = formData.getAll("newTags");
+    const formDataObject = {
+      ...Object.fromEntries(formData.entries()),
+      tags,
+      newTags,
+    };
     try {
       Meteor.call("transaction.createTransaction", formDataObject);
     } catch (error) {
@@ -257,7 +264,7 @@ function TagSelection({ isOpen }) {
 
   return (
     <div
-      className={`w-full flex flex-col gap-2 justify-start overflow-hidden ${
+      className={`w-full flex flex-col gap-2 justify-start overflow-hidden lg:hover:cursor-pointer ${
         expanded ? "h-auto" : "h-10"
       }`}
     >
@@ -278,9 +285,10 @@ function TagSelection({ isOpen }) {
         </div>
       </div>
       {expanded && (
-        <div className="w-full flex flex-row flex-wrap gap-2 flex-start items-center text-grey-700 pb-2">
+        <div className="w-full flex flex-row flex-nowrap overflow-scroll gap-1 flex-start text-grey-700 mb-2 overscroll-contain scrollbar-hide">
+          <CreateTags />
           {tags.map((tag) => (
-            <TagInput key={tag._id} tag={tag} />
+            <Tag key={tag._id} tag={tag} />
           ))}
         </div>
       )}
@@ -288,14 +296,13 @@ function TagSelection({ isOpen }) {
   );
 }
 
-function TagInput({ tag }) {
+function Tag({ tag }) {
   const [checked, setChecked] = useState(false);
   const toggleChecked = () => setChecked((prev) => !prev);
 
   return (
     <div
-      key={tag._id}
-      className={`transition-all duration-75 no-tap-button text-md font-semibold border-2 border-sky-500 px-2 rounded-full min-w-max text-gray-700 ${
+      className={`transition-all duration-75 no-tap-button text-md font-semibold border-2 border-sky-500 px-2 rounded-md min-w-max text-gray-700 ${
         checked ? "bg-sky-500 text-white" : ""
       }`}
       onClick={toggleChecked}
@@ -308,6 +315,155 @@ function TagInput({ tag }) {
         checked={checked}
         onChange={toggleChecked}
         name="tags"
+      />
+    </div>
+  );
+}
+
+function CreateTags() {
+  const [newTags, setNewTags] = useState([]);
+  const [activeTab, setActiveTab] = useState(false);
+
+  const removeTag = ({ id }) => {
+    setNewTags((prev) => prev.filter((tag) => tag.id !== id));
+    setActiveTab(false);
+  };
+
+  const saveTag = ({ tagName, id }) => {
+    if (tagName === "New tag") {
+      return;
+    }
+    const tagExists = newTags.find(
+      (tag) => tag.id === id || tag.name === tagName
+    );
+    if (tagExists) {
+      // If the tag already exists in newTabs, then update the tag name.
+      setNewTags((prev) =>
+        prev.map((tag) => (tag.id === id ? { ...tag, name: tagName } : tag))
+      );
+    } else {
+      // If the tag doesn't exist in newTabs, then add it.
+      setNewTags((prev) => [{ name: tagName, id }, ...prev]);
+    }
+
+    setActiveTab(false);
+  };
+
+  return (
+    <div className="flex flex-row flex-no-wrap">
+      <div
+        className="h-7 w-auto pe-2"
+        onClick={() => {
+          setActiveTab((prev) => !prev);
+        }}
+      >
+        <AiOutlinePlusCircle className="h-full w-auto text-sky-500" />
+      </div>
+      <div className="flex flex-row flex-no-wrap gap-1">
+        {activeTab && (
+          <NewTag
+            defaultValue={"New tag"}
+            removeTag={removeTag}
+            saveTag={saveTag}
+            id={Random.id()}
+            autoFocus={true}
+          />
+        )}
+        {newTags.map((tag) => (
+          <NewTag
+            key={tag.id}
+            defaultValue={tag.name}
+            removeTag={removeTag}
+            saveTag={saveTag}
+            id={tag.id}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function NewTag({ defaultValue, removeTag, saveTag, id, autoFocus }) {
+  const pRef = useRef();
+  const inputRef = useRef();
+  const [tagName, setTagName] = useState(defaultValue || "");
+  const [inputWidth, setInputWidth] = useState(96);
+
+  useEffect(() => {
+    function handleKeyDown(e) {
+      const key = e.key;
+      if (key.toLowerCase() === "enter") {
+        inputRef.current.blur();
+      }
+    }
+    if (inputRef.current) {
+      document.addEventListener("keydown", handleKeyDown);
+      return () => document.removeEventListener("keydown", handleKeyDown);
+    }
+  }, []);
+
+  const handleInput = (e) => {
+    setTagName(e.target.value);
+    // setTimeout is needed in order to allow the browser to finish painting
+    // before we read the value of the hidden <p> element
+    setTimeout(() => {
+      if (pRef.current) {
+        const pElementWidth = pRef.current.getBoundingClientRect().width;
+        const newWidth = pElementWidth > 96 ? pElementWidth + 10 : 96;
+        setInputWidth(newWidth);
+      }
+    }, 0);
+  };
+
+  const handleBlur = (e) => {
+    if (e.target.value === "") {
+      setTagName(defaultValue);
+      removeTag({ id: id }); //This will tell the parent to remove this component.
+    } else {
+      saveTag({
+        tagName,
+        id,
+      });
+    }
+  };
+
+  const handleClick = (e) => {
+    if (tagName === defaultValue) {
+      e.target.selectionStart = 0;
+      e.target.selectionEnd = e.target.value.length;
+    }
+  };
+
+  return (
+    <div className="no-tap-button text-md font-semibold border-2 border-sky-500 px-2 rounded-md overflow-hidden py-0 bg-sky-500 text-white">
+      {/* This hidden p tag gets populated with the value that the user types 
+      for the tag name. I use this to get the width of the element and set the 
+      width of the input tag. I want the input's width to be dynamic and always
+      contain the user's text.  */}
+      <p className="fixed invisible" ref={pRef}>
+        {tagName}
+      </p>
+      <input
+        ref={inputRef}
+        className="focus:ring-0 border-0 m-0 p-0 w-24 h-6 text-center bg-inherit text-inherit transition-width duration-100"
+        style={{
+          width: `${inputWidth}px`,
+        }}
+        type="text"
+        autoFocus={autoFocus}
+        value={tagName}
+        onInput={handleInput}
+        onBlur={handleBlur}
+        onClick={handleClick}
+        onFocus={handleClick}
+      />
+      <input
+        type="checkbox"
+        checked
+        readOnly
+        className="hidden"
+        value={tagName}
+        name="newTags"
       />
     </div>
   );
