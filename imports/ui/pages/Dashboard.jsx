@@ -72,8 +72,8 @@ export const Dashboard = () => {
   };
 
   return (
-    <div className="w-full pb-12 relative z-0">
-      <div className="sticky top-0 z-20">
+    <div className="w-full pb-12 relative z-0 border-2">
+      <div className="fixed top-0 left-0 right-0 z-20 w-full lg:w-3/5 mx-auto">
         <DashboardHeader
           setActiveTab={setActiveTab}
           activeTab={activeTab}
@@ -81,7 +81,7 @@ export const Dashboard = () => {
         />
       </div>
 
-      <div className="py-8 px-2 flex flex-col items-stretch gap-5 z-10">
+      <div className="pt-32 pb-8 px-2 flex flex-col items-stretch gap-5 z-10">
         {/* Categories container */}
         <DashboardContext.Provider value={dashboardContext}>
           {envelopes.map((category, i) => {
