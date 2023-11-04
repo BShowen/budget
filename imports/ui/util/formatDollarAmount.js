@@ -10,6 +10,7 @@
 
 // 0.01
 export function formatDollarAmount(value) {
+  value = value.toString();
   if (
     // If value is not a number
     isNaN(value)
@@ -25,7 +26,7 @@ export function formatDollarAmount(value) {
     value.toString() === "0"
   ) {
     // Ignore leading zeros
-    return;
+    return "";
   }
 
   if (value.toString() === "0.0") return "";

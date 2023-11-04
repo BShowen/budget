@@ -8,7 +8,7 @@ import { TransactionCollection } from "../../api/Transaction/TransactionCollecti
 
 // Utils
 import { cap } from "../util/cap";
-import { decimal } from "../util/decimal";
+import { toDollars } from "../util/toDollars";
 import { reduceTransactions } from "../util/reduceTransactions";
 
 // Components
@@ -60,7 +60,7 @@ export const Envelope = ({ _id, name, activeTab }) => {
     // Envelope container
     <div className="bg-white rounded-lg shadow-md flex flex-col items-stretch px-2 pt-1 pb-2 gap-2 relative z-0">
       <EnvelopeHeader name={name} activeTab={activeTab} progress={progress} />
-      <EnvelopeBody ledgers={ledgers} activeTab={activeTab} />
+      <EnvelopeBody ledgers={ledgers} activeTab={activeTab} envelopeId={_id} />
       <EnvelopeFooter displayBalance={displayBalance} envelopeId={_id} />
     </div>
   );
@@ -75,11 +75,18 @@ function EnvelopeHeader({ name, activeTab }) {
   );
 }
 
-function EnvelopeBody({ ledgers, activeTab }) {
+function EnvelopeBody({ ledgers, activeTab, envelopeId }) {
   return (
     <div className="flex flex-col gap-2 z-20">
       {ledgers.map((ledger, i) => {
-        return <Ledger key={i} {...ledger} activeTab={activeTab} />;
+        return (
+          <Ledger
+            key={i}
+            {...ledger}
+            activeTab={activeTab}
+            envelopeId={envelopeId}
+          />
+        );
       })}
     </div>
   );
@@ -110,7 +117,7 @@ function EnvelopeFooter({ displayBalance, envelopeId }) {
             >
               Add item
             </p>
-            <h2 className="font-medium">{decimal(displayBalance)}</h2>
+            <h2 className="font-medium">{toDollars(displayBalance)}</h2>
           </div>
         )}
       </NewLedgerForm>

@@ -19,7 +19,7 @@ import "react-circular-progressbar/dist/styles.css";
 // Utils
 import { cap } from "../util/cap";
 import { reduceTransactions } from "../util/reduceTransactions";
-import { decimal } from "../util/decimal";
+import { toDollars } from "../util/toDollars";
 import { dates } from "../util/dates";
 
 // Context
@@ -151,7 +151,7 @@ export const LedgerTransactions = ({ isOpen, onClose, ledgerId }) => {
               <h2 className="text-xl font-bold">{cap(ledger.name)}</h2>
               {/* prettier-ignore */}
               <p className="text-xs font-semibold">
-                {`${decimal(spent)} spent of ${decimal(ledger.startingBalance)}`}
+                {`${toDollars(spent)} spent of ${toDollars(ledger.startingBalance)}`}
               </p>
             </div>
             <div className="col-start-8 col-span-3 text-end h-fit">
@@ -161,7 +161,7 @@ export const LedgerTransactions = ({ isOpen, onClose, ledgerId }) => {
                   spent > ledger.startingBalance && "text-rose-400"
                 }`}
               >
-                {decimal(remaining)}
+                {toDollars(remaining)}
               </p>
             </div>
             <div className="col-start-11 col-span-2 absolute -right-6 -top-2">
@@ -247,7 +247,7 @@ export const LedgerTransactions = ({ isOpen, onClose, ledgerId }) => {
                           <HiPlus className="text-green-500" />
                         )}
                       </span>
-                      <p>{decimal(transaction.amount)}</p>
+                      <p>{toDollars(transaction.amount)}</p>
                     </div>
                   </div>
                 );
