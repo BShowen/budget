@@ -11,25 +11,20 @@ Meteor.methods({
     }
 
     try {
-      // Get the budget that belongs to the user.
-      const user = Meteor.user();
-      const budgetId = user.budgetIdList[0];
-      // Verify the envelope belongs to the current budget
-      const envelopeBelongsToBudget = EnvelopeCollection.find({
-        _id: input.envelopeId,
-        budgetId,
-      }).count();
+      const accountId = Meteor.user().accountId;
+      const { budgetId } = EnvelopeCollection.findOne(
+        { _id: input.envelopeId },
+        { fields: { budgetId: 1 } }
+      );
 
-      if (envelopeBelongsToBudget) {
-        // Assign the budgetId to the ledger input
-        input.budgetId = budgetId;
-        // Validate and create the new ledger
-        LedgerCollection.simpleSchema().clean(input, { mutate: true });
-        LedgerCollection.simpleSchema().validate({
-          ...input,
-        });
-        LedgerCollection.insert(input);
-      }
+      input = { ...input, accountId, budgetId };
+      // Validate and create the new ledger
+      LedgerCollection.simpleSchema().clean(input, { mutate: true });
+      LedgerCollection.simpleSchema().validate({
+        ...input,
+      });
+
+      LedgerCollection.insert(input);
     } catch (error) {
       console.log(error);
       if (error.error === "validation-error") {
