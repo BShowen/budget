@@ -1,9 +1,10 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
+import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 
 // Utils
 import { cap } from "../util/cap";
-import { decimal } from "../util/decimal";
+import { toDollars } from "../util/toDollars";
 import { reduceTransactions } from "../util/reduceTransactions";
 
 // Components
@@ -14,8 +15,15 @@ import { TransactionCollection } from "../../api/Transaction/TransactionCollecti
 
 // Context
 import { DashboardContext } from "../pages/Dashboard";
+import { NewLedgerForm } from "./NewLedgerForm";
 
-export const Ledger = ({ _id, name, startingBalance, activeTab }) => {
+export const Ledger = ({
+  _id,
+  name,
+  startingBalance,
+  activeTab,
+  envelopeId,
+}) => {
   const { transactions } = useTracker(() => {
     if (!Meteor.userId()) return {};
     // Get the transactions in the ledger.
@@ -25,6 +33,7 @@ export const Ledger = ({ _id, name, startingBalance, activeTab }) => {
     return { transactions };
   });
   const { toggleLedger } = useContext(DashboardContext);
+  const [isFormActive, setFormActive] = useState(false);
 
   const { expense, income } = reduceTransactions({ transactions });
   const spent = expense - income;
@@ -62,16 +71,38 @@ export const Ledger = ({ _id, name, startingBalance, activeTab }) => {
 
   return (
     <div
-      onClick={() => toggleLedger({ ledgerId: _id })}
-      className="flex flex-row justify-between items-center px-2 bg-slate-100 rounded-md py-1 lg:hover:cursor-pointer h-8 relative"
+      onClick={() => (isFormActive ? null : toggleLedger({ ledgerId: _id }))}
+      className="flex flex-row justify-between items-center px-2 bg-slate-100 rounded-md py-1 lg:hover:cursor-pointer h-8 relative z-0"
     >
-      <h2 className="font-semibold">{cap(name)}</h2>
-      <h2
-        className={`font-normal ${displayBalance < 0 ? "text-rose-500" : ""}`}
+      <NewLedgerForm
+        toggleForm={() => setFormActive(false)}
+        envelopeId={envelopeId}
+        options={{ isUpdate: true }}
+        defaultValues={{
+          name: cap(name),
+          startingBalance: startingBalance,
+          ledgerId: _id,
+        }}
       >
-        {decimal(displayBalance)}
-      </h2>
-      <Progress percent={progress} />
+        {!isFormActive && (
+          <>
+            <h2 className="font-semibold z-50">{cap(name)}</h2>
+            <h2
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setFormActive(true);
+              }}
+              className={`font-normal z-50 ${
+                displayBalance < 0 ? "text-rose-500" : ""
+              }`}
+            >
+              {toDollars(displayBalance)}
+            </h2>
+            <Progress percent={progress} />
+          </>
+        )}
+      </NewLedgerForm>
     </div>
   );
 };

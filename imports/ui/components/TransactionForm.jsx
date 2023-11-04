@@ -429,8 +429,7 @@ function NewTag({ defaultValue, removeTag, saveTag, id, autoFocus }) {
 
   const handleClick = (e) => {
     if (tagName === defaultValue) {
-      e.target.selectionStart = 0;
-      e.target.selectionEnd = e.target.value.length;
+      e.target.setSelectionRange(0, 99999);
     }
   };
 

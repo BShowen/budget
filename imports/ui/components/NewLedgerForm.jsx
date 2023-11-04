@@ -4,13 +4,33 @@ import { Meteor } from "meteor/meteor";
 // Utils
 import { formatDollarAmount } from "../util/formatDollarAmount";
 
-export function NewLedgerForm({ children, toggleForm, envelopeId }) {
+export function NewLedgerForm({
+  children,
+  toggleForm,
+  envelopeId,
+  options = { isUpdate: false },
+  defaultFormState,
+  defaultValues = { name: "", startingBalance: 0.0, ledgerId: "" },
+}) {
   const [state, setState] = useState({
     envelopeId: envelopeId,
-    name: "",
-    startingBalance: "",
+    name: defaultValues.name,
+    startingBalance: defaultValues.startingBalance.toFixed(2),
   });
   const [timeoutId, setTimeoutId] = useState(null);
+
+  useEffect(() => {
+    if (
+      state.name !== defaultValues.name ||
+      state.startingBalance !== defaultValues.startingBalance.toFixed(2)
+    ) {
+      setState((prev) => ({
+        ...prev,
+        name: defaultValues.name,
+        startingBalance: defaultValues.startingBalance.toFixed(2),
+      }));
+    }
+  }, [defaultValues.name, defaultValues.startingBalance]);
 
   useEffect(() => {
     // Close the form when the escape key is pressed
@@ -18,11 +38,20 @@ export function NewLedgerForm({ children, toggleForm, envelopeId }) {
       const key = e.key.toLowerCase();
       if (key === "escape") {
         toggleForm();
+        // Reset the form state
+        setState((prev) => ({
+          ...prev,
+          name: defaultValues.name,
+          startingBalance: defaultValues.startingBalance.toFixed(2),
+        }));
       }
     }
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, []);
+    if (!children) {
+      // Only add an event listener if children are rendered.
+      document.addEventListener("keydown", handleKeyDown);
+      return () => document.removeEventListener("keydown", handleKeyDown);
+    }
+  }, [children]);
 
   function handleInput(e) {
     const name = e.target.name;
@@ -34,10 +63,20 @@ export function NewLedgerForm({ children, toggleForm, envelopeId }) {
   }
 
   function handleSubmit() {
-    if (state.name) {
-      // Submit
+    if (state.name && !options.isUpdate) {
+      // Create new ledger
       try {
         Meteor.call("ledger.createLedger", state);
+      } catch (error) {
+        console.log(error);
+      }
+    } else if (state.name && options.isUpdate) {
+      // Update ledger
+      try {
+        Meteor.call("ledger.updateLedger", {
+          ...state,
+          ledgerId: defaultValues.ledgerId,
+        });
       } catch (error) {
         console.log(error);
       }
@@ -45,8 +84,8 @@ export function NewLedgerForm({ children, toggleForm, envelopeId }) {
     // Reset the form state
     setState((prev) => ({
       ...prev,
-      name: "",
-      startingBalance: "",
+      name: defaultValues.name,
+      startingBalance: defaultValues.startingBalance.toFixed(2),
     }));
     toggleForm();
   }
@@ -67,25 +106,32 @@ export function NewLedgerForm({ children, toggleForm, envelopeId }) {
             className="focus:ring-0 border-0 w-1/3 h-full p-0 m-0 bg-inherit font-semibold"
             name="name"
             placeholder="Item name"
-            autoFocus
+            autoFocus={!options.isUpdate}
             value={state.name}
             onInput={handleInput}
             onKeyDown={handleKeyDown}
             // onFocus get clear the timeout that is stored in state
-            onFocus={() => clearTimeout(timeoutId)}
+            onFocus={(e) => {
+              clearTimeout(timeoutId);
+              e.target.setSelectionRange(0, 1000);
+            }}
             // onBlur start a timeout and store its ID in state
             onBlur={() => setTimeoutId(setTimeout(handleSubmit, 10))}
           />
           <input
             className="focus:ring-0 border-0 w-1/3 h-full p-0 m-0 bg-inherit text-right"
             name="startingBalance"
+            autoFocus={options.isUpdate}
             placeholder="$0.00"
             pattern="[0-9]*"
             value={state.startingBalance}
             onInput={handleInput}
             onKeyDown={handleKeyDown}
             // onFocus get clear the timeout that is stored in state
-            onFocus={() => clearTimeout(timeoutId)}
+            onFocus={(e) => {
+              clearTimeout(timeoutId);
+              e.target.setSelectionRange(0, 1000);
+            }}
             // onBlur start a timeout and store its ID in state
             onBlur={() => setTimeoutId(setTimeout(handleSubmit, 10))}
           />
