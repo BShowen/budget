@@ -4,7 +4,7 @@ import { Meteor } from "meteor/meteor";
 // Utils
 import { formatDollarAmount } from "../util/formatDollarAmount";
 
-export function NewLedgerForm({ toggleForm, envelopeId }) {
+export function NewLedgerForm({ children, toggleForm, envelopeId }) {
   const [state, setState] = useState({
     envelopeId: envelopeId,
     name: "",
@@ -60,35 +60,37 @@ export function NewLedgerForm({ toggleForm, envelopeId }) {
   }
 
   return (
-    <div className="w-full h-full">
-      <form className="w-full flex flex-row justify-between h-full">
-        <input
-          className="focus:ring-0 border-0 w-1/3 h-full p-0 m-0 bg-inherit font-semibold"
-          name="name"
-          placeholder="Item name"
-          autoFocus
-          value={state.name}
-          onInput={handleInput}
-          onKeyDown={handleKeyDown}
-          // onFocus get clear the timeout that is stored in state
-          onFocus={() => clearTimeout(timeoutId)}
-          // onBlur start a timeout and store its ID in state
-          onBlur={() => setTimeoutId(setTimeout(handleSubmit, 10))}
-        />
-        <input
-          className="focus:ring-0 border-0 w-1/3 h-full p-0 m-0 bg-inherit text-right"
-          name="startingBalance"
-          placeholder="$0.00"
-          pattern="[0-9]*"
-          value={state.startingBalance}
-          onInput={handleInput}
-          onKeyDown={handleKeyDown}
-          // onFocus get clear the timeout that is stored in state
-          onFocus={() => clearTimeout(timeoutId)}
-          // onBlur start a timeout and store its ID in state
-          onBlur={() => setTimeoutId(setTimeout(handleSubmit, 10))}
-        />
-      </form>
-    </div>
+    children || (
+      <div className="w-full h-full">
+        <form className="w-full flex flex-row justify-between h-full">
+          <input
+            className="focus:ring-0 border-0 w-1/3 h-full p-0 m-0 bg-inherit font-semibold"
+            name="name"
+            placeholder="Item name"
+            autoFocus
+            value={state.name}
+            onInput={handleInput}
+            onKeyDown={handleKeyDown}
+            // onFocus get clear the timeout that is stored in state
+            onFocus={() => clearTimeout(timeoutId)}
+            // onBlur start a timeout and store its ID in state
+            onBlur={() => setTimeoutId(setTimeout(handleSubmit, 10))}
+          />
+          <input
+            className="focus:ring-0 border-0 w-1/3 h-full p-0 m-0 bg-inherit text-right"
+            name="startingBalance"
+            placeholder="$0.00"
+            pattern="[0-9]*"
+            value={state.startingBalance}
+            onInput={handleInput}
+            onKeyDown={handleKeyDown}
+            // onFocus get clear the timeout that is stored in state
+            onFocus={() => clearTimeout(timeoutId)}
+            // onBlur start a timeout and store its ID in state
+            onBlur={() => setTimeoutId(setTimeout(handleSubmit, 10))}
+          />
+        </form>
+      </div>
+    )
   );
 }

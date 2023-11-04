@@ -86,35 +86,34 @@ function EnvelopeBody({ ledgers, activeTab }) {
 }
 
 function EnvelopeFooter({ displayBalance, envelopeId }) {
-  const [isForm, setFormState] = useState(false);
+  const [isFormActive, setFormActive] = useState(false);
   const toggleForm = () => {
-    setFormState((prev) => !prev);
+    setFormActive((prev) => !prev);
   };
-  const component = isForm ? (
-    <NewLedgerForm toggleForm={toggleForm} envelopeId={envelopeId} />
-  ) : (
-    <div className="w-full flex flex-row justify-between items-center">
-      <p
-        onClick={() => {
-          if (!isForm) {
-            toggleForm();
-          }
-        }}
-        className="font-normal lg:hover:cursor-pointer"
-      >
-        Add item
-      </p>
-      <h2 className="font-medium">{decimal(displayBalance)}</h2>
-    </div>
-  );
 
   return (
     <div
       className={`flex flex-row items-center px-2 h-8 rounded-md ${
-        isForm ? "bg-slate-100" : ""
+        isFormActive ? "bg-slate-100" : ""
       }`}
     >
-      {component}
+      <NewLedgerForm toggleForm={toggleForm} envelopeId={envelopeId}>
+        {!isFormActive && (
+          <div className="w-full flex flex-row justify-between items-center">
+            <p
+              onClick={() => {
+                if (!isFormActive) {
+                  toggleForm();
+                }
+              }}
+              className="font-normal lg:hover:cursor-pointer"
+            >
+              Add item
+            </p>
+            <h2 className="font-medium">{decimal(displayBalance)}</h2>
+          </div>
+        )}
+      </NewLedgerForm>
     </div>
   );
 }
