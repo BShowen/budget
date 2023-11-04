@@ -19,6 +19,6 @@ export const ledgerSchema = new SimpleSchema({
   name: String,
   startingBalance: {
     type: Number,
-    optional: true,
+    defaultValue: 0.0,
   },
 });

@@ -42,10 +42,7 @@ Meteor.startup(() => {
     );
 
     // Create some tags
-    TagCollection.insert({ accountId, name: "fast food" });
-    TagCollection.insert({ accountId, name: "groceries" });
-    TagCollection.insert({ accountId, name: "coffee" });
-    TagCollection.insert({ accountId, name: "impulse" });
+    const fastFoodTag = TagCollection.insert({ accountId, name: "fast food" });
 
     // Random budgets
     BudgetCollection.insert({
@@ -96,46 +93,35 @@ Meteor.startup(() => {
         accountId,
         budgetId: budgetId,
         name: "food",
-        isAllocated: false,
-        startingBalance: 500.0,
       }),
       // Vehicles envelope
       EnvelopeCollection.insert({
         accountId,
         budgetId: budgetId,
         name: "vehicles",
-        isAllocated: true,
       }),
       // Utilities envelope
       EnvelopeCollection.insert({
         accountId,
         budgetId: budgetId,
         name: "utilities",
-        isAllocated: true,
       }),
       // Personal envelope
       EnvelopeCollection.insert({
         accountId,
         budgetId: budgetId,
         name: "bradley - personal",
-        isAllocated: false,
-        startingBalance: 100.0,
       }),
     ];
 
     // Ledgers for Food envelope
-    const [env1_ledger1, env1_ledger2] = [
+    const [env1_ledger1] = [
       LedgerCollection.insert({
         accountId,
         budgetId: budgetId,
         envelopeId: env1,
         name: "groceries",
-      }),
-      LedgerCollection.insert({
-        accountId,
-        budgetId: budgetId,
-        envelopeId: env1,
-        name: "eating out",
+        startingBalance: 1400,
       }),
     ];
     // Transactions for edgers in the Food envelope
@@ -186,17 +172,16 @@ Meteor.startup(() => {
           lastName: user.profile.lastName,
         },
       }),
-    ];
-    const env1_ledger2_transactions = [
       TransactionCollection.insert({
         accountId,
         budgetId: budgetId,
         envelopeId: env1,
-        ledgerId: env1_ledger2,
+        ledgerId: env1_ledger1,
         createdAt: new Date(),
         type: "expense",
         merchant: "Steak n Shake",
         amount: 4.85,
+        tags: [fastFoodTag],
         loggedBy: {
           userId: user._id,
           firstName: user.profile.firstName,

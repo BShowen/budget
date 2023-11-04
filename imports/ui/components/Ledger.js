@@ -10,19 +10,12 @@ import { reduceTransactions } from "../util/reduceTransactions";
 import { Progress } from "./Progress";
 
 // Collections
-import { LedgerCollection } from "/imports/api/Ledger/LedgerCollection";
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 
 // Context
 import { DashboardContext } from "../pages/Dashboard";
 
-export const Ledger = ({
-  _id,
-  envelopeId,
-  name,
-  startingBalance,
-  activeTab,
-}) => {
+export const Ledger = ({ _id, name, startingBalance, activeTab }) => {
   const { transactions } = useTracker(() => {
     if (!Meteor.userId()) return {};
     // Get the transactions in the ledger.

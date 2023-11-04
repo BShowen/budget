@@ -103,9 +103,15 @@ export const LedgerTransactions = ({ isOpen, onClose, ledgerId }) => {
   useEffect(() => {
     // After component mounts, update the percentSpent so it animates from zero
     // to percentSpent.
-    const percentSpent = ledger.startingBalance
-      ? (spent / ledger.startingBalance) * 100
-      : (spent / envelope.startingBalance) * 100;
+
+    // If ledger.startingBalance is zero then percentage spent should always be
+    // 100%. This is to avoid dividing by zero error because if user has spent
+    // money but not set a startingBalance then spent / startingBalance is a
+    // divide by zero error.
+    const percentSpent =
+      ledger.startingBalance == 0
+        ? 100
+        : (spent / ledger.startingBalance) * 100;
     setPercentSpent(percentSpent);
   }, [ledger, envelope]);
 
@@ -113,9 +119,7 @@ export const LedgerTransactions = ({ isOpen, onClose, ledgerId }) => {
 
   const spent = expense - income;
 
-  const remaining = ledger.startingBalance
-    ? ledger.startingBalance - spent
-    : envelope.startingBalance - (envelope.expense - envelope.income);
+  const remaining = ledger.startingBalance - spent;
 
   const logo =
     remaining == 0 ? (
@@ -147,7 +151,7 @@ export const LedgerTransactions = ({ isOpen, onClose, ledgerId }) => {
               <h2 className="text-xl font-bold">{cap(ledger.name)}</h2>
               {/* prettier-ignore */}
               <p className="text-xs font-semibold">
-                {`${decimal(spent)} spent of ${decimal(ledger.startingBalance || envelope.startingBalance)}`}
+                {`${decimal(spent)} spent of ${decimal(ledger.startingBalance)}`}
               </p>
             </div>
             <div className="col-start-8 col-span-3 text-end h-fit">

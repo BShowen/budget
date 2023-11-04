@@ -5,7 +5,6 @@ import { useTracker } from "meteor/react-meteor-data";
 // Collections
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
-import { Progress } from "./Progress";
 
 // Utils
 import { cap } from "../util/cap";
@@ -16,13 +15,7 @@ import { formatDollarAmount } from "../util/formatDollarAmount";
 // Components
 import { Ledger } from "./Ledger";
 
-export const Envelope = ({
-  _id,
-  name,
-  startingBalance,
-  activeTab,
-  isAllocated,
-}) => {
+export const Envelope = ({ _id, name, activeTab }) => {
   const { ledgers } = useTracker(() => {
     if (!Meteor.userId()) return {};
     // Return the ledgers that belong to this envelope
@@ -41,11 +34,9 @@ export const Envelope = ({
     }).fetch();
     return { transactions };
   });
-  const calculatedEnvelopeBalance =
-    startingBalance ||
-    ledgers.reduce((total, ledger) => {
-      return total + ledger.startingBalance;
-    }, 0);
+  const calculatedEnvelopeBalance = ledgers.reduce((total, ledger) => {
+    return total + ledger.startingBalance;
+  }, 0);
 
   const { expense, income } = reduceTransactions({ transactions });
   const spent = expense - income;
@@ -68,24 +59,18 @@ export const Envelope = ({
   return (
     // Envelope container
     <div className="bg-white rounded-lg shadow-md flex flex-col items-stretch px-2 pt-1 pb-2 gap-2 relative z-0">
-      <EnvelopeHeader
-        name={name}
-        activeTab={activeTab}
-        isAllocated={isAllocated}
-        progress={progress}
-      />
+      <EnvelopeHeader name={name} activeTab={activeTab} progress={progress} />
       <EnvelopeBody ledgers={ledgers} activeTab={activeTab} />
       <EnvelopeFooter displayBalance={displayBalance} envelopeId={_id} />
     </div>
   );
 };
 
-function EnvelopeHeader({ name, activeTab, isAllocated, progress }) {
+function EnvelopeHeader({ name, activeTab }) {
   return (
     <div className="flex flex-row justify-between p-1 px-2 h-8 rounded-md overflow-hidden items-center relative z-0 w-full">
       <h1 className="font-bold relative z-50">{cap(name)}</h1>
       <h2 className="font-semibold relative z-50">{cap(activeTab)}</h2>
-      {!isAllocated && <Progress percent={progress} />}
     </div>
   );
 }
