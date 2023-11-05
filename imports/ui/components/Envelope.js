@@ -22,7 +22,6 @@ export const Envelope = ({ _id, name, activeTab }) => {
     const ledgers = LedgerCollection.find({
       envelopeId: _id,
     }).fetch();
-
     return { ledgers };
   });
 
@@ -60,7 +59,7 @@ export const Envelope = ({ _id, name, activeTab }) => {
     // Envelope container
     <div className="bg-white rounded-lg shadow-md flex flex-col items-stretch px-2 pt-1 pb-2 gap-2 relative z-0">
       <EnvelopeHeader name={name} activeTab={activeTab} progress={progress} />
-      <EnvelopeBody ledgers={ledgers} activeTab={activeTab} envelopeId={_id} />
+      <EnvelopeBody ledgers={ledgers} activeTab={activeTab} />
       <EnvelopeFooter displayBalance={displayBalance} envelopeId={_id} />
     </div>
   );
@@ -75,19 +74,12 @@ function EnvelopeHeader({ name, activeTab }) {
   );
 }
 
-function EnvelopeBody({ ledgers, activeTab, envelopeId }) {
+function EnvelopeBody({ ledgers, activeTab }) {
   return (
     <div className="flex flex-col gap-2 z-20">
-      {ledgers.map((ledger, i) => {
-        return (
-          <Ledger
-            key={i}
-            {...ledger}
-            activeTab={activeTab}
-            envelopeId={envelopeId}
-          />
-        );
-      })}
+      {ledgers.map((ledger) => (
+        <Ledger key={ledger._id} ledgerData={ledger} activeTab={activeTab} />
+      ))}
     </div>
   );
 }

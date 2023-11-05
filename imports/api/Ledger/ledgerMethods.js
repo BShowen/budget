@@ -20,7 +20,6 @@ Meteor.methods({
       input = { ...input, accountId, budgetId };
       // Validate and create the new ledger
       LedgerCollection.simpleSchema().clean(input, { mutate: true });
-      console.log(input);
       LedgerCollection.simpleSchema().validate({
         ...input,
       });
@@ -46,22 +45,23 @@ Meteor.methods({
 
     // Verify the current user's account owns this envelope.
     const ledgerExists = LedgerCollection.find({
-      _id: input.ledgerId,
+      _id: input._id,
       envelopeId: input.envelopeId,
       accountId: Meteor.user().accountId,
     }).count();
 
     if (ledgerExists) {
-      const { ledgerId } = input;
-      delete input.envelopeId;
+      const { _id: ledgerId } = input;
+      const ledger = {
+        name: input.name,
+        startingBalance: input.startingBalance,
+      };
       // Validate and update the ledger
-      LedgerCollection.simpleSchema().clean(input, { mutate: true });
-      LedgerCollection.simpleSchema().validate(
-        { ...input },
-        { keys: ["name", "startingBalance"] }
-      );
-
-      LedgerCollection.update({ _id: ledgerId }, { $set: { ...input } });
+      LedgerCollection.simpleSchema().clean(ledger, { mutate: true });
+      LedgerCollection.simpleSchema().validate(ledger, {
+        keys: ["name", "startingBalance"],
+      });
+      LedgerCollection.update({ _id: ledgerId }, { $set: ledger });
     }
   },
 });
