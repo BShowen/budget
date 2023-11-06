@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 
@@ -9,16 +9,15 @@ import { reduceTransactions } from "../util/reduceTransactions";
 
 // Components
 import { Progress } from "./Progress";
+import { UpdateLedgerForm } from "./UpdateLedgerForm";
 
 // Collections
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 
 // Context
 import { DashboardContext } from "../pages/Dashboard";
-import { UpdateLedgerForm } from "./UpdateLedgerForm";
 
-export const Ledger = ({ ledgerData, activeTab }) => {
-  const [ledger, setLedger] = useState(ledgerData);
+export const Ledger = ({ ledger, activeTab }) => {
   const [isFormActive, setFormActive] = useState(false);
   // Open open/close ledger transactions
   const { toggleLedger } = useContext(DashboardContext);
@@ -34,18 +33,6 @@ export const Ledger = ({ ledgerData, activeTab }) => {
     const spent = expense - income;
     return spent;
   });
-
-  useEffect(() => {
-    // When ledgerData is changed, update the state of this component but only
-    // if startingBalance or name has changed. This is needed for optimistic UI
-    // update after form submission.
-    if (
-      ledgerData.name !== ledger.name ||
-      ledgerData.startingBalance !== ledger.startingBalance
-    ) {
-      setLedger(ledgerData);
-    }
-  }, [ledgerData]);
 
   const remaining = ledger.startingBalance - spent;
 
@@ -87,7 +74,6 @@ export const Ledger = ({ ledgerData, activeTab }) => {
       {isFormActive ? (
         <UpdateLedgerForm
           toggleForm={() => setFormActive(false)}
-          setLedger={setLedger}
           ledger={ledger}
         />
       ) : (

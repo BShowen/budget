@@ -5,7 +5,7 @@ import { Meteor } from "meteor/meteor";
 import { formatDollarAmount } from "../util/formatDollarAmount";
 import { cap } from "../util/cap";
 
-export function UpdateLedgerForm({ toggleForm, ledger, setLedger }) {
+export function UpdateLedgerForm({ toggleForm, ledger }) {
   const [formState, setFormState] = useState({
     name: ledger.name,
     startingBalance: ledger.startingBalance,
@@ -40,8 +40,7 @@ export function UpdateLedgerForm({ toggleForm, ledger, setLedger }) {
         console.log(error);
       }
     }
-    setLedger((prev) => ({ ...prev, ...formState }));
-    toggleForm();
+    setTimeout(toggleForm, 75);
   }
 
   function handleInput(e) {

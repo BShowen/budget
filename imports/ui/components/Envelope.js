@@ -78,7 +78,7 @@ function EnvelopeBody({ ledgers, activeTab }) {
   return (
     <div className="flex flex-col gap-2 z-20">
       {ledgers.map((ledger) => (
-        <Ledger key={ledger._id} ledgerData={ledger} activeTab={activeTab} />
+        <Ledger key={ledger._id} ledger={ledger} activeTab={activeTab} />
       ))}
     </div>
   );
