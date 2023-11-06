@@ -40,7 +40,6 @@ export function UpdateLedgerForm({ toggleForm, ledger }) {
         console.log(error);
       }
     }
-    setTimeout(toggleForm, 75);
   }
 
   function handleInput(e) {

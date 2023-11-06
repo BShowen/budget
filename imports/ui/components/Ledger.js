@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 
@@ -33,6 +33,13 @@ export const Ledger = ({ ledger, activeTab }) => {
     const spent = expense - income;
     return spent;
   });
+
+  useEffect(() => {
+    // When ledger.name or ledger.startingBalance has changed, this means that
+    // this ledger document has been updated in mini mongo and the form needs
+    // to be closed.
+    setFormActive(false);
+  }, [ledger.name, ledger.startingBalance]);
 
   const remaining = ledger.startingBalance - spent;
 
