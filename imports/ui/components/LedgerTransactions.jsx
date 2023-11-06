@@ -34,41 +34,21 @@ import { BsFillPlusCircleFill } from "react-icons/bs";
 
 export const LedgerTransactions = ({ isOpen, onClose, ledgerId }) => {
   const { toggleLedger, toggleForm } = useContext(DashboardContext);
-  const { envelope } = useTracker(() => {
-    if (!Meteor.userId() || !isOpen) return {};
-    // Get the ledger so I can get the envelope by ledger.envelopeId.
-    const ledger = LedgerCollection.findOne({ _id: ledgerId });
-    // Get the envelope so I can get all transactions in the envelope.
-    const envelope = EnvelopeCollection.findOne({ _id: ledger.envelopeId });
-    // Get all the transactions the are in this envelope.
-    const envelopeTransactionList = TransactionCollection.find({
-      envelopeId: envelope._id,
-    }).fetch();
-    // Income and expense for the envelope
-    const { income, expense } = reduceTransactions({
-      transactions: envelopeTransactionList,
-    });
-
-    envelope.income = income;
-    envelope.expense = expense;
-
-    return { envelope };
-  }, []);
-
   const { ledger } = useTracker(() => {
     if (!Meteor.userId() || !isOpen) return {};
     const ledger = LedgerCollection.findOne({ _id: ledgerId });
     return { ledger };
   });
 
-  const { transactions, income, expense } = useTracker(() => {
+  const { transactions, spent } = useTracker(() => {
     if (!Meteor.userId() || !isOpen) return {};
     const transactions = TransactionCollection.find({
       ledgerId: ledgerId,
     }).fetch();
     // income and expense for this ledger
     const { income, expense } = reduceTransactions({ transactions });
-    return { transactions, income, expense };
+    const spent = expense - income;
+    return { transactions, spent };
   });
 
   const { tagIdList } = useTracker(() => {
@@ -113,11 +93,7 @@ export const LedgerTransactions = ({ isOpen, onClose, ledgerId }) => {
         ? 100
         : (spent / ledger.startingBalance) * 100;
     setPercentSpent(percentSpent);
-  }, [ledger, envelope]);
-
-  if (!isOpen) return null;
-
-  const spent = expense - income;
+  }, [ledger]);
 
   const remaining = ledger.startingBalance - spent;
 
@@ -134,6 +110,7 @@ export const LedgerTransactions = ({ isOpen, onClose, ledgerId }) => {
       />
     );
 
+  if (!isOpen) return null;
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="overflow-scroll bg-slate-100 w-full">
