@@ -64,4 +64,19 @@ Meteor.methods({
       LedgerCollection.update({ _id: ledgerId }, { $set: ledger });
     }
   },
+  "ledger.deleteLedger"({ ledgerId }) {
+    if (!this.userId) {
+      return [];
+    }
+
+    LedgerCollection.countDocuments({ _id: ledgerId }).then((count, error) => {
+      if (count > 0) {
+        LedgerCollection.remove({ _id: ledgerId });
+      }
+
+      if (error) {
+        console.log(error);
+      }
+    });
+  },
 });

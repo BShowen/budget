@@ -33,52 +33,82 @@ import { TfiAngleDown, TfiAngleUp } from "react-icons/tfi";
 import { BsFillPlusCircleFill } from "react-icons/bs";
 
 export const LedgerTransactions = ({ isOpen, onClose, ledgerId }) => {
-  const { toggleLedger, toggleForm } = useContext(DashboardContext);
-  const { ledger } = useTracker(() => {
+  const { transactionList, spent } = useTracker(() => {
     if (!Meteor.userId() || !isOpen) return {};
-    const ledger = LedgerCollection.findOne({ _id: ledgerId });
-    return { ledger };
-  });
-
-  const { transactions, spent } = useTracker(() => {
-    if (!Meteor.userId() || !isOpen) return {};
-    const transactions = TransactionCollection.find({
+    const transactionList = TransactionCollection.find({
       ledgerId: ledgerId,
     }).fetch();
     // income and expense for this ledger
-    const { income, expense } = reduceTransactions({ transactions });
+    const { income, expense } = reduceTransactions({
+      transactions: transactionList,
+    });
     const spent = expense - income;
-    return { transactions, spent };
+    return { transactionList, spent };
   });
 
   const { tagIdList } = useTracker(() => {
-    // Return only the tags that have been used in this ledger's transactions
+    // Return only the tags that have been used in this ledger's transactionList
 
-    // Iterate through the list of transactions and reduce them down to only the
-    // tag list making sure to remove duplicates along the way.
-    const tags = transactions.reduce((acc, transaction) => {
+    // Iterate through transactionList and reduce down to just the tags, making
+    // sure to remove duplicates.
+    const tags = transactionList.reduce((acc, transaction) => {
       const tags = transaction.tags || [];
       // use new Set() to remove duplicate tagIds
       return [...new Set([...acc, ...tags])];
     }, []);
     return { tagIdList: tags };
   });
+  const [activeTags, setActiveTags] = useState([]);
 
-  const [percentSpent, setPercentSpent] = useState(0);
-  const [filterTags, setFilterTags] = useState([]);
   const toggleTag = (tagId) => {
     if (!tagId) {
       // Call toggleTag() with no params to clear the filters
-      setFilterTags([]);
+      setActiveTags([]);
     } else {
-      // If filterTags includes tagId, remove it, else, add it.
-      setFilterTags((prev) => {
-        return prev.includes(tagId)
-          ? [...prev.filter((prevTagId) => prevTagId !== tagId)]
-          : [...prev, tagId];
+      setActiveTags((prev) => {
+        // If activeTags includes tagId, remove it, else, add it.
+        if (prev.includes(tagId)) {
+          return [...prev.filter((prevTagId) => prevTagId !== tagId)];
+        } else {
+          return [...prev, tagId];
+        }
       });
     }
   };
+
+  if (!isOpen) return null;
+  return (
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <div className="overflow-scroll bg-slate-100 w-full">
+        <Header spent={spent} isOpen={isOpen} ledgerId={ledgerId} />
+        <div className="bg-slate-100 flex flex-col gap-3 p-2">
+          <TagSelector
+            tagIdList={tagIdList}
+            toggleTag={toggleTag}
+            activeFilterTags={activeTags}
+          />
+          <TransactionList
+            transactionList={transactionList}
+            ledgerId={ledgerId}
+            activeTags={activeTags}
+          />
+          <DeleteTransaction ledgerId={ledgerId} />
+        </div>
+      </div>
+
+      <AddTransactionsCircle ledgerId={ledgerId} />
+    </Modal>
+  );
+};
+
+function Header({ ledgerId, spent, isOpen }) {
+  const { toggleLedger } = useContext(DashboardContext);
+  const { ledger } = useTracker(() => {
+    if (!Meteor.userId() || !isOpen) return {};
+    const ledger = LedgerCollection.findOne({ _id: ledgerId });
+    return { ledger };
+  });
+  const [percentSpent, setPercentSpent] = useState(0);
 
   useEffect(() => {
     // After component mounts, update the percentSpent so it animates from zero
@@ -96,7 +126,6 @@ export const LedgerTransactions = ({ isOpen, onClose, ledgerId }) => {
   }, [ledger]);
 
   const remaining = ledger.startingBalance - spent;
-
   const logo =
     remaining == 0 ? (
       <BiCheck className="text-4xl text-emerald-400" />
@@ -109,141 +138,57 @@ export const LedgerTransactions = ({ isOpen, onClose, ledgerId }) => {
         }`}
       />
     );
-
-  if (!isOpen) return null;
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <div className="overflow-scroll bg-slate-100 w-full">
-        <div className="bg-sky-500 text-white px-1 pt-3 pb-8 z-50 sticky top-0">
-          <div
-            className="text-left text-xl font-bold pb-3 px-2 flex flex-row items-center justify-start"
-            onClick={() => {
-              toggleLedger({ ledger: {} });
-            }}
-          >
-            <IoIosArrowBack className="text-2xl" /> Back
-          </div>
-          <div className="bg-sky-700/50 grid grid-cols-12 rounded-lg w-11/12 mx-auto p-1 px-2 h-14 relative">
-            <div className="col-start-1 col-span-6 h-fit text-start">
-              <h2 className="text-xl font-bold">{cap(ledger.name)}</h2>
-              {/* prettier-ignore */}
-              <p className="text-xs font-semibold">
-                {`${toDollars(spent)} spent of ${toDollars(ledger.startingBalance)}`}
-              </p>
-            </div>
-            <div className="col-start-8 col-span-3 text-end h-fit">
-              <p className="text-xs font-semibold">Remaining</p>
-              <p
-                className={`text-lg font-semibold ${
-                  spent > ledger.startingBalance && "text-rose-400"
-                }`}
-              >
-                {toDollars(remaining)}
-              </p>
-            </div>
-            <div className="col-start-11 col-span-2 absolute -right-6 -top-2">
-              <div className="w-[70px] h-[70px] rounded-full ">
-                <CircularProgressbarWithChildren
-                  value={percentSpent}
-                  background
-                  backgroundPadding={6}
-                  styles={buildStyles({
-                    backgroundColor: "#0387C5",
-                    pathColor:
-                      spent > ledger.startingBalance ? "#fb7185" : "#34d399",
-                    trailColor: "transparent",
-                  })}
-                >
-                  {logo}
-                </CircularProgressbarWithChildren>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="bg-slate-100 flex flex-col gap-3 p-2">
-          <FilterByTags
-            tagIdList={tagIdList}
-            toggleTag={toggleTag}
-            activeFilterTags={filterTags}
-          />
-          <div className="bg-white shadow-md py-0 pb-2 rounded-lg px-3">
-            <div className="w-full flex flex-row justify-between items-center py-2 px-1 h-12">
-              <div>
-                <h2 className="font-bold text-gray-400 text-md">
-                  Transactions this month
-                </h2>
-              </div>
-              <div>
-                <a
-                  onClick={() => toggleForm({ ledgerId })}
-                  className="text-sky-500 font-bold"
-                >
-                  Add transaction
-                </a>
-              </div>
-            </div>
-            {transactions
-              .filter((transaction) => {
-                if (filterTags.length === 0) return true;
-                return (
-                  transaction.tags &&
-                  transaction.tags.some((tag) => filterTags.includes(tag))
-                );
-              })
-              .map((transaction, i) => {
-                const border = i === 0 ? "" : "border-t";
-                const [month, day] = dates
-                  .format(transaction.createdAt, {
-                    forTransaction: true,
-                  })
-                  .split(" ");
-                return (
-                  <div
-                    key={transaction._id}
-                    className={`${border} border-slate-300 p-1 flex flex-row flex-nowrap items-center gap-2`}
-                  >
-                    <div className="basis-0 ">
-                      <div className="border-4 rounded-full p-0 font-semibold text-gray-400 w-12 h-12 flex flex-col justify-center items-center">
-                        <p className="text-sm">{month}</p>
-                        <p className="text-xs">{day}</p>
-                      </div>
-                    </div>
-                    <div className="basis-0 grow ps-1">
-                      <p className="font-semibold text-gray-700 text-lg">
-                        {cap(transaction.merchant)}
-                      </p>
-                      <p className="text-sm text-gray-400 font-semibold">
-                        Logged by {cap(transaction.loggedBy.firstName)}
-                      </p>
-                    </div>
-                    <div className="text-md text-slate-700 font-semibold flex flex-row items-center gap-1">
-                      <span>
-                        {transaction.type === "expense" ? (
-                          <HiMinus className="text-red-500" />
-                        ) : (
-                          <HiPlus className="text-green-500" />
-                        )}
-                      </span>
-                      <p>{toDollars(transaction.amount)}</p>
-                    </div>
-                  </div>
-                );
-              })}
-          </div>
-        </div>
-      </div>
-
+    <div className="bg-sky-500 text-white px-1 pt-3 pb-8 z-50 sticky top-0">
       <div
-        className="fixed bottom-4 right-4 w-14 h-14 bg-white rounded-full flex flex-row justify-center items-center z-20"
-        onClick={() => toggleForm({ ledgerId })}
+        className="text-left text-xl font-bold pb-3 px-2 flex flex-row items-center justify-start"
+        onClick={() => {
+          toggleLedger({ ledger: {} });
+        }}
       >
-        <BsFillPlusCircleFill className="text-sky-700 w-full h-full" />
+        <IoIosArrowBack className="text-2xl" /> Back
       </div>
-    </Modal>
+      <div className="bg-sky-700/50 grid grid-cols-12 rounded-lg w-11/12 mx-auto p-1 px-2 h-14 relative">
+        <div className="col-start-1 col-span-6 h-fit text-start">
+          <h2 className="text-xl font-bold">{cap(ledger.name)}</h2>
+          {/* prettier-ignore */}
+          <p className="text-xs font-semibold">
+        {`${toDollars(spent)} spent of ${toDollars(ledger.startingBalance)}`}
+      </p>
+        </div>
+        <div className="col-start-8 col-span-3 text-end h-fit">
+          <p className="text-xs font-semibold">Remaining</p>
+          <p
+            className={`text-lg font-semibold ${
+              spent > ledger.startingBalance && "text-rose-400"
+            }`}
+          >
+            {toDollars(remaining)}
+          </p>
+        </div>
+        <div className="col-start-11 col-span-2 absolute -right-6 -top-2">
+          <div className="w-[70px] h-[70px] rounded-full ">
+            <CircularProgressbarWithChildren
+              value={percentSpent}
+              background
+              backgroundPadding={6}
+              styles={buildStyles({
+                backgroundColor: "#0387C5",
+                pathColor:
+                  spent > ledger.startingBalance ? "#fb7185" : "#34d399",
+                trailColor: "transparent",
+              })}
+            >
+              {logo}
+            </CircularProgressbarWithChildren>
+          </div>
+        </div>
+      </div>
+    </div>
   );
-};
+}
 
-function FilterByTags({ tagIdList, toggleTag, activeFilterTags }) {
+function TagSelector({ tagIdList, toggleTag, activeFilterTags }) {
   const { tags } = useTracker(() => {
     const tags = TagCollection.find(
       { _id: { $in: tagIdList } },
@@ -304,6 +249,111 @@ function FilterByTags({ tagIdList, toggleTag, activeFilterTags }) {
           {tagList}
         </div>
       </div>
+    </div>
+  );
+}
+
+function TransactionList({ transactionList, ledgerId, activeTags }) {
+  const { toggleForm } = useContext(DashboardContext);
+  return (
+    <div className="bg-white shadow-md py-0 pb-2 rounded-lg px-3">
+      <div className="w-full flex flex-row justify-between items-center py-2 px-1 h-12">
+        <div>
+          <h2 className="font-bold text-gray-400 text-md">
+            Transactions this month
+          </h2>
+        </div>
+        <div>
+          <a
+            onClick={() => toggleForm({ ledgerId })}
+            className="text-sky-500 font-bold"
+          >
+            Add transaction
+          </a>
+        </div>
+      </div>
+      {transactionList
+        .filter((transaction) => {
+          if (activeTags.length === 0) return true;
+          return (
+            transaction.tags &&
+            transaction.tags.some((tag) => activeTags.includes(tag))
+          );
+        })
+        .map((transaction, i) => {
+          const border = i === 0 ? "" : "border-t";
+          const [month, day] = dates
+            .format(transaction.createdAt, {
+              forTransaction: true,
+            })
+            .split(" ");
+          return (
+            <div
+              key={transaction._id}
+              className={`${border} border-slate-300 p-1 flex flex-row flex-nowrap items-center gap-2`}
+            >
+              <div className="basis-0 ">
+                <div className="border-4 rounded-full p-0 font-semibold text-gray-400 w-12 h-12 flex flex-col justify-center items-center">
+                  <p className="text-sm">{month}</p>
+                  <p className="text-xs">{day}</p>
+                </div>
+              </div>
+              <div className="basis-0 grow ps-1">
+                <p className="font-semibold text-gray-700 text-lg">
+                  {cap(transaction.merchant)}
+                </p>
+                <p className="text-sm text-gray-400 font-semibold">
+                  Logged by {cap(transaction.loggedBy.firstName)}
+                </p>
+              </div>
+              <div className="text-md text-slate-700 font-semibold flex flex-row items-center gap-1">
+                <span>
+                  {transaction.type === "expense" ? (
+                    <HiMinus className="text-red-500" />
+                  ) : (
+                    <HiPlus className="text-green-500" />
+                  )}
+                </span>
+                <p>{toDollars(transaction.amount)}</p>
+              </div>
+            </div>
+          );
+        })}
+    </div>
+  );
+}
+
+function DeleteTransaction({ ledgerId }) {
+  const { toggleLedger } = useContext(DashboardContext);
+  const deleteLedger = () => {
+    const confirmation = confirm(
+      "Are you sure you want to delete this ledger?"
+    );
+    if (confirmation) {
+      Meteor.call("ledger.deleteLedger", { ledgerId });
+      toggleLedger({ ledgerId });
+    }
+  };
+  return (
+    <div className="w-full flex flex-row justify-center items-center h-20">
+      <button
+        className="text-xl font-bold text-rose-500 lg:hover:cursor-pointer lg:hover:text-rose-600 lg:hover:underline transition-text duration-150"
+        onClick={deleteLedger}
+      >
+        Delete ledger
+      </button>
+    </div>
+  );
+}
+
+function AddTransactionsCircle({ ledgerId }) {
+  const { toggleForm } = useContext(DashboardContext);
+  return (
+    <div
+      className="fixed bottom-4 right-4 w-14 h-14 bg-white rounded-full flex flex-row justify-center items-center z-20"
+      onClick={() => toggleForm({ ledgerId })}
+    >
+      <BsFillPlusCircleFill className="text-sky-700 w-full h-full" />
     </div>
   );
 }
