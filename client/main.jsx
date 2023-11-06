@@ -1,3 +1,4 @@
+import "/imports/startup/client";
 import React, { StrictMode } from "react";
 import { Meteor } from "meteor/meteor";
 import { createRoot } from "react-dom/client";
