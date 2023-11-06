@@ -8,8 +8,6 @@ export function NewLedgerForm({
   children,
   toggleForm,
   envelopeId,
-  options = { isUpdate: false },
-  defaultFormState,
   defaultValues = { name: "", startingBalance: 0.0, ledgerId: "" },
 }) {
   const [state, setState] = useState({
@@ -63,20 +61,10 @@ export function NewLedgerForm({
   }
 
   function handleSubmit() {
-    if (state.name && !options.isUpdate) {
+    if (state.name) {
       // Create new ledger
       try {
         Meteor.call("ledger.createLedger", state);
-      } catch (error) {
-        console.log(error);
-      }
-    } else if (state.name && options.isUpdate) {
-      // Update ledger
-      try {
-        Meteor.call("ledger.updateLedger", {
-          ...state,
-          ledgerId: defaultValues.ledgerId,
-        });
       } catch (error) {
         console.log(error);
       }
@@ -106,7 +94,7 @@ export function NewLedgerForm({
             className="focus:ring-0 border-0 w-1/3 h-full p-0 m-0 bg-inherit font-semibold"
             name="name"
             placeholder="Item name"
-            autoFocus={!options.isUpdate}
+            autoFocus={true}
             value={state.name}
             onInput={handleInput}
             onKeyDown={handleKeyDown}
@@ -121,7 +109,6 @@ export function NewLedgerForm({
           <input
             className="focus:ring-0 border-0 w-1/3 h-full p-0 m-0 bg-inherit text-right"
             name="startingBalance"
-            autoFocus={options.isUpdate}
             placeholder="$0.00"
             pattern="[0-9]*"
             value={state.startingBalance}
