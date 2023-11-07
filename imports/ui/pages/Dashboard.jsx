@@ -10,11 +10,12 @@ import { DashboardHeader } from "../components/DashboardHeader";
 import { Envelope } from "../components/Envelope";
 import { TransactionForm } from "../components/TransactionForm";
 import { LedgerTransactions } from "../components/LedgerTransactions";
+import { AddEnvelopeButton } from "../components/AddEnvelopeButton";
 
 export const DashboardContext = createContext(null);
 export const Dashboard = () => {
   const { budget } = useTracker(() => {
-    // BudgetCollection will never container more than one document.
+    // BudgetCollection will never contain more than one document.
     // This is on purpose because the budget publication returns one document.
     const budget = BudgetCollection.findOne();
     return {
@@ -69,6 +70,7 @@ export const Dashboard = () => {
         ledgerId: !prev.isOpen ? ledgerId : undefined,
       }));
     },
+    budgetId: budget._id,
   };
 
   return (
@@ -87,6 +89,7 @@ export const Dashboard = () => {
           {envelopes.map((category, i) => {
             return <Envelope key={i} {...category} activeTab={activeTab} />;
           })}
+          <AddEnvelopeButton />
         </DashboardContext.Provider>
       </div>
 

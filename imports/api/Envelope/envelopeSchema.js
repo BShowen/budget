@@ -11,5 +11,8 @@ export const envelopeSchema = new SimpleSchema({
     type: String,
     regEx: SimpleSchema.RegEx.Id,
   },
-  name: String,
+  name: {
+    type: String,
+    defaultValue: "untitled",
+  },
 });
