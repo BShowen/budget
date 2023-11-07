@@ -66,10 +66,25 @@ export const Envelope = ({ _id, name, activeTab }) => {
 };
 
 function EnvelopeHeader({ name, activeTab }) {
+  const [isEditing, setEditing] = useState(false);
+
+  const toggleEditing = () => setEditing((prev) => !prev);
+
   return (
     <div className="flex flex-row justify-between p-1 px-2 h-8 rounded-md overflow-hidden items-center relative z-0 w-full">
-      <h1 className="font-bold relative z-50">{cap(name)}</h1>
-      <h2 className="font-semibold relative z-50">{cap(activeTab)}</h2>
+      {isEditing ? (
+        <>Editing</>
+      ) : (
+        <>
+          <h1
+            onClick={toggleEditing}
+            className="font-bold relative z-50 lg:hover:cursor-text"
+          >
+            {cap(name)}
+          </h1>
+          <h2 className="font-semibold relative z-50">{cap(activeTab)}</h2>
+        </>
+      )}
     </div>
   );
 }

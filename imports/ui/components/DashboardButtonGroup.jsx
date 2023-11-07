@@ -1,7 +1,7 @@
 import React from "react";
 
 // Utils
-import { cap } from ".././util/cap";
+import { cap } from "../util/cap";
 
 export const DashboardButtonGroup = ({ active, setActiveTab }) => {
   const slugList = ["planned", "spent", "remaining"];
