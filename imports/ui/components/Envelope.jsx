@@ -5,6 +5,7 @@ import { useTracker } from "meteor/react-meteor-data";
 // Collections
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
+import { EditEnvelopeForm } from "./EditEnvelopeForm";
 
 // Utils
 import { cap } from "../util/cap";
@@ -58,14 +59,19 @@ export const Envelope = ({ _id, name, activeTab }) => {
   return (
     // Envelope container
     <div className="bg-white rounded-lg shadow-md flex flex-col items-stretch px-2 pt-1 pb-2 gap-2 relative z-0">
-      <EnvelopeHeader name={name} activeTab={activeTab} progress={progress} />
+      <EnvelopeHeader
+        name={name}
+        activeTab={activeTab}
+        progress={progress}
+        envelopeId={_id}
+      />
       <EnvelopeBody ledgers={ledgers} activeTab={activeTab} />
       <EnvelopeFooter displayBalance={displayBalance} envelopeId={_id} />
     </div>
   );
 };
 
-function EnvelopeHeader({ name, activeTab }) {
+function EnvelopeHeader({ name, activeTab, envelopeId }) {
   const [isEditing, setEditing] = useState(false);
 
   const toggleEditing = () => setEditing((prev) => !prev);
@@ -73,7 +79,11 @@ function EnvelopeHeader({ name, activeTab }) {
   return (
     <div className="flex flex-row justify-between p-1 px-2 h-8 rounded-md overflow-hidden items-center relative z-0 w-full">
       {isEditing ? (
-        <>Editing</>
+        <EditEnvelopeForm
+          envelopeId={envelopeId}
+          envelopeName={name}
+          toggleForm={toggleEditing}
+        />
       ) : (
         <>
           <h1
