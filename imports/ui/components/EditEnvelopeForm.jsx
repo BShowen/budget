@@ -1,11 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Meteor } from "meteor/meteor";
+
+// Components
+import { FaRegTrashAlt } from "react-icons/fa";
 
 // Utils
 import { cap } from "../util/cap";
 
 export const EditEnvelopeForm = ({ envelopeId, envelopeName, toggleForm }) => {
+  const [timeoutId, setTimeoutId] = useState(null);
+
   const focusHandler = (e) => {
+    clearTimeout(timeoutId);
     e.target.setSelectionRange(0, 999);
   };
 
@@ -16,12 +22,27 @@ export const EditEnvelopeForm = ({ envelopeId, envelopeName, toggleForm }) => {
       ...Object.fromEntries(new FormData(formElement).entries()),
       envelopeId,
     };
-    Meteor.call("envelope.updateEnvelope", formData, (error) => {
-      if (error) {
-        console.log(error);
-      }
-      toggleForm();
-    });
+    setTimeoutId(
+      setTimeout(() => {
+        Meteor.call("envelope.updateEnvelope", formData, (error) => {
+          if (error) {
+            console.log(error);
+          }
+          toggleForm();
+        });
+      }, 10)
+    );
+  };
+
+  const handleTrashCanClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const confirmation = confirm("Delete this envelope?");
+    if (confirmation) {
+      Meteor.call("envelope.deleteEnvelope", { envelopeId });
+    } else {
+      // toggleForm();
+    }
   };
 
   useEffect(() => {
@@ -40,8 +61,8 @@ export const EditEnvelopeForm = ({ envelopeId, envelopeName, toggleForm }) => {
   }, []);
 
   return (
-    <div className="w-full h-full flex flex-row justify-start items-center">
-      <form className="w-full h-full flex flex-row justify-start items-center ">
+    <div className="w-full h-full flex flex-row items-center">
+      <form className="w-full h-full flex flex-row justify-between items-center ">
         <input
           className="focus:ring-0 border-0 h-full p-0 font-bold"
           autoFocus
@@ -51,6 +72,15 @@ export const EditEnvelopeForm = ({ envelopeId, envelopeName, toggleForm }) => {
           onFocus={focusHandler}
           onBlur={handleSubmit}
         />
+        <button
+          onFocus={() => clearTimeout(timeoutId)}
+          onClick={handleTrashCanClick}
+          onBlur={handleSubmit}
+          type="button"
+          className="focus:ring-0 outline-none text-rose-500 focus:text-rose-700 border-0 active:border-0 hover:border-0 "
+        >
+          <FaRegTrashAlt className="text-inherit lg:hover:cursor-pointer lg:hover:text-rose-700 text-lg" />
+        </button>
       </form>
     </div>
   );

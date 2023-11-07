@@ -30,4 +30,18 @@ Meteor.methods({
       console.log(error);
     }
   },
+  "envelope.deleteEnvelope"({ envelopeId }) {
+    if (!this.userId || !Meteor.user()) {
+      return;
+    }
+
+    try {
+      EnvelopeCollection.remove({
+        _id: envelopeId,
+        accountId: Meteor.user().accountId,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  },
 });
