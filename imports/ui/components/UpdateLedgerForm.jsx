@@ -35,7 +35,11 @@ export function UpdateLedgerForm({ toggleForm, ledger }) {
     // Update ledger
     if (formState.name.trim().length) {
       try {
-        Meteor.call("ledger.updateLedger", { ...ledger, ...formState });
+        Meteor.call(
+          "ledger.updateLedger",
+          { ...ledger, ...formState },
+          toggleForm
+        );
       } catch (error) {
         console.log(error);
       }

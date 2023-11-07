@@ -43,26 +43,33 @@ Meteor.methods({
       return [];
     }
 
-    // Verify the current user's account owns this envelope.
-    const ledgerExists = LedgerCollection.find({
+    LedgerCollection.countDocuments({
       _id: input._id,
-      envelopeId: input.envelopeId,
       accountId: Meteor.user().accountId,
-    }).count();
+    }).then((count, error) => {
+      if (count > 0) {
+        const { _id: ledgerId } = input;
+        const updatedLedgerFields = {
+          name: input.name,
+          startingBalance: input.startingBalance,
+        };
+        // Validate and update the updatedLedgerFields
+        LedgerCollection.simpleSchema().clean(updatedLedgerFields, {
+          mutate: true,
+        });
+        LedgerCollection.simpleSchema().validate(updatedLedgerFields, {
+          keys: ["name", "startingBalance"],
+        });
+        LedgerCollection.update(
+          { _id: ledgerId },
+          { $set: updatedLedgerFields }
+        );
+      }
 
-    if (ledgerExists) {
-      const { _id: ledgerId } = input;
-      const ledger = {
-        name: input.name,
-        startingBalance: input.startingBalance,
-      };
-      // Validate and update the ledger
-      LedgerCollection.simpleSchema().clean(ledger, { mutate: true });
-      LedgerCollection.simpleSchema().validate(ledger, {
-        keys: ["name", "startingBalance"],
-      });
-      LedgerCollection.update({ _id: ledgerId }, { $set: ledger });
-    }
+      if (error) {
+        console.log(error);
+      }
+    });
   },
   "ledger.deleteLedger"({ ledgerId }) {
     if (!this.userId) {
