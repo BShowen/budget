@@ -10,7 +10,6 @@ import "/imports/api/Budget/server/publications";
 import "/imports/api/Envelope/server/publications";
 import "/imports/api/Ledger/server/publications";
 import "/imports/api/Transaction/server/publications";
-import "/imports/api/Paycheck/server/publications";
 import "/imports/api/Tag/server/publications";
 
 // Collections
@@ -18,7 +17,6 @@ import "/imports/api/Budget/BudgetCollection";
 import "/imports/api/Envelope/EnvelopeCollection";
 import "/imports/api/Ledger/LedgerCollection";
 import "/imports/api/Transaction/TransactionCollection";
-import "/imports/api/Paycheck/PaycheckCollection";
 import "/imports/api/Tag/TagCollection";
 
 // Publish any custom user fields here.

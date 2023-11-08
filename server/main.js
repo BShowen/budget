@@ -5,7 +5,6 @@ import { BudgetCollection } from "../imports/api/Budget/BudgetCollection";
 import { EnvelopeCollection } from "../imports/api/Envelope/EnvelopeCollection";
 import { LedgerCollection } from "../imports/api/Ledger/LedgerCollection";
 import { TransactionCollection } from "../imports/api/Transaction/TransactionCollection";
-import { PaycheckCollection } from "../imports/api/Paycheck/PaycheckCollection";
 import { AccountCollection } from "../imports/api/Account/AccountCollection";
 import { TagCollection } from "../imports/api/Tag/TagCollection";
 
@@ -75,17 +74,11 @@ Meteor.startup(() => {
       },
     });
 
-    const paycheckId = PaycheckCollection.insert({
+    const incomeEnvelope = EnvelopeCollection.insert({
       accountId,
-      budgetId: budgetId,
-      createdAt: new Date(),
-      source: "Paycheck",
-      amount: 1000.5,
-      loggedBy: {
-        userId: user._id,
-        firstName: user.profile.firstName,
-        lastName: user.profile.lastName,
-      },
+      budgetId,
+      isIncomeEnvelope: true,
+      name: "income",
     });
     const [env1, env2, env3, env4] = [
       // Food envelope

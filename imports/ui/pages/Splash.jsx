@@ -21,7 +21,6 @@ import { LoginForm } from "../components/LoginForm";
 
 // Collections
 import { BudgetCollection } from "../../api/Budget/BudgetCollection";
-import { TagCollection } from "../../api/Tag/TagCollection";
 
 export const RootContext = createContext(null);
 export const Splash = () => {
@@ -43,7 +42,6 @@ export const Splash = () => {
     const envelopeHandler = Meteor.subscribe("envelopes", budget?._id);
     const ledgerHandler = Meteor.subscribe("ledgers", budget?._id);
     const transactionHandler = Meteor.subscribe("transactions", budget?._id);
-    const paycheckHandler = Meteor.subscribe("paychecks", budget?._id);
     const userDataHandler = Meteor.subscribe("userData", budget?._id);
     const tagHandler = Meteor.subscribe("tags");
     if (
@@ -51,7 +49,6 @@ export const Splash = () => {
       envelopeHandler.ready() &&
       ledgerHandler.ready() &&
       transactionHandler.ready() &&
-      paycheckHandler.ready() &&
       userDataHandler.ready() &&
       tagHandler.ready()
     ) {
