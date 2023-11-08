@@ -22,9 +22,10 @@ Meteor.methods({
     }
 
     try {
+      const modifier = { $set: { name } };
       EnvelopeCollection.update(
         { _id: envelopeId, accountId: Meteor.user().accountId },
-        { $set: { name } }
+        modifier
       );
     } catch (error) {
       console.log(error);
