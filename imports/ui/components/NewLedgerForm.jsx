@@ -61,7 +61,7 @@ export function NewLedgerForm({
   }
 
   function handleSubmit() {
-    if (state.name) {
+    if (state.name && state.name.trim().length) {
       // Create new ledger
       try {
         Meteor.call("ledger.createLedger", state);

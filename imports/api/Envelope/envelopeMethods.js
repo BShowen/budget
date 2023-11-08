@@ -3,46 +3,51 @@ import { EnvelopeCollection } from "./EnvelopeCollection";
 
 Meteor.methods({
   "envelope.createEnvelope"({ budgetId }) {
-    if (!this.userId || !Meteor.user()) {
-      return;
-    }
+    if (!this.userId || !Meteor.user()) return;
 
-    try {
-      EnvelopeCollection.insert({
+    EnvelopeCollection.insert(
+      {
         accountId: Meteor.user().accountId,
         budgetId,
-      });
-    } catch (error) {
-      console.log(error);
-    }
+      },
+      (err) => {
+        if (err && Meteor.isServer && err.invalidKeys?.length == 0) {
+          // This is not a validation error. Console.log the error.
+          console.log(err);
+        }
+      }
+    );
   },
   "envelope.updateEnvelope"({ name, envelopeId }) {
-    if (!this.userId || !Meteor.user()) {
-      return;
-    }
+    if (!this.userId || !Meteor.user()) return;
 
-    try {
-      const modifier = { $set: { name } };
-      EnvelopeCollection.update(
-        { _id: envelopeId, accountId: Meteor.user().accountId },
-        modifier
-      );
-    } catch (error) {
-      console.log(error);
-    }
+    const modifier = { $set: { name } };
+
+    EnvelopeCollection.update(
+      { _id: envelopeId, accountId: Meteor.user().accountId },
+      modifier,
+      (err) => {
+        if (err && Meteor.isServer && err.invalidKeys?.length == 0) {
+          // This is not a validation error. Console.log the error.
+          console.log(err);
+        }
+      }
+    );
   },
   "envelope.deleteEnvelope"({ envelopeId }) {
-    if (!this.userId || !Meteor.user()) {
-      return;
-    }
+    if (!this.userId || !Meteor.user()) return;
 
-    try {
-      EnvelopeCollection.remove({
+    EnvelopeCollection.remove(
+      {
         _id: envelopeId,
         accountId: Meteor.user().accountId,
-      });
-    } catch (error) {
-      console.log(error);
-    }
+      },
+      (err) => {
+        if (err && Meteor.isServer && err.invalidKeys?.length == 0) {
+          // This is not a validation error. Console.log the error.
+          console.log(err);
+        }
+      }
+    );
   },
 });

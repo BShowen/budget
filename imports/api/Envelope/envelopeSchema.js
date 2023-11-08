@@ -15,7 +15,7 @@ export const envelopeSchema = new SimpleSchema(
     name: {
       type: String,
       autoValue: function () {
-        if (this.isUpdate && this.value.trim().toLowerCase() === "income") {
+        if (this.isUpdate && this.value?.trim()?.toLowerCase() === "income") {
           //Don't allow the envelope to use reserved name "income"
           return "cant use 'income'";
         }

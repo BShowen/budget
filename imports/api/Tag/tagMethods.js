@@ -1,30 +1,6 @@
 import { Meteor } from "meteor/meteor";
 import { TagCollection } from "./TagCollection";
 
-Meteor.methods({
-  "tag.createTag"(input) {
-    // input is either a string or an array of strings.
-    // Each string is a new tag-name
-    if (!this.userId) {
-      return [];
-    }
-
-    try {
-      createTags(input);
-    } catch (error) {
-      console.log(error);
-      if (error.error === "validation-error") {
-        throw new Meteor.Error(
-          "bad-user-input",
-          error.details.map((err) => err.message)
-        );
-      } else {
-        throw new Meteor.Error(error.message);
-      }
-    }
-  },
-});
-
 // This method takes in an array of String tag-names like ["tag name", ..., "another tag name"]
 // If a tag with the specified tag name does not exist, a new tag is a created and its id is returned.
 // If a tag with the specified tag name does exist, its id is returned.
@@ -51,12 +27,12 @@ export function createTags({ tagNameList }) {
   const created = nonExisting.map((tagName) => {
     const newTag = { name: tagName, accountId: user.accountId };
 
-    TagCollection.simpleSchema().clean(newTag, { mutate: true });
-    TagCollection.simpleSchema().validate({
-      ...newTag,
+    return TagCollection.insert(newTag, (err) => {
+      if (err && Meteor.isServer && err.invalidKeys?.length == 0) {
+        // This is not a validation error. Console.log the error.
+        console.log(err);
+      }
     });
-
-    return TagCollection.insert(newTag);
   });
 
   return [...existing, ...created];
