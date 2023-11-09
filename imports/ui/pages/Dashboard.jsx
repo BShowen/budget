@@ -8,6 +8,7 @@ import { EnvelopeCollection } from "../../api/Envelope/EnvelopeCollection";
 // Components
 import { DashboardHeader } from "../components/DashboardHeader";
 import { Envelope } from "../components/Envelope";
+import { IncomeEnvelope } from "../components/IncomeEnvelope";
 import { TransactionForm } from "../components/TransactionForm";
 import { LedgerTransactions } from "../components/LedgerTransactions";
 import { AddEnvelopeButton } from "../components/AddEnvelopeButton";
@@ -23,17 +24,28 @@ export const Dashboard = () => {
     };
   });
 
-  const { envelopes } = useTracker(() => {
+  const { envelopes, incomeEnvelopes } = useTracker(() => {
     if (!budget) {
       return { envelopes: {} };
     }
     // Get the envelopes for this budget.
-    const envelopes = EnvelopeCollection.find({
+    const allEnvelopes = EnvelopeCollection.find({
       budgetId: budget._id,
     }).fetch();
 
+    const { envelopes, incomeEnvelopes } = allEnvelopes.reduce(
+      (acc, curr) => {
+        if (curr.isIncomeEnvelope) {
+          return { ...acc, incomeEnvelopes: [...acc.incomeEnvelopes, curr] };
+        } else {
+          return { ...acc, envelopes: [...acc.envelopes, curr] };
+        }
+      },
+      { envelopes: [], incomeEnvelopes: [] }
+    );
     return {
       envelopes,
+      incomeEnvelopes,
     };
   });
   const [activeTab, setActiveTab] = useState("planned"); // "planned", "spent", "remaining"
@@ -86,9 +98,16 @@ export const Dashboard = () => {
       <div className="pt-32 pb-8 px-2 flex flex-col items-stretch gap-5 z-10">
         {/* Categories container */}
         <DashboardContext.Provider value={dashboardContext}>
-          {envelopes.map((category, i) => {
-            return <Envelope key={i} {...category} activeTab={activeTab} />;
-          })}
+          {incomeEnvelopes.map((envelope) => (
+            <IncomeEnvelope
+              key={envelope._id}
+              {...envelope}
+              activeTab={activeTab}
+            />
+          ))}
+          {envelopes.map((envelope) => (
+            <Envelope key={envelope._id} {...envelope} activeTab={activeTab} />
+          ))}
           <AddEnvelopeButton />
         </DashboardContext.Provider>
       </div>
