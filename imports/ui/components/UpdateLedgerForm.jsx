@@ -72,6 +72,9 @@ export function UpdateLedgerForm({ toggleForm, ledger }) {
           onKeyDown={handleKeyDown}
           // onFocus get clear the timeout that is stored in state
           onFocus={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log("stopped");
             if (timeoutId) clearTimeout(timeoutId);
             e.target.setSelectionRange(0, 999);
           }}
@@ -91,6 +94,8 @@ export function UpdateLedgerForm({ toggleForm, ledger }) {
           onKeyDown={handleKeyDown}
           // onFocus get clear the timeout that is stored in state
           onFocus={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
             if (timeoutId) clearTimeout(timeoutId);
             e.target.setSelectionRange(0, 999);
           }}

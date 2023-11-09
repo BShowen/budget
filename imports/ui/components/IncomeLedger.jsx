@@ -1,6 +1,7 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
+import { Link } from "react-router-dom";
 
 // Utils
 import { cap } from "../util/cap";
@@ -14,13 +15,8 @@ import { UpdateLedgerForm } from "./UpdateLedgerForm";
 // Collections
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 
-// Context
-import { DashboardContext } from "../pages/Dashboard";
-
 export const IncomeLedger = ({ ledger, activeTab }) => {
   const [isFormActive, setFormActive] = useState(false);
-  // Open open/close ledger transactions
-  const { toggleLedger } = useContext(DashboardContext);
   const { expense, income } = useTracker(() => {
     if (!Meteor.userId()) return {};
     // Get the transactions in the ledger.
@@ -65,29 +61,31 @@ export const IncomeLedger = ({ ledger, activeTab }) => {
 
   const displayBalance = calculateDisplayBalance();
   return (
-    <div
-      onClick={() => !isFormActive && toggleLedger({ ledgerId: ledger._id })}
-      className="flex flex-row justify-between items-center px-2 bg-slate-100 rounded-md py-1 lg:hover:cursor-pointer h-8 relative z-0"
-    >
-      {isFormActive ? (
-        <UpdateLedgerForm
-          toggleForm={() => setFormActive(false)}
-          ledger={ledger}
-        />
-      ) : (
-        <>
-          <h2 className="font-semibold z-20">{cap(ledger.name)}</h2>
-          <h2
-            onClick={activateForm}
-            className={`font-normal z-20 ${
-              displayBalance < 0 ? "text-rose-500" : ""
-            }`}
-          >
-            {toDollars(displayBalance)}
-          </h2>
-        </>
-      )}
-      <Progress percent={calculateProgress()} />
+    <div className="w-full h-8 px-2 py-1  relative z-0 flex flex-row items-center bg-slate-100 rounded-md lg:hover:cursor-pointer">
+      <Link
+        to={`/ledger/${ledger._id}/transactions`}
+        className="w-full h-full flex flex-row justify-between items-center"
+      >
+        {isFormActive ? (
+          <UpdateLedgerForm
+            toggleForm={() => setFormActive(false)}
+            ledger={ledger}
+          />
+        ) : (
+          <>
+            <h2 className="font-semibold z-20">{cap(ledger.name)}</h2>
+            <h2
+              onClick={activateForm}
+              className={`font-normal z-20 ${
+                displayBalance < 0 ? "text-rose-500" : ""
+              }`}
+            >
+              {toDollars(displayBalance)}
+            </h2>
+          </>
+        )}
+        <Progress percent={calculateProgress()} />
+      </Link>
     </div>
   );
 };

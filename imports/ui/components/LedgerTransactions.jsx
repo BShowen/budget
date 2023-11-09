@@ -1,6 +1,7 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
+import { useParams, Link, useNavigate } from "react-router-dom";
 
 // Collections
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
@@ -8,7 +9,6 @@ import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
 import { TagCollection } from "../../api/Tag/TagCollection";
 
 // Components
-import { Modal } from "./Modal";
 import {
   CircularProgressbarWithChildren,
   buildStyles,
@@ -21,9 +21,6 @@ import { reduceTransactions } from "../util/reduceTransactions";
 import { toDollars } from "../util/toDollars";
 import { dates } from "../util/dates";
 
-// Context
-import { DashboardContext } from "../pages/Dashboard";
-
 // Icons
 import { IoIosArrowBack } from "react-icons/io";
 import { HiMinus, HiPlus } from "react-icons/hi";
@@ -31,9 +28,11 @@ import { BiDollar, BiCheck, BiX } from "react-icons/bi";
 import { TfiAngleDown, TfiAngleUp } from "react-icons/tfi";
 import { BsFillPlusCircleFill } from "react-icons/bs";
 
-export const LedgerTransactions = ({ isOpen, onClose, ledgerId }) => {
+export const LedgerTransactions = () => {
+  // UseParams to get ledgerId
+  const { ledgerId } = useParams();
   const { transactionList, spent } = useTracker(() => {
-    if (!Meteor.userId() || !isOpen) return {};
+    if (!Meteor.userId()) return {};
     const transactionList = TransactionCollection.find({
       ledgerId: ledgerId,
     }).fetch();
@@ -75,35 +74,31 @@ export const LedgerTransactions = ({ isOpen, onClose, ledgerId }) => {
     }
   };
 
-  if (!isOpen) return null;
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <div className="overflow-scroll bg-slate-100 w-full">
-        <Header spent={spent} isOpen={isOpen} ledgerId={ledgerId} />
-        <div className="bg-slate-100 flex flex-col gap-3 p-2">
-          <TagSelector
-            tagIdList={tagIdList}
-            toggleTag={toggleTag}
-            activeFilterTags={activeTags}
-          />
-          <TransactionList
-            transactionList={transactionList}
-            ledgerId={ledgerId}
-            activeTags={activeTags}
-          />
-          <DeleteTransaction ledgerId={ledgerId} />
-        </div>
+    <div className="bg-slate-100 w-full">
+      <Header spent={spent} ledgerId={ledgerId} />
+      <div className="bg-slate-100 flex flex-col gap-3 p-2">
+        <TagSelector
+          tagIdList={tagIdList}
+          toggleTag={toggleTag}
+          activeFilterTags={activeTags}
+        />
+        <TransactionList
+          transactionList={transactionList}
+          ledgerId={ledgerId}
+          activeTags={activeTags}
+        />
+        <DeleteLedger ledgerId={ledgerId} />
       </div>
-
       <AddTransactionsCircle ledgerId={ledgerId} />
-    </Modal>
+    </div>
   );
 };
 
-function Header({ ledgerId, spent, isOpen }) {
-  const { toggleLedger } = useContext(DashboardContext);
+function Header({ ledgerId, spent }) {
+  const navigate = useNavigate();
   const { ledger } = useTracker(() => {
-    if (!Meteor.userId() || !isOpen) return {};
+    if (!Meteor.userId()) return {};
     const ledger = LedgerCollection.findOne({ _id: ledgerId });
     return { ledger };
   });
@@ -141,9 +136,7 @@ function Header({ ledgerId, spent, isOpen }) {
     <div className="bg-sky-500 text-white px-1 pt-3 pb-8 z-50 sticky top-0">
       <div
         className="text-left text-xl font-bold pb-3 px-2 flex flex-row items-center justify-start"
-        onClick={() => {
-          toggleLedger({ ledger: {} });
-        }}
+        onClick={() => navigate(-1)}
       >
         <IoIosArrowBack className="text-2xl" /> Back
       </div>
@@ -253,7 +246,6 @@ function TagSelector({ tagIdList, toggleTag, activeFilterTags }) {
 }
 
 function TransactionList({ transactionList, ledgerId, activeTags }) {
-  const { toggleForm } = useContext(DashboardContext);
   return (
     <div className="bg-white shadow-md py-0 pb-2 rounded-lg px-3">
       <div className="w-full flex flex-row justify-between items-center py-2 px-1 h-12">
@@ -263,12 +255,12 @@ function TransactionList({ transactionList, ledgerId, activeTags }) {
           </h2>
         </div>
         <div>
-          <a
-            onClick={() => toggleForm({ ledgerId })}
+          <Link
+            to={`/ledger/${ledgerId}/transactions/new`}
             className="text-sky-500 font-bold"
           >
             Add transaction
-          </a>
+          </Link>
         </div>
       </div>
       {transactionList
@@ -322,15 +314,15 @@ function TransactionList({ transactionList, ledgerId, activeTags }) {
   );
 }
 
-function DeleteTransaction({ ledgerId }) {
-  const { toggleLedger } = useContext(DashboardContext);
+function DeleteLedger({ ledgerId }) {
+  const navigate = useNavigate();
   const deleteLedger = () => {
     const confirmation = confirm(
       "Are you sure you want to delete this ledger?"
     );
     if (confirmation) {
       Meteor.call("ledger.deleteLedger", { ledgerId });
-      toggleLedger({ ledgerId });
+      navigate("/");
     }
   };
   return (
@@ -346,13 +338,14 @@ function DeleteTransaction({ ledgerId }) {
 }
 
 function AddTransactionsCircle({ ledgerId }) {
-  const { toggleForm } = useContext(DashboardContext);
   return (
-    <div
-      className="fixed bottom-4 right-4 w-14 h-14 bg-white rounded-full flex flex-row justify-center items-center z-20"
-      onClick={() => toggleForm({ ledgerId })}
-    >
-      <BsFillPlusCircleFill className="text-sky-700 w-full h-full" />
+    <div className="fixed bottom-4 right-4 w-14 h-14 bg-white rounded-full flex flex-row justify-center items-center z-20">
+      <Link
+        className="w-full h-full"
+        to={`/ledger/${ledgerId}/transactions/new`}
+      >
+        <BsFillPlusCircleFill className="text-sky-700 w-full h-full" />
+      </Link>
     </div>
   );
 }

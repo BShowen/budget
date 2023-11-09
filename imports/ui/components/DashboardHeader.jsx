@@ -9,7 +9,7 @@ import { DashboardButtonGroup } from "./DashboardButtonGroup";
 import { BudgetDate } from "./BudgetDate";
 
 // Context
-import { RootContext } from "../pages/Splash";
+import { RootContext } from "../pages/AppData";
 
 export function DashboardHeader({ setActiveTab, activeTab, date }) {
   const { setDate } = useContext(RootContext);

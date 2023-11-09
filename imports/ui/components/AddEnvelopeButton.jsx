@@ -1,10 +1,7 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Meteor } from "meteor/meteor";
 
-// Context
-import { DashboardContext } from "../pages/Dashboard";
-export const AddEnvelopeButton = () => {
-  const { budgetId } = useContext(DashboardContext);
+export const AddEnvelopeButton = ({ budgetId }) => {
   const handleClick = () => {
     Meteor.call("envelope.createEnvelope", { budgetId });
   };

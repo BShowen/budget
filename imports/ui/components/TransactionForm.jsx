@@ -1,17 +1,12 @@
 import { Meteor } from "meteor/meteor";
 import { Random } from "meteor/random";
 import { useTracker } from "meteor/react-meteor-data";
-import React, { useContext, useEffect, useRef, useState } from "react";
-
-// Components
-import { Modal } from "./Modal";
+import React, { useEffect, useRef, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
 // Collections
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
 import { TagCollection } from "../../api/Tag/TagCollection";
-
-// Context
-import { DashboardContext } from "../pages/Dashboard";
 
 // Utils
 import { cap } from ".././util/cap";
@@ -23,10 +18,10 @@ import { CgHashtag } from "react-icons/cg";
 import { TfiAngleDown, TfiAngleUp } from "react-icons/tfi";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 
-export function TransactionForm({ isOpen, onClose, defaultLedgerSelection }) {
-  const { toggleForm } = useContext(DashboardContext);
+export function TransactionForm() {
+  const navigate = useNavigate();
+  const { ledgerId } = useParams();
   const { ledgers } = useTracker(() => {
-    // const ledgers = LedgerCollection.find({ budgetId: budgetId }).fetch();
     const ledgers = LedgerCollection.find().fetch();
     return { ledgers };
   });
@@ -53,142 +48,138 @@ export function TransactionForm({ isOpen, onClose, defaultLedgerSelection }) {
     };
     try {
       Meteor.call("transaction.createTransaction", formDataObject);
+      navigate(-1);
     } catch (error) {
       console.log("Error ----> ", error);
     }
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <div className="overscroll-none bg-slate-100 h-full w-full">
-        <div className="w-full bg-sky-500 p-2 flex flex-col justify-start">
-          <div className="w-full px-1 py-2 grid grid-cols-12 font-bold text-center">
-            <h2 className="col-start-4 col-end-10">Add transaction</h2>
+    <div className="bg-slate-100 h-full w-full">
+      <div className="w-full bg-sky-500 p-2 flex flex-col justify-start">
+        <div className="w-full px-1 py-2 grid grid-cols-12 font-bold text-center">
+          <h2 className="col-start-4 col-end-10">Add transaction</h2>
+          <h2
+            className="col-start-10 col-end-13 text-white lg:hover:cursor-pointer"
+            onClick={() => navigate(-1)}
+          >
+            Cancel
+          </h2>
+        </div>
+        <ButtonGroup active={active} setActiveTab={setActiveTab} />
+      </div>
+      <div className="bg-slate-100 p-3">
+        <form className="flex flex-col justify-start gap-2">
+          <InputGroup>
+            <InputContainer>
+              <label className="w-1/2" htmlFor="date">
+                <p className="font-semibold">Date</p>
+              </label>
+              <input
+                type="date"
+                name="createdAt"
+                defaultValue={dates.format({ forHtml: true })}
+                required
+                id="date"
+                className="px-0 w-1/2 focus:ring-0 border-0"
+              />
+            </InputContainer>
+            <InputContainer>
+              <label className="w-1/2" htmlFor="amount">
+                <p className="font-semibold">Amount</p>
+              </label>
+              <input
+                type="text"
+                inputMode="decimal"
+                pattern="[0-9]*"
+                placeholder="$0.00"
+                required
+                name="amount"
+                id="amount"
+                value={formData.amount || ""}
+                onInput={(e) => {
+                  const name = e.target.name;
+                  const value = e.target.value;
+                  if (name === "amount") {
+                    setFormData((prev) => ({
+                      ...prev,
+                      [name]: formatDollarAmount(value),
+                    }));
+                  } else {
+                    setFormData((prev) => ({
+                      ...prev,
+                      [name]: value,
+                    }));
+                  }
+                }}
+                min={0}
+                className="px-0 w-1/2 text-end focus:ring-0 border-0"
+              />
+            </InputContainer>
+            <InputContainer options={{ border: false }}>
+              <label className="w-1/2" htmlFor="merchant">
+                <p className="font-semibold">
+                  {active === "expense" ? "Merchant" : "Source"}
+                </p>
+              </label>
+              <input
+                type="text"
+                placeholder="Name"
+                required
+                id="merchant"
+                name="merchant"
+                className="px-0 w-1/2 text-end focus:ring-0 border-0"
+              />
+            </InputContainer>
+          </InputGroup>
+
+          <InputGroup>
+            <InputContainer options={{ border: false }}>
+              <TagSelection />
+            </InputContainer>
+          </InputGroup>
+
+          <InputGroup>
+            <InputContainer options={{ border: false }}>
+              <select
+                className="px-0 w-full focus:ring-0 border-0"
+                name="ledgerId"
+                defaultValue={ledgerId}
+              >
+                {ledgers
+                  .sort((a, b) => {
+                    return a.name.charCodeAt(0) - b.name.charCodeAt(0);
+                  })
+                  .map((ledger) => (
+                    <option key={ledger._id} value={ledger._id}>
+                      {ledger.name}
+                    </option>
+                  ))}
+              </select>
+            </InputContainer>
+          </InputGroup>
+
+          <InputGroup>
+            <InputContainer options={{ border: false }}>
+              <input
+                type="text"
+                placeholder="Add a note"
+                name="note"
+                className="px-0 text-left w-full focus:ring-0 border-0"
+              />
+            </InputContainer>
+          </InputGroup>
+          <div className="flex flex-row justify-center items-center w-full p-2 pb-14">
             <h2
-              className="col-start-10 col-end-13 text-white"
-              onClick={toggleForm}
+              onClick={submit}
+              className="inline-block text-center text-green-500 font-bold text-lg"
             >
-              Cancel
+              Log {active}
             </h2>
           </div>
-          <ButtonGroup active={active} setActiveTab={setActiveTab} />
-        </div>
-        <div className="bg-slate-100 p-3">
-          <form className="flex flex-col justify-start gap-2">
-            <InputGroup>
-              <InputContainer>
-                <label className="w-1/2" htmlFor="date">
-                  <p className="font-semibold">Date</p>
-                </label>
-                <input
-                  type="date"
-                  name="createdAt"
-                  defaultValue={dates.format({ forHtml: true })}
-                  required
-                  id="date"
-                  className="px-0 w-1/2 focus:ring-0 border-0"
-                />
-              </InputContainer>
-              <InputContainer>
-                <label className="w-1/2" htmlFor="amount">
-                  <p className="font-semibold">Amount</p>
-                </label>
-                <input
-                  type="text"
-                  inputMode="decimal"
-                  pattern="[0-9]*"
-                  placeholder="$0.00"
-                  required
-                  name="amount"
-                  id="amount"
-                  value={formData.amount || ""}
-                  onInput={(e) => {
-                    const name = e.target.name;
-                    const value = e.target.value;
-                    if (name === "amount") {
-                      setFormData((prev) => ({
-                        ...prev,
-                        [name]: formatDollarAmount(value),
-                      }));
-                    } else {
-                      setFormData((prev) => ({
-                        ...prev,
-                        [name]: value,
-                      }));
-                    }
-                  }}
-                  min={0}
-                  className="px-0 w-1/2 text-end focus:ring-0 border-0"
-                />
-              </InputContainer>
-              <InputContainer options={{ border: false }}>
-                <label className="w-1/2" htmlFor="merchant">
-                  <p className="font-semibold">
-                    {active === "expense" ? "Merchant" : "Source"}
-                  </p>
-                </label>
-                <input
-                  type="text"
-                  placeholder="Name"
-                  required
-                  id="merchant"
-                  name="merchant"
-                  className="px-0 w-1/2 text-end focus:ring-0 border-0"
-                />
-              </InputContainer>
-            </InputGroup>
-
-            <InputGroup>
-              <InputContainer options={{ border: false }}>
-                <TagSelection isOpen={isOpen} />
-              </InputContainer>
-            </InputGroup>
-
-            <InputGroup>
-              <InputContainer options={{ border: false }}>
-                <select
-                  className="px-0 w-full focus:ring-0 border-0"
-                  name="ledgerId"
-                  defaultValue={defaultLedgerSelection}
-                >
-                  {ledgers
-                    .sort((a, b) => {
-                      return a.name.charCodeAt(0) - b.name.charCodeAt(0);
-                    })
-                    .map((ledger) => (
-                      <option key={ledger._id} value={ledger._id}>
-                        {ledger.name}
-                      </option>
-                    ))}
-                </select>
-              </InputContainer>
-            </InputGroup>
-
-            <InputGroup>
-              <InputContainer options={{ border: false }}>
-                <input
-                  type="text"
-                  placeholder="Add a note"
-                  name="note"
-                  className="px-0 text-left w-full focus:ring-0 border-0"
-                />
-              </InputContainer>
-            </InputGroup>
-            <div className="flex flex-row justify-center items-center w-full p-2 pb-14">
-              <h2
-                onClick={(e) => {
-                  submit(e);
-                  toggleForm();
-                }}
-                className="inline-block text-center text-green-500 font-bold text-lg"
-              >
-                Log {active}
-              </h2>
-            </div>
-          </form>
-        </div>
+        </form>
       </div>
-    </Modal>
+    </div>
   );
 }
 
@@ -246,9 +237,9 @@ function Slider({ index }) {
   );
 }
 
-function TagSelection({ isOpen }) {
+function TagSelection() {
   const { tags } = useTracker(() => {
-    if (!Meteor.userId() || !isOpen) return {};
+    if (!Meteor.userId()) return {};
     const tags = TagCollection.find(
       {
         accountId: Meteor.user().accountId,

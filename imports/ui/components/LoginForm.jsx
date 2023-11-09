@@ -1,14 +1,10 @@
 import React, { useState } from "react";
 import { Meteor } from "meteor/meteor";
-
-// The root component for this app (Splash.jsx) is using Meteor.userID() to
-// determine if a user is logged in or not. Because Meteor.userID() is reactive
-// I don't have to do anything in this component after a successful login. This
-// is why you don't see a useEffect, or something similar, that checks for a
-// response and then performs an action/redirect based on that response.
-// When Meteor.userID() gets updated it will trigger a re-render in Splash.jsx
-// and the user will be logged in so this component gets unmounted and the app
-// gets mounted.
+import { redirect } from "react-router-dom";
+export const loginFormLoader = () => {
+  // If user is login, redirect to budget.
+  return Meteor.userId() ? redirect("/") : null;
+};
 export function LoginForm() {
   const [errorMessage, setErrorMessage] = useState("");
   const [formValues, setFormValues] = useState({
