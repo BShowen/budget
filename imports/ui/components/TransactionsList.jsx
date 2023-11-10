@@ -89,7 +89,7 @@ export const TransactionsList = () => {
         />
         <TransactionList
           transactionList={transactionList}
-          ledgerId={ledger._id}
+          ledger={ledger}
           activeTags={activeTags}
         />
         <DeleteLedger ledgerId={ledger._id} />
@@ -328,21 +328,21 @@ function TagSelector({ tagIdList, toggleTag, activeFilterTags }) {
   );
 }
 
-function TransactionList({ transactionList, ledgerId, activeTags }) {
+function TransactionList({ transactionList, ledger, activeTags }) {
   return (
     <div className="bg-white shadow-md py-0 pb-2 rounded-lg px-3">
       <div className="w-full flex flex-row justify-between items-center py-2 px-1 h-12">
         <div>
           <h2 className="font-bold text-gray-400 text-md">
-            Transactions this month
+            {ledger.isIncomeLedger ?"Income this month" :"Transactions this month"}
           </h2>
         </div>
         <div>
           <Link
-            to={`/ledger/${ledgerId}/transactions/new`}
+            to={`/ledger/${ledger._id}/transactions/new`}
             className="text-sky-500 font-bold"
           >
-            Add transaction
+            {ledger.isIncomeLedger ? "Add income" : "Add transaction"}
           </Link>
         </div>
       </div>

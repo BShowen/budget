@@ -25,7 +25,11 @@ export function TransactionForm() {
     const ledgers = LedgerCollection.find().fetch();
     return { ledgers };
   });
-  const [active, setActiveTab] = useState("expense"); //expense or income
+  const ledger = ledgers.find((ledger) => ledger._id === ledgerId);
+
+  const [active, setActiveTab] = useState(
+    ledger.isIncomeLedger ? "income" : "expense"
+  ); //expense or income
   const [formData, setFormData] = useState({});
 
   function submit(e) {
@@ -58,7 +62,9 @@ export function TransactionForm() {
     <div className="bg-slate-100 h-full w-full">
       <div className="w-full bg-sky-500 p-2 flex flex-col justify-start">
         <div className="w-full px-1 py-2 grid grid-cols-12 font-bold text-center">
-          <h2 className="col-start-4 col-end-10">Add transaction</h2>
+          <h2 className="col-start-4 col-end-10">
+            {ledger.isIncomeLedger ? "Add income" : "Add transaction"}
+          </h2>
           <h2
             className="col-start-10 col-end-13 text-white lg:hover:cursor-pointer"
             onClick={() => navigate(-1)}
@@ -66,7 +72,12 @@ export function TransactionForm() {
             Cancel
           </h2>
         </div>
-        <ButtonGroup active={active} setActiveTab={setActiveTab} />
+
+        <ButtonGroup
+          active={active}
+          setActiveTab={setActiveTab}
+          disableChange={ledger.isIncomeLedger}
+        />
       </div>
       <div className="bg-slate-100 p-3">
         <form className="flex flex-col justify-start gap-2">
@@ -204,17 +215,22 @@ function InputGroup({ children }) {
   );
 }
 
-function ButtonGroup({ active, setActiveTab }) {
+function ButtonGroup({ active, setActiveTab, disableChange }) {
   const slugList = ["expense", "income"];
-  const buttonList = slugList.map((btnText) => (
-    <div
-      key={btnText}
-      onClick={setActiveTab.bind(null, btnText)}
-      className="basis-0 grow text-white font-bold flex flex-row justify-center items-center md:hover:cursor-pointer"
-    >
-      <h2>{cap(btnText)}</h2>
-    </div>
-  ));
+  const buttonList = slugList.map((btnText) => {
+    const isDisabled = disableChange ? btnText != active : false;
+    return (
+      <button
+        key={btnText}
+        onClick={isDisabled ? () => {} : setActiveTab.bind(null, btnText)}
+        className={`basis-0 grow text-white font-bold flex flex-row justify-center items-center ${
+          isDisabled ? "md:hover:cursor-not-allowed" : "md:hover:cursor-pointer"
+        }`}
+      >
+        <h2>{cap(btnText)}</h2>
+      </button>
+    );
+  });
 
   const index = slugList.indexOf(active);
 
