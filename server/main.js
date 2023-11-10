@@ -80,6 +80,16 @@ Meteor.startup(() => {
       isIncomeEnvelope: true,
       name: "income",
     });
+
+    const incomeLedger = LedgerCollection.insert({
+      accountId,
+      budgetId: budgetId,
+      envelopeId: incomeEnvelope,
+      name: "Your job",
+      startingBalance: 9500,
+      isIncomeLedger: true,
+    });
+
     const [env1, env2, env3, env4] = [
       // Food envelope
       EnvelopeCollection.insert({

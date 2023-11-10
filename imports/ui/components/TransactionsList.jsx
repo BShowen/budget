@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 // Collections
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
@@ -28,13 +28,13 @@ import { BiDollar, BiCheck, BiX } from "react-icons/bi";
 import { TfiAngleDown, TfiAngleUp } from "react-icons/tfi";
 import { BsFillPlusCircleFill } from "react-icons/bs";
 
-export const LedgerTransactions = () => {
-  // UseParams to get ledgerId
+export const TransactionsList = () => {
   const { ledgerId } = useParams();
+  const ledger = useTracker(() => LedgerCollection.findOne({ _id: ledgerId }));
   const { transactionList, spent } = useTracker(() => {
     if (!Meteor.userId()) return {};
     const transactionList = TransactionCollection.find({
-      ledgerId: ledgerId,
+      ledgerId: ledger._id,
     }).fetch();
     // income and expense for this ledger
     const { income, expense } = reduceTransactions({
@@ -76,7 +76,11 @@ export const LedgerTransactions = () => {
 
   return (
     <div className="bg-slate-100 w-full">
-      <Header spent={spent} ledgerId={ledgerId} />
+      {ledger.isIncomeLedger ? (
+        <IncomeHeader ledger={ledger} transactionList={transactionList} />
+      ) : (
+        <Header spent={spent} ledger={ledger} />
+      )}
       <div className="bg-slate-100 flex flex-col gap-3 p-2">
         <TagSelector
           tagIdList={tagIdList}
@@ -85,23 +89,18 @@ export const LedgerTransactions = () => {
         />
         <TransactionList
           transactionList={transactionList}
-          ledgerId={ledgerId}
+          ledgerId={ledger._id}
           activeTags={activeTags}
         />
-        <DeleteLedger ledgerId={ledgerId} />
+        <DeleteLedger ledgerId={ledger._id} />
       </div>
-      <AddTransactionsCircle ledgerId={ledgerId} />
+      <AddTransactionsCircle ledgerId={ledger._id} />
     </div>
   );
 };
 
-function Header({ ledgerId, spent }) {
+function Header({ ledger, spent }) {
   const navigate = useNavigate();
-  const { ledger } = useTracker(() => {
-    if (!Meteor.userId()) return {};
-    const ledger = LedgerCollection.findOne({ _id: ledgerId });
-    return { ledger };
-  });
   const [percentSpent, setPercentSpent] = useState(0);
 
   useEffect(() => {
@@ -168,6 +167,90 @@ function Header({ ledgerId, spent }) {
                 backgroundColor: "#0387C5",
                 pathColor:
                   spent > ledger.startingBalance ? "#fb7185" : "#34d399",
+                trailColor: "transparent",
+              })}
+            >
+              {logo}
+            </CircularProgressbarWithChildren>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function IncomeHeader({ ledger, transactionList }) {
+  const navigate = useNavigate();
+  const [percentReceived, setPercentReceived] = useState(0);
+
+  const incomeReceived = transactionList.reduce((total, transaction) => {
+    return total + transaction.amount;
+  }, 0);
+  const expectedIncome = ledger.startingBalance;
+
+  useEffect(() => {
+    // After component mounts, update the percentReceived so it animates from zero
+    // to percentReceived.
+
+    // If expectedIncome is zero then percentReceived should always be 100%.
+    // This is to avoid dividing by zero, because if user has received money but
+    // not set an expected amount then received / expected is dividing by zero.
+    const percentReceived =
+      ledger.startingBalance == 0
+        ? 100
+        : (incomeReceived / expectedIncome) * 100;
+    setPercentReceived(percentReceived);
+  }, [ledger]);
+
+  const remaining = expectedIncome - incomeReceived;
+  const logo =
+    remaining == 0 ? (
+      <BiCheck className="text-4xl text-emerald-400" />
+    ) : remaining < 0 ? (
+      <BiX className="text-5xl text-rose-400" />
+    ) : (
+      <BiDollar
+        className={`text-3xl ${
+          incomeReceived > expectedIncome ? "text-rose-400" : "text-emerald-400"
+        }`}
+      />
+    );
+  return (
+    <div className="bg-sky-500 text-white px-1 pt-3 pb-8 z-50 sticky top-0">
+      <div
+        className="text-left text-xl font-bold pb-3 px-2 flex flex-row items-center justify-start"
+        onClick={() => navigate(-1)}
+      >
+        <IoIosArrowBack className="text-2xl" /> Back
+      </div>
+      <div className="bg-sky-700/50 grid grid-cols-12 rounded-lg w-11/12 mx-auto p-1 px-2 h-14 relative">
+        <div className="col-start-1 col-span-6 h-fit text-start">
+          <h2 className="text-xl font-bold">{cap(ledger.name)}</h2>
+          {/* prettier-ignore */}
+          <p className="text-xs font-semibold">
+        {`${toDollars(incomeReceived)} received of ${toDollars(expectedIncome)}`}
+      </p>
+        </div>
+        <div className="col-start-8 col-span-3 text-end h-fit">
+          <p className="text-xs font-semibold">Income left to receive</p>
+          <p
+            className={`text-lg font-semibold ${
+              incomeReceived > expectedIncome && "text-rose-400"
+            }`}
+          >
+            {toDollars(remaining)}
+          </p>
+        </div>
+        <div className="col-start-11 col-span-2 absolute -right-6 -top-2">
+          <div className="w-[70px] h-[70px] rounded-full ">
+            <CircularProgressbarWithChildren
+              value={percentReceived}
+              background
+              backgroundPadding={6}
+              styles={buildStyles({
+                backgroundColor: "#0387C5",
+                pathColor:
+                  incomeReceived > expectedIncome ? "#fb7185" : "#34d399",
                 trailColor: "transparent",
               })}
             >

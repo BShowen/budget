@@ -12,7 +12,7 @@ import { toDollars } from "../util/toDollars";
 import { reduceTransactions } from "../util/reduceTransactions";
 
 // Components
-import { IncomeLedger } from "./IncomeLedger";
+import { Ledger } from "./Ledger";
 import { NewLedgerForm } from "./NewLedgerForm";
 
 export const IncomeEnvelope = ({ _id, name, activeTab }) => {
@@ -82,7 +82,7 @@ function EnvelopeBody({ ledgers, activeTab }) {
   return (
     <div className="flex flex-col gap-2 z-20">
       {ledgers.map((ledger) => (
-        <IncomeLedger key={ledger._id} ledger={ledger} activeTab={activeTab} />
+        <Ledger key={ledger._id} ledger={ledger} activeTab={activeTab} />
       ))}
     </div>
   );

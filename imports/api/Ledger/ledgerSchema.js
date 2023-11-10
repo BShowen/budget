@@ -27,6 +27,10 @@ export const ledgerSchema = new SimpleSchema(
         return this.value ? Number.parseFloat(this.value) : defaultValue;
       },
     },
+    isIncomeLedger: {
+      type: Boolean,
+      required: false,
+    },
   },
   { clean: { mutate: true } }
 );

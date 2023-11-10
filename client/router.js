@@ -4,9 +4,11 @@ import { createBrowserRouter, redirect } from "react-router-dom";
 
 // Components
 import { LoginForm, loginFormLoader } from "../imports/ui/components/LoginForm";
-import { Dashboard } from "../imports/ui/pages/Dashboard";
-import { LedgerTransactions } from "../imports/ui/components/LedgerTransactions";
 import { TransactionForm } from "../imports/ui/components/TransactionForm";
+
+// Pages
+import { Dashboard } from "../imports/ui/pages/Dashboard";
+import { TransactionsList } from "../imports/ui/components/TransactionsList";
 
 const checkLoginStatus = () => {
   return Meteor.userId() ? null : redirect("/login");
@@ -23,7 +25,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/ledger/:ledgerId/transactions",
-        element: <LedgerTransactions />,
+        element: <TransactionsList />,
       },
       {
         path: "/ledger/:ledgerId/transactions/new",
