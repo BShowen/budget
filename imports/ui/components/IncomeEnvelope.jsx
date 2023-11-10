@@ -42,7 +42,7 @@ export const IncomeEnvelope = ({ _id, name, activeTab }) => {
   const remainingToReceive = totalIncomeExpected - totalIncomeReceived;
   const displayBalance =
     activeTab === "spent"
-      ? 0
+      ? totalIncomeReceived
       : activeTab === "remaining"
       ? remainingToReceive
       : totalIncomeExpected;

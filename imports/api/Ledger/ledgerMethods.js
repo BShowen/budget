@@ -9,12 +9,12 @@ Meteor.methods({
     if (!this.userId) return;
 
     const accountId = Meteor.user().accountId;
-    const { budgetId } = EnvelopeCollection.findOne(
+    const { budgetId, isIncomeEnvelope } = EnvelopeCollection.findOne(
       { _id: input.envelopeId },
-      { fields: { budgetId: 1 } }
+      { fields: { budgetId: 1, isIncomeEnvelope: 1 } }
     );
 
-    input = { ...input, accountId, budgetId };
+    input = { ...input, accountId, budgetId, isIncomeLedger: isIncomeEnvelope };
 
     LedgerCollection.insert(input, (err) => {
       if (err && Meteor.isServer) {

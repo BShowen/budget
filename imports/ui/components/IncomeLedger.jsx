@@ -37,7 +37,7 @@ export const IncomeLedger = ({ ledger, activeTab }) => {
       case "spent":
         return incomeReceived;
       case "remaining":
-        return remainingToReceive;
+        return ledger.startingBalance > 0 ? remainingToReceive : 0;
     }
   };
 
