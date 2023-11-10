@@ -10,9 +10,7 @@ import { TransactionForm } from "../imports/ui/components/TransactionForm";
 import { Dashboard } from "../imports/ui/pages/Dashboard";
 import { TransactionsList } from "../imports/ui/components/TransactionsList";
 
-const checkLoginStatus = () => {
-  return Meteor.userId() ? null : redirect("/login");
-};
+const checkLoginStatus = () => (Meteor.userId() ? null : redirect("/login"));
 
 export const router = createBrowserRouter([
   {

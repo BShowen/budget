@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Meteor } from "meteor/meteor";
-import { redirect } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 export const loginFormLoader = () => {
   // If user is login, redirect to budget.
   return Meteor.userId() ? redirect("/") : null;
 };
 export function LoginForm() {
+  const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
   const [formValues, setFormValues] = useState({
     email: "",
@@ -26,6 +27,8 @@ export function LoginForm() {
       (error) => {
         if (error) {
           setErrorMessage(error?.reason || "");
+        } else {
+          navigate("/");
         }
       }
     );
