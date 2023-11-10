@@ -14,3 +14,15 @@
   -webkit-tap-highlight-color: transparent;
   box-sizing: border-box;
 }
+
+/* Fallback incase javascript doesn't set the height of --app-height variable */
+:root {
+  --app-height: 100%;
+}
+
+html,
+body,
+#layout {
+  max-width: 100vw;
+  min-height: var(--app-height);
+}

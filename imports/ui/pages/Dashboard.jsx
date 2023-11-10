@@ -48,8 +48,8 @@ export const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("planned"); // "planned", "spent", "remaining"
 
   return (
-    <div className="w-full pb-12 relative z-0">
-      <div className="fixed top-0 left-0 right-0 z-20 w-full lg:w-3/5 mx-auto">
+    <div className="w-full pb-12">
+      <div className="fixed top-0 left-0 right-0 z-50 w-full lg:w-3/5 mx-auto">
         <DashboardHeader
           setActiveTab={setActiveTab}
           activeTab={activeTab}
@@ -57,7 +57,7 @@ export const Dashboard = () => {
         />
       </div>
 
-      <div className="pt-32 pb-8 px-2 flex flex-col items-stretch gap-5 z-10">
+      <div className="pt-32 pb-8 px-2 flex flex-col items-stretch gap-5 z-0">
         {/* Categories container */}
 
         {incomeEnvelopes.map((envelope) => (
