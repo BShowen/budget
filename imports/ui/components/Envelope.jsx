@@ -13,7 +13,7 @@ import { toDollars } from "../util/toDollars";
 import { reduceTransactions } from "../util/reduceTransactions";
 
 // Components
-import { Ledger } from "./Ledger";
+import { CategoryLedger } from "./CategoryLedger";
 import { NewLedgerForm } from "./NewLedgerForm";
 
 export const Envelope = ({ _id, name, activeTab }) => {
@@ -103,7 +103,11 @@ function EnvelopeBody({ ledgers, activeTab }) {
   return (
     <div className="flex flex-col gap-2 z-20">
       {ledgers.map((ledger) => (
-        <Ledger key={ledger._id} ledger={ledger} activeTab={activeTab} />
+        <CategoryLedger
+          key={ledger._id}
+          ledger={ledger}
+          activeTab={activeTab}
+        />
       ))}
     </div>
   );

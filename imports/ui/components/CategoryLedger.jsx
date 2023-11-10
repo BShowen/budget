@@ -15,7 +15,7 @@ import { UpdateLedgerForm } from "./UpdateLedgerForm";
 // Collections
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 
-export const Ledger = ({ ledger, activeTab }) => {
+export const CategoryLedger = ({ ledger, activeTab }) => {
   const [isFormActive, setFormActive] = useState(false);
   const spent = useTracker(() => {
     if (!Meteor.userId()) return {};

@@ -12,7 +12,7 @@ import { toDollars } from "../util/toDollars";
 import { reduceTransactions } from "../util/reduceTransactions";
 
 // Components
-import { Ledger } from "./Ledger";
+import { IncomeLedger } from "./IncomeLedger";
 import { NewLedgerForm } from "./NewLedgerForm";
 
 export const IncomeEnvelope = ({ _id, name, activeTab }) => {
@@ -70,10 +70,11 @@ export const IncomeEnvelope = ({ _id, name, activeTab }) => {
 };
 
 function EnvelopeHeader({ name, activeTab }) {
+  const categoryName = activeTab === "spent" ? "received" : activeTab;
   return (
     <div className="flex flex-row justify-between p-1 px-2 h-8 rounded-md overflow-hidden items-center relative z-0 w-full">
       <h1 className="font-bold relative z-50">{cap(name)}</h1>
-      <h2 className="font-semibold relative z-50">{cap(activeTab)}</h2>
+      <h2 className="font-semibold relative z-50">{cap(categoryName)}</h2>
     </div>
   );
 }
@@ -82,7 +83,7 @@ function EnvelopeBody({ ledgers, activeTab }) {
   return (
     <div className="flex flex-col gap-2 z-20">
       {ledgers.map((ledger) => (
-        <Ledger key={ledger._id} ledger={ledger} activeTab={activeTab} />
+        <IncomeLedger key={ledger._id} ledger={ledger} activeTab={activeTab} />
       ))}
     </div>
   );
