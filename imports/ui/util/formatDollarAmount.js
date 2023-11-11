@@ -9,7 +9,7 @@ export function formatDollarAmount(value) {
     return value.slice(0, -1); // Return the input minus the bad value
   }
   // Remove decimals
-  value = value.split(".").join("");
+  value = value.toString().split(".").join("");
   // Remove leading zeros
   value = Number.parseInt(value);
   // Return the floating point number

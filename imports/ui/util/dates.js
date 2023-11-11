@@ -1,10 +1,10 @@
 // A simple module for formatting the dates used throughout the app.
 export const dates = (() => {
-  const date = new Date();
+  // const date = new Date();
 
   // Format a date to be used as the default value in an HTML form date input.
   // Returns YYYY-MM-DD
-  function forHtml() {
+  function forHtml(date) {
     const [month, day, year] = new Intl.DateTimeFormat("en-US", {
       year: "numeric",
       month: "2-digit",
@@ -34,8 +34,8 @@ export const dates = (() => {
     return date.toLocaleString("en-us", { month: "short", day: "numeric" });
   }
 
-  function format(date, args = {}) {
-    if (!(date instanceof Date)) {
+  function format(date, args) {
+    if (!(date instanceof Date) && args === undefined) {
       // If only the options object is provided
       args = date;
       date = undefined;
@@ -67,7 +67,7 @@ export const dates = (() => {
 
     switch (formatOption) {
       case "forHtml":
-        return forHtml();
+        return forHtml(date);
       case "forPageHeader":
         return forPageHeader(date);
       case "forTransaction":

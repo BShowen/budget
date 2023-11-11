@@ -1,12 +1,13 @@
 import { Meteor } from "meteor/meteor";
 import { Random } from "meteor/random";
 import { useTracker } from "meteor/react-meteor-data";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 // Collections
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
 import { TagCollection } from "../../api/Tag/TagCollection";
+import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 
 // Utils
 import { cap } from ".././util/cap";
@@ -14,62 +15,144 @@ import { dates } from "../util/dates";
 import { formatDollarAmount } from "../util/formatDollarAmount";
 
 // Icons
-import { CgHashtag } from "react-icons/cg";
-import { TfiAngleDown, TfiAngleUp } from "react-icons/tfi";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 
 export function TransactionForm() {
+  const formRef = useRef(null);
   const navigate = useNavigate();
-  const { ledgerId } = useParams();
+  const { ledgerId, transactionId } = useParams();
   const { ledgers } = useTracker(() => {
     const ledgers = LedgerCollection.find().fetch();
     return { ledgers };
   });
   const ledger = ledgers.find((ledger) => ledger._id === ledgerId);
-
-  const [active, setActiveTab] = useState(
-    ledger.isIncomeLedger ? "income" : "expense"
-  ); //expense or income
-  const [formData, setFormData] = useState({});
-
-  function submit(e) {
-    const formData = new FormData(e.target.parentElement.parentElement);
-    formData.set("createdAt", `${formData.get("createdAt")}T00:00:00`);
-    formData.set("type", active);
-
-    const ledgerId = formData.get("ledgerId");
-    const { budgetId, envelopeId } = ledgers.find(
-      (ledger) => ledger._id === ledgerId
+  const transaction = useTracker(() => {
+    if (!transactionId) return;
+    const transaction = TransactionCollection.findOne(
+      { _id: transactionId },
+      { fields: { accountId: 0 } }
     );
-    formData.set("budgetId", budgetId);
-    formData.set("envelopeId", envelopeId);
-    const tags = formData.getAll("tags");
-    const newTags = formData.getAll("newTags");
-    const formDataObject = {
-      ...Object.fromEntries(formData.entries()),
-      tags,
-      newTags,
+    return {
+      ...transaction,
+      createdAt: dates.format(transaction.createdAt, { forHtml: true }),
     };
+  });
+  const [active, setActiveTab] = useState(
+    ledger.isIncomeLedger
+      ? "income"
+      : (transaction && transaction.type) || "expense"
+  ); //expense or income
+  const [formData, setFormData] = useState(
+    transaction
+      ? {
+          ...transaction,
+          note: transaction?.note || "",
+          amount: transaction.amount.toLocaleString("en-US", {
+            style: "decimal",
+            minimumIntegerDigits: 1,
+            minimumFractionDigits: 2,
+          }),
+        }
+      : {
+          createdAt: dates.format(new Date(), { forHtml: true }),
+          type: "",
+          amount: "",
+          merchant: "",
+          ledgerId: ledgerId,
+          tags: "",
+          note: "",
+          newTags: "",
+        }
+  );
+
+  useEffect(() => {
+    function handleKeyDown(e) {
+      const key = e.key.toLowerCase();
+      if (key === "escape") {
+        // Close the form when the escape key is pressed
+        navigate(-1);
+      } else if (key === "enter") {
+        // Submit the form when the enter key is pressed
+        submit();
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [formData]);
+
+  function handleInputChange(e) {
+    const name = e.target.name;
+    const value = e.target.value;
+    switch (name) {
+      case "amount":
+        setFormData((prev) => ({
+          ...prev,
+          [name]: formatDollarAmount(value),
+        }));
+        break;
+      default:
+        setFormData((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+    }
+  }
+
+  function submit() {
+    const form = new FormData(formRef.current);
+    const tags = form.getAll("tags");
+    const newTags = form.getAll("newTags");
+    const { budgetId, envelopeId } = ledgers.find(
+      (ledger) => ledger._id === formData.ledgerId
+    );
     try {
-      Meteor.call("transaction.createTransaction", formDataObject);
-      navigate(-1);
+      // Set the correct date
+      const [year, month, day] = formData.createdAt.split("-");
+      const formattedDate = new Date(year, month - 1, day);
+      // navigate(-1);
+      const newTransaction = {
+        ...formData,
+        createdAt: formattedDate,
+        tags,
+        newTags,
+        budgetId,
+        envelopeId,
+        type: active,
+      };
+      if (formData._id) {
+        // update
+        Meteor.call("transaction.updateTransaction", newTransaction);
+      } else {
+        // create
+        Meteor.call("transaction.createTransaction", newTransaction);
+      }
     } catch (error) {
       console.log("Error ----> ", error);
     }
+  }
+
+  function setRange(e) {
+    e.target.setSelectionRange(0, 999);
   }
 
   return (
     <div className="bg-slate-100 h-full w-full">
       <div className="w-full bg-sky-500 p-2 flex flex-col justify-start">
         <div className="w-full px-1 py-2 grid grid-cols-12 font-bold text-center">
+          <h2
+            className="col-start-1 col-end-4 text-white lg:hover:cursor-pointer"
+            onClick={() => navigate(-1)}
+          >
+            Cancel
+          </h2>
           <h2 className="col-start-4 col-end-10">
             {ledger.isIncomeLedger ? "Add income" : "Add transaction"}
           </h2>
           <h2
             className="col-start-10 col-end-13 text-white lg:hover:cursor-pointer"
-            onClick={() => navigate(-1)}
+            onClick={submit}
           >
-            Cancel
+            Done
           </h2>
         </div>
 
@@ -80,7 +163,7 @@ export function TransactionForm() {
         />
       </div>
       <div className="bg-slate-100 p-3">
-        <form className="flex flex-col justify-start gap-2">
+        <form ref={formRef} className="flex flex-col justify-start gap-2">
           <InputGroup>
             <InputContainer>
               <label className="w-1/2" htmlFor="date">
@@ -89,7 +172,8 @@ export function TransactionForm() {
               <input
                 type="date"
                 name="createdAt"
-                defaultValue={dates.format({ forHtml: true })}
+                value={formData.createdAt}
+                onChange={handleInputChange}
                 required
                 id="date"
                 className="px-0 w-1/2 focus:ring-0 border-0"
@@ -100,6 +184,7 @@ export function TransactionForm() {
                 <p className="font-semibold">Amount</p>
               </label>
               <input
+                onFocus={setRange}
                 type="text"
                 inputMode="decimal"
                 pattern="[0-9]*"
@@ -107,22 +192,8 @@ export function TransactionForm() {
                 required
                 name="amount"
                 id="amount"
-                value={formData.amount || ""}
-                onInput={(e) => {
-                  const name = e.target.name;
-                  const value = e.target.value;
-                  if (name === "amount") {
-                    setFormData((prev) => ({
-                      ...prev,
-                      [name]: formatDollarAmount(value),
-                    }));
-                  } else {
-                    setFormData((prev) => ({
-                      ...prev,
-                      [name]: value,
-                    }));
-                  }
-                }}
+                value={formData.amount}
+                onInput={handleInputChange}
                 min={0}
                 className="px-0 w-1/2 text-end focus:ring-0 border-0"
               />
@@ -135,10 +206,13 @@ export function TransactionForm() {
               </label>
               <input
                 type="text"
+                onFocus={setRange}
                 placeholder="Name"
                 required
                 id="merchant"
                 name="merchant"
+                value={formData.merchant}
+                onInput={handleInputChange}
                 className="px-0 w-1/2 text-end focus:ring-0 border-0"
               />
             </InputContainer>
@@ -146,7 +220,11 @@ export function TransactionForm() {
 
           <InputGroup>
             <InputContainer options={{ border: false }}>
-              <TagSelection />
+              <TagSelection
+                preSelectedTags={
+                  transaction && transaction.tags ? transaction.tags : undefined
+                }
+              />
             </InputContainer>
           </InputGroup>
 
@@ -155,7 +233,8 @@ export function TransactionForm() {
               <select
                 className="px-0 w-full focus:ring-0 border-0"
                 name="ledgerId"
-                defaultValue={ledgerId}
+                value={formData.ledgerId}
+                onChange={handleInputChange}
               >
                 {ledgers
                   .sort((a, b) => {
@@ -175,19 +254,25 @@ export function TransactionForm() {
               <input
                 type="text"
                 placeholder="Add a note"
+                value={formData.note}
+                onInput={handleInputChange}
                 name="note"
                 className="px-0 text-left w-full focus:ring-0 border-0"
               />
             </InputContainer>
           </InputGroup>
-          <div className="flex flex-row justify-center items-center w-full p-2 pb-14">
-            <h2
-              onClick={submit}
-              className="inline-block text-center text-green-500 font-bold text-lg"
-            >
-              Log {active}
-            </h2>
-          </div>
+          {transaction && (
+            <div className="flex flex-row justify-center items-center w-full p-2 pb-14">
+              <h2
+                onClick={() => {
+                  console.log("Delete transaction");
+                }}
+                className="inline-block text-center text-xl font-bold text-rose-500 lg:hover:cursor-pointer lg:hover:text-rose-600 lg:hover:underline transition-all duration-150"
+              >
+                Delete transaction
+              </h2>
+            </div>
+          )}
         </form>
       </div>
     </div>
@@ -253,7 +338,7 @@ function Slider({ index }) {
   );
 }
 
-function TagSelection() {
+function TagSelection({ preSelectedTags }) {
   const { tags } = useTracker(() => {
     if (!Meteor.userId()) return {};
     const tags = TagCollection.find(
@@ -264,47 +349,28 @@ function TagSelection() {
     ).fetch();
     return { tags };
   });
-  const [expanded, setExpanded] = useState(false);
-  const toggleExpanded = () => {
-    setExpanded((prev) => !prev);
-  };
 
   return (
-    <div
-      className={`w-full flex flex-col gap-2 justify-start overflow-hidden lg:hover:cursor-pointer ${
-        expanded ? "h-auto" : "h-10"
-      }`}
-    >
-      <div
-        className="w-full flex flex-row justify-between items-center h-full"
-        onClick={toggleExpanded}
-      >
+    <div className="w-full flex flex-col gap-2 justify-start overflow-hidden lg:hover:cursor-pointer">
+      <div className="w-full flex flex-row justify-between items-center h-full">
         <div className="flex items-center">
-          <CgHashtag className="text-lg text-gray-700" />
           <p className="font-semibold">Tags</p>
         </div>
-        <div className="w-7 h-7 lg:hover:cursor-pointer flex flex-row justify-center items-center text-xl">
-          {expanded ? (
-            <TfiAngleUp className="text-inherit" />
-          ) : (
-            <TfiAngleDown className="text-inherit" />
-          )}
-        </div>
       </div>
-      {expanded && (
-        <div className="w-full flex flex-row flex-nowrap overflow-scroll gap-1 flex-start text-grey-700 mb-2 overscroll-contain scrollbar-hide">
-          <CreateTags />
-          {tags.map((tag) => (
-            <Tag key={tag._id} tag={tag} />
-          ))}
-        </div>
-      )}
+      <div className="w-full flex flex-row flex-nowrap overflow-scroll gap-1 flex-start text-grey-700 mb-2 overscroll-contain scrollbar-hide">
+        <CreateTags />
+        {tags.map((tag) => {
+          const isPreSelected =
+            preSelectedTags && preSelectedTags.includes(tag._id);
+          return <Tag key={tag._id} tag={tag} isChecked={isPreSelected} />;
+        })}
+      </div>
     </div>
   );
 }
 
-function Tag({ tag }) {
-  const [checked, setChecked] = useState(false);
+function Tag({ tag, isChecked }) {
+  const [checked, setChecked] = useState(isChecked || false);
   const toggleChecked = () => setChecked((prev) => !prev);
 
   return (

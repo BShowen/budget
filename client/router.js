@@ -29,6 +29,10 @@ export const router = createBrowserRouter([
         path: "/ledger/:ledgerId/transactions/new",
         element: <TransactionForm />,
       },
+      {
+        path: "/ledger/:ledgerId/transaction/:transactionId/edit",
+        element: <TransactionForm />,
+      },
     ],
   },
   {

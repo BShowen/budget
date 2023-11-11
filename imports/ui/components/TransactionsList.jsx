@@ -14,6 +14,7 @@ import {
   buildStyles,
 } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import { Transaction } from "./Transaction";
 
 // Utils
 import { cap } from "../util/cap";
@@ -23,7 +24,6 @@ import { dates } from "../util/dates";
 
 // Icons
 import { IoIosArrowBack } from "react-icons/io";
-import { HiMinus, HiPlus } from "react-icons/hi";
 import { BiDollar, BiCheck, BiX } from "react-icons/bi";
 import { TfiAngleDown, TfiAngleUp } from "react-icons/tfi";
 import { BsFillPlusCircleFill } from "react-icons/bs";
@@ -132,7 +132,7 @@ function Header({ ledger, spent }) {
       />
     );
   return (
-    <div className="bg-sky-500 text-white px-1 pt-3 pb-8 z-50 sticky top-0">
+    <div className="bg-sky-500 text-white px-1 pt-3 pb-8 z-50 sticky top-0  shadow-sm">
       <div
         className="text-left text-xl font-bold pb-3 px-2 flex flex-row items-center justify-start"
         onClick={() => navigate(-1)}
@@ -216,7 +216,7 @@ function IncomeHeader({ ledger, transactionList }) {
       />
     );
   return (
-    <div className="bg-sky-500 text-white px-1 pt-3 pb-8 z-50 sticky top-0">
+    <div className="bg-sky-500 text-white px-1 pt-3 pb-8 z-50 sticky top-0 shadow-sm">
       <div
         className="text-left text-xl font-bold pb-3 px-2 flex flex-row items-center justify-start"
         onClick={() => navigate(-1)}
@@ -334,7 +334,9 @@ function TransactionList({ transactionList, ledger, activeTags }) {
       <div className="w-full flex flex-row justify-between items-center py-2 px-1 h-12">
         <div>
           <h2 className="font-bold text-gray-400 text-md">
-            {ledger.isIncomeLedger ?"Income this month" :"Transactions this month"}
+            {ledger.isIncomeLedger
+              ? "Income this month"
+              : "Transactions this month"}
           </h2>
         </div>
         <div>
@@ -362,35 +364,13 @@ function TransactionList({ transactionList, ledger, activeTags }) {
             })
             .split(" ");
           return (
-            <div
+            <Transaction
               key={transaction._id}
-              className={`${border} border-slate-300 p-1 flex flex-row flex-nowrap items-center gap-2`}
-            >
-              <div className="basis-0 ">
-                <div className="border-4 rounded-full p-0 font-semibold text-gray-400 w-12 h-12 flex flex-col justify-center items-center">
-                  <p className="text-sm">{month}</p>
-                  <p className="text-xs">{day}</p>
-                </div>
-              </div>
-              <div className="basis-0 grow ps-1">
-                <p className="font-semibold text-gray-700 text-lg">
-                  {cap(transaction.merchant)}
-                </p>
-                <p className="text-sm text-gray-400 font-semibold">
-                  Logged by {cap(transaction.loggedBy.firstName)}
-                </p>
-              </div>
-              <div className="text-md text-slate-700 font-semibold flex flex-row items-center gap-1">
-                <span>
-                  {transaction.type === "expense" ? (
-                    <HiMinus className="text-red-500" />
-                  ) : (
-                    <HiPlus className="text-green-500" />
-                  )}
-                </span>
-                <p>{toDollars(transaction.amount)}</p>
-              </div>
-            </div>
+              ledgerId={ledger._id}
+              transactionId={transaction._id}
+              transaction={transaction}
+              options={{ border, month, day }}
+            />
           );
         })}
     </div>
