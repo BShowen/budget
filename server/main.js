@@ -47,16 +47,10 @@ Meteor.startup(() => {
     BudgetCollection.insert({
       accountId,
       createdAt: new Date(2023, 8, 1, 0, 0, 0, 0),
-      income: {
-        expected: 500,
-      },
     });
     BudgetCollection.insert({
       accountId,
       createdAt: new Date(2023, 7, 1, 0, 0, 0, 0),
-      income: {
-        expected: 700,
-      },
     });
 
     // Date received from the client
@@ -69,9 +63,6 @@ Meteor.startup(() => {
     const budgetId = BudgetCollection.insert({
       accountId,
       createdAt: clientDate,
-      income: {
-        expected: 1000.5,
-      },
     });
 
     const incomeEnvelope = EnvelopeCollection.insert({

@@ -1,10 +1,4 @@
-// A simple function for converting a number into a dollar amount.
-// 0 --> $0.00
-// 1 --> $1.00
-// 45 --> $45.00
-// 450 --> $450.00
-// 1.25 --> $1.25
-// 45.5 = $45.50
+// A simple function to convert a number into a USD formatted dollar amount.
 export function toDollars(number) {
   // prettier-ignore
   if (
@@ -13,11 +7,13 @@ export function toDollars(number) {
     number?.toString()?.trim()?.length == 0
   ) return "";
 
-  number = number.toString().trim();
+  return toUSD(number);
+}
 
-  if (number < 0) {
-    return `$(${Number.parseFloat(Math.abs(number)).toFixed(2)})`;
-  } else {
-    return `$${Number.parseFloat(number).toFixed(2)}`;
-  }
+function toUSD(number) {
+  number = Number.parseFloat(number.toString().trim());
+  return number.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+  });
 }

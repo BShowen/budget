@@ -21,52 +21,51 @@ export const Dashboard = () => {
     };
   });
 
-  const { envelopes, incomeEnvelopes } = useTracker(() => {
+  const { envelopes, incomeEnvelope } = useTracker(() => {
     if (!budget) {
-      return { envelopes: {} };
+      return { envelopes: [], incomeEnvelope: {} };
     }
     // Get the envelopes for this budget.
     const allEnvelopes = EnvelopeCollection.find({
       budgetId: budget._id,
     }).fetch();
 
-    const { envelopes, incomeEnvelopes } = allEnvelopes.reduce(
+    const { envelopes, incomeEnvelope } = allEnvelopes.reduce(
       (acc, curr) => {
         if (curr.isIncomeEnvelope) {
-          return { ...acc, incomeEnvelopes: [...acc.incomeEnvelopes, curr] };
+          return { ...acc, incomeEnvelope: { ...curr } };
         } else {
           return { ...acc, envelopes: [...acc.envelopes, curr] };
         }
       },
-      { envelopes: [], incomeEnvelopes: [] }
+      { envelopes: [], incomeEnvelope: {} }
     );
     return {
       envelopes,
-      incomeEnvelopes,
+      incomeEnvelope,
     };
   });
   const [activeTab, setActiveTab] = useState("planned"); // "planned", "spent", "remaining"
 
   return (
-    <div className="w-full pb-12">
-      <div className="fixed top-0 left-0 right-0 z-50 w-full lg:w-3/5 mx-auto">
-        <DashboardHeader
-          setActiveTab={setActiveTab}
-          activeTab={activeTab}
-          date={budget.createdAt}
-        />
-      </div>
+    <div className="w-full pb-12 flex flex-col items-stretch gap-5 relative z-0">
+      <DashboardHeader
+        setActiveTab={setActiveTab}
+        activeTab={activeTab}
+        date={budget.createdAt}
+        incomeEnvelope={incomeEnvelope}
+        nonIncomeEnvelopes={envelopes}
+      />
 
-      <div className="pt-32 pb-8 px-2 flex flex-col items-stretch gap-5 z-0">
+      <div className="mt-40 pb-8 px-2 flex flex-col items-stretch gap-4 z-0">
         {/* Categories container */}
 
-        {incomeEnvelopes.map((envelope) => (
-          <IncomeEnvelope
-            key={envelope._id}
-            {...envelope}
-            activeTab={activeTab}
-          />
-        ))}
+        <IncomeEnvelope
+          key={incomeEnvelope._id}
+          {...incomeEnvelope}
+          activeTab={activeTab}
+        />
+
         {envelopes.map((envelope) => (
           <Envelope key={envelope._id} {...envelope} activeTab={activeTab} />
         ))}
