@@ -129,6 +129,7 @@ export function TransactionForm() {
     } catch (error) {
       console.log("Error ----> ", error);
     }
+    navigate(-1);
   }
 
   function setRange(e) {
@@ -265,7 +266,10 @@ export function TransactionForm() {
             <div className="flex flex-row justify-center items-center w-full p-2 pb-14">
               <h2
                 onClick={() => {
-                  console.log("Delete transaction");
+                  navigate(-1);
+                  Meteor.call("transaction.deleteTransaction", {
+                    transactionId,
+                  });
                 }}
                 className="inline-block text-center text-xl font-bold text-rose-500 lg:hover:cursor-pointer lg:hover:text-rose-600 lg:hover:underline transition-all duration-150"
               >

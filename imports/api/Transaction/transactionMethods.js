@@ -85,6 +85,15 @@ Meteor.methods({
       }
     );
   },
+  "transaction.deleteTransaction"({ transactionId }) {
+    if (!this.userId) return;
+    TransactionCollection.remove({ _id: transactionId }, (err) => {
+      if (err && Meteor.isServer && err.invalidKeys?.length == 0) {
+        // This is not a validation error. Console.log the error.
+        console.log(err);
+      }
+    });
+  },
 });
 
 function createAndAssignTags(transaction) {
