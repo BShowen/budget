@@ -9,7 +9,8 @@ Meteor.methods({
       {
         accountId: Meteor.user().accountId,
         budgetId,
-        isIncomeEnvelope: false,
+        isIncomeEnvelope: false, // User's can never modify this field
+        isSavingsEnvelope: false, // User's can never modify this field
         name: "untitled",
       },
       (err) => {
@@ -31,6 +32,16 @@ Meteor.methods({
         accountId: Meteor.user().accountId,
         // If true that means it's an income envelope, which are NEVER to be updated.
         isIncomeEnvelope: false,
+        // If true that means it's a savings envelope, which are NEVER to be updated.
+        $or: [
+          { isSavingsEnvelope: false },
+          {
+            // For backwards compatibility
+            isSavingsEnvelope: {
+              $exists: false,
+            },
+          },
+        ],
       },
       modifier,
       (err) => {
@@ -50,6 +61,8 @@ Meteor.methods({
         accountId: Meteor.user().accountId,
         // If true that means it's an income envelope, which are NEVER to be deleted.
         isIncomeEnvelope: false,
+        // If true that means it's a savings envelope, which are NEVER to be deleted.
+        isSavingsEnvelope: false,
       },
       (err) => {
         if (err && Meteor.isServer && err.invalidKeys?.length == 0) {

@@ -31,6 +31,10 @@ export const ledgerSchema = new SimpleSchema(
       type: Boolean,
       required: false,
     },
+    isSavingsLedger: {
+      type: Boolean,
+      required: false,
+    },
   },
   { clean: { mutate: true } }
 );

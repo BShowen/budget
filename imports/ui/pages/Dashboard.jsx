@@ -9,6 +9,7 @@ import { EnvelopeCollection } from "../../api/Envelope/EnvelopeCollection";
 import { DashboardHeader } from "../components/DashboardHeader";
 import { Envelope } from "../components/Envelope";
 import { IncomeEnvelope } from "../components/IncomeEnvelope";
+import { SavingsEnvelope } from "../components/SavingsEnvelope";
 import { AddEnvelopeButton } from "../components/AddEnvelopeButton";
 
 export const Dashboard = () => {
@@ -21,7 +22,7 @@ export const Dashboard = () => {
     };
   });
 
-  const { envelopes, incomeEnvelope } = useTracker(() => {
+  const { envelopes, incomeEnvelope, savingsEnvelope } = useTracker(() => {
     if (!budget) {
       return { envelopes: [], incomeEnvelope: {} };
     }
@@ -30,19 +31,22 @@ export const Dashboard = () => {
       budgetId: budget._id,
     }).fetch();
 
-    const { envelopes, incomeEnvelope } = allEnvelopes.reduce(
-      (acc, curr) => {
-        if (curr.isIncomeEnvelope) {
-          return { ...acc, incomeEnvelope: { ...curr } };
+    const { envelopes, incomeEnvelope, savingsEnvelope } = allEnvelopes.reduce(
+      (acc, envelope) => {
+        if (envelope.isIncomeEnvelope) {
+          return { ...acc, incomeEnvelope: { ...envelope } };
+        } else if (envelope.isSavingsEnvelope) {
+          return { ...acc, savingsEnvelope: { ...envelope } };
         } else {
-          return { ...acc, envelopes: [...acc.envelopes, curr] };
+          return { ...acc, envelopes: [...acc.envelopes, envelope] };
         }
       },
-      { envelopes: [], incomeEnvelope: {} }
+      { envelopes: [], incomeEnvelope: {}, savingsEnvelope: {} }
     );
     return {
       envelopes,
       incomeEnvelope,
+      savingsEnvelope,
     };
   });
   const [activeTab, setActiveTab] = useState("planned"); // "planned", "spent", "remaining"
@@ -63,6 +67,12 @@ export const Dashboard = () => {
         <IncomeEnvelope
           key={incomeEnvelope._id}
           {...incomeEnvelope}
+          activeTab={activeTab}
+        />
+
+        <SavingsEnvelope
+          key={savingsEnvelope._id}
+          {...savingsEnvelope}
           activeTab={activeTab}
         />
 

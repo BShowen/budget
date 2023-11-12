@@ -12,10 +12,10 @@ import { toDollars } from "../util/toDollars";
 import { reduceTransactions } from "../util/reduceTransactions";
 
 // Components
-import { IncomeLedger } from "./IncomeLedger";
+import { SavingsLedger } from "./SavingsLedger";
 import { NewLedgerForm } from "./NewLedgerForm";
 
-export const IncomeEnvelope = ({ _id, name, activeTab }) => {
+export const SavingsEnvelope = ({ _id, name, activeTab }) => {
   const { ledgers } = useTracker(() => {
     if (!Meteor.userId()) return {};
     // Return the ledgers that belong to this envelope
@@ -33,24 +33,26 @@ export const IncomeEnvelope = ({ _id, name, activeTab }) => {
     }).fetch();
     return { transactions };
   });
-  const totalIncomeExpected = ledgers.reduce((total, ledger) => {
+  const plannedToSave = ledgers.reduce((total, ledger) => {
     return total + ledger.startingBalance;
   }, 0);
 
-  const { income: totalIncomeReceived } = reduceTransactions({ transactions });
+  const { expense, income: savedThisMonth } = reduceTransactions({
+    transactions,
+  });
 
-  const remainingToReceive = totalIncomeExpected - totalIncomeReceived;
+  const leftToReceive = plannedToSave - savedThisMonth;
   const displayBalance =
     activeTab === "spent"
-      ? totalIncomeReceived
+      ? expense
       : activeTab === "remaining"
-      ? remainingToReceive
-      : totalIncomeExpected;
+      ? leftToReceive
+      : plannedToSave;
 
   return (
     // Envelope container
     <div className="bg-white rounded-lg shadow-md flex flex-col items-stretch px-2 pt-1 pb-2 gap-2 relative z-0">
-      <EnvelopeHeader name={name} activeTab={activeTab} envelopeId={_id} />
+      <EnvelopeHeader name={name} activeTab={activeTab} />
       <EnvelopeBody ledgers={ledgers} activeTab={activeTab} />
       <EnvelopeFooter displayBalance={displayBalance} envelopeId={_id} />
     </div>
@@ -58,11 +60,12 @@ export const IncomeEnvelope = ({ _id, name, activeTab }) => {
 };
 
 function EnvelopeHeader({ name, activeTab }) {
-  const categoryName = activeTab === "spent" ? "received" : activeTab;
   return (
     <div className="flex flex-row justify-between p-1 px-2 h-8 rounded-md overflow-hidden items-center relative z-0 w-full">
-      <h1 className="font-bold relative z-50">{cap(name)}</h1>
-      <h2 className="font-semibold relative z-50">{cap(categoryName)}</h2>
+      <h1 className="font-bold relative z-50 lg:hover:cursor-text">
+        {cap(name)}
+      </h1>
+      <h2 className="font-semibold relative z-50">{cap(activeTab)}</h2>
     </div>
   );
 }
@@ -71,7 +74,7 @@ function EnvelopeBody({ ledgers, activeTab }) {
   return (
     <div className="flex flex-col gap-2 z-20">
       {ledgers.map((ledger) => (
-        <IncomeLedger key={ledger._id} ledger={ledger} activeTab={activeTab} />
+        <SavingsLedger key={ledger._id} ledger={ledger} activeTab={activeTab} />
       ))}
     </div>
   );
@@ -109,3 +112,24 @@ function EnvelopeFooter({ displayBalance, envelopeId }) {
     </div>
   );
 }
+
+// function divideAndRoundToNearestTens(balance, n) {
+//   const baseProduct = (balance / n).toFixed(2);
+//   const balances = [];
+//   if ((baseProduct * n).toFixed(2) == balance) {
+//     for (let i = 0; i < n; i++) {
+//       balances.push(baseProduct);
+//     }
+//     return balances;
+//   } else {
+//     for (let i = 0; i < n; i++) {
+//       if (i === 0) {
+//         const product = ((baseProduct * 100 + 1) / 100).toFixed(2);
+//         balances.push(product);
+//       } else {
+//         balances.push(baseProduct);
+//       }
+//     }
+//     return balances;
+//   }
+// }

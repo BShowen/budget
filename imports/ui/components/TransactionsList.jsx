@@ -74,13 +74,17 @@ export const TransactionsList = () => {
     }
   };
 
+  const header = ledger.isIncomeLedger ? (
+    <IncomeHeader ledger={ledger} transactionList={transactionList} />
+  ) : ledger.isSavingsLedger ? (
+    <SavingsHeader ledger={ledger} transactionList={transactionList} />
+  ) : (
+    <Header spent={spent} ledger={ledger} />
+  );
+
   return (
     <div className="bg-slate-100 w-full">
-      {ledger.isIncomeLedger ? (
-        <IncomeHeader ledger={ledger} transactionList={transactionList} />
-      ) : (
-        <Header spent={spent} ledger={ledger} />
-      )}
+      {header}
       <div className="bg-slate-100 flex flex-col gap-3 p-2">
         <TagSelector
           tagIdList={tagIdList}
@@ -251,6 +255,76 @@ function IncomeHeader({ ledger, transactionList }) {
                 backgroundColor: "#0387C5",
                 pathColor:
                   incomeReceived > expectedIncome ? "#fb7185" : "#34d399",
+                trailColor: "transparent",
+              })}
+            >
+              {logo}
+            </CircularProgressbarWithChildren>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SavingsHeader({ ledger, transactionList }) {
+  const navigate = useNavigate();
+  const [percentSaved, setPercentSaved] = useState(0);
+  const { income } = reduceTransactions({
+    transactions: transactionList,
+  });
+  const moneySaved = income;
+  const plannedToSave = ledger.startingBalance;
+
+  useEffect(() => {
+    // After component mounts, update the percentSaved so it animates from zero
+    // to percentSaved.
+
+    // If plannedToSave is zero then percentSaved should always be 100%.
+    // This is to avoid dividing by zero, because if user has received money but
+    // not set an expected amount then received / expected is dividing by zero.
+    const percentSaved =
+      ledger.startingBalance == 0 ? 100 : (moneySaved / plannedToSave) * 100;
+    setPercentSaved(percentSaved);
+  }, [ledger]);
+
+  const leftToSave =
+    plannedToSave - moneySaved < 0 ? 0 : plannedToSave - moneySaved;
+  const logo =
+    leftToSave <= 0 ? (
+      <BiCheck className="text-4xl text-emerald-400" />
+    ) : (
+      <BiDollar className="text-3xl text-emerald-400" />
+    );
+  return (
+    <div className="bg-sky-500 text-white px-1 pt-3 pb-8 z-50 sticky top-0 shadow-sm">
+      <div
+        className="text-left text-xl font-bold pb-3 px-2 flex flex-row items-center justify-start"
+        onClick={() => navigate(-1)}
+      >
+        <IoIosArrowBack className="text-2xl" /> Back
+      </div>
+      <div className="bg-sky-700/50 grid grid-cols-12 rounded-lg w-11/12 mx-auto p-1 px-2 h-14 relative">
+        <div className="col-start-1 col-span-6 h-fit text-start">
+          <h2 className="text-xl font-bold">{cap(ledger.name)}</h2>
+          {/* prettier-ignore */}
+          <p className="text-xs font-semibold">
+        {`${toDollars(moneySaved)} saved of ${toDollars(plannedToSave)}`}
+      </p>
+        </div>
+        <div className="col-start-8 col-span-3 text-end h-fit">
+          <p className="text-xs font-semibold">Savings left to receive</p>
+          <p className="text-lg font-semibold">{toDollars(leftToSave)}</p>
+        </div>
+        <div className="col-start-11 col-span-2 absolute -right-6 -top-2">
+          <div className="w-[70px] h-[70px] rounded-full ">
+            <CircularProgressbarWithChildren
+              value={percentSaved}
+              background
+              backgroundPadding={6}
+              styles={buildStyles({
+                backgroundColor: "#0387C5",
+                pathColor: "#34d399",
                 trailColor: "transparent",
               })}
             >

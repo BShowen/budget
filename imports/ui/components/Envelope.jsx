@@ -49,22 +49,10 @@ export const Envelope = ({ _id, name, activeTab }) => {
       ? remaining
       : calculatedEnvelopeBalance;
 
-  const progress =
-    activeTab === "spent"
-      ? (spent / calculatedEnvelopeBalance) * 100
-      : activeTab === "remaining"
-      ? (remaining / calculatedEnvelopeBalance) * 100
-      : 0;
-
   return (
     // Envelope container
     <div className="bg-white rounded-lg shadow-md flex flex-col items-stretch px-2 pt-1 pb-2 gap-2 relative z-0">
-      <EnvelopeHeader
-        name={name}
-        activeTab={activeTab}
-        progress={progress}
-        envelopeId={_id}
-      />
+      <EnvelopeHeader name={name} activeTab={activeTab} envelopeId={_id} />
       <EnvelopeBody ledgers={ledgers} activeTab={activeTab} />
       <EnvelopeFooter displayBalance={displayBalance} envelopeId={_id} />
     </div>
