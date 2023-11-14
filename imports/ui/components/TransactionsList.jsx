@@ -30,8 +30,73 @@ import { BsFillPlusCircleFill } from "react-icons/bs";
 
 export const TransactionsList = () => {
   const { ledgerId } = useParams();
+
+  return (
+    <div className="bg-slate-100 w-full">
+      <PageHeader ledgerId={ledgerId} />
+      <div className="bg-slate-100 flex flex-col gap-3 p-2">
+        <ListTransactions ledgerId={ledgerId} />
+        <DeleteLedger ledgerId={ledgerId} />
+      </div>
+      <AddTransactionsCircle ledgerId={ledgerId} />
+    </div>
+  );
+};
+
+function PageHeader({ ledgerId }) {
   const ledger = useTracker(() => LedgerCollection.findOne({ _id: ledgerId }));
-  const { transactionList, spent } = useTracker(() => {
+  const pageHeader = ledger.isIncomeLedger ? (
+    <IncomeHeader ledger={ledger} />
+  ) : ledger.isSavingsLedger ? (
+    <SavingsHeader ledger={ledger} />
+  ) : (
+    <CategoryHeader ledger={ledger} />
+  );
+
+  return pageHeader;
+}
+
+function ProgressHeader({ children, percent, pathColor, logo }) {
+  const navigate = useNavigate();
+  return (
+    <div className="sticky top-0">
+      <div className="bg-sky-500 flex flex-row items-center text-white p-1 h-11">
+        {/* Back button */}
+        <div className="w-full flex flex-row justify-start items-center">
+          <Link
+            className="text-left text-xl font-bold flex flex-row items-center justify-start w-24 lg:hover:cursor-pointer"
+            onClick={() => navigate(-1)}
+          >
+            <IoIosArrowBack className="text-2xl" /> Back
+          </Link>
+        </div>
+        {/* Progress circle */}
+        <div className="absolute right-2 top-2">
+          <div className="w-[80px] h-[80px] rounded-full ">
+            <CircularProgressbarWithChildren
+              value={percent}
+              background
+              backgroundPadding={6}
+              styles={buildStyles({
+                backgroundColor: "#f1f5f9",
+                pathColor,
+                trailColor: "#e2e8f0",
+              })}
+            >
+              {logo}
+            </CircularProgressbarWithChildren>
+          </div>
+        </div>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function CategoryHeader({ ledger }) {
+  const [percentSpent, setPercentSpent] = useState(0);
+
+  const spent = useTracker(() => {
     if (!Meteor.userId()) return {};
     const transactionList = TransactionCollection.find({
       ledgerId: ledger._id,
@@ -41,71 +106,8 @@ export const TransactionsList = () => {
       transactions: transactionList,
     });
     const spent = expense - income;
-    return { transactionList, spent };
+    return spent;
   });
-
-  const { tagIdList } = useTracker(() => {
-    // Return only the tags that have been used in this ledger's transactionList
-
-    // Iterate through transactionList and reduce down to just the tags, making
-    // sure to remove duplicates.
-    const tags = transactionList.reduce((acc, transaction) => {
-      const tags = transaction.tags || [];
-      // use new Set() to remove duplicate tagIds
-      return [...new Set([...acc, ...tags])];
-    }, []);
-    return { tagIdList: tags };
-  });
-  const [activeTags, setActiveTags] = useState([]);
-
-  const toggleTag = (tagId) => {
-    if (!tagId) {
-      // Call toggleTag() with no params to clear the filters
-      setActiveTags([]);
-    } else {
-      setActiveTags((prev) => {
-        // If activeTags includes tagId, remove it, else, add it.
-        if (prev.includes(tagId)) {
-          return [...prev.filter((prevTagId) => prevTagId !== tagId)];
-        } else {
-          return [...prev, tagId];
-        }
-      });
-    }
-  };
-
-  const header = ledger.isIncomeLedger ? (
-    <IncomeHeader ledger={ledger} transactionList={transactionList} />
-  ) : ledger.isSavingsLedger ? (
-    <SavingsHeader ledger={ledger} transactionList={transactionList} />
-  ) : (
-    <Header spent={spent} ledger={ledger} />
-  );
-
-  return (
-    <div className="bg-slate-100 w-full">
-      {header}
-      <div className="bg-slate-100 flex flex-col gap-3 p-2">
-        <TagSelector
-          tagIdList={tagIdList}
-          toggleTag={toggleTag}
-          activeFilterTags={activeTags}
-        />
-        <TransactionList
-          transactionList={transactionList}
-          ledger={ledger}
-          activeTags={activeTags}
-        />
-        <DeleteLedger ledgerId={ledger._id} />
-      </div>
-      <AddTransactionsCircle ledgerId={ledger._id} />
-    </div>
-  );
-};
-
-function Header({ ledger, spent }) {
-  const navigate = useNavigate();
-  const [percentSpent, setPercentSpent] = useState(0);
 
   useEffect(() => {
     // After component mounts, update the percentSpent so it animates from zero
@@ -135,56 +137,45 @@ function Header({ ledger, spent }) {
         }`}
       />
     );
+  const pathColor = spent > ledger.startingBalance ? "#fb7185" : "#34d399";
   return (
-    <div className="bg-sky-500 text-white px-1 pt-3 pb-8 z-50 sticky top-0  shadow-sm">
-      <div
-        className="text-left text-xl font-bold pb-3 px-2 flex flex-row items-center justify-start"
-        onClick={() => navigate(-1)}
-      >
-        <IoIosArrowBack className="text-2xl" /> Back
-      </div>
-      <div className="bg-sky-700/50 grid grid-cols-12 rounded-lg w-11/12 mx-auto p-1 px-2 h-14 relative">
-        <div className="col-start-1 col-span-6 h-fit text-start">
-          <h2 className="text-xl font-bold">{cap(ledger.name)}</h2>
-          {/* prettier-ignore */}
-          <p className="text-xs font-semibold">
-        {`${toDollars(spent)} spent of ${toDollars(ledger.startingBalance)}`}
-      </p>
+    <ProgressHeader percent={percentSpent} pathColor={pathColor} logo={logo}>
+      <div className="max-w-full flex flex-col justify-start items-stretch px-2 text-gray-700 bg-slate-100 py-2">
+        <div className="w-full flex flex-row justify-start items-center flex-nowrap">
+          <h2 className="text-3xl font-bold">{cap(ledger.name)}</h2>
         </div>
-        <div className="col-start-8 col-span-3 text-end h-fit">
-          <p className="text-xs font-semibold">Remaining</p>
-          <p
-            className={`text-lg font-semibold ${
-              spent > ledger.startingBalance && "text-rose-400"
-            }`}
-          >
-            {toDollars(remaining)}
+        <div className="w-full flex flex-row flex-start justify-between items-center">
+          <p className="font-semibold text-gray-500">
+            Spent {toDollars(spent)} out of {toDollars(ledger.startingBalance)}
           </p>
         </div>
-        <div className="col-start-11 col-span-2 absolute -right-6 -top-2">
-          <div className="w-[70px] h-[70px] rounded-full ">
-            <CircularProgressbarWithChildren
-              value={percentSpent}
-              background
-              backgroundPadding={6}
-              styles={buildStyles({
-                backgroundColor: "#0387C5",
-                pathColor:
-                  spent > ledger.startingBalance ? "#fb7185" : "#34d399",
-                trailColor: "transparent",
-              })}
-            >
-              {logo}
-            </CircularProgressbarWithChildren>
-          </div>
+        <div className="w-full flex flex-col flex-nowrap justify-start items-end">
+          {spent <= ledger.startingBalance ? (
+            <>
+              <p className="font-bold">Left to spend</p>
+              <p className="text-4xl p-0">{toDollars(remaining)}</p>
+            </>
+          ) : (
+            <>
+              <p className="font-bold">Overspent by</p>
+              <p className="text-4xl text-rose-500/90 p-0">
+                {toDollars(remaining)}
+              </p>
+            </>
+          )}
         </div>
       </div>
-    </div>
+    </ProgressHeader>
   );
 }
 
-function IncomeHeader({ ledger, transactionList }) {
-  const navigate = useNavigate();
+function IncomeHeader({ ledger }) {
+  const transactionList = useTracker(() => {
+    if (!Meteor.userId()) return {};
+    return TransactionCollection.find({
+      ledgerId: ledger._id,
+    }).fetch();
+  });
   const [percentReceived, setPercentReceived] = useState(0);
 
   const incomeReceived = transactionList.reduce((total, transaction) => {
@@ -206,11 +197,11 @@ function IncomeHeader({ ledger, transactionList }) {
     setPercentReceived(percentReceived);
   }, [ledger]);
 
-  const remaining = expectedIncome - incomeReceived;
+  const remainingToReceive = expectedIncome - incomeReceived;
   const logo =
-    remaining == 0 ? (
+    remainingToReceive == 0 ? (
       <BiCheck className="text-4xl text-emerald-400" />
-    ) : remaining < 0 ? (
+    ) : remainingToReceive < 0 ? (
       <BiX className="text-5xl text-rose-400" />
     ) : (
       <BiDollar
@@ -219,56 +210,81 @@ function IncomeHeader({ ledger, transactionList }) {
         }`}
       />
     );
+  const pathColor = incomeReceived > expectedIncome ? "#fb7185" : "#34d399";
   return (
-    <div className="bg-sky-500 text-white px-1 pt-3 pb-8 z-50 sticky top-0 shadow-sm">
-      <div
-        className="text-left text-xl font-bold pb-3 px-2 flex flex-row items-center justify-start"
-        onClick={() => navigate(-1)}
-      >
-        <IoIosArrowBack className="text-2xl" /> Back
-      </div>
-      <div className="bg-sky-700/50 grid grid-cols-12 rounded-lg w-11/12 mx-auto p-1 px-2 h-14 relative">
-        <div className="col-start-1 col-span-6 h-fit text-start">
-          <h2 className="text-xl font-bold">{cap(ledger.name)}</h2>
-          {/* prettier-ignore */}
-          <p className="text-xs font-semibold">
-        {`${toDollars(incomeReceived)} received of ${toDollars(expectedIncome)}`}
-      </p>
+    <ProgressHeader percent={percentReceived} pathColor={pathColor} logo={logo}>
+      <div className="max-w-full flex flex-col justify-start items-stretch px-2 text-gray-700 bg-slate-100 py-2">
+        <div className="w-full flex flex-row justify-start items-center flex-nowrap">
+          <h2 className="text-3xl font-bold">{cap(ledger.name)}</h2>
         </div>
-        <div className="col-start-8 col-span-3 text-end h-fit">
-          <p className="text-xs font-semibold">Income left to receive</p>
-          <p
-            className={`text-lg font-semibold ${
-              incomeReceived > expectedIncome && "text-rose-400"
-            }`}
-          >
-            {toDollars(remaining)}
+        <div className="w-full flex flex-row flex-start justify-between items-center">
+          <p className="font-semibold text-gray-500">
+            Receive {toDollars(incomeReceived)} out of{" "}
+            {toDollars(expectedIncome)}
           </p>
         </div>
-        <div className="col-start-11 col-span-2 absolute -right-6 -top-2">
-          <div className="w-[70px] h-[70px] rounded-full ">
-            <CircularProgressbarWithChildren
-              value={percentReceived}
-              background
-              backgroundPadding={6}
-              styles={buildStyles({
-                backgroundColor: "#0387C5",
-                pathColor:
-                  incomeReceived > expectedIncome ? "#fb7185" : "#34d399",
-                trailColor: "transparent",
-              })}
-            >
-              {logo}
-            </CircularProgressbarWithChildren>
-          </div>
+        <div className="w-full flex flex-col flex-nowrap justify-start items-end">
+          <p className="font-bold">Left to receive</p>
+          <p className="text-4xl p-0">{toDollars(remainingToReceive)}</p>
         </div>
       </div>
-    </div>
+    </ProgressHeader>
   );
+
+  // <div className="bg-sky-500 text-white px-1 pt-3 pb-8 z-50 sticky top-0 shadow-sm">
+  //   <div
+  //     className="text-left text-xl font-bold pb-3 px-2 flex flex-row items-center justify-start"
+  //     onClick={() => navigate(-1)}
+  //   >
+  //     <IoIosArrowBack className="text-2xl" /> Back
+  //   </div>
+  //   <div className="bg-sky-700/50 grid grid-cols-12 rounded-lg w-11/12 mx-auto p-1 px-2 h-14 relative">
+  //     <div className="col-start-1 col-span-6 h-fit text-start">
+  //       <h2 className="text-xl font-bold">{cap(ledger.name)}</h2>
+  //       {/* prettier-ignore */}
+  //       <p className="text-xs font-semibold">
+  //     {`${toDollars(incomeReceived)} received of ${toDollars(expectedIncome)}`}
+  //   </p>
+  //     </div>
+  //     <div className="col-start-8 col-span-3 text-end h-fit">
+  //       <p className="text-xs font-semibold">Income left to receive</p>
+  //       <p
+  //         className={`text-lg font-semibold ${
+  //           incomeReceived > expectedIncome && "text-rose-400"
+  //         }`}
+  //       >
+  //         {toDollars(remaining)}
+  //       </p>
+  //     </div>
+  //     <div className="col-start-11 col-span-2 absolute -right-6 -top-2">
+  //       <div className="w-[70px] h-[70px] rounded-full ">
+  //         <CircularProgressbarWithChildren
+  //           value={percentReceived}
+  //           background
+  //           backgroundPadding={6}
+  //           styles={buildStyles({
+  //             backgroundColor: "#0387C5",
+  //             pathColor:
+  //               incomeReceived > expectedIncome ? "#fb7185" : "#34d399",
+  //             trailColor: "transparent",
+  //           })}
+  //         >
+  //           {logo}
+  //         </CircularProgressbarWithChildren>
+  //       </div>
+  //     </div>
+  //   </div>
+  // </div>
 }
 
-function SavingsHeader({ ledger, transactionList }) {
-  const navigate = useNavigate();
+function SavingsHeader({ ledger }) {
+  console.log("Savings header");
+  const transactionList = useTracker(() => {
+    if (!Meteor.userId()) return {};
+    return TransactionCollection.find({
+      ledgerId: ledger._id,
+    }).fetch();
+  });
   const [percentSaved, setPercentSaved] = useState(0);
   const { income } = reduceTransactions({
     transactions: transactionList,
@@ -297,43 +313,22 @@ function SavingsHeader({ ledger, transactionList }) {
       <BiDollar className="text-3xl text-emerald-400" />
     );
   return (
-    <div className="bg-sky-500 text-white px-1 pt-3 pb-8 z-50 sticky top-0 shadow-sm">
-      <div
-        className="text-left text-xl font-bold pb-3 px-2 flex flex-row items-center justify-start"
-        onClick={() => navigate(-1)}
-      >
-        <IoIosArrowBack className="text-2xl" /> Back
-      </div>
-      <div className="bg-sky-700/50 grid grid-cols-12 rounded-lg w-11/12 mx-auto p-1 px-2 h-14 relative">
-        <div className="col-start-1 col-span-6 h-fit text-start">
-          <h2 className="text-xl font-bold">{cap(ledger.name)}</h2>
-          {/* prettier-ignore */}
-          <p className="text-xs font-semibold">
-        {`${toDollars(moneySaved)} saved of ${toDollars(plannedToSave)}`}
-      </p>
+    <ProgressHeader percent={percentSaved} pathColor={"#34d399"} logo={logo}>
+      <div className="max-w-full flex flex-col justify-start items-stretch px-2 text-gray-700 bg-slate-100 py-2">
+        <div className="w-full flex flex-row justify-start items-center flex-nowrap">
+          <h2 className="text-3xl font-bold">{cap(ledger.name)}</h2>
         </div>
-        <div className="col-start-8 col-span-3 text-end h-fit">
-          <p className="text-xs font-semibold">Savings left to receive</p>
-          <p className="text-lg font-semibold">{toDollars(leftToSave)}</p>
+        <div className="w-full flex flex-row flex-start justify-between items-center">
+          <p className="font-semibold text-gray-500">
+            Saved {toDollars(moneySaved)} out of {toDollars(plannedToSave)}
+          </p>
         </div>
-        <div className="col-start-11 col-span-2 absolute -right-6 -top-2">
-          <div className="w-[70px] h-[70px] rounded-full ">
-            <CircularProgressbarWithChildren
-              value={percentSaved}
-              background
-              backgroundPadding={6}
-              styles={buildStyles({
-                backgroundColor: "#0387C5",
-                pathColor: "#34d399",
-                trailColor: "transparent",
-              })}
-            >
-              {logo}
-            </CircularProgressbarWithChildren>
-          </div>
+        <div className="w-full flex flex-col flex-nowrap justify-start items-end">
+          <p className="font-bold">Left to save</p>
+          <p className="text-4xl p-0">{toDollars(leftToSave)}</p>
         </div>
       </div>
-    </div>
+    </ProgressHeader>
   );
 }
 
@@ -346,36 +341,29 @@ function TagSelector({ tagIdList, toggleTag, activeFilterTags }) {
     return { tags };
   });
 
-  const [expanded, setExpanded] = useState(
-    tagIdList.length > 0 && tagIdList.length < 10
-  );
+  const [expanded, setExpanded] = useState(false);
 
-  const tagList =
-    tagIdList.length > 0
-      ? tags.map((tag) => (
-          <button
-            key={tag._id}
-            className={`transition-all duration-250 no-tap-button text-md font-semibold border-2 border-sky-500 px-2 rounded-full min-w-max text-gray-700 ${
-              activeFilterTags.includes(tag._id) ? "bg-sky-500 text-white" : ""
-            }`}
-            onClick={() => toggleTag(tag._id)}
-          >
-            {cap(tag.name)}
-          </button>
-        ))
-      : "No tags";
+  const tagList = tags.map((tag) => (
+    <button
+      key={tag._id}
+      className={`transition-all duration-250 no-tap-button text-md font-semibold border-2 border-sky-500 px-2 rounded-full min-w-max text-gray-700 ${
+        activeFilterTags.includes(tag._id) ? "bg-sky-500 text-white" : ""
+      }`}
+      onClick={() => toggleTag(tag._id)}
+    >
+      {cap(tag.name)}
+    </button>
+  ));
 
-  return (
-    <div className="bg-white shadow-md py-2 rounded-lg px-3 flex flex-row items-center">
+  return tagList.length > 0 ? (
+    <div className="bg-white shadow-sm py-2 rounded-lg px-3 flex flex-row items-center">
       <div
         className={`w-full flex flex-col gap-2 justify-start overflow-hidden ${
           expanded ? "h-auto" : "h-8"
         }`}
       >
         <div className="w-full flex flex-row justify-between items-center">
-          <h2 className="text-md text-gray-400 font-semibold">
-            Tags - {tagIdList.length}
-          </h2>
+          <h2 className="text-md text-gray-400 font-semibold">Tags</h2>
           <div
             className="w-7 h-7 lg:hover:cursor-pointer flex flex-row justify-center items-center text-xl"
             onClick={() => {
@@ -399,55 +387,100 @@ function TagSelector({ tagIdList, toggleTag, activeFilterTags }) {
         </div>
       </div>
     </div>
-  );
+  ) : null;
 }
 
-function TransactionList({ transactionList, ledger, activeTags }) {
+function ListTransactions({ ledgerId }) {
+  const ledger = useTracker(() => LedgerCollection.findOne({ _id: ledgerId }));
+  const transactionList = useTracker(() => {
+    if (!Meteor.userId()) return {};
+    return TransactionCollection.find({
+      ledgerId: ledger._id,
+    }).fetch();
+  });
+
+  const tagIdList = useTracker(() => {
+    // Return only the tags that have been used in this ledger's transactionList
+
+    // Iterate through transactionList and reduce down to just the tags, making
+    // sure to remove duplicates.
+    return transactionList.reduce((acc, transaction) => {
+      const tags = transaction.tags || [];
+      // use new Set() to remove duplicate tagIds
+      return [...new Set([...acc, ...tags])];
+    }, []);
+  });
+
+  const [activeTags, setActiveTags] = useState([]);
+
+  const toggleTag = (tagId) => {
+    if (!tagId) {
+      // Call toggleTag() with no params to clear the filters
+      setActiveTags([]);
+    } else {
+      setActiveTags((prev) => {
+        // If activeTags includes tagId, remove it, else, add it.
+        if (prev.includes(tagId)) {
+          return [...prev.filter((prevTagId) => prevTagId !== tagId)];
+        } else {
+          return [...prev, tagId];
+        }
+      });
+    }
+  };
+
   return (
-    <div className="bg-white shadow-md py-0 pb-2 rounded-lg px-3">
-      <div className="w-full flex flex-row justify-between items-center py-2 px-1 h-12">
-        <div>
-          <h2 className="font-bold text-gray-400 text-md">
-            {ledger.isIncomeLedger
-              ? "Income this month"
-              : "Transactions this month"}
-          </h2>
+    <>
+      <TagSelector
+        tagIdList={tagIdList}
+        toggleTag={toggleTag}
+        activeFilterTags={activeTags}
+      />
+      <div className="bg-white shadow-sm py-0 pb-2 rounded-lg px-3">
+        <div className="w-full flex flex-row justify-between items-center py-2 px-1 h-12">
+          <div>
+            <h2 className="font-bold text-gray-400 text-md">
+              {ledger.isIncomeLedger
+                ? "Income this month"
+                : "Transactions this month"}
+            </h2>
+          </div>
+          <div>
+            <Link
+              to={`/ledger/${ledger._id}/transactions/new`}
+              className="text-sky-500 font-bold"
+            >
+              {ledger.isIncomeLedger ? "Add income" : "Add transaction"}
+            </Link>
+          </div>
         </div>
-        <div>
-          <Link
-            to={`/ledger/${ledger._id}/transactions/new`}
-            className="text-sky-500 font-bold"
-          >
-            {ledger.isIncomeLedger ? "Add income" : "Add transaction"}
-          </Link>
-        </div>
+        {transactionList
+          .filter((transaction) => {
+            if (activeTags.length === 0) return true;
+            return (
+              transaction.tags &&
+              transaction.tags.some((tag) => activeTags.includes(tag))
+            );
+          })
+          .map((transaction, i) => {
+            const border = i === 0 ? "" : "border-t";
+            const [month, day] = dates
+              .format(transaction.createdAt, {
+                forTransaction: true,
+              })
+              .split(" ");
+            return (
+              <Transaction
+                key={transaction._id}
+                ledgerId={ledger._id}
+                transactionId={transaction._id}
+                transaction={transaction}
+                options={{ border, month, day }}
+              />
+            );
+          })}
       </div>
-      {transactionList
-        .filter((transaction) => {
-          if (activeTags.length === 0) return true;
-          return (
-            transaction.tags &&
-            transaction.tags.some((tag) => activeTags.includes(tag))
-          );
-        })
-        .map((transaction, i) => {
-          const border = i === 0 ? "" : "border-t";
-          const [month, day] = dates
-            .format(transaction.createdAt, {
-              forTransaction: true,
-            })
-            .split(" ");
-          return (
-            <Transaction
-              key={transaction._id}
-              ledgerId={ledger._id}
-              transactionId={transaction._id}
-              transaction={transaction}
-              options={{ border, month, day }}
-            />
-          );
-        })}
-    </div>
+    </>
   );
 }
 

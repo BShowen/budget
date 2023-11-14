@@ -82,6 +82,7 @@ Meteor.startup(() => {
     const savingLedger = LedgerCollection.insert({
       accountId,
       budgetId: budgetId,
+      isSavingsLedger: true,
       envelopeId: savingsEnvelope,
       name: "Personal savings account",
       startingBalance: 400,
