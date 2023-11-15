@@ -113,18 +113,18 @@ function CategoryHeader({ ledger }) {
     // After component mounts, update the percentSpent so it animates from zero
     // to percentSpent.
 
-    // If ledger.startingBalance is zero then percentage spent should always be
+    // If ledger.allocatedAmount is zero then percentage spent should always be
     // 100%. This is to avoid dividing by zero error because if user has spent
-    // money but not set a startingBalance then spent / startingBalance is a
+    // money but not set a allocatedAmount then spent / allocatedAmount is a
     // divide by zero error.
     const percentSpent =
-      ledger.startingBalance == 0
+      ledger.allocatedAmount == 0
         ? 100
-        : (spent / ledger.startingBalance) * 100;
+        : (spent / ledger.allocatedAmount) * 100;
     setPercentSpent(percentSpent);
   }, [ledger]);
 
-  const remaining = ledger.startingBalance - spent;
+  const remaining = ledger.allocatedAmount - spent;
   const logo =
     remaining == 0 ? (
       <BiCheck className="text-4xl text-emerald-400" />
@@ -133,11 +133,11 @@ function CategoryHeader({ ledger }) {
     ) : (
       <BiDollar
         className={`text-3xl ${
-          spent > ledger.startingBalance ? "text-rose-400" : "text-emerald-400"
+          spent > ledger.allocatedAmount ? "text-rose-400" : "text-emerald-400"
         }`}
       />
     );
-  const pathColor = spent > ledger.startingBalance ? "#fb7185" : "#34d399";
+  const pathColor = spent > ledger.allocatedAmount ? "#fb7185" : "#34d399";
   return (
     <ProgressHeader percent={percentSpent} pathColor={pathColor} logo={logo}>
       <div className="max-w-full flex flex-col justify-start items-stretch px-2 text-gray-700 bg-slate-100 py-2">
@@ -146,11 +146,11 @@ function CategoryHeader({ ledger }) {
         </div>
         <div className="w-full flex flex-row flex-start justify-between items-center">
           <p className="font-semibold text-gray-500">
-            Spent {toDollars(spent)} out of {toDollars(ledger.startingBalance)}
+            Spent {toDollars(spent)} out of {toDollars(ledger.allocatedAmount)}
           </p>
         </div>
         <div className="w-full flex flex-col flex-nowrap justify-start items-end">
-          {spent <= ledger.startingBalance ? (
+          {spent <= ledger.allocatedAmount ? (
             <>
               <p className="font-bold">Left to spend</p>
               <p className="text-4xl p-0">{toDollars(remaining)}</p>
@@ -181,7 +181,7 @@ function IncomeHeader({ ledger }) {
   const incomeReceived = transactionList.reduce((total, transaction) => {
     return total + transaction.amount;
   }, 0);
-  const expectedIncome = ledger.startingBalance;
+  const expectedIncome = ledger.allocatedAmount;
 
   useEffect(() => {
     // After component mounts, update the percentReceived so it animates from zero
@@ -191,7 +191,7 @@ function IncomeHeader({ ledger }) {
     // This is to avoid dividing by zero, because if user has received money but
     // not set an expected amount then received / expected is dividing by zero.
     const percentReceived =
-      ledger.startingBalance == 0
+      ledger.allocatedAmount == 0
         ? 100
         : (incomeReceived / expectedIncome) * 100;
     setPercentReceived(percentReceived);
@@ -278,7 +278,6 @@ function IncomeHeader({ ledger }) {
 }
 
 function SavingsHeader({ ledger }) {
-  console.log("Savings header");
   const transactionList = useTracker(() => {
     if (!Meteor.userId()) return {};
     return TransactionCollection.find({
@@ -290,7 +289,7 @@ function SavingsHeader({ ledger }) {
     transactions: transactionList,
   });
   const moneySaved = income;
-  const plannedToSave = ledger.startingBalance;
+  const plannedToSave = ledger.allocatedAmount;
 
   useEffect(() => {
     // After component mounts, update the percentSaved so it animates from zero
@@ -300,7 +299,7 @@ function SavingsHeader({ ledger }) {
     // This is to avoid dividing by zero, because if user has received money but
     // not set an expected amount then received / expected is dividing by zero.
     const percentSaved =
-      ledger.startingBalance == 0 ? 100 : (moneySaved / plannedToSave) * 100;
+      ledger.allocatedAmount == 0 ? 100 : (moneySaved / plannedToSave) * 100;
     setPercentSaved(percentSaved);
   }, [ledger]);
 

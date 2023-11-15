@@ -28,16 +28,16 @@ export const IncomeLedger = ({ ledger, activeTab }) => {
     return incomeReceived;
   });
 
-  const remainingToReceive = ledger.startingBalance - incomeReceived;
+  const remainingToReceive = ledger.allocatedAmount - incomeReceived;
 
   const calculateDisplayBalance = () => {
     switch (activeTab) {
       case "planned":
-        return parseFloat(ledger.startingBalance).toFixed(2);
+        return parseFloat(ledger.allocatedAmount).toFixed(2);
       case "spent":
         return incomeReceived;
       case "remaining":
-        return ledger.startingBalance > 0 ? remainingToReceive : 0;
+        return ledger.allocatedAmount > 0 ? remainingToReceive : 0;
     }
   };
 
@@ -46,12 +46,12 @@ export const IncomeLedger = ({ ledger, activeTab }) => {
     if (activeTab === "planned") {
       progress = 0;
     } else if (activeTab === "spent") {
-      progress = ledger.startingBalance
-        ? (incomeReceived / ledger.startingBalance) * 100
+      progress = ledger.allocatedAmount
+        ? (incomeReceived / ledger.allocatedAmount) * 100
         : 0;
     } else if (activeTab === "remaining") {
-      progress = ledger.startingBalance
-        ? (remainingToReceive / ledger.startingBalance) * 100
+      progress = ledger.allocatedAmount
+        ? (remainingToReceive / ledger.allocatedAmount) * 100
         : 0;
     }
     return Number.parseInt(progress.toFixed(0));

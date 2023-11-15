@@ -8,27 +8,27 @@ export function NewLedgerForm({
   children,
   toggleForm,
   envelopeId,
-  defaultValues = { name: "", startingBalance: 0.0, ledgerId: "" },
+  defaultValues = { name: "", allocatedAmount: 0.0, ledgerId: "" },
 }) {
   const [state, setState] = useState({
     envelopeId: envelopeId,
     name: defaultValues.name,
-    startingBalance: defaultValues.startingBalance.toFixed(2),
+    allocatedAmount: defaultValues.allocatedAmount.toFixed(2),
   });
   const [timeoutId, setTimeoutId] = useState(null);
 
   useEffect(() => {
     if (
       state.name !== defaultValues.name ||
-      state.startingBalance !== defaultValues.startingBalance.toFixed(2)
+      state.allocatedAmount !== defaultValues.allocatedAmount.toFixed(2)
     ) {
       setState((prev) => ({
         ...prev,
         name: defaultValues.name,
-        startingBalance: defaultValues.startingBalance.toFixed(2),
+        allocatedAmount: defaultValues.allocatedAmount.toFixed(2),
       }));
     }
-  }, [defaultValues.name, defaultValues.startingBalance]);
+  }, [defaultValues.name, defaultValues.allocatedAmount]);
 
   useEffect(() => {
     // Close the form when the escape key is pressed
@@ -40,7 +40,7 @@ export function NewLedgerForm({
         setState((prev) => ({
           ...prev,
           name: defaultValues.name,
-          startingBalance: defaultValues.startingBalance.toFixed(2),
+          allocatedAmount: defaultValues.allocatedAmount.toFixed(2),
         }));
       }
     }
@@ -54,7 +54,7 @@ export function NewLedgerForm({
   function handleInput(e) {
     const name = e.target.name;
     const value =
-      name === "startingBalance"
+      name === "allocatedAmount"
         ? formatDollarAmount(e.target.value)
         : e.target.value;
     setState((prev) => ({ ...prev, [name]: value }));
@@ -73,7 +73,7 @@ export function NewLedgerForm({
     setState((prev) => ({
       ...prev,
       name: defaultValues.name,
-      startingBalance: defaultValues.startingBalance.toFixed(2),
+      allocatedAmount: defaultValues.allocatedAmount.toFixed(2),
     }));
     toggleForm();
   }
@@ -108,10 +108,10 @@ export function NewLedgerForm({
           />
           <input
             className="focus:ring-0 border-0 w-1/3 h-full p-0 m-0 bg-inherit text-right"
-            name="startingBalance"
+            name="allocatedAmount"
             placeholder="$0.00"
             pattern="[0-9]*"
-            value={state.startingBalance}
+            value={state.allocatedAmount}
             onInput={handleInput}
             onKeyDown={handleKeyDown}
             // onFocus get clear the timeout that is stored in state

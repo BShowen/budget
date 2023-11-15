@@ -75,7 +75,7 @@ Meteor.startup(() => {
       isSavingsLedger: true,
       envelopeId: savingsEnvelope,
       name: "Personal savings account",
-      startingBalance: 400,
+      allocatedAmount: 400,
     });
 
     const incomeLedger = LedgerCollection.insert({
@@ -83,7 +83,7 @@ Meteor.startup(() => {
       budgetId: budgetId,
       envelopeId: incomeEnvelope,
       name: "Your job",
-      startingBalance: 9500,
+      allocatedAmount: 9500,
       isIncomeLedger: true,
     });
 
@@ -121,7 +121,7 @@ Meteor.startup(() => {
         budgetId: budgetId,
         envelopeId: env1,
         name: "groceries",
-        startingBalance: 1400,
+        allocatedAmount: 1400,
       }),
     ];
     // Transactions for edgers in the Food envelope
@@ -197,14 +197,14 @@ Meteor.startup(() => {
         budgetId: budgetId,
         envelopeId: env2,
         name: "gas",
-        startingBalance: 190,
+        allocatedAmount: 190,
       }),
       LedgerCollection.insert({
         accountId,
         budgetId: budgetId,
         envelopeId: env2,
         name: "insurance",
-        startingBalance: 170.0,
+        allocatedAmount: 170.0,
       }),
     ];
     // Transactions for ledgers in the Vehicle envelope
@@ -265,21 +265,21 @@ Meteor.startup(() => {
         budgetId: budgetId,
         envelopeId: env3,
         name: "internet",
-        startingBalance: 85.0,
+        allocatedAmount: 85.0,
       }),
       LedgerCollection.insert({
         accountId,
         budgetId: budgetId,
         envelopeId: env3,
         name: "electric",
-        startingBalance: 180.0,
+        allocatedAmount: 180.0,
       }),
       LedgerCollection.insert({
         accountId,
         budgetId: budgetId,
         envelopeId: env3,
         name: "water",
-        startingBalance: 11.5,
+        allocatedAmount: 11.5,
       }),
     ];
     // Transactions for ledgers in the Utilities envelope

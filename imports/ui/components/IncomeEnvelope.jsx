@@ -34,7 +34,7 @@ export const IncomeEnvelope = ({ _id, name, activeTab }) => {
     return { transactions };
   });
   const totalIncomeExpected = ledgers.reduce((total, ledger) => {
-    return total + ledger.startingBalance;
+    return total + ledger.allocatedAmount;
   }, 0);
 
   const { income: totalIncomeReceived } = reduceTransactions({ transactions });

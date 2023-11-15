@@ -8,7 +8,7 @@ import { cap } from "../util/cap";
 export function UpdateLedgerForm({ toggleForm, ledger }) {
   const [formState, setFormState] = useState({
     name: ledger.name,
-    startingBalance: ledger.startingBalance,
+    allocatedAmount: ledger.allocatedAmount,
   });
   const [timeoutId, setTimeoutId] = useState(null);
   useEffect(() => {
@@ -49,7 +49,7 @@ export function UpdateLedgerForm({ toggleForm, ledger }) {
   function handleInput(e) {
     const name = e.target.name;
     const value = e.target.value;
-    if (name === "startingBalance") {
+    if (name === "allocatedAmount") {
       setFormState((prev) => ({
         ...prev,
         [name]: formatDollarAmount(value),
@@ -74,7 +74,6 @@ export function UpdateLedgerForm({ toggleForm, ledger }) {
           onFocus={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            console.log("stopped");
             if (timeoutId) clearTimeout(timeoutId);
             e.target.setSelectionRange(0, 999);
           }}
@@ -85,11 +84,11 @@ export function UpdateLedgerForm({ toggleForm, ledger }) {
           type="text"
           inputMode="decimal"
           className="focus:ring-0 border-0 w-1/3 h-full p-0 m-0 bg-inherit text-right"
-          name="startingBalance"
+          name="allocatedAmount"
           autoFocus={true}
           placeholder="$0.00"
           pattern="[0-9]*"
-          value={parseFloat(formState.startingBalance || 0).toFixed(2)}
+          value={parseFloat(formState.allocatedAmount || 0).toFixed(2)}
           onInput={handleInput}
           onKeyDown={handleKeyDown}
           // onFocus get clear the timeout that is stored in state

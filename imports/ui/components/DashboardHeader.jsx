@@ -102,7 +102,7 @@ function RemainingMoneyBanner({ incomeEnvelope }) {
     }).fetch();
 
     return ledgers.reduce((total, ledger) => {
-      return ledger.startingBalance + total;
+      return ledger.allocatedAmount + total;
     }, 0);
   });
 
@@ -111,7 +111,7 @@ function RemainingMoneyBanner({ incomeEnvelope }) {
       envelopeId: { $ne: incomeEnvelope._id },
     }).fetch();
     return ledgers.reduce((total, ledger) => {
-      return ledger.startingBalance + total;
+      return ledger.allocatedAmount + total;
     }, 0);
   });
 

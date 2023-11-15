@@ -27,12 +27,12 @@ export const SavingsLedger = ({ ledger, activeTab }) => {
     return reduceTransactions({ transactions });
   });
 
-  const remainingToReceive = ledger.startingBalance - savedThisMonth;
+  const remainingToReceive = ledger.allocatedAmount - savedThisMonth;
 
   const calculateDisplayBalance = () => {
     switch (activeTab) {
       case "planned":
-        return parseFloat(ledger.startingBalance).toFixed(2);
+        return parseFloat(ledger.allocatedAmount).toFixed(2);
       case "spent":
         return expense;
       case "remaining":
@@ -45,10 +45,10 @@ export const SavingsLedger = ({ ledger, activeTab }) => {
     if (activeTab === "planned") {
       progress = 0;
     } else if (activeTab === "spent") {
-      progress = (expense / ledger.startingBalance) * 100;
+      progress = (expense / ledger.allocatedAmount) * 100;
     } else if (activeTab === "remaining") {
       progress = remainingToReceive
-        ? (remainingToReceive / ledger.startingBalance) * 100
+        ? (remainingToReceive / ledger.allocatedAmount) * 100
         : 0;
     }
     return Number.parseInt(progress.toFixed(0));

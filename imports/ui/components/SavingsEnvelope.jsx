@@ -34,7 +34,7 @@ export const SavingsEnvelope = ({ _id, name, activeTab }) => {
     return { transactions };
   });
   const plannedToSave = ledgers.reduce((total, ledger) => {
-    return total + ledger.startingBalance;
+    return total + ledger.allocatedAmount;
   }, 0);
 
   const { expense, income: savedThisMonth } = reduceTransactions({

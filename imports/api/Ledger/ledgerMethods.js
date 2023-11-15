@@ -37,7 +37,7 @@ Meteor.methods({
         const { _id: ledgerId } = input;
         const updatedLedgerFields = {
           name: input.name,
-          startingBalance: input.startingBalance,
+          allocatedAmount: input.allocatedAmount,
         };
         LedgerCollection.update(
           { _id: ledgerId },

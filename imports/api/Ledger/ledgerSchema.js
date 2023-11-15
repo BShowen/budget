@@ -20,7 +20,7 @@ export const ledgerSchema = new SimpleSchema(
     name: {
       type: String,
     },
-    startingBalance: {
+    allocatedAmount: {
       type: Number,
       autoValue: function () {
         const defaultValue = 0;
