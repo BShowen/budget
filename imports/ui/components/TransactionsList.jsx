@@ -230,51 +230,6 @@ function IncomeHeader({ ledger }) {
       </div>
     </ProgressHeader>
   );
-
-  // <div className="bg-sky-500 text-white px-1 pt-3 pb-8 z-50 sticky top-0 shadow-sm">
-  //   <div
-  //     className="text-left text-xl font-bold pb-3 px-2 flex flex-row items-center justify-start"
-  //     onClick={() => navigate(-1)}
-  //   >
-  //     <IoIosArrowBack className="text-2xl" /> Back
-  //   </div>
-  //   <div className="bg-sky-700/50 grid grid-cols-12 rounded-lg w-11/12 mx-auto p-1 px-2 h-14 relative">
-  //     <div className="col-start-1 col-span-6 h-fit text-start">
-  //       <h2 className="text-xl font-bold">{cap(ledger.name)}</h2>
-  //       {/* prettier-ignore */}
-  //       <p className="text-xs font-semibold">
-  //     {`${toDollars(incomeReceived)} received of ${toDollars(expectedIncome)}`}
-  //   </p>
-  //     </div>
-  //     <div className="col-start-8 col-span-3 text-end h-fit">
-  //       <p className="text-xs font-semibold">Income left to receive</p>
-  //       <p
-  //         className={`text-lg font-semibold ${
-  //           incomeReceived > expectedIncome && "text-rose-400"
-  //         }`}
-  //       >
-  //         {toDollars(remaining)}
-  //       </p>
-  //     </div>
-  //     <div className="col-start-11 col-span-2 absolute -right-6 -top-2">
-  //       <div className="w-[70px] h-[70px] rounded-full ">
-  //         <CircularProgressbarWithChildren
-  //           value={percentReceived}
-  //           background
-  //           backgroundPadding={6}
-  //           styles={buildStyles({
-  //             backgroundColor: "#0387C5",
-  //             pathColor:
-  //               incomeReceived > expectedIncome ? "#fb7185" : "#34d399",
-  //             trailColor: "transparent",
-  //           })}
-  //         >
-  //           {logo}
-  //         </CircularProgressbarWithChildren>
-  //       </div>
-  //     </div>
-  //   </div>
-  // </div>
 }
 
 function SavingsHeader({ ledger }) {
