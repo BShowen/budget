@@ -43,16 +43,6 @@ Meteor.startup(() => {
     // Create some tags
     const fastFoodTag = TagCollection.insert({ accountId, name: "fast food" });
 
-    // Random budgets
-    BudgetCollection.insert({
-      accountId,
-      createdAt: new Date(2023, 8, 1, 0, 0, 0, 0),
-    });
-    BudgetCollection.insert({
-      accountId,
-      createdAt: new Date(2023, 7, 1, 0, 0, 0, 0),
-    });
-
     // Date received from the client
     const clientDate = new Date(
       new Date().getFullYear(),

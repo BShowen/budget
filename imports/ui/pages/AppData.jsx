@@ -48,6 +48,23 @@ export const AppData = ({ children }) => {
   return loading ? (
     <p>Loading</p>
   ) : (
-    <RootContext.Provider value={{ setDate }}>{children}</RootContext.Provider>
+    <RootContext.Provider
+      value={{
+        goPreviousMonth: () => {
+          setDate(
+            (prevDate) =>
+              new Date(prevDate.getFullYear(), prevDate.getMonth() - 1, 1)
+          );
+        },
+        goNextMonth: () => {
+          setDate(
+            (prevDate) =>
+              new Date(prevDate.getFullYear(), prevDate.getMonth() + 1, 1)
+          );
+        },
+      }}
+    >
+      {children}
+    </RootContext.Provider>
   );
 };

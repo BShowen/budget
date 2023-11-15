@@ -5,12 +5,10 @@ import { useTracker } from "meteor/react-meteor-data";
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
 
 // Icons
-import { IoPersonCircleSharp } from "react-icons/io5";
-import { TfiAngleDown } from "react-icons/tfi";
+// import { IoPersonCircleSharp } from "react-icons/io5";
 
 // Components
 import { DashboardButtonGroup } from "./DashboardButtonGroup";
-import { BudgetDate } from "./BudgetDate";
 
 // Utils
 import { toDollars } from "../util/toDollars";
@@ -24,19 +22,44 @@ export function DashboardHeader({
   date,
   incomeEnvelope,
 }) {
-  const { setDate } = useContext(RootContext);
+  const { goPreviousMonth, goNextMonth } = useContext(RootContext);
+
+  const prevDate = new Date(date.getFullYear(), date.getMonth() - 1, 1);
+  const prevMonth = prevDate.toLocaleDateString("en-US", { month: "long" });
+
+  const nextDate = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+  const nextMonth = nextDate.toLocaleDateString("en-US", { month: "long" });
+
+  const year = date.toLocaleString("en-US", { year: "numeric" });
+  const currentMonth = date.toLocaleString("en-US", { month: "long" });
 
   return (
-    // This container needs to be position: fixed instead of sticky otherwise
-    // iOS - Safari will flicker this element on page load.
-    <div className="fixed top-0 lg:w-3/5 mx-auto z-50 w-full flex flex-col justify-start items-stretch shadow-md">
-      <div className="bg-sky-500 px-2 pb-4 z-50 shadow-sm">
-        <div className="w-full flex flex-row flex-nowrap items-center justify-between">
-          <div className="flex flex-row justify-center items-center">
-            <BudgetDate date={date} />
-            <TfiAngleDown className="text-white text-3xl lg:hover:cursor-pointer" />
+    <div className="fixed top-0 lg:w-3/5 mx-auto z-50 w-full flex flex-col justify-start items-stretch shadow-sm">
+      <div className="bg-sky-500 pb-4 z-50 shadow-sm">
+        <div className="w-full flex flex-row flex-nowrap items-center justify-center text-white">
+          {/* months */}
+          <div className="flex flex-row justify-center items-center shrink basis-1/3">
+            <h1
+              onClick={goPreviousMonth}
+              className="text-lg font-semibold lg:hover:cursor-pointer w-min"
+            >
+              {prevMonth}
+            </h1>
           </div>
-          <IoPersonCircleSharp className="text-5xl me-2 text-sky-700" />
+          <div className="flex flex-col items-center grow basis-1/3">
+            <h1 className="text-3xl font-bold lg:hover:cursor-pointer w-min">
+              {currentMonth}
+            </h1>
+            <p className="text-sm font-semibold">{year}</p>
+          </div>
+          <div className="flex flex-row justify-center items-center shrink basis-1/3">
+            <h1
+              onClick={goNextMonth}
+              className="text-lg font-semibold lg:hover:cursor-pointer w-min"
+            >
+              {nextMonth}
+            </h1>
+          </div>
         </div>
         <div className="w-full px-1">
           <DashboardButtonGroup
@@ -48,6 +71,28 @@ export function DashboardHeader({
       <RemainingMoneyBanner incomeEnvelope={incomeEnvelope} />
     </div>
   );
+  // return (
+  //   // This container needs to be position: fixed instead of sticky otherwise
+  //   // iOS - Safari will flicker this element on page load.
+  //   <div className="fixed top-0 lg:w-3/5 mx-auto z-50 w-full flex flex-col justify-start items-stretch shadow-md">
+  //     <div className="bg-sky-500 px-2 pb-4 z-50 shadow-sm">
+  //       <div className="w-full flex flex-row flex-nowrap items-center justify-between">
+  //         <div className="flex flex-row justify-center items-center">
+  //           <BudgetDate date={date} />
+  //           <TfiAngleDown className="text-white text-3xl lg:hover:cursor-pointer" />
+  //         </div>
+  //         <IoPersonCircleSharp className="text-5xl me-2 text-sky-700" />
+  //       </div>
+  //       <div className="w-full px-1">
+  //         <DashboardButtonGroup
+  //           active={activeTab}
+  //           setActiveTab={(activeTab) => setActiveTab(activeTab)}
+  //         />
+  //       </div>
+  //     </div>
+  //     <RemainingMoneyBanner incomeEnvelope={incomeEnvelope} />
+  //   </div>
+  // );
 }
 
 function RemainingMoneyBanner({ incomeEnvelope }) {
