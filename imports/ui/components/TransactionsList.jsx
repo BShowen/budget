@@ -219,7 +219,7 @@ function IncomeHeader({ ledger }) {
         </div>
         <div className="w-full flex flex-row flex-start justify-between items-center">
           <p className="font-semibold text-gray-500">
-            Receive {toDollars(incomeReceived)} out of{" "}
+            Received {toDollars(incomeReceived)} out of{" "}
             {toDollars(expectedIncome)}
           </p>
         </div>
