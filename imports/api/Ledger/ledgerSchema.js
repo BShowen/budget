@@ -35,6 +35,20 @@ export const ledgerSchema = new SimpleSchema(
       type: Boolean,
       required: false,
     },
+    startingBalance: {
+      type: Number,
+      optional: true,
+      autoValue: function () {
+        // Can update this value only if isSavingLedger == true
+        const isSavingsLedger = this.field("isSavingsLedger").value;
+        if (isSavingsLedger) {
+          return;
+        } else {
+          this.unset();
+          return;
+        }
+      },
+    },
   },
   { clean: { mutate: true } }
 );

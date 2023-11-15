@@ -240,26 +240,31 @@ function SavingsHeader({ ledger }) {
     }).fetch();
   });
   const [percentSaved, setPercentSaved] = useState(0);
-  const { income } = reduceTransactions({
+  const { income, expense } = reduceTransactions({
     transactions: transactionList,
   });
-  const moneySaved = income;
-  const plannedToSave = ledger.allocatedAmount;
+  const totalSavedThisMonth = income;
+  const plannedToSaveThisMonth = ledger.allocatedAmount;
+  const balance = ledger.startingBalance - expense + income;
 
   useEffect(() => {
     // After component mounts, update the percentSaved so it animates from zero
     // to percentSaved.
 
-    // If plannedToSave is zero then percentSaved should always be 100%.
+    // If plannedToSaveThisMonth is zero then percentSaved should always be 100%.
     // This is to avoid dividing by zero, because if user has received money but
     // not set an expected amount then received / expected is dividing by zero.
     const percentSaved =
-      ledger.allocatedAmount == 0 ? 100 : (moneySaved / plannedToSave) * 100;
+      ledger.allocatedAmount == 0
+        ? 100
+        : (totalSavedThisMonth / plannedToSaveThisMonth) * 100;
     setPercentSaved(percentSaved);
   }, [ledger]);
 
   const leftToSave =
-    plannedToSave - moneySaved < 0 ? 0 : plannedToSave - moneySaved;
+    plannedToSaveThisMonth - totalSavedThisMonth < 0
+      ? 0
+      : plannedToSaveThisMonth - totalSavedThisMonth;
   const logo =
     leftToSave <= 0 ? (
       <BiCheck className="text-4xl text-emerald-400" />
@@ -274,12 +279,13 @@ function SavingsHeader({ ledger }) {
         </div>
         <div className="w-full flex flex-row flex-start justify-between items-center">
           <p className="font-semibold text-gray-500">
-            Saved {toDollars(moneySaved)} out of {toDollars(plannedToSave)}
+            Saved {toDollars(totalSavedThisMonth)} out of{" "}
+            {toDollars(plannedToSaveThisMonth)}
           </p>
         </div>
         <div className="w-full flex flex-col flex-nowrap justify-start items-end">
-          <p className="font-bold">Left to save</p>
-          <p className="text-4xl p-0">{toDollars(leftToSave)}</p>
+          <p className="font-bold">Available</p>
+          <p className="text-4xl p-0">{toDollars(balance)}</p>
         </div>
       </div>
     </ProgressHeader>

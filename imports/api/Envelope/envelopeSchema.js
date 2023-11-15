@@ -46,7 +46,8 @@ export const envelopeSchema = new SimpleSchema(
         if (this.isInsert || canEdit) {
           return;
         } else {
-          return "untitled";
+          this.unset();
+          return;
         }
       },
     },
