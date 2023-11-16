@@ -11,6 +11,7 @@ import { Envelope } from "../components/Envelope";
 import { IncomeEnvelope } from "../components/IncomeEnvelope";
 import { SavingsEnvelope } from "../components/SavingsEnvelope";
 import { AddEnvelopeButton } from "../components/AddEnvelopeButton";
+import { FooterNav } from "../components/FooterNav";
 
 export const Dashboard = () => {
   const { budget } = useTracker(() => {
@@ -81,6 +82,8 @@ export const Dashboard = () => {
         ))}
         <AddEnvelopeButton budgetId={budget._id} />
       </div>
+
+      <FooterNav />
     </div>
   );
 };
