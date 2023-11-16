@@ -15,6 +15,13 @@
   box-sizing: border-box;
 }
 
+/* Hide scrollbar. Only works desktop. */
+body::-webkit-scrollbar {
+  display: none;
+  scrollbar-width: none;
+  -webkit-appearance: none;
+}
+
 /* Fallback incase javascript doesn't set the height of --app-height variable */
 :root {
   --app-height: 100%;
