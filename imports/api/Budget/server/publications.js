@@ -4,6 +4,10 @@ import { Meteor } from "meteor/meteor";
 import { BudgetCollection } from "../BudgetCollection";
 import { EnvelopeCollection } from "../../Envelope/EnvelopeCollection";
 import { LedgerCollection } from "../../Ledger/LedgerCollection";
+import { TransactionCollection } from "../../Transaction/TransactionCollection";
+
+// Utils
+import { reduceTransactions } from "../../../ui/util/reduceTransactions";
 
 Meteor.publish("budget", function (date) {
   // Return the budget specified by the date
@@ -78,6 +82,17 @@ Meteor.publish("budget", function (date) {
             };
             // Remove the old _id from the ledger
             delete newLedger._id;
+
+            if (ledger.isRecurring) {
+              // Calculate ledger balance.
+              const transactions = TransactionCollection.find({
+                accountId: user.accountId,
+                ledgerId: ledger._id,
+              }).fetch();
+              const { income, expense } = reduceTransactions({ transactions });
+              newLedger.startingBalance =
+                ledger.startingBalance + income - expense;
+            }
             // Insert the new ledger
             LedgerCollection.insert(newLedger);
           });

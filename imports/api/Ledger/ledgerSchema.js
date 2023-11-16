@@ -35,6 +35,10 @@ export const ledgerSchema = new SimpleSchema(
       type: Boolean,
       required: false,
     },
+    isRecurring: {
+      type: Boolean,
+      defaultValue: false,
+    },
     startingBalance: {
       type: Number,
       optional: true,
