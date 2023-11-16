@@ -4,9 +4,6 @@ import { useTracker } from "meteor/react-meteor-data";
 // Collections
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
 
-// Icons
-// import { IoPersonCircleSharp } from "react-icons/io5";
-
 // Components
 import { DashboardButtonGroup } from "./DashboardButtonGroup";
 
