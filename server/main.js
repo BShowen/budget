@@ -8,23 +8,38 @@ import { TransactionCollection } from "../imports/api/Transaction/TransactionCol
 import { AccountCollection } from "../imports/api/Account/AccountCollection";
 import { TagCollection } from "../imports/api/Tag/TagCollection";
 
-const SEED_EMAIL = "bshowen@me.com";
-const SEED_PASSWORD = "123123123";
-const SEED_FIRST_NAME = "bradley";
-const SEED_LAST_NAME = "showen";
+const SEED_1_EMAIL = "bshowen@me.com";
+const SEED_1_PASSWORD = "bean";
+const SEED_1_FIRST_NAME = "bradley";
+const SEED_1_LAST_NAME = "showen";
+
+const SEED_2_EMAIL = "jp9711@yahoo.com";
+const SEED_2_PASSWORD = "bean";
+const SEED_2_FIRST_NAME = "jennifer";
+const SEED_2_LAST_NAME = "patterson";
 
 Meteor.startup(() => {
-  if (!Accounts.findUserByEmail(SEED_EMAIL)) {
+  if (!Accounts.findUserByEmail(SEED_1_EMAIL)) {
     Accounts.createUser({
-      email: SEED_EMAIL,
-      password: SEED_PASSWORD,
+      email: SEED_1_EMAIL,
+      password: SEED_1_PASSWORD,
       profile: {
-        firstName: SEED_FIRST_NAME,
-        lastName: SEED_LAST_NAME,
+        firstName: SEED_1_FIRST_NAME,
+        lastName: SEED_1_LAST_NAME,
+      },
+    });
+    Accounts.createUser({
+      email: SEED_2_EMAIL,
+      password: SEED_2_PASSWORD,
+      profile: {
+        firstName: SEED_2_FIRST_NAME,
+        lastName: SEED_2_LAST_NAME,
       },
     });
   }
-  const user = Accounts.findUserByEmail(SEED_EMAIL);
+
+  const user = Accounts.findUserByEmail(SEED_1_EMAIL);
+  const user2 = Accounts.findUserByEmail(SEED_2_EMAIL);
 
   if (!AccountCollection.find().count()) {
     // Create a new account
@@ -33,6 +48,14 @@ Meteor.startup(() => {
     // Assign the user to the new account
     Meteor.users.update(
       { _id: user._id },
+      {
+        $set: {
+          accountId,
+        },
+      }
+    );
+    Meteor.users.update(
+      { _id: user2._id },
       {
         $set: {
           accountId,

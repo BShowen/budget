@@ -7,17 +7,23 @@ export const loginFormLoader = () => {
 };
 export function LoginForm() {
   const navigate = useNavigate();
-  const [errorMessage, setErrorMessage] = useState("");
+  const [error, setError] = useState({});
   const [formValues, setFormValues] = useState({
     email: "",
     password: "",
   });
 
+  function blurInputs() {
+    // Manually blur html inputs.
+    document.getElementById("email").blur();
+    document.getElementById("password").blur();
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
-
+    blurInputs();
     if (!formValues.email) {
-      setErrorMessage("");
+      setError({});
       return;
     }
 
@@ -26,7 +32,11 @@ export function LoginForm() {
       formValues.password,
       (error) => {
         if (error) {
-          setErrorMessage(error?.reason || "");
+          if (error.reason.toLowerCase() == "user not found") {
+            setError({ field: "email", reason: "Invalid email" });
+          } else if (error.reason.toLowerCase() == "incorrect password") {
+            setError({ field: "password", reason: "Invalid password" });
+          }
         } else {
           navigate("/");
         }
@@ -44,20 +54,16 @@ export function LoginForm() {
   }
 
   return (
-    <div className="w-full max-w-xs mx-auto">
+    <div id="loginFormContainer" className="w-full bg-white pt-28 px-5">
       <form
-        className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
         onSubmit={handleSubmit}
+        className="flex flex-col justify-start gap-3 lg:w-2/5 lg:mx-auto"
       >
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="email"
-          >
-            Email
-          </label>
+        <div>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className={`appearance-none w-full rounded-md font-semibold border-2 placeholder:font-medium  ${
+              error.field === "email" ? "border-rose-400" : "border-gray-300"
+            }`}
             id="email"
             type="email"
             required
@@ -67,15 +73,11 @@ export function LoginForm() {
             onInput={handleInput}
           />
         </div>
-        <div className="mb-6">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="password"
-          >
-            Password
-          </label>
+        <div>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+            className={`appearance-none w-full rounded-md font-semibold border-2 placeholder:font-medium ${
+              error.field === "password" ? "border-rose-400" : "border-gray-300"
+            }`}
             id="password"
             type="password"
             required
@@ -84,23 +86,14 @@ export function LoginForm() {
             value={formValues.password}
             onInput={handleInput}
           />
-          {errorMessage && (
-            <p className="text-red-500 text-xs italic">{errorMessage}</p>
-          )}
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-row justify-center items-center">
           <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:shadow-outline"
+            className="bg-sky-500 lg:hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md lg:focus:shadow-outline text-lg w-full"
             type="submit"
           >
-            Sign In
+            Log In
           </button>
-          <a
-            className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-            // href="#"
-          >
-            Forgot Password?
-          </a>
         </div>
       </form>
     </div>
