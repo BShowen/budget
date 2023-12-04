@@ -21,26 +21,16 @@ Meteor.publish("budget", function (date) {
     accountId: user.accountId,
     createdAt: date,
   }).then((count) => {
+    // If count is zero then no budget exists for this month. Need to create one
     if (count == 0) {
-      // if date is after current date, create new budget with last month blueprint.
-      // else create new budget with no blueprint
-      const currentDate = new Date(
-        new Date().getFullYear(),
-        new Date().getMonth(),
-        1
-      );
-      const queryDate = date;
-      if (queryDate > currentDate) {
-        // Create new budget with last month's blueprint
-        // Get last months's budget
-        const prevBudget = BudgetCollection.findOne({
-          createdAt: new Date(
-            queryDate.getFullYear(),
-            queryDate.getMonth() - 1,
-            1
-          ),
-          accountId: user.accountId,
-        });
+      // Get last months's budget
+      const prevBudget = BudgetCollection.findOne({
+        createdAt: new Date(date.getFullYear(), date.getMonth() - 1, 1),
+        accountId: user.accountId,
+      });
+      // If there was a budget last month, create a new budget using last
+      // month's budget as a blueprint.
+      if (prevBudget) {
         // Get last months's envelopes
         const prevEnvelopes = EnvelopeCollection.find({
           accountId: user.accountId,
@@ -98,7 +88,7 @@ Meteor.publish("budget", function (date) {
           });
         });
       } else {
-        // Create the budget.
+        // Create a budget without any blueprint.
         const budgetId = BudgetCollection.insert({
           accountId: user.accountId,
           createdAt: date,
