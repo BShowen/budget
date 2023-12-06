@@ -8,6 +8,7 @@
   "scripts": {
     "start": "meteor run",
     "reset-and-start": "meteor reset && meteor run",
+    "deploy": "DEPLOY_HOSTNAME=galaxy.meteor.com meteor deploy doughtracker.meteorapp.com --settings ./productionSettings.json",
     "test": "meteor test --once --driver-package meteortesting:mocha",
     "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
     "visualize": "meteor --production --extra-packages bundle-visualizer"
@@ -27,7 +28,8 @@
     "react-router-dom": "^6.18.0",
     "simpl-schema": "^1.13.1",
     "tailwind-scrollbar-hide": "^1.1.7",
-    "tailwindcss": "^3.0.23"
+    "tailwindcss": "^3.0.23",
+    "@tailwindcss/forms": "^0.5.6"
   },
   "meteor": {
     "mainModule": {
@@ -37,7 +39,6 @@
     "testModule": "tests/main.js"
   },
   "devDependencies": {
-    "@tailwindcss/forms": "^0.5.6",
     "eslint": "^8.52.0",
     "eslint-plugin-react": "^7.33.2"
   }
