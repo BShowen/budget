@@ -16,7 +16,7 @@ export const FooterNav = () => {
         <FooterLink to="/insights" text="Insights">
           <PiChartDonutFill className="text-sky-700 w-full h-full" />
         </FooterLink>
-        <FooterLink to="/profile" text="Profile">
+        <FooterLink to="/account" text="Account">
           <IoPersonCircleSharp className="text-sky-700 w-full h-full" />
         </FooterLink>
       </div>

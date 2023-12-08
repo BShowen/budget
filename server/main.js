@@ -8,15 +8,10 @@ import { TransactionCollection } from "../imports/api/Transaction/TransactionCol
 import { AccountCollection } from "../imports/api/Account/AccountCollection";
 import { TagCollection } from "../imports/api/Tag/TagCollection";
 
-const SEED_1_EMAIL = "bshowen@me.com";
-const SEED_1_PASSWORD = "bean";
-const SEED_1_FIRST_NAME = "bradley";
-const SEED_1_LAST_NAME = "showen";
-
-const SEED_2_EMAIL = "jp9711@yahoo.com";
-const SEED_2_PASSWORD = "bean";
-const SEED_2_FIRST_NAME = "jennifer";
-const SEED_2_LAST_NAME = "patterson";
+const SEED_1_EMAIL = "johnSmith@demo.com";
+const SEED_1_PASSWORD = "demo";
+const SEED_1_FIRST_NAME = "John";
+const SEED_1_LAST_NAME = "Smith";
 
 Meteor.startup(() => {
   if (!Accounts.findUserByEmail(SEED_1_EMAIL)) {
@@ -28,18 +23,12 @@ Meteor.startup(() => {
         lastName: SEED_1_LAST_NAME,
       },
     });
-    Accounts.createUser({
-      email: SEED_2_EMAIL,
-      password: SEED_2_PASSWORD,
-      profile: {
-        firstName: SEED_2_FIRST_NAME,
-        lastName: SEED_2_LAST_NAME,
-      },
-    });
   }
 
   const user = Accounts.findUserByEmail(SEED_1_EMAIL);
-  const user2 = Accounts.findUserByEmail(SEED_2_EMAIL);
+
+  // Set the user to be an admin.
+  Meteor.users.update({ _id: user._id }, { $set: { isAdmin: true } });
 
   if (!AccountCollection.find().count()) {
     // Create a new account
@@ -48,14 +37,6 @@ Meteor.startup(() => {
     // Assign the user to the new account
     Meteor.users.update(
       { _id: user._id },
-      {
-        $set: {
-          accountId,
-        },
-      }
-    );
-    Meteor.users.update(
-      { _id: user2._id },
       {
         $set: {
           accountId,

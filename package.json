@@ -6,9 +6,10 @@
     "npm": "6.14.17"
   },
   "scripts": {
-    "start": "meteor run",
-    "reset-and-start": "meteor reset && meteor run",
-    "deploy": "DEPLOY_HOSTNAME=galaxy.meteor.com meteor deploy doughtracker.meteorapp.com --settings ./productionSettings.json",
+    "start": "meteor run --settings ./ignoredFiles/productionSettings.json",
+    "reset-and-start": "meteor reset && meteor run --settings ./ignoredFiles/productionSettings.json",
+    "test-production": "meteor run --production --settings ./ignoredFiles/productionSettings.json",
+    "deploy": "DEPLOY_HOSTNAME=galaxy.meteor.com meteor deploy doughtracker.meteorapp.com --settings ./ignoredFiles/productionSettings.json",
     "test": "meteor test --once --driver-package meteortesting:mocha",
     "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
     "visualize": "meteor --production --extra-packages bundle-visualizer"

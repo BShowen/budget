@@ -6,6 +6,10 @@ export const accountSchema = new SimpleSchema(
       type: String,
       regEx: SimpleSchema.RegEx.Id,
     },
+    inviteCode: {
+      type: String,
+      required: false,
+    },
   },
   { clean: { mutate: true } }
 );

@@ -1,6 +1,7 @@
 import { Meteor } from "meteor/meteor";
 
 // Methods
+import "/imports/api/Account/accountMethods";
 import "/imports/api/Transaction/transactionMethods";
 import "/imports/api/Ledger/ledgerMethods";
 import "/imports/api/Envelope/envelopeMethods";
@@ -30,6 +31,7 @@ Meteor.publish("userData", function () {
         fields: {
           profile: 1,
           accountId: 1,
+          isAdmin: 1,
         },
       }
     );

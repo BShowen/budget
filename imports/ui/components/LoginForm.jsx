@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { redirect, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+
 export const loginFormLoader = () => {
   // If user is login, redirect to budget.
   return Meteor.userId() ? redirect("/") : null;
@@ -54,7 +56,7 @@ export function LoginForm() {
   }
 
   return (
-    <div id="loginFormContainer" className="w-full bg-white pt-28 px-5">
+    <div className="w-full h-full bg-white pt-28 px-5">
       <form
         onSubmit={handleSubmit}
         className="flex flex-col justify-start gap-3 lg:w-2/5 lg:mx-auto"
@@ -94,6 +96,19 @@ export function LoginForm() {
           >
             Log In
           </button>
+        </div>
+        <div className="flex flex-row justify-start items-center px-2">
+          <p>
+            Don't have an account?{" "}
+            <span>
+              <Link to="/signup" className="underline text-sky-500">
+                Sign up
+              </Link>
+            </span>
+          </p>
+        </div>
+        <div className="flex flex-row justify-start items-center px-2">
+          <Link className="underline text-sky-500">Try a demo</Link>
         </div>
       </form>
     </div>

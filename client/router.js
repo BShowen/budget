@@ -9,6 +9,8 @@ import { TransactionForm } from "../imports/ui/components/TransactionForm";
 // Pages
 import { Dashboard } from "../imports/ui/pages/Dashboard";
 import { TransactionsList } from "../imports/ui/components/TransactionsList";
+import { SignupForm } from "../imports/ui/components/SignupForm";
+import { AccountPage } from "../imports/ui/pages/AccountPage";
 
 const checkLoginStatus = () => (Meteor.userId() ? null : redirect("/login"));
 
@@ -33,11 +35,19 @@ export const router = createBrowserRouter([
         path: "/ledger/:ledgerId/transaction/:transactionId/edit",
         element: <TransactionForm />,
       },
+      {
+        path: "/account",
+        element: <AccountPage />,
+      },
     ],
   },
   {
     path: "/login",
     loader: loginFormLoader,
     element: <LoginForm />,
+  },
+  {
+    path: "/:inviteCode/signup",
+    element: <SignupForm />,
   },
 ]);
