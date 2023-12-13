@@ -5,6 +5,7 @@ import { createBrowserRouter, redirect } from "react-router-dom";
 // Components
 import { LoginForm, loginFormLoader } from "../imports/ui/components/LoginForm";
 import { TransactionForm } from "../imports/ui/components/TransactionForm";
+import { Layout } from "../imports/ui/pages/Layout";
 
 // Pages
 import { Dashboard } from "../imports/ui/pages/Dashboard";
@@ -18,6 +19,7 @@ export const router = createBrowserRouter([
   {
     path: "/",
     loader: checkLoginStatus,
+    element: <Layout />,
     children: [
       {
         index: true,

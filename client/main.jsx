@@ -16,9 +16,7 @@ Meteor.startup(() => {
   root.render(
     <StrictMode>
       <AppData>
-        <Layout>
-          <RouterProvider router={router} />
-        </Layout>
+        <RouterProvider router={router} />
       </AppData>
     </StrictMode>
   );
