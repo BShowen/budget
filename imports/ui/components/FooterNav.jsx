@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { RiMoneyDollarCircleFill } from "react-icons/ri";
 import { PiChartDonutFill } from "react-icons/pi";
+import { FiLogOut } from "react-icons/fi";
 
 export const FooterNav = () => {
   return (
@@ -18,6 +19,9 @@ export const FooterNav = () => {
         </FooterLink>
         <FooterLink to="/account" text="Account">
           <IoPersonCircleSharp className="text-sky-700 w-full h-full" />
+        </FooterLink>
+        <FooterLink to="/logout" text="Logout">
+          <FiLogOut className="text-sky-700 w-full h-full" />
         </FooterLink>
       </div>
     </div>

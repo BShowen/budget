@@ -4,8 +4,16 @@ import { redirect, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 export const loginFormLoader = () => {
-  // If user is login, redirect to budget.
-  return Meteor.userId() ? redirect("/") : null;
+  // If user is logged in, redirect to budget.
+  if (Meteor.loggingOut()) {
+    // If user is logging out
+    return null;
+  } else if (Meteor.userId() && !Meteor.loggingOut()) {
+    // If userId is true and user is not logging out.
+    return redirect("/");
+  } else {
+    return null;
+  }
 };
 export function LoginForm() {
   const navigate = useNavigate();

@@ -13,7 +13,18 @@ import { TransactionsList } from "../imports/ui/components/TransactionsList";
 import { SignupForm } from "../imports/ui/components/SignupForm";
 import { AccountPage } from "../imports/ui/pages/AccountPage";
 
-const checkLoginStatus = () => (Meteor.userId() ? null : redirect("/login"));
+// Loaders
+import { logoutLoader } from "../imports/ui/components/Logout";
+
+const checkLoginStatus = () => {
+  if (Meteor.loggingOut()) {
+    return redirect("/login");
+  } else if (Meteor.userId()) {
+    return null;
+  } else {
+    return redirect("/login");
+  }
+};
 
 export const router = createBrowserRouter([
   {
@@ -47,6 +58,10 @@ export const router = createBrowserRouter([
     path: "/login",
     loader: loginFormLoader,
     element: <LoginForm />,
+  },
+  {
+    path: "/logout",
+    loader: logoutLoader,
   },
   {
     path: "/:inviteCode/signup",
