@@ -12,6 +12,7 @@ import { Dashboard } from "../imports/ui/pages/Dashboard";
 import { TransactionsList } from "../imports/ui/components/TransactionsList";
 import { SignupForm } from "../imports/ui/components/SignupForm";
 import { AccountPage } from "../imports/ui/pages/AccountPage";
+import { ErrorPage } from "../imports/ui/pages/ErrorPage";
 
 // Loaders
 import { logoutLoader } from "../imports/ui/components/Logout";
@@ -31,6 +32,7 @@ export const router = createBrowserRouter([
     path: "/",
     loader: checkLoginStatus,
     element: <Layout />,
+    errorElement: <ErrorPage />,
     children: [
       {
         index: true,
