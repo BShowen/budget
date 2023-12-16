@@ -31,14 +31,19 @@ import { BsFillPlusCircleFill } from "react-icons/bs";
 export const TransactionsList = () => {
   const { ledgerId } = useParams();
 
+  useEffect(() => {
+    // Make sure the transactions list is always scrolled to the top.
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div className="bg-slate-100 w-full">
       <PageHeader ledgerId={ledgerId} />
-      <div className="bg-slate-100 flex flex-col gap-3 p-2">
+      <div className="bg-slate-100 flex flex-col gap-3 p-2 pt-52 pb-16">
         <ListTransactions ledgerId={ledgerId} />
         <DeleteLedger ledgerId={ledgerId} />
       </div>
-      <AddTransactionsCircle ledgerId={ledgerId} />
+      {/* <AddTransactionsCircle ledgerId={ledgerId} /> */}
     </div>
   );
 };
@@ -59,8 +64,11 @@ function PageHeader({ ledgerId }) {
 function ProgressHeader({ children, percent, pathColor, logo }) {
   const navigate = useNavigate();
   return (
-    <div className="sticky top-0">
-      <div className="bg-sky-500 flex flex-row items-center text-white p-1 h-11">
+    <div
+      id="ledger-nav"
+      className="fixed top-0 w-full lg:w-3/5 h-48 bg-sky-500 flex flex-col justify-start"
+    >
+      <div className="relative flex flex-row items-center text-white p-1 h-11">
         {/* Back button */}
         <div className="w-full flex flex-row justify-start items-center">
           <Link
@@ -88,7 +96,7 @@ function ProgressHeader({ children, percent, pathColor, logo }) {
           </div>
         </div>
       </div>
-      {children}
+      <div className="grow">{children}</div>
     </div>
   );
 }
@@ -140,7 +148,7 @@ function CategoryHeader({ ledger }) {
   const pathColor = spent > ledger.allocatedAmount ? "#fb7185" : "#34d399";
   return (
     <ProgressHeader percent={percentSpent} pathColor={pathColor} logo={logo}>
-      <div className="max-w-full flex flex-col justify-start items-stretch px-2 text-gray-700 bg-slate-100 py-2">
+      <div className="max-w-full flex flex-col justify-start items-stretch px-2 text-gray-700 bg-slate-100 py-2 h-full">
         <div className="w-full flex flex-row justify-start items-center flex-nowrap">
           <h2 className="text-3xl font-bold">{cap(ledger.name)}</h2>
         </div>
@@ -213,7 +221,7 @@ function IncomeHeader({ ledger }) {
   const pathColor = incomeReceived > expectedIncome ? "#fb7185" : "#34d399";
   return (
     <ProgressHeader percent={percentReceived} pathColor={pathColor} logo={logo}>
-      <div className="max-w-full flex flex-col justify-start items-stretch px-2 text-gray-700 bg-slate-100 py-2">
+      <div className="max-w-full flex flex-col justify-start items-stretch px-2 text-gray-700 bg-slate-100 py-2 h-full">
         <div className="w-full flex flex-row justify-start items-center flex-nowrap">
           <h2 className="text-3xl font-bold">{cap(ledger.name)}</h2>
         </div>
@@ -273,7 +281,7 @@ function SavingsHeader({ ledger }) {
     );
   return (
     <ProgressHeader percent={percentSaved} pathColor={"#34d399"} logo={logo}>
-      <div className="max-w-full flex flex-col justify-start items-stretch px-2 text-gray-700 bg-slate-100 py-2">
+      <div className="max-w-full flex flex-col justify-start items-stretch px-2 text-gray-700 bg-slate-100 py-2 h-full">
         <div className="w-full flex flex-row justify-start items-center flex-nowrap">
           <h2 className="text-3xl font-bold">{cap(ledger.name)}</h2>
         </div>
