@@ -31,8 +31,11 @@ export function DashboardHeader({
   const currentMonth = date.toLocaleString("en-US", { month: "long" });
 
   return (
-    <div className="fixed top-0 lg:w-3/5 mx-auto z-50 w-full flex flex-col justify-start items-stretch shadow-sm">
-      <div className="bg-sky-500 pb-4 z-50 shadow-sm">
+    <div
+      id="top-nav"
+      className="fixed top-0 lg:w-3/5 mx-auto z-50 w-full flex flex-col justify-start items-stretch shadow-sm bg-sky-500"
+    >
+      <div className="pb-4 z-50 shadow-sm">
         <div className="w-full flex flex-row flex-nowrap items-center justify-center text-white">
           {/* months */}
           <div className="flex flex-row justify-center items-center shrink basis-1/3">

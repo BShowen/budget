@@ -27,10 +27,19 @@ body::-webkit-scrollbar {
   --app-height: 100%;
 }
 
-html,
-body,
+html {
+  min-height: calc(100% + env(safe-area-inset-top));
+  padding-top: env(safe-area-inset-top);
+}
+
+body {
+  min-height: calc(var(--app-height) - env(safe-area-inset-top));
+}
+
 #layout {
-  max-width: 100vw;
-  min-height: var(--app-height);
-  height: var(--app-height);
+  min-height: calc(var(--app-height) - env(safe-area-inset-top));
+}
+
+#top-nav {
+  padding-top: calc(env(safe-area-inset-top) - 13px);
 }
