@@ -109,14 +109,29 @@ export function LoginForm() {
           <p>
             Don't have an account?{" "}
             <span>
-              <Link to="/signup" className="underline text-sky-500">
-                Sign up
-              </Link>
+              <Link className="underline text-sky-500">Sign up</Link>
             </span>
           </p>
         </div>
         <div className="flex flex-row justify-start items-center px-2">
-          <Link className="underline text-sky-500">Try a demo</Link>
+          <a
+            className="underline text-sky-500 hover:cursor-pointer"
+            onClick={() => {
+              Meteor.loginWithPassword(
+                { email: "demo@demo.com" },
+                "demo",
+                (error) => {
+                  if (error) {
+                    alert("Sorry, demo isn't available right now.");
+                  } else {
+                    navigate("/");
+                  }
+                }
+              );
+            }}
+          >
+            Try a demo
+          </a>
         </div>
       </form>
     </div>

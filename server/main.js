@@ -8,10 +8,10 @@ import { TransactionCollection } from "../imports/api/Transaction/TransactionCol
 import { AccountCollection } from "../imports/api/Account/AccountCollection";
 import { TagCollection } from "../imports/api/Tag/TagCollection";
 
-const SEED_1_EMAIL = "johnSmith@demo.com";
+const SEED_1_EMAIL = "demo@demo.com";
 const SEED_1_PASSWORD = "demo";
-const SEED_1_FIRST_NAME = "John";
-const SEED_1_LAST_NAME = "Smith";
+const SEED_1_FIRST_NAME = "Demo";
+const SEED_1_LAST_NAME = "Demo";
 
 Meteor.startup(() => {
   if (!Accounts.findUserByEmail(SEED_1_EMAIL)) {
@@ -66,6 +66,41 @@ Meteor.startup(() => {
       name: "income",
     });
 
+    const firstPaycheckLedger = LedgerCollection.insert({
+      accountId,
+      budgetId: budgetId,
+      envelopeId: incomeEnvelope,
+      name: "First paycheck",
+      allocatedAmount: 1500,
+      isIncomeLedger: true,
+    });
+
+    // Add a paycheck
+    TransactionCollection.insert({
+      accountId,
+      budgetId: budgetId,
+      envelopeId: incomeEnvelope,
+      ledgerId: firstPaycheckLedger,
+      createdAt: new Date(2023, 11, 3),
+      type: "income",
+      merchant: "Paycheck",
+      amount: 1500.0,
+      loggedBy: {
+        userId: user._id,
+        firstName: user.profile.firstName,
+        lastName: user.profile.lastName,
+      },
+    });
+
+    const secondPaycheckLeger = LedgerCollection.insert({
+      accountId,
+      budgetId: budgetId,
+      envelopeId: incomeEnvelope,
+      name: "Second paycheck",
+      allocatedAmount: 1700,
+      isIncomeLedger: true,
+    });
+
     const savingsEnvelope = EnvelopeCollection.insert({
       accountId,
       budgetId,
@@ -84,13 +119,21 @@ Meteor.startup(() => {
       isRecurring: true,
     });
 
-    const incomeLedger = LedgerCollection.insert({
+    // Add some savings
+    TransactionCollection.insert({
       accountId,
       budgetId: budgetId,
-      envelopeId: incomeEnvelope,
-      name: "pools",
-      allocatedAmount: 9500,
-      isIncomeLedger: true,
+      envelopeId: savingsEnvelope,
+      ledgerId: savingLedger,
+      createdAt: new Date(2023, 11, 3),
+      type: "income",
+      merchant: "Saving",
+      amount: 220.0,
+      loggedBy: {
+        userId: user._id,
+        firstName: user.profile.firstName,
+        lastName: user.profile.lastName,
+      },
     });
 
     const [env1, env2, env3, env4] = [
@@ -116,11 +159,11 @@ Meteor.startup(() => {
       EnvelopeCollection.insert({
         accountId,
         budgetId: budgetId,
-        name: "bradley - personal",
+        name: "personal",
       }),
     ];
 
-    // Ledgers for Food envelope
+    // Ledger for Food envelope.
     const [env1_ledger1] = [
       LedgerCollection.insert({
         accountId,
@@ -130,7 +173,7 @@ Meteor.startup(() => {
         allocatedAmount: 1400,
       }),
     ];
-    // Transactions for edgers in the Food envelope
+    //  Transactions for Groceries ledger in Food envelope
     const env1_ledger1_transactions = [
       TransactionCollection.insert({
         accountId,
@@ -363,7 +406,7 @@ Meteor.startup(() => {
         envelopeId: env4,
         createdAt: new Date(2023, 10, 3),
         type: "expense",
-        merchant: "stumptown",
+        merchant: "stumptown coffee roasters",
         amount: 17.0,
         loggedBy: {
           userId: user._id,
