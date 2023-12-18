@@ -61,7 +61,7 @@ export const Dashboard = () => {
         nonIncomeEnvelopes={envelopes}
       />
 
-      <div className="mt-40 pb-8 px-2 flex flex-col items-stretch gap-4 z-0">
+      <div className="mt-40 pb-16 px-2 flex flex-col items-stretch gap-4 z-0">
         {/* Categories container */}
 
         <IncomeEnvelope

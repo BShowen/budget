@@ -54,6 +54,10 @@ export const router = createBrowserRouter([
         path: "/account",
         element: <AccountPage />,
       },
+      {
+        path: "/insights",
+        element: <p>Nothing to see here.</p>,
+      },
     ],
   },
   {
