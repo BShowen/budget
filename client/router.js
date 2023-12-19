@@ -13,6 +13,7 @@ import { TransactionsList } from "../imports/ui/components/TransactionsList";
 import { SignupForm } from "../imports/ui/components/SignupForm";
 import { AccountPage } from "../imports/ui/pages/AccountPage";
 import { ErrorPage } from "../imports/ui/pages/ErrorPage";
+import { InvitationPage } from "../imports/ui/pages/InvitationPage";
 
 // Loaders
 import { logoutLoader } from "../imports/ui/components/Logout";
@@ -52,7 +53,13 @@ export const router = createBrowserRouter([
       },
       {
         path: "/account",
-        element: <AccountPage />,
+        children: [
+          {
+            index: true,
+            element: <AccountPage />,
+          },
+          { path: "invite", element: <InvitationPage /> },
+        ],
       },
       {
         path: "/insights",
