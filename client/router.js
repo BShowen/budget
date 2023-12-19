@@ -14,6 +14,7 @@ import { SignupForm } from "../imports/ui/components/SignupForm";
 import { AccountPage } from "../imports/ui/pages/AccountPage";
 import { ErrorPage } from "../imports/ui/pages/ErrorPage";
 import { InvitationPage } from "../imports/ui/pages/InvitationPage";
+import { ResetPassword } from "../imports/ui/pages/ResetPasswordPage";
 
 // Loaders
 import { logoutLoader } from "../imports/ui/components/Logout";
@@ -59,6 +60,7 @@ export const router = createBrowserRouter([
             element: <AccountPage />,
           },
           { path: "invite", element: <InvitationPage /> },
+          { path: "reset-password", element: <ResetPassword /> },
         ],
       },
       {
