@@ -146,4 +146,54 @@ Meteor.methods({
     // Send a success response.
     return true;
   },
+  "account.resetPassword"({ oldPassword, newPassword, confirmPassword }) {
+    // Don't run this method if isClient or user is not logged in.
+    if (Meteor.isClient || !Meteor.userId()) return;
+
+    const [passwordError] = validatePasswords({
+      password: newPassword,
+      confirmPassword,
+    });
+    if (passwordError) {
+      throw new Meteor.Error(
+        "account.resetPassword",
+        passwordError.split(":")[1],
+        passwordError
+      );
+    }
+
+    // Verify that oldPassword is current password.
+    const { error } = Accounts._checkPassword(Meteor.user(), oldPassword);
+    if (error) {
+      throw new Meteor.Error(
+        "account.resetPassword",
+        error.reason,
+        "oldPassword:Incorrect password."
+      );
+    }
+
+    Accounts.setPassword(Meteor.userId(), newPassword, { logout: false });
+    return true;
+  },
 });
+
+function validatePasswords({ password, confirmPassword }) {
+  const validationErrors = [];
+  for (let [name, value] of Object.entries({ password, confirmPassword })) {
+    // Check passwords.
+    if (name == "password" || name == "confirmPassword") {
+      if (name == "password" && value.trim().length == 0) {
+        // Password was not entered.
+        validationErrors.push(`password:Password is required.`);
+      } else if (name == "password" && value.trim().length == 0) {
+        // Confirm password was not entered.
+        validationErrors.push(`confirmPassword:Confirm password is required.`);
+      } else if (name == "password" && value !== confirmPassword) {
+        // Passwords don't match.
+        validationErrors.push("confirmPassword:Passwords don't match.");
+      }
+      continue;
+    }
+  }
+  return validationErrors;
+}

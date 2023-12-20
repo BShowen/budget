@@ -118,8 +118,8 @@ export function LoginForm() {
             className="underline text-sky-500 hover:cursor-pointer"
             onClick={() => {
               Meteor.loginWithPassword(
-                { email: "demo@demo.com" },
-                "demo",
+                { email: Meteor.settings.public.demoAccount.email },
+                Meteor.settings.public.demoAccount.password,
                 (error) => {
                   if (error) {
                     alert("Sorry, demo isn't available right now.");

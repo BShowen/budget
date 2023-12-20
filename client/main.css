@@ -13,7 +13,7 @@
 @layer components {
   /* Default styling for all form inputs in the app. */
   .form-input {
-    @apply appearance-none border-2 border-gray-200 rounded-md font-medium placeholder:font-medium h-10;
+    @apply appearance-none w-full border-2 border-gray-200 rounded-md font-medium placeholder:font-medium h-10;
   }
   /* Default styling for all form buttons in the app. */
   .btn-primary {

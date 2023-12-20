@@ -1,8 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
+import { Meteor } from "meteor/meteor";
+import { useNavigate } from "react-router-dom";
 
 export function ResetPassword() {
-  const handleSubmit = () => {
+  const navigate = useNavigate();
+  const [errors, setErrors] = useState({
+    oldPassword: null,
+    newPassword: null,
+  });
+
+  const resetPassword = ({ oldPassword, newPassword, confirmPassword }) => {
     // Send password reset info to server.
+    Meteor.call(
+      "account.resetPassword",
+      { oldPassword, newPassword, confirmPassword },
+      (error, result) => {
+        if (error) {
+          if (error.error == 500) {
+            // Internal server error
+            console.log("Internal server error", error);
+          } else {
+            const [field, message] = error.details.split(":");
+            setErrors({ [field]: message });
+          }
+        } else {
+          Meteor.logout(() => {
+            navigate("/login");
+          });
+        }
+      }
+    );
   };
 
   return (
@@ -15,24 +42,63 @@ export function ResetPassword() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          handleSubmit(e);
+          const formData = Object.fromEntries(new FormData(e.target).entries());
+          resetPassword({ ...formData });
         }}
       >
         <div className="flex flex-col justify-start items-stretch gap-2">
-          <input
-            type="password"
-            required
-            name="oldPassword"
-            placeholder="Old password"
-            className="form-input"
-          ></input>
-          <input
-            type="password"
-            required
-            name="newPassword"
-            placeholder="New password"
-            className="form-input"
-          ></input>
+          <div>
+            <div className="w-full flex flex-row justify-between">
+              <p>Old password</p>
+              {errors.oldPassword && (
+                <p className="text-rose-400">{errors.oldPassword}</p>
+              )}
+            </div>
+            <input
+              type="password"
+              required
+              name="oldPassword"
+              placeholder="Old password"
+              className={`form-input ${
+                errors.oldPassword ? "border-rose-400" : ""
+              }`}
+            />
+          </div>
+          <div>
+            <div className="w-full flex flex-row justify-between">
+              <p>New password</p>
+              {errors.password && (
+                <p className="text-rose-400">{errors.password}</p>
+              )}
+            </div>
+            <input
+              type="password"
+              required
+              name="newPassword"
+              placeholder="New password"
+              className={`form-input ${
+                errors.newPassword ? "border-rose-400" : ""
+              }`}
+            />
+          </div>
+          <div>
+            <div className="w-full flex flex-row justify-between">
+              <p>Confirm password</p>
+              {errors.confirmPassword && (
+                <p className="text-rose-400">{errors.confirmPassword}</p>
+              )}
+            </div>
+
+            <input
+              type="password"
+              required
+              name="confirmPassword"
+              placeholder="Confirm password"
+              className={`form-input ${
+                errors.confirmPassword ? "border-rose-400" : ""
+              }`}
+            />
+          </div>
           <button className="btn-primary">Submit</button>
         </div>
       </form>
