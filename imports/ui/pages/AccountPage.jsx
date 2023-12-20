@@ -29,7 +29,10 @@ export function AccountPage() {
           <LuChevronRight className="text-xl" />
         </Link>
         <hr />
-        <Link className="w-full flex flex-row justify-start items-center">
+        <Link
+          to="delete-account"
+          className="w-full flex flex-row justify-start items-center"
+        >
           <LuAlertCircle className="text-xl" />
           <p className="ps-1 me-auto">Delete account</p>
           <LuChevronRight className="text-xl" />

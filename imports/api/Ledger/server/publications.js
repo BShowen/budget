@@ -6,7 +6,7 @@ import { LedgerCollection } from "../LedgerCollection";
 // Return all ledgers associated with a Budget
 Meteor.publish("ledgers", function (budgetId) {
   if (!this.userId || !budgetId) {
-    return [];
+    return this.ready();
   }
   const user = Meteor.user();
   return LedgerCollection.find({ accountId: user.accountId, budgetId });

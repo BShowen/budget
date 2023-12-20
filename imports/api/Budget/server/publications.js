@@ -12,7 +12,7 @@ import { reduceTransactions } from "../../../ui/util/reduceTransactions";
 Meteor.publish("budget", function (date) {
   // Return the budget specified by the date
   if (!this.userId || !date) {
-    return null;
+    return this.ready();
   }
   // get the user.budgetIdList
   const user = Meteor.user();

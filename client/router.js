@@ -15,6 +15,7 @@ import { AccountPage } from "../imports/ui/pages/AccountPage";
 import { ErrorPage } from "../imports/ui/pages/ErrorPage";
 import { InvitationPage } from "../imports/ui/pages/InvitationPage";
 import { ResetPassword } from "../imports/ui/pages/ResetPasswordPage";
+import { DeleteAccount } from "../imports/ui/pages/DeleteAccountPage";
 
 // Loaders
 import { logoutLoader } from "../imports/ui/components/Logout";
@@ -61,6 +62,7 @@ export const router = createBrowserRouter([
           },
           { path: "invite", element: <InvitationPage /> },
           { path: "reset-password", element: <ResetPassword /> },
+          { path: "delete-account", element: <DeleteAccount /> },
         ],
       },
       {

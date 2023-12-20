@@ -14,6 +14,7 @@ import "/imports/api/Transaction/server/publications";
 import "/imports/api/Tag/server/publications";
 
 // Collections
+import "/imports/api/Account/AccountCollection";
 import "/imports/api/Budget/BudgetCollection";
 import "/imports/api/Envelope/EnvelopeCollection";
 import "/imports/api/Ledger/LedgerCollection";

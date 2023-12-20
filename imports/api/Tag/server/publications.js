@@ -7,7 +7,7 @@ import { TagCollection } from "../TagCollection";
 Meteor.publish("tags", function () {
   // Return all the tags associated with the current users account.
   if (!this.userId) {
-    return [];
+    return this.ready();
   }
   const user = Meteor.user();
   return TagCollection.find({ accountId: user.accountId });

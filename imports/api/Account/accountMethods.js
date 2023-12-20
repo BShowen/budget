@@ -2,6 +2,11 @@ import { Meteor } from "meteor/meteor";
 import { Accounts } from "meteor/accounts-base";
 import { Random } from "meteor/random";
 import { AccountCollection } from "./AccountCollection";
+import { BudgetCollection } from "../Budget/BudgetCollection";
+import { EnvelopeCollection } from "../Envelope/EnvelopeCollection";
+import { LedgerCollection } from "../Ledger/LedgerCollection";
+import { TagCollection } from "../Tag/TagCollection";
+import { TransactionCollection } from "../Transaction/TransactionCollection";
 
 Meteor.methods({
   "account.generateSignupUrl"() {
@@ -174,6 +179,34 @@ Meteor.methods({
 
     Accounts.setPassword(Meteor.userId(), newPassword, { logout: false });
     return true;
+  },
+  "account.deleteAccount"({ password }) {
+    // Don't run on client. Don't run if not logged in.
+    if (Meteor.isClient || !Meteor.userId()) return;
+    const { error } = Accounts._checkPassword(Meteor.user(), password);
+    if (error) {
+      throw new Meteor.Error(
+        "account.deleteAccount",
+        error.reason,
+        "password:Incorrect password."
+      );
+    }
+
+    const selector = { accountId: Meteor.user().accountId };
+    // Delete all accounts.
+    AccountCollection.remove({ _id: selector.accountId });
+    // Delete all budgets.
+    BudgetCollection.remove(selector);
+    // Delete all envelopes.
+    EnvelopeCollection.remove(selector);
+    // Delete all ledgers.
+    LedgerCollection.remove(selector);
+    // Delete all tags.
+    TagCollection.remove(selector);
+    // Delete all transactions.
+    TransactionCollection.remove(selector);
+    // Delete all users.
+    Meteor.users.remove(selector);
   },
 });
 
