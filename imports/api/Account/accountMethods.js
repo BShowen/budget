@@ -178,7 +178,6 @@ Meteor.methods({
     }
 
     Accounts.setPassword(Meteor.userId(), newPassword, { logout: false });
-    return true;
   },
   "account.deleteAccount"({ password }) {
     // Don't run on client. Don't run if not logged in.

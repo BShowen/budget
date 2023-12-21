@@ -14,7 +14,7 @@ export function ResetPassword() {
     Meteor.call(
       "account.resetPassword",
       { oldPassword, newPassword, confirmPassword },
-      (error, result) => {
+      (error) => {
         if (error) {
           if (error.error == 500) {
             // Internal server error
@@ -24,8 +24,10 @@ export function ResetPassword() {
             setErrors({ [field]: message });
           }
         } else {
-          Meteor.logout(() => {
-            navigate("/login");
+          Meteor.logoutOtherClients(() => {
+            Meteor.logout(() => {
+              navigate("/login");
+            });
           });
         }
       }
