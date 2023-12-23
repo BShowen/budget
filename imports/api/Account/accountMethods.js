@@ -180,6 +180,11 @@ Meteor.methods({
     Accounts.setPassword(Meteor.userId(), newPassword, { logout: false });
   },
   "account.deleteAccount"({ password }) {
+    // ******************************************************************************************
+    // If user is admin, delete all account data and all users.
+    // If user is not admin, then just delete the user account and nothing else.
+    // ******************************************************************************************
+
     // Don't run on client. Don't run if not logged in.
     if (Meteor.isClient || !Meteor.userId()) return;
     const { error } = Accounts._checkPassword(Meteor.user(), password);
@@ -206,6 +211,39 @@ Meteor.methods({
     TransactionCollection.remove(selector);
     // Delete all users.
     Meteor.users.remove(selector);
+  },
+  "account.updateRole"({ userId, adminStatus }) {
+    // Don't run on server.
+    // Don't run if logged out.
+    // Don't allow non-admins to run this method.
+    if (Meteor.isClient || !this.userId || !Meteor.user().isAdmin) return;
+
+    // A user cannot change the admin status of another user that was created
+    // before them.
+    const currentUserCreatedAt = new Date(Meteor.user().createdAt);
+    const targetUserCreatedAt = new Date(
+      Meteor.users.findOne(
+        { _id: userId },
+        { fields: { createdAt: 1 } }
+      ).createdAt
+    );
+    if (currentUserCreatedAt < targetUserCreatedAt) {
+      // if current user was created before the target user
+      try {
+        // Update the admin status of the user.
+        Meteor.users.update(
+          { _id: userId },
+          { $set: { isAdmin: adminStatus } }
+        );
+        // Return the updated admin status of the user.
+        return Meteor.users.findOne({ _id: userId }).isAdmin;
+      } catch (error) {
+        console.log("account.updateRole");
+        throw new Meteor.Error("account.updateRole", "Internal server error");
+      }
+    } else {
+      return;
+    }
   },
 });
 

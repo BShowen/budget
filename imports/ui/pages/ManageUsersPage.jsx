@@ -1,15 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTracker } from "meteor/react-meteor-data";
 import { Switch } from "@headlessui/react";
+import { useNavigate } from "react-router-dom";
 
 // Icons
 import { LuXCircle } from "react-icons/lu";
 import { LuUserCircle2 } from "react-icons/lu";
 
 export function ManageUsersPage() {
+  const navigate = useNavigate();
+  const isAdmin = useTracker(() => Meteor.user().isAdmin);
   const userList = useTracker(() => {
     return Meteor.users.find({}).fetch();
   });
+
+  const currentUserId = Meteor.userId();
+
+  useEffect(() => {
+    // If the user is not an admin, navigate to the root url.
+    // isAdmin is a reactive source. So even if the user is already on this page
+    // they will be redirected immediately when there isAdmin status is changed.
+    if (isAdmin == false) {
+      navigate("/");
+    }
+  }, [isAdmin]);
 
   return (
     <div className="w-full h-full p-2 text-gray-700 text-center">
@@ -17,7 +31,7 @@ export function ManageUsersPage() {
         <h1 className="font-bold text-2xl text-gray-700">Manage users</h1>
       </div>
       <div className="bg-white rounded-md overflow-hidden drop-shadow-sm">
-        <table class="table-auto border-collapse w-full font-medium text-lg">
+        <table className="table-auto border-collapse w-full font-medium text-lg">
           <thead className="bg-slate-200 drop-shadow-sm">
             <tr className="h-10">
               <th>Name</th>
@@ -27,6 +41,10 @@ export function ManageUsersPage() {
           </thead>
           <tbody>
             {userList.map((user, i) => {
+              {
+                /* Don't show current user. */
+              }
+              if (user._id == currentUserId) return;
               return (
                 <tr
                   key={user._id}
@@ -44,7 +62,7 @@ export function ManageUsersPage() {
                   </td>
                   <td>
                     <div className="w-full flex flex-row justify-center items-center">
-                      <Toggle />
+                      <ToggleAdmin user={user} />
                     </div>
                   </td>
                   <td>
@@ -62,22 +80,54 @@ export function ManageUsersPage() {
   );
 }
 
-function Toggle() {
-  const [enabled, setEnabled] = useState(false);
+function ToggleAdmin({ user }) {
+  const currentUserId = Meteor.userId();
+  const [toggleState, setToggleState] = useState(user.isAdmin || false);
 
+  const toggleAdminRole = () => {
+    if (currentUserId == user._id) {
+      return;
+    } else {
+      Meteor.call(
+        "account.updateRole",
+        { userId: user._id, adminStatus: !toggleState },
+        (err, result) => {
+          if (err) {
+            return;
+          } else if (result != undefined) {
+            setToggleState(result);
+          }
+        }
+      );
+    }
+  };
+
+  return (
+    <Toggle
+      onToggle={toggleAdminRole}
+      checked={toggleState}
+      disabled={currentUserId == user._id}
+    />
+  );
+}
+
+function Toggle({ onToggle, checked, disabled }) {
   return (
     <div className="flex flex-col justify-center h-full">
       <Switch
-        checked={enabled}
-        onChange={setEnabled}
-        className={`${
-          enabled ? "bg-sky-500" : "bg-gray-200"
-        } relative inline-flex h-6 w-11 items-center rounded-full`}
+        disabled={disabled}
+        checked={checked}
+        onChange={() => {
+          onToggle();
+        }}
+        className={`${checked ? "bg-sky-500" : "bg-gray-200"} 
+          ${disabled ? "md:hover:cursor-not-allowed" : ""}
+          relative inline-flex h-6 w-11 items-center rounded-full`}
       >
         <span className="sr-only">Enable notifications</span>
         <span
-          className={`${
-            enabled ? "translate-x-6" : "translate-x-1"
+          className={`${checked ? "translate-x-6" : "translate-x-1"} ${
+            disabled ? "md:hover:cursor-not-allowed" : ""
           } inline-block h-4 w-4 transform rounded-full bg-white transition duration-250`}
         />
       </Switch>

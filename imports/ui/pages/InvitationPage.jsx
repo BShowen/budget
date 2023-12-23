@@ -1,8 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Meteor } from "meteor/meteor";
+import { useNavigate } from "react-router-dom";
+import { useTracker } from "meteor/react-meteor-data";
+
 export function InvitationPage() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [url, setUrl] = useState("");
+  const isAdmin = useTracker(() => Meteor.user().isAdmin);
+
+  useEffect(() => {
+    // If the user is not an admin, navigate to the root url.
+    // isAdmin is a reactive source. So even if the user is already on this page
+    // they will be redirected immediately when there isAdmin status is changed.
+    if (isAdmin == false) {
+      navigate("/");
+    }
+  }, [isAdmin]);
 
   const getInvitationLink = () => {
     setLoading(true);

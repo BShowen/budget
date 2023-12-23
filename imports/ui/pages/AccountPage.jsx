@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
+import { useTracker } from "meteor/react-meteor-data";
 
 // Icons
 import { LuChevronRight } from "react-icons/lu";
@@ -13,7 +14,10 @@ export function AccountPage() {
   const {
     isAdmin,
     profile: { firstName, lastName },
-  } = Meteor.user();
+  } = useTracker(() => {
+    return Meteor.user();
+  });
+
   return (
     <div className="w-full h-full p-2 text-gray-700">
       <div className="h-20 flex flex-col justify-start items-start">
