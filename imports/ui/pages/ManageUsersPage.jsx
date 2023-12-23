@@ -35,7 +35,7 @@ export function ManageUsersPage() {
           <div className="bg-white rounded-md overflow-hidden drop-shadow-sm">
             <table className="table-auto border-collapse w-full font-medium text-lg">
               <thead className="bg-slate-200 drop-shadow-sm">
-                <tr className="h-10">
+                <tr className="h-10 text-sm">
                   <th>Name</th>
                   <th>Admin</th>
                   <th className="pe-2">Delete</th>
