@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 
 // Icons
 import { LuCircleDollarSign } from "react-icons/lu";
-import { LuBarChartBig } from "react-icons/lu";
+import { LuListMinus } from "react-icons/lu";
 import { LuUserCircle2 } from "react-icons/lu";
 import { LuLogOut } from "react-icons/lu";
 
@@ -14,8 +14,8 @@ export const FooterNav = () => {
         <FooterLink to="/" text="Budget">
           <LuCircleDollarSign className="text-inherit w-full h-full" />
         </FooterLink>
-        <FooterLink to="/insights" text="Insights">
-          <LuBarChartBig className="text-inherit w-full h-full" />
+        <FooterLink to="/transactions" text="Transactions">
+          <LuListMinus className="text-inherit w-full h-full" />
         </FooterLink>
         <FooterLink to="/account" text="Account">
           <LuUserCircle2 className="text-inherit w-full h-full" />

@@ -97,7 +97,7 @@ export const router = createBrowserRouter([
         ],
       },
       {
-        path: "/insights",
+        path: "/transactions",
         element: <p>Nothing to see here.</p>,
       },
     ],

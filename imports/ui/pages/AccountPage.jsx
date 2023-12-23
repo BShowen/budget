@@ -4,7 +4,7 @@ import { useTracker } from "meteor/react-meteor-data";
 
 // Icons
 import { LuChevronRight } from "react-icons/lu";
-import { LuClipboardList } from "react-icons/lu";
+import { LuListChecks } from "react-icons/lu";
 import { LuSettings } from "react-icons/lu";
 import { LuAlertCircle } from "react-icons/lu";
 import { LuUserPlus } from "react-icons/lu";
@@ -35,7 +35,7 @@ export function AccountPage() {
       <p className="font-semibold text-lg py-3">Account settings</p>
       <div className="bg-white rounded-lg drop-shadow-sm flex flex-col items-stretch px-2 py-2 gap-2 relative z-0 font-medium text-lg">
         <Link className="w-full flex flex-row justify-start items-center">
-          <LuClipboardList className="text-xl" />
+          <LuListChecks className="text-xl" />
           <p className="ps-1 me-auto">Reconcile</p>
           <LuChevronRight className="text-xl" />
         </Link>
