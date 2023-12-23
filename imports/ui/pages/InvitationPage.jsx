@@ -7,7 +7,7 @@ export function InvitationPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [url, setUrl] = useState("");
-  const isAdmin = useTracker(() => Meteor.user().isAdmin);
+  const isAdmin = useTracker(() => Meteor.user()?.isAdmin);
 
   useEffect(() => {
     // If the user is not an admin, navigate to the root url.

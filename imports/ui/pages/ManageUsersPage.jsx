@@ -9,7 +9,7 @@ import { LuUserCircle2 } from "react-icons/lu";
 
 export function ManageUsersPage() {
   const navigate = useNavigate();
-  const isAdmin = useTracker(() => Meteor.user().isAdmin);
+  const isAdmin = useTracker(() => Meteor.user()?.isAdmin);
   const userList = useTracker(() => {
     return Meteor.users.find({}).fetch();
   });

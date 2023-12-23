@@ -218,17 +218,13 @@ Meteor.methods({
     // Don't allow non-admins to run this method.
     if (Meteor.isClient || !this.userId || !Meteor.user().isAdmin) return;
 
-    // A user cannot change the admin status of another user that was created
-    // before them.
-    const currentUserCreatedAt = new Date(Meteor.user().createdAt);
-    const targetUserCreatedAt = new Date(
-      Meteor.users.findOne(
-        { _id: userId },
-        { fields: { createdAt: 1 } }
-      ).createdAt
-    );
-    if (currentUserCreatedAt < targetUserCreatedAt) {
-      // if current user was created before the target user
+    if (
+      currentUserHasPrecedence({ targetUserId: userId }) &&
+      isSameAccount({ targetUserId: userId })
+    ) {
+      // A user cannot change the admin status of another user that was created
+      // before them.
+      // A user cannot change the admin status of users belonging to other accounts
       try {
         // Update the admin status of the user.
         Meteor.users.update(
@@ -246,6 +242,26 @@ Meteor.methods({
     }
   },
 });
+
+function isSameAccount({ targetUserId }) {
+  // Return true if target user belongs to same account as logged in user.
+  return (
+    Meteor.user().accountId ==
+    Meteor.users.findOne({ _id: targetUserId }).accountId
+  );
+}
+
+function currentUserHasPrecedence({ targetUserId }) {
+  // Return true if current user was created before the target user
+  const currentUserCreatedAt = new Date(Meteor.user().createdAt);
+  const targetUserCreatedAt = new Date(
+    Meteor.users.findOne(
+      { _id: targetUserId },
+      { fields: { createdAt: 1 } }
+    ).createdAt
+  );
+  return currentUserCreatedAt < targetUserCreatedAt;
+}
 
 function validatePasswords({ password, confirmPassword }) {
   const validationErrors = [];

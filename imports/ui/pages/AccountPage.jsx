@@ -17,10 +17,10 @@ export function AccountPage() {
   const { isAdmin, firstName, lastName, email } = useTracker(() => {
     const user = Meteor.user();
     return {
-      firstName: user.profile.firstName,
-      lastName: user.profile.lastName,
-      isAdmin: user.isAdmin,
-      email: user.emails[0].address,
+      firstName: user?.profile?.firstName,
+      lastName: user?.profile?.lastName,
+      isAdmin: user?.isAdmin,
+      email: user?.emails[0]?.address,
     };
   });
 
