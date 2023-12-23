@@ -16,6 +16,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.15.4",
+    "@headlessui/react": "^1.7.17",
+    "@tailwindcss/forms": "^0.5.6",
     "autoprefixer": "^10.4.4",
     "bcrypt": "^5.1.1",
     "lodash": "^4.17.21",
@@ -29,8 +31,7 @@
     "react-router-dom": "^6.18.0",
     "simpl-schema": "^1.13.1",
     "tailwind-scrollbar-hide": "^1.1.7",
-    "tailwindcss": "^3.0.23",
-    "@tailwindcss/forms": "^0.5.6"
+    "tailwindcss": "^3.0.23"
   },
   "meteor": {
     "mainModule": {

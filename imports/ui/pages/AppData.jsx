@@ -35,13 +35,15 @@ export const AppData = ({ children }) => {
     const transactionHandler = Meteor.subscribe("transactions", budget?._id);
     const userDataHandler = Meteor.subscribe("userData", budget?._id);
     const tagHandler = Meteor.subscribe("tags");
+    const allUsers = Meteor.subscribe("allUsers");
 
     return !(
       envelopeHandler.ready() &&
       ledgerHandler.ready() &&
       transactionHandler.ready() &&
       userDataHandler.ready() &&
-      tagHandler.ready()
+      tagHandler.ready() &&
+      allUsers.ready()
     );
   });
 

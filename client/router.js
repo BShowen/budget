@@ -16,6 +16,7 @@ import { ErrorPage } from "../imports/ui/pages/ErrorPage";
 import { InvitationPage } from "../imports/ui/pages/InvitationPage";
 import { ResetPassword } from "../imports/ui/pages/ResetPasswordPage";
 import { DeleteAccount } from "../imports/ui/pages/DeleteAccountPage";
+import { ManageUsersPage } from "../imports/ui/pages/ManageUsersPage";
 
 // Loaders
 import { logoutLoader } from "../imports/ui/components/Logout";
@@ -56,13 +57,11 @@ export const router = createBrowserRouter([
       {
         path: "/account",
         children: [
-          {
-            index: true,
-            element: <AccountPage />,
-          },
+          { index: true, element: <AccountPage /> },
           { path: "invite", element: <InvitationPage /> },
           { path: "reset-password", element: <ResetPassword /> },
           { path: "delete-account", element: <DeleteAccount /> },
+          { path: "manage-users", element: <ManageUsersPage /> },
         ],
       },
       {

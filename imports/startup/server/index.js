@@ -12,6 +12,7 @@ import "/imports/api/Envelope/server/publications";
 import "/imports/api/Ledger/server/publications";
 import "/imports/api/Transaction/server/publications";
 import "/imports/api/Tag/server/publications";
+import "/imports/api/User/server/publications";
 
 // Collections
 import "/imports/api/Account/AccountCollection";
