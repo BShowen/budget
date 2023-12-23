@@ -21,7 +21,7 @@ export function ManageUsersPage() {
     // isAdmin is a reactive source. So even if the user is already on this page
     // they will be redirected immediately when there isAdmin status is changed.
     if (isAdmin == false) {
-      navigate("/");
+      navigate("/account");
     }
   }, [isAdmin]);
 
