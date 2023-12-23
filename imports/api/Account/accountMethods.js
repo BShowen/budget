@@ -246,6 +246,22 @@ Meteor.methods({
       return;
     }
   },
+  "account.removeUserAccount"({ targetUserId }) {
+    // Don't run on server.
+    // Don't run if logged out.
+    // Don't allow non-admins to run this method.
+    if (Meteor.isClient || !this.userId || !Meteor.user().isAdmin) return;
+
+    if (
+      currentUserHasPrecedence({ targetUserId }) &&
+      isSameAccount({ targetUserId })
+    ) {
+      return !!Meteor.users.remove({
+        _id: targetUserId,
+        accountId: Meteor.user().accountId,
+      });
+    }
+  },
 });
 
 function isSameAccount({ targetUserId }) {

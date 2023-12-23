@@ -69,7 +69,7 @@ export function ManageUsersPage() {
                       </td>
                       <td>
                         <div className="w-full flex flex-row justify-center items-center">
-                          <LuXCircle className="text-2xl md:hover:cursor-pointer md:hover:text-rose-400" />
+                          <RemoveUserButton user={user} />
                         </div>
                       </td>
                     </tr>
@@ -147,5 +147,23 @@ function Toggle({ onToggle, checked, disabled }) {
         />
       </Switch>
     </div>
+  );
+}
+
+function RemoveUserButton({ user }) {
+  const removeAccount = () => {
+    Meteor.call(
+      "account.removeUserAccount",
+      { targetUserId: user._id },
+      (err, result) => {
+        console.log({ err, result });
+      }
+    );
+  };
+  return (
+    <LuXCircle
+      onClick={removeAccount}
+      className="text-2xl md:hover:cursor-pointer md:hover:text-rose-400"
+    />
   );
 }
