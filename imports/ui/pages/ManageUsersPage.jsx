@@ -152,13 +152,12 @@ function Toggle({ onToggle, checked, disabled }) {
 
 function RemoveUserButton({ user }) {
   const removeAccount = () => {
-    Meteor.call(
-      "account.removeUserAccount",
-      { targetUserId: user._id },
-      (err, result) => {
-        console.log({ err, result });
-      }
+    const confirmation = confirm(
+      "Are your sure you want to delete this account?"
     );
+    if (confirmation) {
+      Meteor.call("account.removeUserAccount", { targetUserId: user._id });
+    }
   };
   return (
     <LuXCircle
