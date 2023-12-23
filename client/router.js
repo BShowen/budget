@@ -18,6 +18,7 @@ import { ResetPassword } from "../imports/ui/pages/ResetPasswordPage";
 import { DeleteAccount } from "../imports/ui/pages/DeleteAccountPage";
 import { ManageUsersPage } from "../imports/ui/pages/ManageUsersPage";
 import { AccountPageLayout } from "../imports/ui/pages/AccountPageLayout";
+import { TransactionsPage } from "../imports/ui/pages/TransactionsPage";
 
 // Loaders
 import { logoutLoader } from "../imports/ui/components/Logout";
@@ -98,7 +99,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/transactions",
-        element: <p>Nothing to see here.</p>,
+        element: <TransactionsPage />,
       },
     ],
   },

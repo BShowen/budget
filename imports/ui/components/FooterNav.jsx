@@ -14,7 +14,7 @@ export const FooterNav = () => {
         <FooterLink to="/" text="Budget">
           <LuCircleDollarSign className="text-inherit w-full h-full" />
         </FooterLink>
-        <FooterLink to="/transactions" text="Transactions">
+        <FooterLink to="/transactions" text="Insights">
           <LuListMinus className="text-inherit w-full h-full" />
         </FooterLink>
         <FooterLink to="/account" text="Account">
