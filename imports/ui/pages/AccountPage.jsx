@@ -10,21 +10,27 @@ import { LuAlertCircle } from "react-icons/lu";
 import { LuUserPlus } from "react-icons/lu";
 import { LuUserCog } from "react-icons/lu";
 
+// Utils
+import { cap } from "../util/cap";
+
 export function AccountPage() {
-  const {
-    isAdmin,
-    profile: { firstName, lastName },
-  } = useTracker(() => {
-    return Meteor.user();
+  const { isAdmin, firstName, lastName, email } = useTracker(() => {
+    const user = Meteor.user();
+    return {
+      firstName: user.profile.firstName,
+      lastName: user.profile.lastName,
+      isAdmin: user.isAdmin,
+      email: user.emails[0].address,
+    };
   });
 
   return (
     <div className="w-full h-full p-2 text-gray-700">
       <div className="h-20 flex flex-col justify-start items-start">
-        <p className="text-sm font-semibold">Logged in as</p>
         <h1 className="font-bold text-3xl text-gray-700">
-          {firstName} {lastName}
+          {cap(firstName)} {cap(lastName)}
         </h1>
+        <p className="text-sm font-semibold">{email}</p>
       </div>
       <p className="font-semibold text-lg py-3">Account settings</p>
       <div className="bg-white rounded-lg drop-shadow-sm flex flex-col items-stretch px-2 py-2 gap-2 relative z-0 font-medium text-lg">
