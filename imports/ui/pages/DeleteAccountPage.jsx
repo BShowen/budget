@@ -23,7 +23,7 @@ export function DeleteAccount() {
   };
 
   return (
-    <div className="px-2">
+    <div className="w-full h-full p-2 text-gray-700 text-center">
       <div className="h-20 flex flex-col justify-center items-center">
         <h1 className="font-bold text-2xl text-gray-700">
           Delete your account
