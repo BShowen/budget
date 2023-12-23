@@ -179,12 +179,7 @@ Meteor.methods({
 
     Accounts.setPassword(Meteor.userId(), newPassword, { logout: false });
   },
-  "account.deleteAccount"({ password }) {
-    // ******************************************************************************************
-    // If user is admin, delete all account data and all users.
-    // If user is not admin, then just delete the user account and nothing else.
-    // ******************************************************************************************
-
+  async "account.deleteAccount"({ password }) {
     // Don't run on client. Don't run if not logged in.
     if (Meteor.isClient || !Meteor.userId()) return;
     const { error } = Accounts._checkPassword(Meteor.user(), password);
@@ -196,21 +191,31 @@ Meteor.methods({
       );
     }
 
-    const selector = { accountId: Meteor.user().accountId };
-    // Delete all accounts.
-    AccountCollection.remove({ _id: selector.accountId });
-    // Delete all budgets.
-    BudgetCollection.remove(selector);
-    // Delete all envelopes.
-    EnvelopeCollection.remove(selector);
-    // Delete all ledgers.
-    LedgerCollection.remove(selector);
-    // Delete all tags.
-    TagCollection.remove(selector);
-    // Delete all transactions.
-    TransactionCollection.remove(selector);
-    // Delete all users.
-    Meteor.users.remove(selector);
+    const userCount = await Meteor.users.countDocuments({
+      accountId: Meteor.user().accountId,
+    });
+
+    // If user is only user on the account then delete everything.
+    // If there are multiple users, delete only the user.
+    if (userCount > 1) {
+      Meteor.users.remove({ _id: Meteor.userId() });
+    } else {
+      const selector = { accountId: Meteor.user().accountId };
+      // Delete all accounts.
+      AccountCollection.remove({ _id: selector.accountId });
+      // Delete all budgets.
+      BudgetCollection.remove(selector);
+      // Delete all envelopes.
+      EnvelopeCollection.remove(selector);
+      // Delete all ledgers.
+      LedgerCollection.remove(selector);
+      // Delete all tags.
+      TagCollection.remove(selector);
+      // Delete all transactions.
+      TransactionCollection.remove(selector);
+      // Delete all users.
+      Meteor.users.remove(selector);
+    }
   },
   "account.updateRole"({ userId, adminStatus }) {
     // Don't run on server.
