@@ -64,76 +64,85 @@ export function LoginForm() {
   }
 
   return (
-    <div className="w-full h-full bg-white pt-28 px-5">
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col justify-start gap-3 lg:w-2/5 lg:mx-auto"
-      >
-        <div>
-          <input
-            className={`appearance-none w-full rounded-md font-semibold border-2 placeholder:font-medium  ${
-              error.field === "email" ? "border-rose-400" : "border-gray-300"
-            }`}
-            id="email"
-            type="email"
-            required
-            placeholder="Email"
-            name="email"
-            value={formValues.email}
-            onInput={handleInput}
-          />
+    <>
+      <div className="empty-page-header !bg-gray-100"></div>
+      <div className="w-full bg-inherit p-2 flex flex-col justify-start items-stretch gap-7 padding-safe-area-top">
+        <div className="w-full h-14 flex flex-col justify-end items-center">
+          <h1 className="text-3xl font-semibold">Login to Dough Tracker</h1>
         </div>
-        <div>
-          <input
-            className={`appearance-none w-full rounded-md font-semibold border-2 placeholder:font-medium ${
-              error.field === "password" ? "border-rose-400" : "border-gray-300"
-            }`}
-            id="password"
-            type="password"
-            required
-            placeholder="Password"
-            name="password"
-            value={formValues.password}
-            onInput={handleInput}
-          />
-        </div>
-        <div className="flex flex-row justify-center items-center">
-          <button
-            className="bg-sky-500 lg:hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md lg:focus:shadow-outline text-lg w-full"
-            type="submit"
-          >
-            Log In
-          </button>
-        </div>
-        <div className="flex flex-row justify-start items-center px-2">
-          <p>
-            Don't have an account?{" "}
-            <span>
-              <Link className="underline text-sky-500">Sign up</Link>
-            </span>
-          </p>
-        </div>
-        <div className="flex flex-row justify-start items-center px-2">
-          <a
-            className="underline text-sky-500 hover:cursor-pointer"
-            onClick={() => {
-              Meteor.loginWithPassword(
-                { email: Meteor.settings.public.demoAccount.email },
-                Meteor.settings.public.demoAccount.password,
-                (error) => {
-                  if (error) {
-                    alert("Sorry, demo isn't available right now.");
-                  } else {
-                    navigate("/");
+
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col justify-start gap-3 lg:w-2/5 lg:mx-auto"
+        >
+          <div>
+            <input
+              className={`appearance-none w-full rounded-md font-semibold border-2 placeholder:font-medium  ${
+                error.field === "email" ? "border-rose-400" : "border-gray-300"
+              }`}
+              id="email"
+              type="email"
+              required
+              placeholder="Email"
+              name="email"
+              value={formValues.email}
+              onInput={handleInput}
+            />
+          </div>
+          <div>
+            <input
+              className={`appearance-none w-full rounded-md font-semibold border-2 placeholder:font-medium ${
+                error.field === "password"
+                  ? "border-rose-400"
+                  : "border-gray-300"
+              }`}
+              id="password"
+              type="password"
+              required
+              placeholder="Password"
+              name="password"
+              value={formValues.password}
+              onInput={handleInput}
+            />
+          </div>
+          <div className="flex flex-row justify-center items-center">
+            <button
+              className="bg-sky-500 lg:hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md lg:focus:shadow-outline text-lg w-full"
+              type="submit"
+            >
+              Log In
+            </button>
+          </div>
+          <div className="flex flex-row justify-start items-center px-2">
+            <p>
+              Don't have an account?{" "}
+              <span>
+                <Link className="underline text-sky-500">Sign up</Link>
+              </span>
+            </p>
+          </div>
+          <div className="flex flex-row justify-start items-center px-2">
+            <a
+              className="underline text-sky-500 hover:cursor-pointer"
+              onClick={() => {
+                Meteor.loginWithPassword(
+                  { email: Meteor.settings.public.demoAccount.email },
+                  Meteor.settings.public.demoAccount.password,
+                  (error) => {
+                    if (error) {
+                      alert("Sorry, demo isn't available right now.");
+                    } else {
+                      navigate("/");
+                    }
                   }
-                }
-              );
-            }}
-          >
-            Try a demo
-          </a>
-        </div>
-      </form>
-    </div>
+                );
+              }}
+            >
+              Try a demo
+            </a>
+          </div>
+        </form>
+      </div>
+    </>
   );
 }
