@@ -137,8 +137,8 @@ export function TransactionForm() {
   }
 
   return (
-    <div className="bg-slate-100 h-full w-full">
-      <div className="w-full bg-sky-500 p-2 flex flex-col justify-start">
+    <>
+      <div className="page-header w-full md:w-3/5 bg-sky-500 p-2 flex flex-col justify-start">
         <div className="w-full px-1 py-2 grid grid-cols-12 font-bold text-center">
           <h2
             className="col-start-1 col-end-4 text-white lg:hover:cursor-pointer"
@@ -163,7 +163,7 @@ export function TransactionForm() {
           disableChange={ledger.isIncomeLedger}
         />
       </div>
-      <div className="bg-slate-100 p-3">
+      <div className="h-full w-full pt-24 p-2">
         <form ref={formRef} className="flex flex-col justify-start gap-2">
           <InputGroup>
             <InputContainer>
@@ -279,7 +279,7 @@ export function TransactionForm() {
           )}
         </form>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -298,7 +298,7 @@ function InputContainer({ children, options = {} }) {
 
 function InputGroup({ children }) {
   return (
-    <div className="bg-white rounded-lg flex flex-col justify-start items-center px-4">
+    <div className="bg-white rounded-lg flex flex-col justify-start items-center px-4 shadow-sm">
       {children}
     </div>
   );

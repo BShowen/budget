@@ -64,10 +64,7 @@ function PageHeader({ ledgerId }) {
 function ProgressHeader({ children, percent, pathColor, logo }) {
   const navigate = useNavigate();
   return (
-    <div
-      id="ledger-nav"
-      className="fixed top-0 w-full lg:w-3/5 h-48 bg-sky-500 flex flex-col justify-start"
-    >
+    <div className="page-header w-full lg:w-3/5 h-48 bg-sky-500 flex flex-col justify-start">
       <div className="relative flex flex-row items-center text-white p-1 h-11">
         {/* Back button */}
         <div className="w-full flex flex-row justify-start items-center">

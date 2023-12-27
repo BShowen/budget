@@ -38,20 +38,52 @@ body::-webkit-scrollbar {
   --app-height: 100%;
 }
 
-html {
-  min-height: calc(100% + env(safe-area-inset-top));
-  padding-top: env(safe-area-inset-top);
+/* html {
+  min-height: calc(var(--app-height) + env(safe-area-inset-top));
 }
 
 body {
-  min-height: calc(var(--app-height) - env(safe-area-inset-top));
+  min-height: inherit;
+}
+
+#app {
+  min-height: inherit;
 }
 
 #layout {
-  min-height: calc(var(--app-height) - env(safe-area-inset-top));
+  min-height: inherit;
+} */
+
+html,
+body,
+#app,
+#layout {
+  /* height: calc(var(--app-height) + env(safe-area-inset-top)); */
+  min-height: calc(var(--app-height) + env(safe-area-inset-top));
 }
 
-#top-nav,
-#ledger-nav {
-  padding-top: calc(env(safe-area-inset-top) - 13px);
+html {
+  background-color: #f3f4f6;
+}
+
+.padding-safe-area-top {
+  padding-top: calc(env(safe-area-inset-top));
+}
+
+.page-header {
+  padding-top: calc(env(safe-area-inset-top));
+  position: fixed;
+  top: 0;
+}
+
+.empty-page-header {
+  padding-top: calc(env(safe-area-inset-top));
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: inherit;
+}
+
+.position-top-safe {
+  top: calc(env(safe-area-inset-top, 0));
 }

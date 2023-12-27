@@ -31,10 +31,7 @@ export function DashboardHeader({
   const currentMonth = date.toLocaleString("en-US", { month: "long" });
 
   return (
-    <div
-      id="top-nav"
-      className="fixed top-0 lg:w-3/5 mx-auto z-50 w-full flex flex-col justify-start items-stretch shadow-sm bg-sky-500"
-    >
+    <div className="page-header lg:w-3/5 mx-auto z-50 w-full flex flex-col justify-start items-stretch shadow-sm bg-sky-500">
       <div className="pb-4 z-50 shadow-sm">
         <div className="w-full flex flex-row flex-nowrap items-center justify-center text-white">
           {/* months */}

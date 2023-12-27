@@ -81,16 +81,17 @@ export function TransactionsPage() {
   };
 
   return (
-    <div className="flex flex-col justify-start items-stretch p-2 pb-28 gap-5 bg-gray-100">
-      <Insights />
-      {transactionList.length > 0 && (
+    <>
+      <div className="empty-page-header"></div>
+      <div className="flex flex-col justify-start items-stretch p-2 pb-28 gap-5 bg-gray-100">
+        <Insights />
         <div className="bg-white p-2 rounded-xl flex flex-col gap-2">
           <div className="w-full text-center">
             <h2 className="font-bold text-gray-700 text-xl">
               {transactionList.length} Transactions this month
             </h2>
           </div>
-          <Toolbar {...toolbarOptions} />
+          {transactionList.length > 0 && <Toolbar {...toolbarOptions} />}
           <ul className="list-none">
             {transactionList.map((transaction, i) => {
               const border = i == 0 ? "" : "border-t";
@@ -113,8 +114,8 @@ export function TransactionsPage() {
             })}
           </ul>
         </div>
-      )}
-    </div>
+      </div>
+    </>
   );
 }
 
@@ -198,7 +199,7 @@ function Insights() {
 
 function Toolbar(options) {
   return (
-    <div className="sticky top-0 px-1 bg-gray-50 rounded-xl h-11 shadow-md mb-3">
+    <div className="sticky position-top-safe px-1 bg-gray-50 rounded-xl h-11 shadow-md mb-3">
       <div className="w-full h-full flex flex-row justify-center items-stretch gap-1 text-gray-700 font-bold text-sm py-1">
         <SortByDate {...options} />
         <SortByName {...options} />

@@ -25,64 +25,67 @@ export function AccountPage() {
   });
 
   return (
-    <div className="w-full h-full p-2 text-gray-700">
-      <div className="h-20 flex flex-col justify-start items-start">
-        <h1 className="font-bold text-3xl text-gray-700">
-          {cap(firstName)} {cap(lastName)}
-        </h1>
-        <p className="text-sm font-semibold">{email}</p>
-      </div>
-      <p className="font-semibold text-lg py-3">Account settings</p>
-      <div className="bg-white rounded-lg drop-shadow-sm flex flex-col items-stretch px-2 py-2 gap-2 relative z-0 font-medium text-lg">
-        <Link className="w-full flex flex-row justify-start items-center">
-          <LuListChecks className="text-xl" />
-          <p className="ps-1 me-auto">Reconcile</p>
-          <LuChevronRight className="text-xl" />
-        </Link>
-        <hr />
-        <Link
-          to="reset-password"
-          className="w-full flex flex-row justify-start items-center"
-        >
-          <LuSettings className="text-xl" />
-          <p className="ps-1 me-auto">Reset password</p>
-          <LuChevronRight className="text-xl" />
-        </Link>
-        <hr />
-        <Link
-          to="delete-account"
-          className="w-full flex flex-row justify-start items-center"
-        >
-          <LuAlertCircle className="text-xl" />
-          <p className="ps-1 me-auto">Delete account</p>
-          <LuChevronRight className="text-xl" />
-        </Link>
-      </div>
+    <>
+      <div className="empty-page-header"></div>
+      <div className="w-full h-full p-2 text-gray-700">
+        <div className="h-20 flex flex-col justify-start items-start">
+          <h1 className="font-bold text-3xl text-gray-700">
+            {cap(firstName)} {cap(lastName)}
+          </h1>
+          <p className="text-sm font-semibold">{email}</p>
+        </div>
+        <p className="font-semibold text-lg py-3">Account settings</p>
+        <div className="bg-white rounded-lg drop-shadow-sm flex flex-col items-stretch px-2 py-2 gap-2 relative z-0 font-medium text-lg">
+          <Link className="w-full flex flex-row justify-start items-center">
+            <LuListChecks className="text-xl" />
+            <p className="ps-1 me-auto">Reconcile</p>
+            <LuChevronRight className="text-xl" />
+          </Link>
+          <hr />
+          <Link
+            to="reset-password"
+            className="w-full flex flex-row justify-start items-center"
+          >
+            <LuSettings className="text-xl" />
+            <p className="ps-1 me-auto">Reset password</p>
+            <LuChevronRight className="text-xl" />
+          </Link>
+          <hr />
+          <Link
+            to="delete-account"
+            className="w-full flex flex-row justify-start items-center"
+          >
+            <LuAlertCircle className="text-xl" />
+            <p className="ps-1 me-auto">Delete account</p>
+            <LuChevronRight className="text-xl" />
+          </Link>
+        </div>
 
-      {isAdmin && (
-        <>
-          <p className="font-semibold text-lg py-3">User settings</p>
-          <div className="bg-white rounded-lg drop-shadow-sm flex flex-col items-stretch px-2 py-2 gap-2 relative z-0 font-medium text-lg">
-            <Link
-              to="invite"
-              className="w-full flex flex-row justify-start items-center"
-            >
-              <LuUserPlus className="text-xl" />
-              <p className="ps-1 me-auto">Invite user</p>
-              <LuChevronRight className="text-xl" />
-            </Link>
-            <hr />
-            <Link
-              to="manage-users"
-              className="w-full flex flex-row justify-start items-center"
-            >
-              <LuUserCog className="text-xl" />
-              <p className="ps-1 me-auto">Manage user accounts</p>
-              <LuChevronRight className="text-xl" />
-            </Link>
-          </div>
-        </>
-      )}
-    </div>
+        {isAdmin && (
+          <>
+            <p className="font-semibold text-lg py-3">User settings</p>
+            <div className="bg-white rounded-lg drop-shadow-sm flex flex-col items-stretch px-2 py-2 gap-2 relative z-0 font-medium text-lg">
+              <Link
+                to="invite"
+                className="w-full flex flex-row justify-start items-center"
+              >
+                <LuUserPlus className="text-xl" />
+                <p className="ps-1 me-auto">Invite user</p>
+                <LuChevronRight className="text-xl" />
+              </Link>
+              <hr />
+              <Link
+                to="manage-users"
+                className="w-full flex flex-row justify-start items-center"
+              >
+                <LuUserCog className="text-xl" />
+                <p className="ps-1 me-auto">Manage user accounts</p>
+                <LuChevronRight className="text-xl" />
+              </Link>
+            </div>
+          </>
+        )}
+      </div>
+    </>
   );
 }
