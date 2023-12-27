@@ -196,6 +196,7 @@ export function TransactionForm() {
                 value={formData.amount}
                 onInput={handleInputChange}
                 min={0}
+                autoFocus
                 className="px-0 w-1/2 text-end focus:ring-0 border-0"
               />
             </InputContainer>
@@ -252,8 +253,8 @@ export function TransactionForm() {
 
           <InputGroup>
             <InputContainer options={{ border: false }}>
-              <input
-                type="text"
+              <textarea
+                rows={2}
                 placeholder="Add a note"
                 value={formData.note}
                 onInput={handleInputChange}
