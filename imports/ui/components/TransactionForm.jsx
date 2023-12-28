@@ -138,7 +138,7 @@ export function TransactionForm() {
 
   return (
     <>
-      <div className="page-header w-full md:w-3/5 bg-sky-500 p-2 flex flex-col justify-start">
+      <div className="page-header w-full lg:w-3/5 bg-sky-500 p-2 flex flex-col justify-start">
         <div className="w-full px-1 py-2 grid grid-cols-12 font-bold text-center">
           <h2
             className="col-start-1 col-end-4 text-white lg:hover:cursor-pointer"
