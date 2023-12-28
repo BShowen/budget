@@ -116,7 +116,6 @@ Meteor.startup(() => {
       name: "emergency fund",
       allocatedAmount: 400,
       startingBalance: 500.0,
-      isRecurring: true,
     });
 
     // Add some savings

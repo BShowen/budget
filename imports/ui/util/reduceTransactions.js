@@ -4,6 +4,12 @@
 
 // Returns an object {income: Number, expense: Number}
 export function reduceTransactions({ transactions }) {
+  if (!Array.isArray(transactions)) {
+    throw new Error(
+      `reduceTransactions param of type ${typeof transactions} must be an array.`
+    );
+  }
+
   return transactions.reduce(
     (ledgerTotals, transaction) => {
       const transType = transaction.type;
