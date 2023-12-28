@@ -23,11 +23,9 @@ export function DeleteAccount() {
   };
 
   return (
-    <div className="w-full h-full p-2 text-gray-700 text-center">
-      <div className="h-20 flex flex-col justify-center items-center">
-        <h1 className="font-bold text-2xl text-gray-700">
-          Delete your account
-        </h1>
+    <>
+      <div className="flex flex-col justify-center items-center">
+        <h1 className="font-bold text-2xl">Delete your account</h1>
         <div className="flex flex-row justify-center items-center font-medium text-rose-500 gap-2">
           <LuAlertCircle className="text-xl" />
           <p>Deleting your account cannot be undone.</p>
@@ -60,6 +58,6 @@ export function DeleteAccount() {
 
         <button className="btn-primary">Delete my account</button>
       </form>
-    </div>
+    </>
   );
 }

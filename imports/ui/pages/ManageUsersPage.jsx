@@ -26,11 +26,11 @@ export function ManageUsersPage() {
   }, [isAdmin]);
 
   return (
-    <div className="w-full h-full p-2 text-gray-700 text-center">
+    <>
       {userList.length > 1 ? (
         <>
-          <div className="h-20 flex flex-col justify-center items-center">
-            <h1 className="font-bold text-2xl text-gray-700">Manage users</h1>
+          <div className="h-10 flex flex-col justify-center items-center">
+            <h1 className="font-bold text-3xl">Manage users</h1>
           </div>
           <div className="bg-white rounded-md overflow-hidden drop-shadow-sm">
             <table className="table-auto border-collapse w-full font-medium text-lg">
@@ -80,19 +80,21 @@ export function ManageUsersPage() {
           </div>
         </>
       ) : (
-        <div className="h-20 flex flex-col justify-center items-center">
-          <h1 className="font-bold text-2xl text-gray-700">
-            No users to manage
-          </h1>
-          <Link
-            to="../invite"
-            className="text-md font-semibold text-sky-500 underline"
-          >
-            Invite a user
-          </Link>
-        </div>
+        <>
+          <div className="h-10 flex flex-col justify-center items-center">
+            <h1 className="font-bold text-3xl">No users to manage</h1>
+          </div>
+          <div className="overflow-hidden text-center p-3">
+            <Link
+              to="../invite"
+              className="text-lg font-semibold text-sky-500 underline"
+            >
+              Invite a user
+            </Link>
+          </div>
+        </>
       )}
-    </div>
+    </>
   );
 }
 

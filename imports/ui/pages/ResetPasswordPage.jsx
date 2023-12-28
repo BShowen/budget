@@ -35,11 +35,9 @@ export function ResetPassword() {
   };
 
   return (
-    <div className="w-full px-2">
-      <div className="h-20 flex flex-col justify-center items-center">
-        <h1 className="font-bold text-2xl text-gray-700">
-          Reset your password
-        </h1>
+    <>
+      <div className="h-10 flex flex-col justify-center items-center">
+        <h1 className="font-bold text-3xl">Reset your password</h1>
       </div>
       <form
         onSubmit={(e) => {
@@ -104,6 +102,6 @@ export function ResetPassword() {
           <button className="btn-primary">Submit</button>
         </div>
       </form>
-    </div>
+    </>
   );
 }

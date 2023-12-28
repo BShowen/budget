@@ -54,12 +54,12 @@ export function InvitationPage() {
   };
 
   return (
-    <div className="w-full h-full p-2 text-gray-700 text-center">
-      <div className="h-20 flex flex-col justify-center items-center">
-        <h1 className="font-bold text-2xl text-gray-700">Invite a user</h1>
+    <>
+      <div className="h-10 flex flex-col justify-center items-center">
+        <h1 className="font-bold text-2xl">Invite a user</h1>
       </div>
       {url && (
-        <div className="px-2">
+        <div>
           <p className="font-medium font-gray-700">
             Share this link with someone to grant them access to your budget.
           </p>
@@ -104,16 +104,14 @@ export function InvitationPage() {
         </div>
       )}
       {navigator.canShare ? (
-        <div className="px-2">
-          <button
-            className={`${
-              loading ? "text-gray-400 bg-sky-600" : "text-white bg-sky-500"
-            } w-full text-center font-medium text-lg mt-4 rounded-md py-2 shadow-sm active:text-gray-400 active:bg-sky-600`}
-            onClick={shareInvitationLink}
-          >
-            Share invitation link
-          </button>
-        </div>
+        <button
+          className={`${
+            loading ? "text-gray-400 bg-sky-600" : "text-white bg-sky-500"
+          } w-full text-center font-medium text-lg mt-4 rounded-md py-2 shadow-sm active:text-gray-400 active:bg-sky-600`}
+          onClick={shareInvitationLink}
+        >
+          Share invitation link
+        </button>
       ) : (
         <button
           className={`${
@@ -124,6 +122,6 @@ export function InvitationPage() {
           Get Invitation Link
         </button>
       )}
-    </div>
+    </>
   );
 }

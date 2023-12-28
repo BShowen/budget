@@ -74,7 +74,7 @@ export const router = createBrowserRouter([
           {
             path: "reset-password",
             element: (
-              <AccountPageLayout>
+              <AccountPageLayout header="Reset your password">
                 <ResetPassword />
               </AccountPageLayout>
             ),
