@@ -19,7 +19,7 @@ Meteor.methods({
 
     // A helper for setting up and generating the url.
     const signupUrl = {
-      protocol: "http://",
+      protocol: Meteor.isProduction ? "https://" : "http://",
       domain: Meteor.isProduction
         ? Meteor.settings.public.domainNames.production
         : Meteor.settings.public.domainNames.development,
