@@ -8,27 +8,18 @@ export function NewLedgerForm({
   children,
   toggleForm,
   envelopeId,
-  defaultValues = { name: "", allocatedAmount: 0.0, ledgerId: "" },
+  isAllocation = false,
 }) {
+  const defaultFormValues = {
+    name: "",
+    allocatedAmount: "0.00",
+  };
   const [state, setState] = useState({
-    envelopeId: envelopeId,
-    name: defaultValues.name,
-    allocatedAmount: defaultValues.allocatedAmount.toFixed(2),
+    name: "",
+    allocatedAmount: "0.00",
   });
-  const [timeoutId, setTimeoutId] = useState(null);
 
-  useEffect(() => {
-    if (
-      state.name !== defaultValues.name ||
-      state.allocatedAmount !== defaultValues.allocatedAmount.toFixed(2)
-    ) {
-      setState((prev) => ({
-        ...prev,
-        name: defaultValues.name,
-        allocatedAmount: defaultValues.allocatedAmount.toFixed(2),
-      }));
-    }
-  }, [defaultValues.name, defaultValues.allocatedAmount]);
+  const [timeoutId, setTimeoutId] = useState(null);
 
   useEffect(() => {
     // Close the form when the escape key is pressed
@@ -37,11 +28,7 @@ export function NewLedgerForm({
       if (key === "escape") {
         toggleForm();
         // Reset the form state
-        setState((prev) => ({
-          ...prev,
-          name: defaultValues.name,
-          allocatedAmount: defaultValues.allocatedAmount.toFixed(2),
-        }));
+        setState({ ...defaultFormValues });
       }
     }
     if (!children) {
@@ -52,38 +39,39 @@ export function NewLedgerForm({
   }, [children]);
 
   function handleInput(e) {
-    const name = e.target.name;
-    const value =
-      name === "allocatedAmount"
-        ? formatDollarAmount(e.target.value)
-        : e.target.value;
-    setState((prev) => ({ ...prev, [name]: value }));
+    if (e.key === "Enter") {
+      // Submit form when enter key is pressed
+      e.preventDefault(); // Prevent the default form submission
+      handleSubmit(); // Trigger form submission logic
+    } else {
+      // Update the form state
+      const name = e.target.name;
+      const value =
+        name === "allocatedAmount"
+          ? formatDollarAmount(e.target.value)
+          : e.target.value;
+      setState((prev) => ({ ...prev, [name]: value }));
+    }
   }
 
   function handleSubmit() {
     if (state.name && state.name.trim().length) {
-      // Create new ledger
       try {
-        Meteor.call("ledger.createLedger", state);
+        const formData = { ...state, envelopeId, isAllocation };
+        if (isAllocation) {
+          // Create an allocation ledger
+          Meteor.call("allocationLedger.createLedger", formData);
+        } else {
+          // Create new ledger
+          Meteor.call("ledger.createLedger", formData);
+        }
       } catch (error) {
         console.log(error);
       }
     }
     // Reset the form state
-    setState((prev) => ({
-      ...prev,
-      name: defaultValues.name,
-      allocatedAmount: defaultValues.allocatedAmount.toFixed(2),
-    }));
+    setState({ ...defaultFormValues });
     toggleForm();
-  }
-
-  function handleKeyDown(e) {
-    // Submit form when enter key is pressed
-    if (e.key === "Enter") {
-      e.preventDefault(); // Prevent the default form submission
-      handleSubmit(); // Trigger your form submission logic
-    }
   }
 
   return (
@@ -97,8 +85,8 @@ export function NewLedgerForm({
             autoFocus={true}
             value={state.name}
             onInput={handleInput}
-            onKeyDown={handleKeyDown}
-            // onFocus get clear the timeout that is stored in state
+            onKeyDown={handleInput}
+            // onFocus clear the timeout that is stored in state
             onFocus={(e) => {
               clearTimeout(timeoutId);
               e.target.setSelectionRange(0, 1000);
@@ -113,7 +101,7 @@ export function NewLedgerForm({
             pattern="[0-9]*"
             value={state.allocatedAmount}
             onInput={handleInput}
-            onKeyDown={handleKeyDown}
+            onKeyDown={handleInput}
             // onFocus get clear the timeout that is stored in state
             onFocus={(e) => {
               clearTimeout(timeoutId);
