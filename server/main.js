@@ -43,7 +43,7 @@ Meteor.startup(() => {
         },
       }
     );
-
+    return;
     // Create some tags
     const fastFoodTag = TagCollection.insert({ accountId, name: "fast food" });
 
