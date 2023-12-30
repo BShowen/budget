@@ -36,6 +36,10 @@ export const AppData = ({ children }) => {
     const userDataHandler = Meteor.subscribe("userData", budget?._id);
     const tagHandler = Meteor.subscribe("tags");
     const allUsers = Meteor.subscribe("allUsers");
+    const allocationLedgers = Meteor.subscribe(
+      "allocationLedgers",
+      budget?._id
+    );
 
     return !(
       envelopeHandler.ready() &&
@@ -43,7 +47,8 @@ export const AppData = ({ children }) => {
       transactionHandler.ready() &&
       userDataHandler.ready() &&
       tagHandler.ready() &&
-      allUsers.ready()
+      allUsers.ready() &&
+      allocationLedgers.ready()
     );
   });
 
