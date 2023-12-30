@@ -34,7 +34,7 @@ export function InvitationPage() {
         const shareOptions = {
           title: "Dough Tracker Invitation.",
           text: "You're invited to Dough Tracker.",
-          url: url,
+          url: response,
         };
         // Navigator is not supported in Chrome yet.
         if (
