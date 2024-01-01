@@ -1,6 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import React, { useState } from "react";
 import { useTracker } from "meteor/react-meteor-data";
+import { useNavigate } from "react-router-dom";
 
 // Collections
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
@@ -81,6 +82,7 @@ function EnvelopeBody({ ledgers, activeTab }) {
 }
 
 function EnvelopeFooter({ displayBalance, envelopeId }) {
+  const navigate = useNavigate();
   const [isFormActive, setFormActive] = useState(false);
   const toggleForm = () => {
     setFormActive((prev) => !prev);
@@ -95,16 +97,26 @@ function EnvelopeFooter({ displayBalance, envelopeId }) {
       <NewLedgerForm toggleForm={toggleForm} envelopeId={envelopeId}>
         {!isFormActive && (
           <div className="w-full flex flex-row justify-between items-center">
-            <p
-              onClick={() => {
-                if (!isFormActive) {
-                  toggleForm();
-                }
-              }}
-              className="font-normal lg:hover:cursor-pointer"
-            >
-              Add item
-            </p>
+            <div className="flex flex-row justify-start items-center gap-3">
+              <p
+                onClick={() => {
+                  if (!isFormActive) {
+                    toggleForm();
+                  }
+                }}
+                className="font-normal lg:hover:cursor-pointer"
+              >
+                Add item
+              </p>
+              <p
+                onClick={() => {
+                  navigate("/new-allocation");
+                }}
+                className="font-normal lg:hover:cursor-pointer"
+              >
+                Add allocation
+              </p>
+            </div>
             <h2 className="font-medium">{toDollars(displayBalance)}</h2>
           </div>
         )}

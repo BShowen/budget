@@ -19,6 +19,7 @@ import { DeleteAccount } from "../imports/ui/pages/DeleteAccountPage";
 import { ManageUsersPage } from "../imports/ui/pages/ManageUsersPage";
 import { AccountPageLayout } from "../imports/ui/pages/AccountPageLayout";
 import { TransactionsPage } from "../imports/ui/pages/TransactionsPage";
+import { NewAllocationPage } from "../imports/ui/pages/NewAllocationPage";
 
 // Loaders
 import { logoutLoader } from "../imports/ui/components/Logout";
@@ -100,6 +101,10 @@ export const router = createBrowserRouter([
       {
         path: "/transactions",
         element: <TransactionsPage />,
+      },
+      {
+        path: "/new-allocation",
+        element: <NewAllocationPage />,
       },
     ],
   },

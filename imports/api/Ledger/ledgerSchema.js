@@ -34,19 +34,21 @@ export const ledgerSchema = new SimpleSchema(
     isRecurring: {
       type: Boolean,
       autoValue: function () {
-        // If this ledger is an income ledger then it is not a recurring ledger.
-        // If this ledger is a savings or allocation then it is recurring.
-        switch (this.field("kind").value) {
-          case "income":
-            return false;
-          case "savings":
-            return true;
-          case "allocation":
-            return true;
-          default:
-            // If ledger kind is not set, then default to false. This should
-            // never trigger because ledger.kind is a required field.
-            return false;
+        if (this.isInsert) {
+          // If this ledger is an income ledger then it is not a recurring ledger.
+          // If this ledger is a savings or allocation then it is recurring.
+          switch (this.field("kind").value) {
+            case "income":
+              return false;
+            case "savings":
+              return true;
+            case "allocation":
+              return true;
+            default:
+              // If ledger kind is not set, then default to false. This should
+              // never trigger because ledger.kind is a required field.
+              return false;
+          }
         }
       },
     },
@@ -66,6 +68,33 @@ export const ledgerSchema = new SimpleSchema(
             this.unset();
             return undefined;
           }
+        }
+      },
+    },
+    allocation: {
+      type: Object,
+    },
+    "allocation.goalAmount": {
+      type: Number,
+      optional: function () {
+        if (this.isInsert) {
+          if (this.field("kind").value === "allocation") {
+            return false;
+          }
+        } else {
+          return true;
+        }
+      },
+    },
+    "allocation.endDate": {
+      type: Date,
+      optional: function () {
+        if (this.isInsert) {
+          if (this.field("kind").value === "allocation") {
+            return false;
+          }
+        } else {
+          return true;
         }
       },
     },

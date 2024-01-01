@@ -77,4 +77,41 @@ Meteor.methods({
       }
     );
   },
+  "ledger.createAllocationLedger"({ name, goalAmount, endDate, budgetId }) {
+    if (!this.userId) return;
+
+    const accountId = Meteor.user().accountId;
+    const savingsEnvelope = EnvelopeCollection.findOne(
+      {
+        accountId,
+        budgetId,
+        kind: "savings",
+      },
+      { field: { _id: true } }
+    );
+    return LedgerCollection.insert(
+      {
+        accountId,
+        budgetId,
+        envelopeId: savingsEnvelope._id,
+        name,
+        kind: "allocation",
+        allocation: {
+          goalAmount,
+          endDate,
+        },
+      },
+      (error, documentId) => {
+        if (error && Meteor.isServer) {
+          console.log(
+            "ledger.createAllocationLeger error on date: ",
+            new Date().toString(),
+            error
+          );
+        } else {
+          return documentId;
+        }
+      }
+    );
+  },
 });

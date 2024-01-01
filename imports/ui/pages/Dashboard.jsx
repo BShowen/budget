@@ -22,43 +22,40 @@ export const Dashboard = () => {
     };
   });
 
-  const {
-    expenseEnvelopes,
-    incomeEnvelope,
-    savingsEnvelope,
-    allocationEnvelope,
-  } = useTracker(() => {
-    const envelopes = {
-      expenseEnvelopes: [],
-      incomeEnvelope: {},
-      savingsEnvelope: {},
-      allocationEnvelope: {},
-    };
-    // If no budget is loaded, return blank envelopes.
-    if (!budget) return envelopes;
+  const { expenseEnvelopes, incomeEnvelope, savingsEnvelope } = useTracker(
+    () => {
+      const envelopes = {
+        expenseEnvelopes: [],
+        incomeEnvelope: {},
+        savingsEnvelope: {},
+        allocationEnvelope: {},
+      };
+      // If no budget is loaded, return blank envelopes.
+      if (!budget) return envelopes;
 
-    // Get the envelopes for this budget.
-    const allEnvelopes = EnvelopeCollection.find({
-      budgetId: budget._id,
-    }).fetch();
+      // Get the envelopes for this budget.
+      const allEnvelopes = EnvelopeCollection.find({
+        budgetId: budget._id,
+      }).fetch();
 
-    // Categorize and return the envelopes.
-    return allEnvelopes.reduce((acc, envelope) => {
-      switch (envelope.kind) {
-        case "income":
-          return { ...acc, incomeEnvelope: { ...envelope } };
-        case "savings":
-          return { ...acc, savingsEnvelope: { ...envelope } };
-        case "allocation":
-          return { ...acc, allocationEnvelope: { ...envelope } };
-        case "expense":
-          return {
-            ...acc,
-            expenseEnvelopes: [...acc.expenseEnvelopes, envelope],
-          };
-      }
-    }, envelopes);
-  });
+      // Categorize and return the envelopes.
+      return allEnvelopes.reduce((acc, envelope) => {
+        switch (envelope.kind) {
+          case "income":
+            return { ...acc, incomeEnvelope: { ...envelope } };
+          case "savings":
+            return { ...acc, savingsEnvelope: { ...envelope } };
+          case "allocation":
+            return { ...acc, allocationEnvelope: { ...envelope } };
+          case "expense":
+            return {
+              ...acc,
+              expenseEnvelopes: [...acc.expenseEnvelopes, envelope],
+            };
+        }
+      }, envelopes);
+    }
+  );
   const [activeTab, setActiveTab] = useState("planned"); // "planned", "spent", "remaining"
 
   return (
