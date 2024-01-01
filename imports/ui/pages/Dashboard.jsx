@@ -22,32 +22,42 @@ export const Dashboard = () => {
     };
   });
 
-  const { envelopes, incomeEnvelope, savingsEnvelope } = useTracker(() => {
-    if (!budget) {
-      return { envelopes: [], incomeEnvelope: {} };
-    }
+  const {
+    expenseEnvelopes,
+    incomeEnvelope,
+    savingsEnvelope,
+    allocationEnvelope,
+  } = useTracker(() => {
+    const envelopes = {
+      expenseEnvelopes: [],
+      incomeEnvelope: {},
+      savingsEnvelope: {},
+      allocationEnvelope: {},
+    };
+    // If no budget is loaded, return blank envelopes.
+    if (!budget) return envelopes;
+
     // Get the envelopes for this budget.
     const allEnvelopes = EnvelopeCollection.find({
       budgetId: budget._id,
     }).fetch();
 
-    const { envelopes, incomeEnvelope, savingsEnvelope } = allEnvelopes.reduce(
-      (acc, envelope) => {
-        if (envelope.isIncomeEnvelope) {
+    // Categorize and return the envelopes.
+    return allEnvelopes.reduce((acc, envelope) => {
+      switch (envelope.kind) {
+        case "income":
           return { ...acc, incomeEnvelope: { ...envelope } };
-        } else if (envelope.isSavingsEnvelope) {
+        case "savings":
           return { ...acc, savingsEnvelope: { ...envelope } };
-        } else {
-          return { ...acc, envelopes: [...acc.envelopes, envelope] };
-        }
-      },
-      { envelopes: [], incomeEnvelope: {}, savingsEnvelope: {} }
-    );
-    return {
-      envelopes,
-      incomeEnvelope,
-      savingsEnvelope,
-    };
+        case "allocation":
+          return { ...acc, allocationEnvelope: { ...envelope } };
+        case "expense":
+          return {
+            ...acc,
+            expenseEnvelopes: [...acc.expenseEnvelopes, envelope],
+          };
+      }
+    }, envelopes);
   });
   const [activeTab, setActiveTab] = useState("planned"); // "planned", "spent", "remaining"
 
@@ -58,7 +68,6 @@ export const Dashboard = () => {
         activeTab={activeTab}
         date={budget.createdAt}
         incomeEnvelope={incomeEnvelope}
-        nonIncomeEnvelopes={envelopes}
       />
 
       <div className="mt-40 pb-16 px-2 flex flex-col items-stretch gap-4 z-0">
@@ -76,7 +85,9 @@ export const Dashboard = () => {
           activeTab={activeTab}
         />
 
-        {envelopes.map((envelope) => (
+        {/* Allocation envelope will go here.  */}
+
+        {expenseEnvelopes.map((envelope) => (
           <Envelope key={envelope._id} {...envelope} activeTab={activeTab} />
         ))}
         <AddEnvelopeButton budgetId={budget._id} />

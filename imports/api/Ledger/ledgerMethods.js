@@ -9,22 +9,23 @@ Meteor.methods({
     if (!this.userId) return;
 
     const accountId = Meteor.user().accountId;
-    const { budgetId, isIncomeEnvelope, isSavingsEnvelope } =
-      EnvelopeCollection.findOne({ _id: input.envelopeId });
-
-    input = {
-      ...input,
-      accountId,
-      budgetId,
-      isIncomeLedger: isIncomeEnvelope,
-      isSavingsLedger: isSavingsEnvelope,
-    };
-
-    LedgerCollection.insert(input, (err) => {
-      if (err && Meteor.isServer) {
-        console.log(err);
-      }
+    const { budgetId, kind } = EnvelopeCollection.findOne({
+      _id: input.envelopeId,
     });
+
+    LedgerCollection.insert(
+      {
+        ...input,
+        accountId,
+        budgetId,
+        kind,
+      },
+      (err) => {
+        if (err && Meteor.isServer) {
+          console.log(err);
+        }
+      }
+    );
   },
   "ledger.updateLedger"(input) {
     if (!this.userId) return;

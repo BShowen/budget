@@ -12,42 +12,39 @@ export const envelopeSchema = new SimpleSchema(
       type: String,
       regEx: SimpleSchema.RegEx.Id,
     },
-    isIncomeEnvelope: {
-      type: Boolean,
-      autoValue: function () {
-        if (this.isInsert) {
-          return this.value || false;
-        }
-        return;
-      },
-    },
-    isSavingsEnvelope: {
-      type: Boolean,
-      autoValue: function () {
-        if (this.isInsert) {
-          return this.value || false;
-        }
-        return;
-      },
+    kind: {
+      type: String,
+      // An envelope can be...
+      // income envelope - to track income throughout the month.
+      // expense envelopes - to track expenses throughout the month.
+      // savings envelope - to track money saved throughout the month.
+      // allocation - to track allocated money throughout the month.
+      allowedValues: ["income", "savings", "allocation", "expense"],
+      // If this value is not provided, then default to expense envelope.
+      defaultValue: "expense",
     },
     name: {
       type: String,
       autoValue: function () {
-        // Don't allow user to rename an envelope to "income" or "savings".
-        // Return "untitled" if they try.
-        const isIncomeEnvelope = this.field("isIncomeEnvelope").value;
-        const isSavingsEnvelope = this.field("isSavingsEnvelope").value;
-        const value = this.value.trim().toLowerCase();
-        const canEdit =
-          !isIncomeEnvelope &&
-          !isSavingsEnvelope &&
-          value !== "income" &&
-          value !== "savings";
-        if (this.isInsert || canEdit) {
-          return;
+        if (this.isInsert) {
+          // this.value will be set when the budget publication is creating a
+          // new budget based off a previous month.
+          // this.value will be undefined when the user is crating a new
+          // envelope.
+          return this.value || "new category";
         } else {
-          this.unset();
-          return;
+          // Don't allow users to rename envelopes to one of the following
+          // reserved envelope names
+          const reservedName = ["income", "savings", "expense"];
+          const isReservedName = reservedName.includes(
+            this.value.trim().toLowerCase()
+          );
+          if (isReservedName) {
+            this.unset();
+            return undefined;
+          } else {
+            return this.value;
+          }
         }
       },
     },

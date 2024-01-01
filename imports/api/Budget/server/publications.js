@@ -121,16 +121,14 @@ Meteor.publish("budget", function (date) {
     EnvelopeCollection.insert({
       budgetId,
       accountId: user.accountId,
-      isIncomeEnvelope: true,
-      isSavingsEnvelope: false,
+      kind: "income",
       name: "income",
     });
     // Create savings Envelope
     EnvelopeCollection.insert({
       budgetId,
       accountId: user.accountId,
-      isIncomeEnvelope: false,
-      isSavingsEnvelope: true,
+      kind: "savings",
       name: "savings",
     });
   }

@@ -8,30 +8,33 @@ import { FaRegTrashAlt } from "react-icons/fa";
 import { cap } from "../util/cap";
 
 export const EditEnvelopeForm = ({ envelopeId, envelopeName, toggleForm }) => {
-  const [timeoutId, setTimeoutId] = useState(null);
-
-  const focusHandler = (e) => {
-    clearTimeout(timeoutId);
-    e.target.setSelectionRange(0, 999);
-  };
+  const [submitFormTimeoutId, setFormTimeoutId] = useState(null);
+  const [trashCanBlurTimeoutId, setTrashCanTimeoutId] = useState(null);
+  const [focused, setFocused] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const formElement = e.target.parentElement;
-    const formData = {
-      ...Object.fromEntries(new FormData(formElement).entries()),
-      envelopeId,
-    };
-    setTimeoutId(
-      setTimeout(() => {
-        Meteor.call("envelope.updateEnvelope", formData, (error) => {
-          if (error) {
-            console.log(error);
-          }
-          toggleForm();
-        });
-      }, 10)
-    );
+    if (focused === "name") {
+      const formElement = e.target.parentElement;
+      const formData = {
+        ...Object.fromEntries(new FormData(formElement).entries()),
+        envelopeId,
+      };
+      setFormTimeoutId(
+        setTimeout(() => {
+          Meteor.call("envelope.updateEnvelope", formData, (error) => {
+            if (error) {
+              console.log(error);
+            }
+            toggleForm();
+          });
+        }, 10)
+      );
+    } else if (focused == "trashCan") {
+      handleTrashCanClick(e);
+    } else {
+      toggleForm();
+    }
   };
 
   const handleTrashCanClick = (e) => {
@@ -58,7 +61,7 @@ export const EditEnvelopeForm = ({ envelopeId, envelopeName, toggleForm }) => {
     }
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [focused]);
 
   return (
     <div className="w-full h-full flex flex-row items-center">
@@ -69,13 +72,27 @@ export const EditEnvelopeForm = ({ envelopeId, envelopeName, toggleForm }) => {
           type="text"
           name="name"
           defaultValue={cap(envelopeName)}
-          onFocus={focusHandler}
+          onFocus={(e) => {
+            clearTimeout(trashCanBlurTimeoutId);
+            clearTimeout(submitFormTimeoutId);
+            setFocused("name");
+            e.target.setSelectionRange(0, 999);
+          }}
           onBlur={handleSubmit}
         />
         <button
-          onFocus={() => clearTimeout(timeoutId)}
+          onFocus={() => {
+            clearTimeout(submitFormTimeoutId);
+            setFocused("trashCan");
+          }}
           onClick={handleTrashCanClick}
-          onBlur={handleSubmit}
+          onBlur={() => {
+            setTrashCanTimeoutId(
+              setTimeout(() => {
+                toggleForm();
+              }, 10)
+            );
+          }}
           type="button"
           className="focus:ring-0 outline-none text-rose-500 focus:text-rose-700 border-0 active:border-0 hover:border-0 "
         >

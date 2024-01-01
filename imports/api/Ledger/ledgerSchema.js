@@ -27,50 +27,45 @@ export const ledgerSchema = new SimpleSchema(
         return this.value ? Number.parseFloat(this.value) : defaultValue;
       },
     },
-    isIncomeLedger: {
-      type: Boolean,
-      required: false,
-    },
-    isSavingsLedger: {
-      type: Boolean,
-      required: false,
+    kind: {
+      type: String,
+      allowedValues: ["income", "expense", "savings", "allocation"],
     },
     isRecurring: {
       type: Boolean,
-      // defaultValue: false,
       autoValue: function () {
-        return !!this.field("isSavingsLedger") || false;
+        // If this ledger is an income ledger then it is not a recurring ledger.
+        // If this ledger is a savings or allocation then it is recurring.
+        switch (this.field("kind").value) {
+          case "income":
+            return false;
+          case "savings":
+            return true;
+          case "allocation":
+            return true;
+          default:
+            // If ledger kind is not set, then default to false. This should
+            // never trigger because ledger.kind is a required field.
+            return false;
+        }
       },
     },
     startingBalance: {
-      // Only a ledger of type savings can have a startingBalance.
-      // All other ledgers use allocatedAmount
       type: Number,
       optional: true,
       autoValue: function () {
-        // A user is never allowed to set the startingBalance attribute.
-        // The startingBalance is ALWAYS set to zero upon savings ledger
-        // creation. The only way the startingBalance gets updated is when next
-        // month's budget is being created. The server will calculate this attribute
-        const isSavingsLedger = this.field("isSavingsLedger").value;
-        // If this is a savingsLedger then this attribute can be updated
-        // (by the server). Otherwise, this attribute is not used and is not
-        // allowed to be updated.
-        if (isSavingsLedger) {
-          // A user is creating a new savings ledger. Set the balance to zero.
-          // this.value will be set when the server is creating a new budget.
-          // this.value will not be set when a user is creating a new savings
-          // ledger, therefore the startingBalance needs to be set to zero.
-          // this.value will be returned when a ledger is being created for next
-          // month. If a ledger is being created by the user, the then
-          // this.value will be undefined and zero will be returned. We need to
-          // return zero when a new savings ledger is being created because this
-          // is the startingBalance. If zero is not returned then the client
-          // will try to calculate the ledger balance and get NaN
-          return this.value || 0;
-        } else {
-          this.unset();
-          return;
+        if (this.isInsert && this.field("kind").isSet) {
+          // Only a ledger of kind savings or allocation can have startingBalance
+          // because these are recurring ledgers.
+          const ledgerKind = this.field("kind").value;
+          if (ledgerKind === "savings" || ledgerKind === "allocation") {
+            // If the startingBalance is set, return it.
+            // Else return zero to be used as startingBalance
+            return this.value || 0;
+          } else {
+            this.unset();
+            return undefined;
+          }
         }
       },
     },

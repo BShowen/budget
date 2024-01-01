@@ -50,15 +50,14 @@ export const TransactionsList = () => {
 
 function PageHeader({ ledgerId }) {
   const ledger = useTracker(() => LedgerCollection.findOne({ _id: ledgerId }));
-  const pageHeader = ledger.isIncomeLedger ? (
-    <IncomeHeader ledger={ledger} />
-  ) : ledger.isSavingsLedger ? (
-    <SavingsHeader ledger={ledger} />
-  ) : (
-    <CategoryHeader ledger={ledger} />
-  );
-
-  return pageHeader;
+  switch (ledger.kind) {
+    case "income":
+      return <IncomeHeader ledger={ledger} />;
+    case "expense":
+      return <CategoryHeader ledger={ledger} />;
+    case "savings":
+      return <SavingsHeader ledger={ledger} />;
+  }
 }
 
 function ProgressHeader({ children, percent, pathColor, logo }) {
@@ -405,7 +404,7 @@ function ListTransactions({ ledgerId }) {
         <div className="w-full flex flex-row justify-between items-center py-2 px-1 h-12">
           <div>
             <h2 className="font-bold text-gray-400 text-md">
-              {ledger.isIncomeLedger
+              {ledger.kind === "income"
                 ? "Income this month"
                 : "Transactions this month"}
             </h2>
@@ -415,7 +414,7 @@ function ListTransactions({ ledgerId }) {
               to={`/ledger/${ledger._id}/transactions/new`}
               className="text-sky-500 font-bold"
             >
-              {ledger.isIncomeLedger ? "Add income" : "Add transaction"}
+              {ledger.kind === "income" ? "Add income" : "Add transaction"}
             </Link>
           </div>
         </div>

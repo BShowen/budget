@@ -122,7 +122,7 @@ export function TransactionsPage() {
 function Insights() {
   const anticipatedIncome = useTracker(() =>
     LedgerCollection.find(
-      { isIncomeLedger: true },
+      { kind: "income" },
       { fields: { allocatedAmount: true } }
     )
       .fetch()
@@ -133,7 +133,7 @@ function Insights() {
     // Get all transactions that belong to the income envelope and accumulate
     // their totals into a single dollar amount.
     const incomeEnvelope = EnvelopeCollection.findOne(
-      { isIncomeEnvelope: true },
+      { kind: "income" },
       { fields: { _id: true } }
     );
 
@@ -148,7 +148,7 @@ function Insights() {
   const spentSoFar = useTracker(() => {
     // Get all transactions that do not belong to incomeEnvelope or savingsEnvelope
     const [env1, env2] = EnvelopeCollection.find(
-      { $or: [{ isIncomeEnvelope: true }, { isSavingsEnvelope: true }] },
+      { $or: [{ kind: "income" }, { kind: "savings" }] },
       { fields: { _id: true } }
     ).fetch();
 

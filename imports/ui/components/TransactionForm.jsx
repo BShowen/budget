@@ -38,7 +38,7 @@ export function TransactionForm() {
     };
   });
   const [active, setActiveTab] = useState(
-    ledger.isIncomeLedger
+    ledger.kind === "income" || ledger.kind === "savings"
       ? "income"
       : (transaction && transaction.type) || "expense"
   ); //expense or income
@@ -147,7 +147,7 @@ export function TransactionForm() {
             Cancel
           </h2>
           <h2 className="col-start-4 col-end-10">
-            {ledger.isIncomeLedger ? "Add income" : "Add transaction"}
+            {ledger.kind == "income" ? "Add income" : "Add transaction"}
           </h2>
           <h2
             className="col-start-10 col-end-13 text-white lg:hover:cursor-pointer"
@@ -160,7 +160,7 @@ export function TransactionForm() {
         <ButtonGroup
           active={active}
           setActiveTab={setActiveTab}
-          disableChange={ledger.isIncomeLedger}
+          disableChange={ledger.kind === "income"}
         />
       </div>
       <div className="h-full w-full pt-24 p-2">
