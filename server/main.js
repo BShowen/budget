@@ -43,7 +43,6 @@ Meteor.startup(() => {
         },
       }
     );
-    return;
     // Create some tags
     const fastFoodTag = TagCollection.insert({ accountId, name: "fast food" });
 
@@ -62,8 +61,8 @@ Meteor.startup(() => {
     const incomeEnvelope = EnvelopeCollection.insert({
       accountId,
       budgetId,
-      isIncomeEnvelope: true,
       name: "income",
+      kind: "income",
     });
 
     const firstPaycheckLedger = LedgerCollection.insert({
@@ -72,7 +71,7 @@ Meteor.startup(() => {
       envelopeId: incomeEnvelope,
       name: "First paycheck",
       allocatedAmount: 1500,
-      isIncomeLedger: true,
+      kind: "income",
     });
 
     // Add a paycheck
@@ -98,20 +97,20 @@ Meteor.startup(() => {
       envelopeId: incomeEnvelope,
       name: "Second paycheck",
       allocatedAmount: 1700,
-      isIncomeLedger: true,
+      kind: "income",
     });
 
     const savingsEnvelope = EnvelopeCollection.insert({
       accountId,
       budgetId,
-      isSavingsEnvelope: true,
+      kind: "savings",
       name: "savings",
     });
 
     const savingLedger = LedgerCollection.insert({
       accountId,
       budgetId: budgetId,
-      isSavingsLedger: true,
+      kind: "savings",
       envelopeId: savingsEnvelope,
       name: "emergency fund",
       allocatedAmount: 400,
@@ -141,24 +140,28 @@ Meteor.startup(() => {
         accountId,
         budgetId: budgetId,
         name: "food",
+        kind: "expense",
       }),
       // Vehicles envelope
       EnvelopeCollection.insert({
         accountId,
         budgetId: budgetId,
         name: "vehicles",
+        kind: "expense",
       }),
       // Utilities envelope
       EnvelopeCollection.insert({
         accountId,
         budgetId: budgetId,
         name: "utilities",
+        kind: "expense",
       }),
       // Personal envelope
       EnvelopeCollection.insert({
         accountId,
         budgetId: budgetId,
         name: "personal",
+        kind: "expense",
       }),
     ];
 
@@ -170,6 +173,7 @@ Meteor.startup(() => {
         envelopeId: env1,
         name: "groceries",
         allocatedAmount: 1400,
+        kind: "expense",
       }),
     ];
     //  Transactions for Groceries ledger in Food envelope
@@ -246,6 +250,7 @@ Meteor.startup(() => {
         envelopeId: env2,
         name: "gas",
         allocatedAmount: 190,
+        kind: "expense",
       }),
       LedgerCollection.insert({
         accountId,
@@ -253,6 +258,7 @@ Meteor.startup(() => {
         envelopeId: env2,
         name: "insurance",
         allocatedAmount: 170.0,
+        kind: "expense",
       }),
     ];
     // Transactions for ledgers in the Vehicle envelope
@@ -314,6 +320,7 @@ Meteor.startup(() => {
         envelopeId: env3,
         name: "internet",
         allocatedAmount: 85.0,
+        kind: "expense",
       }),
       LedgerCollection.insert({
         accountId,
@@ -321,6 +328,7 @@ Meteor.startup(() => {
         envelopeId: env3,
         name: "electric",
         allocatedAmount: 180.0,
+        kind: "expense",
       }),
       LedgerCollection.insert({
         accountId,
@@ -328,6 +336,7 @@ Meteor.startup(() => {
         envelopeId: env3,
         name: "water",
         allocatedAmount: 11.5,
+        kind: "expense",
       }),
     ];
     // Transactions for ledgers in the Utilities envelope
@@ -373,12 +382,14 @@ Meteor.startup(() => {
         budgetId: budgetId,
         envelopeId: env4,
         name: "subscriptions",
+        kind: "expense",
       }),
       LedgerCollection.insert({
         accountId,
         budgetId: budgetId,
         envelopeId: env4,
         name: "misc",
+        kind: "expense",
       }),
     ];
     // Transactions for ledgers in the Personal envelope
