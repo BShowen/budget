@@ -16,6 +16,7 @@ export function NewAllocationPage() {
   const [formData, setFormData] = useState({
     name: "",
     goalAmount: "",
+    startingBalance: "",
     endDate: dates.format(new Date(), { forHtml: true }),
   });
 
@@ -48,6 +49,16 @@ export function NewAllocationPage() {
             min={0}
             className="form-input"
           />
+          <input
+            type="text"
+            inputMode="decimal"
+            placeholder="Starting balance (optional)"
+            name="startingBalance"
+            value={formData.startingBalance.toString()}
+            onInput={handleChange}
+            min={0}
+            className="form-input"
+          />
           <div>
             <label htmlFor="goalDate">Goal date</label>
             <input
@@ -69,7 +80,7 @@ export function NewAllocationPage() {
   function handleChange(e) {
     const { name, value } = e.target;
     setFormData((prev) => {
-      if (name == "goalAmount") {
+      if (name == "goalAmount" || name == "startingBalance") {
         return { ...prev, [name]: formatDollarAmount(value) };
       } else {
         return { ...prev, [name]: value };
@@ -79,14 +90,17 @@ export function NewAllocationPage() {
 
   function handleSubmit(e) {
     e.preventDefault();
+    // Set the correct date
+    const [year, month, day] = formData.endDate.split("-");
+    const formattedDate = new Date(year, month - 1, day);
     Meteor.call(
       "ledger.createAllocationLedger",
-      { ...formData, budgetId: currentBudgetId },
+      { ...formData, endDate: formattedDate, budgetId: currentBudgetId },
       (err, result) => {
         if (err) {
           console.log("Error:", err);
         } else {
-          navigate(-1);
+          navigate("/", { replace: true });
         }
       }
     );

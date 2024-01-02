@@ -73,6 +73,34 @@ export const ledgerSchema = new SimpleSchema(
     },
     allocation: {
       type: Object,
+      optional: function () {
+        if (this.isInsert) {
+          if (this.field("kind").value === "allocation") {
+            return false;
+          } else {
+            return true;
+          }
+        } else {
+          return true;
+        }
+      },
+    },
+    "allocation.runningTotal": {
+      // This total is carried over and calculated each month when a new budget
+      // is created. This field is updated by the Budget publication.
+      type: Number,
+      defaultValue: 0,
+      optional: function () {
+        if (this.isInsert) {
+          if (this.field("kind").value === "allocation") {
+            return false;
+          } else {
+            return true;
+          }
+        } else {
+          return true;
+        }
+      },
     },
     "allocation.goalAmount": {
       type: Number,
@@ -80,6 +108,8 @@ export const ledgerSchema = new SimpleSchema(
         if (this.isInsert) {
           if (this.field("kind").value === "allocation") {
             return false;
+          } else {
+            return true;
           }
         } else {
           return true;
@@ -92,6 +122,8 @@ export const ledgerSchema = new SimpleSchema(
         if (this.isInsert) {
           if (this.field("kind").value === "allocation") {
             return false;
+          } else {
+            return true;
           }
         } else {
           return true;

@@ -34,6 +34,18 @@ export const dates = (() => {
     return date.toLocaleString("en-us", { month: "short", day: "numeric" });
   }
 
+  function forAllocation(date) {
+    if (!(date instanceof Date)) {
+      throw new Error(`${date} must be instance of Date.`);
+    }
+
+    return date.toLocaleString("en-us", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  }
+
   function format(date, args) {
     if (!(date instanceof Date) && args === undefined) {
       // If only the options object is provided
@@ -45,6 +57,7 @@ export const dates = (() => {
       forHtml: false,
       forPageHeader: false,
       forTransaction: false,
+      forAllocation: false,
     };
 
     const options = {
@@ -72,6 +85,8 @@ export const dates = (() => {
         return forPageHeader(date);
       case "forTransaction":
         return forTransaction(date);
+      case "forAllocation":
+        return forAllocation(date);
     }
   }
 

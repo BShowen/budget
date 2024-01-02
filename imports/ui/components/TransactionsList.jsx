@@ -57,6 +57,8 @@ function PageHeader({ ledgerId }) {
       return <CategoryHeader ledger={ledger} />;
     case "savings":
       return <SavingsHeader ledger={ledger} />;
+    case "allocation":
+      return <AllocationHeader ledger={ledger} />;
   }
 }
 
@@ -290,6 +292,76 @@ function SavingsHeader({ ledger }) {
         <div className="w-full flex flex-col flex-nowrap justify-start items-end">
           <p className="font-bold">Available</p>
           <p className="text-4xl p-0">{toDollars(balance)}</p>
+        </div>
+      </div>
+    </ProgressHeader>
+  );
+}
+
+function AllocationHeader({ ledger }) {
+  const transactionList = useTracker(() => {
+    if (!Meteor.userId()) return {};
+    return TransactionCollection.find({
+      ledgerId: ledger._id,
+    }).fetch();
+  });
+  const [percentSaved, setPercentSaved] = useState(0);
+  const { income, expense } = reduceTransactions({
+    transactions: transactionList,
+  });
+  const totalSavedThisMonth = income;
+  const totalSavedSinceStart = ledger.allocation.runningTotal + income;
+  const plannedToSaveThisMonth = ledger.allocatedAmount;
+  const availableToSpend = ledger.startingBalance - expense + income;
+
+  useEffect(() => {
+    // After component mounts, update the percentSaved so it animates from zero
+    // to percentSaved.
+
+    // If plannedToSaveThisMonth is zero then percentSaved should always be 100%.
+    // This is to avoid dividing by zero, because if user has received money but
+    // not set an expected amount then received / expected is dividing by zero.
+    const percentSaved =
+      ledger.allocatedAmount == 0
+        ? 100
+        : (totalSavedThisMonth / plannedToSaveThisMonth) * 100;
+    setPercentSaved(percentSaved);
+  }, [ledger]);
+
+  const leftToSave =
+    plannedToSaveThisMonth - totalSavedThisMonth < 0
+      ? 0
+      : plannedToSaveThisMonth - totalSavedThisMonth;
+  const logo =
+    leftToSave <= 0 ? (
+      <BiCheck className="text-4xl text-emerald-400" />
+    ) : (
+      <BiDollar className="text-3xl text-emerald-400" />
+    );
+
+  return (
+    <ProgressHeader percent={percentSaved} pathColor={"#34d399"} logo={logo}>
+      <div className="max-w-full flex flex-col justify-start items-stretch px-2 text-gray-700 bg-slate-100 py-2 h-full">
+        <div className="w-full flex flex-row justify-start items-center flex-nowrap">
+          <h2 className="text-3xl font-bold">{cap(ledger.name)}</h2>
+        </div>
+        <div className="w-full flex flex-col flex-start justify-start items-start text-xs">
+          <p className="font-extrabold text-gray-500">
+            Saved {toDollars(totalSavedSinceStart)} out of{" "}
+            {toDollars(ledger.allocation.goalAmount)} this year
+          </p>
+          <p className="font-extrabold text-gray-500">
+            Saved {toDollars(totalSavedThisMonth)} out of{" "}
+            {toDollars(plannedToSaveThisMonth)} this month
+          </p>
+          <p className="font-extrabold text-gray-500">
+            This allocation will end on{" "}
+            {dates.format(ledger.allocation.endDate, { forAllocation: true })}
+          </p>
+        </div>
+        <div className="w-full flex flex-col flex-nowrap justify-start items-end">
+          <p className="font-bold">Available to spend</p>
+          <p className="text-4xl p-0">{toDollars(availableToSpend)}</p>
         </div>
       </div>
     </ProgressHeader>

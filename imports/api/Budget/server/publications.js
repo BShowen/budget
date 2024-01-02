@@ -106,6 +106,12 @@ Meteor.publish("budget", function (date) {
           }).fetch();
           const { income, expense } = reduceTransactions({ transactions });
           newLedger.startingBalance = ledger.startingBalance + income - expense;
+
+          // Update ledger running total if it is an allocationLedger
+          if (ledger.kind == "allocation") {
+            newLedger.allocation.runningTotal =
+              ledger.allocation.runningTotal + income;
+          }
         }
         // Insert the new ledger
         LedgerCollection.insert(newLedger);

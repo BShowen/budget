@@ -77,7 +77,13 @@ Meteor.methods({
       }
     );
   },
-  "ledger.createAllocationLedger"({ name, goalAmount, endDate, budgetId }) {
+  "ledger.createAllocationLedger"({
+    name,
+    goalAmount,
+    startingBalance,
+    endDate,
+    budgetId,
+  }) {
     if (!this.userId) return;
 
     const accountId = Meteor.user().accountId;
@@ -99,7 +105,9 @@ Meteor.methods({
         allocation: {
           goalAmount,
           endDate,
+          runningTotal: startingBalance || 0,
         },
+        startingBalance: startingBalance || 0,
       },
       (error, documentId) => {
         if (error && Meteor.isServer) {
