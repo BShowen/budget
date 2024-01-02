@@ -113,7 +113,7 @@ export function LoginForm() {
               Log In
             </button>
           </div>
-          <div className="flex flex-row justify-start items-center px-2">
+          {/* <div className="flex flex-row justify-start items-center px-2">
             <p>
               Don't have an account?{" "}
               <span>
@@ -140,7 +140,7 @@ export function LoginForm() {
             >
               Try a demo
             </a>
-          </div>
+          </div> */}
         </form>
       </div>
     </>
