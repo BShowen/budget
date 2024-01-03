@@ -23,14 +23,12 @@ export function Transaction({ transaction, ledgerId, transactionId, options }) {
         </div>
       </div>
       <div className="basis-0 grow ps-1">
-        <p className="font-semibold text-gray-700 text-lg">
-          {cap(transaction.merchant)}
-        </p>
+        <p className="font-semibold text-lg">{cap(transaction.merchant)}</p>
         <p className="text-sm text-gray-400 font-semibold">
           Logged by {cap(transaction.loggedBy.firstName)}
         </p>
       </div>
-      <div className="text-md text-slate-700 font-semibold flex flex-row items-center gap-1">
+      <div className="text-md font-semibold flex flex-row items-center gap-1">
         <span>
           {transaction.type === "expense" ? (
             <HiMinus className="text-red-500" />

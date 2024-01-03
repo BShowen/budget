@@ -18,7 +18,7 @@ export const DashboardButtonGroup = ({ active, setActiveTab }) => {
   const index = slugList.indexOf(active);
 
   return (
-    <div className="w-full flex flex-row justify-start p-1 bg-sky-700 rounded-md h-9 relative z-0">
+    <div className="w-full flex flex-row justify-start p-1 bg-header-darker rounded-lg h-9 relative z-0">
       <Slider index={index} />
       <div className="absolute top-0 bottom-0 left-0 right-0 flex flex-row flex-nowrap z-3">
         {buttonList}
@@ -32,7 +32,7 @@ function Slider({ index }) {
     index === 0 ? "left-0" : index === 1 ? "left-1/3" : "left-2/3";
   return (
     <div
-      className={`${position} w-1/3 relative z-2 h-7 rounded-md bg-sky-500 transition-all duration-250`}
+      className={`${position} w-1/3 relative z-2 h-7 rounded-lg bg-header transition-all duration-250`}
     />
   );
 }

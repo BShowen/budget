@@ -67,7 +67,7 @@ export const EditEnvelopeForm = ({ envelopeId, envelopeName, toggleForm }) => {
     <div className="w-full h-full flex flex-row items-center">
       <form className="w-full h-full flex flex-row justify-between items-center ">
         <input
-          className="focus:ring-0 border-0 h-full p-0 font-bold"
+          className="focus:ring-0 border-0 h-full p-0 font-bold text-xl font-extra-bold"
           autoFocus
           type="text"
           name="name"

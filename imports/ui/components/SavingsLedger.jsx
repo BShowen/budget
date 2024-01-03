@@ -79,7 +79,7 @@ export const SavingsLedger = ({ ledger, activeTab }) => {
           <h2 className="font-semibold z-20">{cap(ledger.name)}</h2>
           <h2
             onClick={activateForm}
-            className={`font-normal z-20 ${
+            className={`font-bold z-20 ${
               displayBalance < 0 ? "text-rose-500" : ""
             }`}
           >

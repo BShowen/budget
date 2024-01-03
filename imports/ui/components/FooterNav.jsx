@@ -35,7 +35,7 @@ function FooterLink({ children, to, text }) {
         to={to}
         className={({ isActive }) =>
           `${
-            isActive ? "text-sky-500 text-sm" : "text-gray-700 text-xs "
+            isActive ? "text-color-light-blue text-sm" : "text-xs "
           } flex flex-col items-center px-3`
         }
       >

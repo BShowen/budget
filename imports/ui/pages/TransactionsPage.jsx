@@ -87,7 +87,7 @@ export function TransactionsPage() {
         <Insights />
         <div className="bg-white p-2 rounded-xl flex flex-col gap-2">
           <div className="w-full text-center">
-            <h2 className="font-bold text-gray-700 text-xl">
+            <h2 className="font-bold text-xl">
               {transactionList.length} Transactions this month
             </h2>
           </div>
@@ -171,7 +171,7 @@ function Insights() {
       }, 0);
   });
   return (
-    <div className="bg-white p-2 rounded-xl text-gray-700">
+    <div className="bg-white p-2 rounded-xl">
       <div className="w-full text-center text-xl font-bold h-10">
         <h1>Overview</h1>
       </div>
@@ -200,7 +200,7 @@ function Insights() {
 function Toolbar(options) {
   return (
     <div className="sticky position-top-safe px-1 bg-gray-50 rounded-xl h-11 shadow-md mb-3">
-      <div className="w-full h-full flex flex-row justify-center items-stretch gap-1 text-gray-700 font-bold text-sm py-1">
+      <div className="w-full h-full flex flex-row justify-center items-stretch gap-1 font-bold text-sm py-1">
         <SortByDate {...options} />
         <SortByName {...options} />
         <SortByAmount {...options} />

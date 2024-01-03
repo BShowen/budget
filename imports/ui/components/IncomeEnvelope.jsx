@@ -15,6 +15,9 @@ import { reduceTransactions } from "../util/reduceTransactions";
 import { IncomeLedger } from "./IncomeLedger";
 import { NewLedgerForm } from "./NewLedgerForm";
 
+// Icons
+import { LuPlusCircle } from "react-icons/lu";
+
 export const IncomeEnvelope = ({ _id, name, activeTab }) => {
   const { ledgers } = useTracker(() => {
     if (!Meteor.userId()) return {};
@@ -49,27 +52,54 @@ export const IncomeEnvelope = ({ _id, name, activeTab }) => {
 
   return (
     // Envelope container
-    <div className="bg-white rounded-lg shadow-sm flex flex-col items-stretch px-2 pt-1 pb-2 gap-2 relative z-0">
-      <EnvelopeHeader name={name} activeTab={activeTab} envelopeId={_id} />
+    <div className="envelope">
+      <EnvelopeHeader
+        name={name}
+        activeTab={activeTab}
+        envelopeId={_id}
+        displayBalance={displayBalance}
+      />
       <EnvelopeBody ledgers={ledgers} activeTab={activeTab} />
-      <EnvelopeFooter displayBalance={displayBalance} envelopeId={_id} />
+      <EnvelopeFooter envelopeId={_id} />
     </div>
   );
 };
 
-function EnvelopeHeader({ name, activeTab }) {
-  const categoryName = activeTab === "spent" ? "received" : activeTab;
+function EnvelopeHeader({ name, activeTab, displayBalance }) {
+  let categoryName = "";
+  switch (activeTab) {
+    case "planned":
+      categoryName = "planned";
+      break;
+    case "spent":
+      categoryName = "income received";
+      break;
+    case "remaining":
+      categoryName = "left to receive";
+      break;
+  }
+  // const categoryName =
+  //   activeTab === "planned"
+  //     ? activeTab
+  //     : activeTab == "spent"
+  //     ? "income received"
+  //     : "left to receive";
   return (
-    <div className="flex flex-row justify-between p-1 px-2 h-8 rounded-md overflow-hidden items-center relative z-0 w-full">
-      <h1 className="font-bold relative z-50">{cap(name)}</h1>
-      <h2 className="font-semibold relative z-50">{cap(categoryName)}</h2>
+    <div className="envelope-header">
+      <h1 className="relative z-50">{cap(name)}</h1>
+      <div className="flex flex-row justify-center items-center gap-1">
+        <h2 className="font-semibold text-sm relative z-50 text-color-dark-blue">
+          {cap(categoryName)}
+        </h2>
+        <h2 className="text-sm font-semibold">{toDollars(displayBalance)}</h2>
+      </div>
     </div>
   );
 }
 
 function EnvelopeBody({ ledgers, activeTab }) {
   return (
-    <div className="flex flex-col gap-2 z-20">
+    <div className="envelope-body">
       {ledgers.map((ledger) => (
         <IncomeLedger key={ledger._id} ledger={ledger} activeTab={activeTab} />
       ))}
@@ -77,32 +107,28 @@ function EnvelopeBody({ ledgers, activeTab }) {
   );
 }
 
-function EnvelopeFooter({ displayBalance, envelopeId }) {
+function EnvelopeFooter({ envelopeId }) {
   const [isFormActive, setFormActive] = useState(false);
   const toggleForm = () => {
     setFormActive((prev) => !prev);
   };
 
   return (
-    <div
-      className={`flex flex-row items-center px-2 h-8 rounded-md ${
-        isFormActive ? "bg-slate-100" : ""
-      }`}
-    >
+    <div className="envelope-footer">
       <NewLedgerForm toggleForm={toggleForm} envelopeId={envelopeId}>
         {!isFormActive && (
-          <div className="w-full flex flex-row justify-between items-center">
+          <div className="w-full flex flex-row justify-start items-center gap-1">
+            <LuPlusCircle className="text-lg" />
             <p
               onClick={() => {
                 if (!isFormActive) {
                   toggleForm();
                 }
               }}
-              className="font-normal lg:hover:cursor-pointer"
+              className="font-semibold text-sm lg:hover:cursor-pointer"
             >
-              Add item
+              Add income
             </p>
-            <h2 className="font-medium">{toDollars(displayBalance)}</h2>
           </div>
         )}
       </NewLedgerForm>

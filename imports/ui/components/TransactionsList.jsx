@@ -37,9 +37,9 @@ export const TransactionsList = () => {
   }, []);
 
   return (
-    <div className="bg-slate-100 w-full">
+    <div className="w-full">
       <PageHeader ledgerId={ledgerId} />
-      <div className="bg-slate-100 flex flex-col gap-3 p-2 pt-52 pb-16">
+      <div className="flex flex-col gap-3 p-2 pt-52 pb-16">
         <ListTransactions ledgerId={ledgerId} />
         <DeleteLedger ledgerId={ledgerId} />
       </div>
@@ -65,7 +65,7 @@ function PageHeader({ ledgerId }) {
 function ProgressHeader({ children, percent, pathColor, logo }) {
   const navigate = useNavigate();
   return (
-    <div className="page-header w-full lg:w-3/5 h-48 bg-sky-500 flex flex-col justify-start">
+    <div className="page-header w-full lg:w-3/5 h-48 bg-header flex flex-col justify-start">
       <div className="relative flex flex-row items-center text-white p-1 h-11">
         {/* Back button */}
         <div className="w-full flex flex-row justify-start items-center">
@@ -84,7 +84,7 @@ function ProgressHeader({ children, percent, pathColor, logo }) {
               background
               backgroundPadding={6}
               styles={buildStyles({
-                backgroundColor: "#f1f5f9",
+                backgroundColor: "#f1f1f2",
                 pathColor,
                 trailColor: "#e2e8f0",
               })}
@@ -146,7 +146,7 @@ function CategoryHeader({ ledger }) {
   const pathColor = spent > ledger.allocatedAmount ? "#fb7185" : "#34d399";
   return (
     <ProgressHeader percent={percentSpent} pathColor={pathColor} logo={logo}>
-      <div className="max-w-full flex flex-col justify-start items-stretch px-2 text-gray-700 bg-slate-100 py-2 h-full">
+      <div className="max-w-full flex flex-col justify-start items-stretch px-2 bg-app py-2 h-full">
         <div className="w-full flex flex-row justify-start items-center flex-nowrap">
           <h2 className="text-3xl font-bold">{cap(ledger.name)}</h2>
         </div>
@@ -219,7 +219,7 @@ function IncomeHeader({ ledger }) {
   const pathColor = incomeReceived > expectedIncome ? "#fb7185" : "#34d399";
   return (
     <ProgressHeader percent={percentReceived} pathColor={pathColor} logo={logo}>
-      <div className="max-w-full flex flex-col justify-start items-stretch px-2 text-gray-700 bg-slate-100 py-2 h-full">
+      <div className="max-w-full flex flex-col justify-start items-stretch px-2 bg-app py-2 h-full">
         <div className="w-full flex flex-row justify-start items-center flex-nowrap">
           <h2 className="text-3xl font-bold">{cap(ledger.name)}</h2>
         </div>
@@ -279,7 +279,7 @@ function SavingsHeader({ ledger }) {
     );
   return (
     <ProgressHeader percent={percentSaved} pathColor={"#34d399"} logo={logo}>
-      <div className="max-w-full flex flex-col justify-start items-stretch px-2 text-gray-700 bg-slate-100 py-2 h-full">
+      <div className="max-w-full flex flex-col justify-start items-stretch px-2 bg-app py-2 h-full">
         <div className="w-full flex flex-row justify-start items-center flex-nowrap">
           <h2 className="text-3xl font-bold">{cap(ledger.name)}</h2>
         </div>
@@ -341,7 +341,7 @@ function AllocationHeader({ ledger }) {
 
   return (
     <ProgressHeader percent={percentSaved} pathColor={"#34d399"} logo={logo}>
-      <div className="max-w-full flex flex-col justify-start items-stretch px-2 text-gray-700 bg-slate-100 py-2 h-full">
+      <div className="max-w-full flex flex-col justify-start items-stretch px-2 bg-app py-2 h-full">
         <div className="w-full flex flex-row justify-start items-center flex-nowrap">
           <h2 className="text-3xl font-bold">{cap(ledger.name)}</h2>
         </div>
@@ -382,8 +382,8 @@ function TagSelector({ tagIdList, toggleTag, activeFilterTags }) {
   const tagList = tags.map((tag) => (
     <button
       key={tag._id}
-      className={`transition-all duration-250 no-tap-button text-md font-semibold border-2 border-sky-500 px-2 rounded-full min-w-max text-gray-700 ${
-        activeFilterTags.includes(tag._id) ? "bg-sky-500 text-white" : ""
+      className={`transition-all duration-250 no-tap-button text-md font-semibold border-2 border-blue-600 px-2 rounded-full min-w-max ${
+        activeFilterTags.includes(tag._id) ? "bg-blue-600 text-white" : ""
       }`}
       onClick={() => toggleTag(tag._id)}
     >
@@ -484,7 +484,7 @@ function ListTransactions({ ledgerId }) {
           <div>
             <Link
               to={`/ledger/${ledger._id}/transactions/new`}
-              className="text-sky-500 font-bold"
+              className="text-color-light-blue font-bold"
             >
               {ledger.kind === "income" ? "Add income" : "Add transaction"}
             </Link>

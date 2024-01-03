@@ -138,15 +138,15 @@ export function TransactionForm() {
 
   return (
     <>
-      <div className="page-header w-full lg:w-3/5 bg-sky-500 p-2 flex flex-col justify-start">
-        <div className="w-full px-1 py-2 grid grid-cols-12 font-bold text-center">
+      <div className="page-header w-full lg:w-3/5 bg-header p-2 flex flex-col justify-start">
+        <div className="w-full px-1 py-2 grid grid-cols-12 font-bold text-center items-center">
           <h2
             className="col-start-1 col-end-4 text-white lg:hover:cursor-pointer"
             onClick={() => navigate(-1)}
           >
             Cancel
           </h2>
-          <h2 className="col-start-4 col-end-10">
+          <h2 className="col-start-4 col-end-10 text-white text-xl">
             {ledger.kind == "income" ? "Add income" : "Add transaction"}
           </h2>
           <h2
@@ -196,7 +196,8 @@ export function TransactionForm() {
                 value={formData.amount}
                 onInput={handleInputChange}
                 min={0}
-                autoFocus
+                // autoFocus only when creating a new transaction
+                autoFocus={formData.amount == ""}
                 className="px-0 w-1/2 text-end focus:ring-0 border-0"
               />
             </InputContainer>
@@ -325,7 +326,7 @@ function ButtonGroup({ active, setActiveTab, disableChange }) {
   const index = slugList.indexOf(active);
 
   return (
-    <div className="w-full flex flex-row justify-start p-1 bg-sky-700 rounded-md h-9 relative z-0">
+    <div className="w-full flex flex-row justify-start p-1 bg-header-darker rounded-md h-9 relative z-0">
       <Slider index={index} />
       <div className="absolute top-0 bottom-0 left-0 right-0 flex flex-row flex-nowrap z-3">
         {buttonList}
@@ -338,7 +339,7 @@ function Slider({ index }) {
   const position = index === 0 ? "left-0" : "left-2/4";
   return (
     <div
-      className={`${position} w-2/4 relative z-2 h-7 rounded-md bg-sky-500 transition-all duration-250`}
+      className={`${position} w-2/4 relative z-2 h-7 rounded-md bg-header transition-all duration-250`}
     />
   );
 }
@@ -362,7 +363,7 @@ function TagSelection({ preSelectedTags }) {
           <p className="font-semibold">Tags</p>
         </div>
       </div>
-      <div className="w-full flex flex-row flex-nowrap overflow-scroll gap-1 flex-start text-grey-700 mb-2 overscroll-contain scrollbar-hide">
+      <div className="w-full flex flex-row flex-nowrap overflow-scroll gap-1 flex-start mb-2 overscroll-contain scrollbar-hide">
         <CreateTags />
         {tags.map((tag) => {
           const isPreSelected =
@@ -380,8 +381,8 @@ function Tag({ tag, isChecked }) {
 
   return (
     <div
-      className={`transition-all duration-75 no-tap-button text-md font-semibold border-2 border-sky-500 px-2 rounded-md min-w-max text-gray-700 ${
-        checked ? "bg-sky-500 text-white" : ""
+      className={`transition-all duration-75 no-tap-button text-md font-semibold border-2 border-color-light-blue px-2 rounded-md min-w-max ${
+        checked ? "bg-color-light-blue text-white" : ""
       }`}
       onClick={toggleChecked}
     >
@@ -435,7 +436,7 @@ function CreateTags() {
           setActiveTab((prev) => !prev);
         }}
       >
-        <AiOutlinePlusCircle className="h-full w-auto text-sky-500" />
+        <AiOutlinePlusCircle className="h-full w-auto text-color-dark-blue" />
       </div>
       <div className="flex flex-row flex-no-wrap gap-1">
         {activeTab && (
@@ -512,7 +513,7 @@ function NewTag({ defaultValue, removeTag, saveTag, id, autoFocus }) {
   };
 
   return (
-    <div className="no-tap-button text-md font-semibold border-2 border-sky-500 px-2 rounded-md overflow-hidden py-0 bg-sky-500 text-white">
+    <div className="no-tap-button text-md font-semibold border-2 border-color-light-blue px-2 rounded-md overflow-hidden py-0 bg-color-light-blue text-white">
       {/* This hidden p tag gets populated with the value that the user types 
       for the tag name. I use this to get the width of the element and set the 
       width of the input tag. I want the input's width to be dynamic and always

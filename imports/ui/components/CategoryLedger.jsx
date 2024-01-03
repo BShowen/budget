@@ -44,14 +44,24 @@ export const CategoryLedger = ({ ledger, activeTab }) => {
   };
 
   const calculateProgress = () => {
-    let progress = undefined;
+    let progress = 0;
     if (activeTab === "planned") {
       progress = 0;
     } else if (activeTab === "spent") {
-      progress = (spent / ledger.allocatedAmount) * 100;
+      if (ledger.allocatedAmount > 0) {
+        progress = Math.ceil((spent / ledger.allocatedAmount) * 100);
+      }
     } else if (activeTab === "remaining") {
-      progress = remaining ? (remaining / ledger.allocatedAmount) * 100 : 0;
+      if (remaining < 0) {
+        progress = 101;
+      } else if (remaining >= 0) {
+        progress = (Math.abs(remaining) / ledger.allocatedAmount) * 100;
+      }
     }
+
+    // Normalize the percentage.Before: 58.333333333 After: 58
+    progress = Math.floor(progress > 100 ? 101 : progress);
+
     return Number.parseInt(progress.toFixed(0));
   };
 
@@ -80,7 +90,7 @@ export const CategoryLedger = ({ ledger, activeTab }) => {
           <h2 className="font-semibold z-20">{cap(ledger.name)}</h2>
           <h2
             onClick={activateForm}
-            className={`font-normal z-20 ${
+            className={`font-bold z-20 ${
               displayBalance < 0 ? "text-rose-500" : ""
             }`}
           >

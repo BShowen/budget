@@ -14,6 +14,7 @@ const SEED_1_FIRST_NAME = Meteor.settings.public.demoAccount.firstName;
 const SEED_1_LAST_NAME = Meteor.settings.public.demoAccount.lastName;
 
 Meteor.startup(() => {
+  return;
   if (!Accounts.findUserByEmail(SEED_1_EMAIL)) {
     Accounts.createUser({
       email: SEED_1_EMAIL,
