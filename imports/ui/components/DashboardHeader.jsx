@@ -37,7 +37,7 @@ export function DashboardHeader({
           {/* months */}
           <div className="flex flex-row justify-center items-center shrink basis-1/3">
             <h1
-              onClick={goPreviousMonth}
+              // onClick={goPreviousMonth}
               className="text-lg font-semibold lg:hover:cursor-pointer w-min"
             >
               {prevMonth}
@@ -51,7 +51,7 @@ export function DashboardHeader({
           </div>
           <div className="flex flex-row justify-center items-center shrink basis-1/3">
             <h1
-              onClick={goNextMonth}
+              // onClick={goNextMonth}
               className="text-lg font-semibold lg:hover:cursor-pointer w-min"
             >
               {nextMonth}
