@@ -47,11 +47,11 @@ export function TransactionForm() {
       ? {
           ...transaction,
           note: transaction?.note || "",
-          amount: transaction.amount.toLocaleString("en-US", {
-            style: "decimal",
-            minimumIntegerDigits: 1,
-            minimumFractionDigits: 2,
-          }),
+          // amount: transaction.amount.toLocaleString("en-US", {
+          //   style: "decimal",
+          //   minimumIntegerDigits: 1,
+          //   minimumFractionDigits: 2,
+          // }),
         }
       : {
           createdAt: dates.format(new Date(), { forHtml: true }),

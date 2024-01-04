@@ -51,9 +51,9 @@ Meteor.methods({
       _id: transaction._id,
     });
     createAndAssignTags(transaction);
-    TransactionCollection.simpleSchema().clean(transaction);
-
     const modifier = _pickBy(transaction, (value, key) => {
+      // Create a new object of only the fields that have changed.
+      // This will be used as the modifier to update the document.
       if (isObject(value)) {
         // If the value is an object then it is the loggedBy field which I don't
         //  want to update
@@ -67,15 +67,12 @@ Meteor.methods({
       if (value instanceof Array && key == "tags") {
         return true;
       }
-
       return oldTransaction[key] != value;
     });
-
     TransactionCollection.update(
       { _id: oldTransaction._id },
       {
         $set: { ...modifier },
-        $unset: modifier.note ? {} : { note: "" },
       },
       (err) => {
         if (err && Meteor.isServer && err.invalidKeys?.length == 0) {

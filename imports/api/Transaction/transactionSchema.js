@@ -48,7 +48,10 @@ export const transactionSchema = new SimpleSchema(
       min: 0.01,
       autoValue: function () {
         if (this.isSet) {
-          return Number.parseFloat(this.value);
+          // If value contains a comma then Number.parseFloat() will parse only
+          // the digits before the comma. The comma needs to be removed.
+          const parsedValue = this.value.toString().split(",").join("");
+          return Number.parseFloat(parsedValue);
         }
         return undefined;
       },
