@@ -8,13 +8,13 @@ import { TransactionCollection } from "../imports/api/Transaction/TransactionCol
 import { AccountCollection } from "../imports/api/Account/AccountCollection";
 import { TagCollection } from "../imports/api/Tag/TagCollection";
 
-const SEED_1_EMAIL = Meteor.settings.public.demoAccount.email;
-const SEED_1_PASSWORD = Meteor.settings.public.demoAccount.password;
-const SEED_1_FIRST_NAME = Meteor.settings.public.demoAccount.firstName;
-const SEED_1_LAST_NAME = Meteor.settings.public.demoAccount.lastName;
-
 Meteor.startup(() => {
-  return;
+  if (Meteor.isProduction) return;
+  const SEED_1_EMAIL = Meteor.settings.public.demoAccount.email;
+  const SEED_1_PASSWORD = Meteor.settings.public.demoAccount.password;
+  const SEED_1_FIRST_NAME = Meteor.settings.public.demoAccount.firstName;
+  const SEED_1_LAST_NAME = Meteor.settings.public.demoAccount.lastName;
+  // This is not production, create a demo account for easy testing.
   if (!Accounts.findUserByEmail(SEED_1_EMAIL)) {
     Accounts.createUser({
       email: SEED_1_EMAIL,

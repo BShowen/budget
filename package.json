@@ -6,8 +6,8 @@
     "npm": "6.14.17"
   },
   "scripts": {
-    "start": "meteor run --settings ./ignoredFiles/productionSettings.json",
-    "reset-and-start": "meteor reset && meteor run --settings ./ignoredFiles/productionSettings.json",
+    "start": "meteor run --settings ./ignoredFiles/developmentSettings.json",
+    "reset-and-start": "meteor reset && meteor run --settings ./ignoredFiles/developmentSettings.json",
     "test-production": "meteor run --production --settings ./ignoredFiles/productionSettings.json",
     "deploy": "DEPLOY_HOSTNAME=galaxy.meteor.com meteor deploy www.doughtracker.com --settings ./ignoredFiles/productionSettings.json",
     "test": "meteor test --once --driver-package meteortesting:mocha",
