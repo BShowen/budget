@@ -16,11 +16,21 @@ export const transactionSchema = new SimpleSchema(
       // The envelope this document belongs to.
       type: String,
       regEx: SimpleSchema.RegEx.Id,
+      required: false, // So transaction can be uncategorized.
     },
     ledgerId: {
       // The ledger this document belongs to.
       type: String,
       regEx: SimpleSchema.RegEx.Id,
+      required: false, // So transaction can be uncategorized.
+      autoValue: function () {
+        if (this.isSet && this.value.toLowerCase() === "uncategorized") {
+          // If the value is set to "uncategorized" then remove it so this field
+          // is not set on the document.
+          this.unset();
+        }
+        return undefined;
+      },
     },
     loggedBy: Object,
     "loggedBy.userId": {

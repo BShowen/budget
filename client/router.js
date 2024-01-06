@@ -106,6 +106,10 @@ export const router = createBrowserRouter([
         path: "/new-allocation",
         element: <NewAllocationPage />,
       },
+      {
+        path: "/new-transaction",
+        element: <TransactionForm />,
+      },
     ],
   },
   {

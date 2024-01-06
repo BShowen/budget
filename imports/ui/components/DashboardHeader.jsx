@@ -31,31 +31,14 @@ export function DashboardHeader({
   const currentMonth = date.toLocaleString("en-US", { month: "long" });
 
   return (
-    <div className="page-header lg:w-3/5 mx-auto z-50 w-full flex flex-col justify-start items-stretch shadow-sm bg-header ">
+    <div className="page-header lg:w-3/5 mx-auto z-50 w-full flex flex-col justify-start items-stretch shadow-sm bg-header">
       <div className="pb-4 z-50 shadow-sm text-white">
-        <div className="w-full flex flex-row flex-nowrap items-center justify-center">
-          {/* months */}
-          <div className="flex flex-row justify-center items-center shrink basis-1/3">
-            <h1
-              // onClick={goPreviousMonth}
-              className="text-lg font-semibold lg:hover:cursor-pointer w-min"
-            >
-              {prevMonth}
-            </h1>
-          </div>
-          <div className="flex flex-col items-center grow basis-1/3">
+        <div className="w-full flex flex-row justify-start items-stretch h-14">
+          <div className="flex flex-row justify-start items-center px-2 gap-2">
             <h1 className="text-3xl font-bold lg:hover:cursor-pointer w-min">
               {currentMonth}
             </h1>
-            <p className="text-sm font-semibold">{year}</p>
-          </div>
-          <div className="flex flex-row justify-center items-center shrink basis-1/3">
-            <h1
-              // onClick={goNextMonth}
-              className="text-lg font-semibold lg:hover:cursor-pointer w-min"
-            >
-              {nextMonth}
-            </h1>
+            <p className="text-md font-semibold">{year}</p>
           </div>
         </div>
         <div className="w-full px-1">

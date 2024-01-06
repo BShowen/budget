@@ -1,7 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import { Random } from "meteor/random";
 import { useTracker } from "meteor/react-meteor-data";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 // Collections
@@ -17,17 +17,53 @@ import { formatDollarAmount } from "../util/formatDollarAmount";
 // Icons
 import { AiOutlinePlusCircle } from "react-icons/ai";
 
+// App context
+import { RootContext } from "../pages/AppData";
+
 export function TransactionForm() {
   const formRef = useRef(null);
   const navigate = useNavigate();
+  const rootContext = useContext(RootContext);
+  const { currentBudgetId: budgetId } = rootContext;
   const { ledgerId, transactionId } = useParams();
-  const { ledgers } = useTracker(() => {
+
+  // Get all the ledgers in this budget. This list is used to populate the
+  // form selection
+  const { ledgers, ledgerSelection } = useTracker(() => {
     const ledgers = LedgerCollection.find().fetch();
-    return { ledgers };
+
+    const ledgerSelection = [
+      ...ledgers,
+      // This is the selection that a user can select in order to make an
+      // uncategorized transaction
+      { _id: "uncategorized", name: "uncategorized" },
+    ]
+      .sort((a, b) => {
+        return (
+          a.name.toLowerCase().charCodeAt(0) -
+          b.name.toLowerCase().charCodeAt(0)
+        );
+      })
+      .map((ledger) => (
+        <option key={ledger._id} value={ledger._id}>
+          {cap(ledger.name)}
+        </option>
+      ));
+    return { ledgers, ledgerSelection };
   });
-  const ledger = ledgers.find((ledger) => ledger._id === ledgerId);
+
+  // Find the ledger that this transaction belongs to so I can auto-select it
+  // in the form's ledger selection field.
+  // ledger is defined if user is editing a previous transaction otherwise it is
+  // set to null. If null then set ledger to null.
+  const ledger = ledgerId
+    ? ledgers.find((ledger) => ledger._id === ledgerId)
+    : null;
+
+  // transaction is defined if user is editing a previous transaction otherwise
+  // it is set to null
   const transaction = useTracker(() => {
-    if (!transactionId) return;
+    if (!transactionId) return null;
     const transaction = TransactionCollection.findOne(
       { _id: transactionId },
       { fields: { accountId: 0 } }
@@ -37,31 +73,39 @@ export function TransactionForm() {
       createdAt: dates.format(transaction.createdAt, { forHtml: true }),
     };
   });
+
+  // If user is creating a new transaction and ledger is null then active is
+  // set to "expense".
+  // If user is  creating a new transaction and ledger is defined then active is
+  // set to the type of ledger e.g. "income" or "expense" ledger
+  // If user is editing a transaction then ledger is defined and transaction is
+  // defined so I set active to "income" if this is an income ledger. If it's
+  // not an income ledger then I set active to the type of transaction
+  // e.g. "income" or "expense".
   const [active, setActiveTab] = useState(
-    ledger.kind === "income" || ledger.kind === "savings"
-      ? "income"
-      : (transaction && transaction.type) || "expense"
+    ledger
+      ? ledger.kind === "income" || ledger.kind === "savings"
+        ? "income"
+        : (transaction && transaction.type) || "expense"
+      : "expense"
   ); //expense or income
+
   const [formData, setFormData] = useState(
     transaction
       ? {
           ...transaction,
           note: transaction?.note || "",
-          // amount: transaction.amount.toLocaleString("en-US", {
-          //   style: "decimal",
-          //   minimumIntegerDigits: 1,
-          //   minimumFractionDigits: 2,
-          // }),
         }
       : {
           createdAt: dates.format(new Date(), { forHtml: true }),
+          ledgerId: ledger?._id || "uncategorized",
           type: "",
           amount: "",
           merchant: "",
-          ledgerId: ledgerId,
           tags: "",
           note: "",
           newTags: "",
+          budgetId,
         }
   );
 
@@ -102,14 +146,17 @@ export function TransactionForm() {
     const form = new FormData(formRef.current);
     const tags = form.getAll("tags");
     const newTags = form.getAll("newTags");
-    const { budgetId, envelopeId } = ledgers.find(
-      (ledger) => ledger._id === formData.ledgerId
-    );
+    // If formData.ledgerId is defined and doesn't equal "uncategorized" then
+    // envelopeId does not need to be defined because the user is creating an
+    // uncategorized transaction.
+    const { envelopeId } =
+      formData.ledgerId && formData.ledgerId != "uncategorized"
+        ? ledgers.find((ledger) => ledger._id === formData.ledgerId)
+        : {};
     try {
       // Set the correct date
       const [year, month, day] = formData.createdAt.split("-");
       const formattedDate = new Date(year, month - 1, day);
-      // navigate(-1);
       const newTransaction = {
         ...formData,
         createdAt: formattedDate,
@@ -119,6 +166,12 @@ export function TransactionForm() {
         envelopeId,
         type: active,
       };
+
+      if (newTransaction.ledgerId == "uncategorized") {
+        delete newTransaction.ledgerId;
+        delete newTransaction.envelopeId;
+      }
+
       if (formData._id) {
         // update
         Meteor.call("transaction.updateTransaction", newTransaction);
@@ -147,7 +200,7 @@ export function TransactionForm() {
             Cancel
           </h2>
           <h2 className="col-start-4 col-end-10 text-white text-xl">
-            {ledger.kind == "income" ? "Add income" : "Add transaction"}
+            {ledger?.kind == "income" ? "Add income" : "Add transaction"}
           </h2>
           <h2
             className="col-start-10 col-end-13 text-white lg:hover:cursor-pointer"
@@ -160,7 +213,7 @@ export function TransactionForm() {
         <ButtonGroup
           active={active}
           setActiveTab={setActiveTab}
-          disableChange={ledger.kind === "income"}
+          disableChange={ledger?.kind === "income"}
         />
       </div>
       <div className="h-full w-full pt-24 p-2">
@@ -239,15 +292,7 @@ export function TransactionForm() {
                 value={formData.ledgerId}
                 onChange={handleInputChange}
               >
-                {ledgers
-                  .sort((a, b) => {
-                    return a.name.charCodeAt(0) - b.name.charCodeAt(0);
-                  })
-                  .map((ledger) => (
-                    <option key={ledger._id} value={ledger._id}>
-                      {ledger.name}
-                    </option>
-                  ))}
+                {ledgerSelection}
               </select>
             </InputContainer>
           </InputGroup>
@@ -381,8 +426,8 @@ function Tag({ tag, isChecked }) {
 
   return (
     <div
-      className={`transition-all duration-75 no-tap-button text-md font-semibold border-2 border-color-light-blue px-2 rounded-md min-w-max ${
-        checked ? "bg-color-light-blue text-white" : ""
+      className={`transition-all duration-75 no-tap-button text-md font-semibold border-2 border-color-dark-blue px-2 rounded-md min-w-max ${
+        checked ? "bg-color-dark-blue text-white" : ""
       }`}
       onClick={toggleChecked}
     >
@@ -513,7 +558,7 @@ function NewTag({ defaultValue, removeTag, saveTag, id, autoFocus }) {
   };
 
   return (
-    <div className="no-tap-button text-md font-semibold border-2 border-color-light-blue px-2 rounded-md overflow-hidden py-0 bg-color-light-blue text-white">
+    <div className="no-tap-button text-md font-semibold border-2 border-color-dark-blue px-2 rounded-md overflow-hidden py-0 bg-color-dark-blue text-white">
       {/* This hidden p tag gets populated with the value that the user types 
       for the tag name. I use this to get the width of the element and set the 
       width of the input tag. I want the input's width to be dynamic and always
@@ -546,3 +591,9 @@ function NewTag({ defaultValue, removeTag, saveTag, id, autoFocus }) {
     </div>
   );
 }
+
+// amount: transaction.amount.toLocaleString("en-US", {
+//   style: "decimal",
+//   minimumIntegerDigits: 1,
+//   minimumFractionDigits: 2,
+// }),

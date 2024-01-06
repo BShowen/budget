@@ -8,11 +8,22 @@
     touch-action: manipulation;
     user-select: none;
   }
+  /* **********TEXT COLORS********** */
+  .text-color-dark-blue {
+    /* color: #0060e6; */
+    @apply text-blue-600;
+  }
+  .text-color-light-blue {
+    @apply text-blue-500;
+  }
+  .text-color-primary {
+    @apply text-gray-700;
+  }
+  /* **********BG COLORS********** */
   .bg-header {
     /* Main header with months */
     /* dark */
     /* background-color: #354242; */
-    /* digital ocean */
     background-color: #0069fe;
   }
   .border-color-header {
@@ -22,36 +33,30 @@
     /* Pill slider background color */
     /* dark */
     /* background-color: #222a2a; */
-    /* digital ocean */
     background-color: #071c4a;
   }
   .bg-app {
     /* main background color of the app */
     background-color: #f1f1f2;
   }
-  .text-color-dark-blue {
-    /* color: #0060e6; */
-    @apply text-blue-600;
-  }
-  .text-color-light-blue {
-    @apply text-blue-500;
-  }
-  .border-color-light-blue {
-    @apply border-blue-600;
-  }
   .bg-color-light-blue {
     @apply bg-blue-600;
   }
-  .text-color-primary {
-    @apply text-gray-700;
+  .bg-color-dark-blue {
+    @apply bg-blue-600;
   }
   .progress-bg-color-good {
-    /* @apply bg-teal-400/60; */
     @apply bg-teal-400/50;
   }
   .progress-bg-color-bad {
-    /* @apply bg-rose-400/60; */
     @apply bg-rose-400/50;
+  }
+  /* **********BORDER COLORS********** */
+  .border-color-light-blue {
+    @apply border-blue-500;
+  }
+  .border-color-dark-blue {
+    @apply border-blue-600;
   }
 }
 

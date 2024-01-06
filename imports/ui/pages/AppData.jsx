@@ -4,6 +4,7 @@ import React, { useState, createContext } from "react";
 
 // Collections
 import { BudgetCollection } from "../../api/Budget/BudgetCollection";
+import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 
 export const RootContext = createContext(null);
 
@@ -47,6 +48,20 @@ export const AppData = ({ children }) => {
     );
   });
 
+  const uncategorizedTransactions = useTracker(() => {
+    if (loading) return 0;
+
+    const transactions = TransactionCollection.find({
+      $or: [
+        { envelopeId: { $exists: false } },
+        { envelopeId: undefined },
+        { ledgerId: { $exists: false } },
+        { ledgerId: undefined },
+      ],
+    }).fetch();
+    return transactions.length;
+  });
+
   return loading ? (
     <p>Loading</p>
   ) : (
@@ -65,6 +80,7 @@ export const AppData = ({ children }) => {
           );
         },
         currentBudgetId: budget?._id,
+        uncategorizedTransactions,
       }}
     >
       {children}

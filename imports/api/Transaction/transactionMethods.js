@@ -50,8 +50,10 @@ Meteor.methods({
     const oldTransaction = TransactionCollection.findOne({
       _id: transaction._id,
     });
+    const { ledgerId, envelopeId } = transaction;
     createAndAssignTags(transaction);
-    const modifier = _pickBy(transaction, (value, key) => {
+
+    const updateModifier = _pickBy(transaction, (value, key) => {
       // Create a new object of only the fields that have changed.
       // This will be used as the modifier to update the document.
       if (isObject(value)) {
@@ -69,12 +71,20 @@ Meteor.methods({
       }
       return oldTransaction[key] != value;
     });
+
+    const unsetModifier =
+      !ledgerId || !envelopeId
+        ? {
+            ledgerId: "",
+            envelopeId: "",
+          }
+        : {};
+
     TransactionCollection.update(
       { _id: oldTransaction._id },
-      {
-        $set: { ...modifier },
-      },
-      (err) => {
+      { $set: { ...updateModifier }, $unset: { ...unsetModifier } },
+      (err, result) => {
+        console.log({ err, result });
         if (err && Meteor.isServer && err.invalidKeys?.length == 0) {
           // This is not a validation error. Console.log the error.
           console.log(err);
@@ -119,3 +129,8 @@ function isObject(value) {
     !(value instanceof Date)
   );
 }
+
+const t = {
+  set: {},
+  unset: {},
+};
