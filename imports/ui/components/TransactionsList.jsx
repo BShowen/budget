@@ -14,7 +14,7 @@ import {
   buildStyles,
 } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { Transaction } from "./Transaction";
+import { LedgerTransaction } from "./LedgerTransaction";
 
 // Utils
 import { cap } from "../util/cap";
@@ -506,7 +506,7 @@ function ListTransactions({ ledgerId }) {
               })
               .split(" ");
             return (
-              <Transaction
+              <LedgerTransaction
                 key={transaction._id}
                 ledgerId={ledger._id}
                 transactionId={transaction._id}

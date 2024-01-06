@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useTracker } from "meteor/react-meteor-data";
 
 // Components
-import { Transaction } from "../components/Transaction";
+import { ListTransaction } from "../components/ListTransaction";
 
 // Collections
 import { EnvelopeCollection } from "../../api/Envelope/EnvelopeCollection";
@@ -11,7 +11,6 @@ import { TransactionCollection } from "../../api/Transaction/TransactionCollecti
 
 // Utils
 import { dates } from "../util/dates";
-import { reduceTransactions } from "../util/reduceTransactions";
 import { toDollars } from "../util/toDollars";
 
 // Icons
@@ -85,7 +84,7 @@ export function TransactionsPage() {
       <div className="empty-page-header"></div>
       <div className="flex flex-col justify-start items-stretch p-2 pb-28 gap-5 bg-gray-100">
         <Insights />
-        <div className="bg-white p-2 rounded-xl flex flex-col gap-2">
+        <div className="bg-white py-2 rounded-xl flex flex-col gap-2">
           <div className="w-full text-center">
             <h2 className="font-bold text-xl">
               {transactionList.length} Transactions this month
@@ -93,19 +92,18 @@ export function TransactionsPage() {
           </div>
           {transactionList.length > 0 && <Toolbar {...toolbarOptions} />}
           <ul className="list-none">
-            {transactionList.map((transaction, i) => {
-              const border = i == 0 ? "" : "border-t";
+            {transactionList.map((transaction) => {
               const [month, day] = dates
                 .format(transaction.createdAt, {
                   forTransaction: true,
                 })
                 .split(" ");
               return (
-                <li key={transaction._id}>
-                  <Transaction
+                <li className="border-t" key={transaction._id}>
+                  <ListTransaction
                     key={transaction._id}
                     transaction={transaction}
-                    options={{ month, day, border }}
+                    options={{ month, day }}
                     ledgerId={transaction.ledgerId}
                     transactionId={transaction._id}
                   />

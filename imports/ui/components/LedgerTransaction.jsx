@@ -8,7 +8,12 @@ import { toDollars } from "../util/toDollars";
 // Icons
 import { HiMinus, HiPlus } from "react-icons/hi";
 import { LuChevronRight } from "react-icons/lu";
-export function Transaction({ transaction, ledgerId, transactionId, options }) {
+export function LedgerTransaction({
+  transaction,
+  ledgerId,
+  transactionId,
+  options,
+}) {
   const defaultOptions = { border: "", month: "", day: "" };
   const { border, month, day } = { ...defaultOptions, ...options };
   return (
