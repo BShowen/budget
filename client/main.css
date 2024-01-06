@@ -11,10 +11,10 @@
   /* **********TEXT COLORS********** */
   .text-color-dark-blue {
     /* color: #0060e6; */
-    @apply text-blue-600;
+    @apply text-blue-700;
   }
   .text-color-light-blue {
-    @apply text-blue-500;
+    @apply text-blue-600;
   }
   .text-color-primary {
     @apply text-gray-700;
@@ -43,7 +43,7 @@
     @apply bg-blue-600;
   }
   .bg-color-dark-blue {
-    @apply bg-blue-600;
+    @apply bg-blue-700;
   }
   .progress-bg-color-good {
     @apply bg-teal-400/50;
@@ -53,10 +53,10 @@
   }
   /* **********BORDER COLORS********** */
   .border-color-light-blue {
-    @apply border-blue-500;
+    @apply border-blue-600;
   }
   .border-color-dark-blue {
-    @apply border-blue-600;
+    @apply border-blue-700;
   }
 }
 
@@ -67,7 +67,7 @@
   }
   /* Default styling for all form buttons in the app. */
   .btn-primary {
-    @apply w-full h-10 bg-sky-500 text-center font-medium text-lg text-white rounded-md shadow-sm active:text-gray-400 active:bg-sky-600;
+    @apply w-full h-10 bg-color-light-blue text-center font-medium text-lg text-white rounded-md shadow-sm active:text-gray-400 active:bg-color-dark-blue lg:hover:cursor-pointer;
   }
   .envelope {
     @apply rounded-lg flex flex-col items-stretch gap-2 relative z-0 overflow-hidden bg-white;

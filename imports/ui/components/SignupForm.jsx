@@ -44,17 +44,17 @@ export function SignupForm() {
   }
 
   return (
-    <div className="w-full h-full flex flex-col justify-start bg-white px-2">
+    <div className="w-full h-full flex flex-col justify-start px-2">
       {error ? (
         <div className="w-full h-full flex flex-col justify-center">
-          <div className="text-center text-gray-700">
+          <div className="text-center">
             <p className="text-xl">{error}</p>
           </div>
         </div>
       ) : (
         <>
-          <div className="text-center py-8">
-            <p className="text-3xl text-gray-700 font-semibold">
+          <div className="text-center py-8 text-color-primary">
+            <p className="text-3xl font-semibold">
               You have been invited to create an account
             </p>
           </div>
@@ -64,7 +64,7 @@ export function SignupForm() {
           >
             <div className="flex flex-row justify-evenly items-center gap-2">
               <input
-                className={`appearance-none w-2/4 rounded-md font-semibold border-2 placeholder:font-medium h-10 ${
+                className={`form-input w-2/4 ${
                   validationErrors.firstName
                     ? "border-rose-400"
                     : "border-gray-300"
@@ -75,7 +75,7 @@ export function SignupForm() {
                 name="firstName"
               />
               <input
-                className={`appearance-none w-2/4 rounded-md font-semibold border-2 placeholder:font-medium h-10 ${
+                className={`form-input w-2/4 ${
                   validationErrors.lastName
                     ? "border-rose-400"
                     : "border-gray-300"
@@ -88,7 +88,7 @@ export function SignupForm() {
             </div>
             <div>
               <input
-                className={`appearance-none w-full rounded-md font-semibold border-2 placeholder:font-medium h-10 ${
+                className={`form-input ${
                   validationErrors.email ? "border-rose-400" : "border-gray-300"
                 }`}
                 type="email"
@@ -99,7 +99,7 @@ export function SignupForm() {
             </div>
             <div>
               <input
-                className={`appearance-none w-full rounded-md font-semibold border-2 placeholder:font-medium h-10 ${
+                className={`form-input ${
                   validationErrors.password
                     ? "border-rose-400"
                     : "border-gray-300"
@@ -112,7 +112,7 @@ export function SignupForm() {
             </div>
             <div>
               <input
-                className={`appearance-none w-full rounded-md font-semibold border-2 placeholder:font-medium h-10 ${
+                className={`form-input ${
                   validationErrors.confirmPassword
                     ? "border-rose-400"
                     : "border-gray-300"
@@ -131,10 +131,7 @@ export function SignupForm() {
               value={inviteCode}
             />
             <div className="flex flex-row justify-center items-center">
-              <button
-                className="bg-sky-500 lg:hover:bg-blue-700 text-white font-bold rounded-md lg:focus:shadow-outline text-lg w-full h-10"
-                type="submit"
-              >
+              <button className="btn-primary" type="submit">
                 Create account
               </button>
             </div>

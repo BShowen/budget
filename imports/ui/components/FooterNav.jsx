@@ -37,13 +37,13 @@ export const FooterNav = () => {
         >
           <LuListMinus className="text-inherit w-full h-full" />
         </FooterLink>
-        <div className="w-[75px] h-[95px]">
+        <div className="w-[70px] h-[90px]">
           <Link
             to="/new-transaction"
             replace={replace}
             className="block rounded-full drop-shadow-lg"
           >
-            <IoIosAddCircle className="w-full h-full text-color-dark-blue" />
+            <IoIosAddCircle className="w-full h-full text-color-light-blue" />
           </Link>
         </div>
         <FooterLink to="/account" text="Account">

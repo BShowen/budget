@@ -77,7 +77,7 @@ export function LoginForm() {
         >
           <div>
             <input
-              className={`appearance-none w-full rounded-md font-semibold border-2 placeholder:font-medium  ${
+              className={`form-input border ${
                 error.field === "email" ? "border-rose-400" : "border-gray-300"
               }`}
               id="email"
@@ -91,7 +91,7 @@ export function LoginForm() {
           </div>
           <div>
             <input
-              className={`appearance-none w-full rounded-md font-semibold border-2 placeholder:font-medium ${
+              className={`form-input border ${
                 error.field === "password"
                   ? "border-rose-400"
                   : "border-gray-300"
@@ -106,10 +106,7 @@ export function LoginForm() {
             />
           </div>
           <div className="flex flex-row justify-center items-center">
-            <button
-              className="bg-sky-500 lg:hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md lg:focus:shadow-outline text-lg w-full"
-              type="submit"
-            >
+            <button className="btn-primary py-2 px-4" type="submit">
               Log In
             </button>
           </div>

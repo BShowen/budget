@@ -104,21 +104,11 @@ export function InvitationPage() {
         </div>
       )}
       {navigator.canShare ? (
-        <button
-          className={`${
-            loading ? "text-gray-400 bg-sky-600" : "text-white bg-sky-500"
-          } w-full text-center font-medium text-lg mt-4 rounded-md py-2 shadow-sm active:text-gray-400 active:bg-sky-600`}
-          onClick={shareInvitationLink}
-        >
+        <button className="btn-primary mt-4 py-2" onClick={shareInvitationLink}>
           Share invitation link
         </button>
       ) : (
-        <button
-          className={`${
-            loading ? "text-gray-400 bg-sky-600" : "text-white bg-sky-500"
-          } w-full text-center font-medium text-lg mt-4 rounded-md py-2 shadow-sm active:text-gray-400 active:bg-sky-600`}
-          onClick={getInvitationLink}
-        >
+        <button className="btn-primary mt-4 py-2" onClick={getInvitationLink}>
           Get Invitation Link
         </button>
       )}

@@ -8,7 +8,6 @@ import { RouterProvider } from "react-router-dom";
 import { router } from "./router";
 
 // Components
-import { Layout } from "../imports/ui/pages/Layout.jsx";
 import { AppData } from "../imports/ui/pages/AppData.jsx";
 
 Meteor.startup(() => {
