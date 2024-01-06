@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useLocation } from "react-router-dom";
 
 // Context
 import { RootContext } from "../pages/AppData";
@@ -18,6 +18,12 @@ export const FooterNav = () => {
   const rootContext = useContext(RootContext);
   const { uncategorizedTransactions } = rootContext;
 
+  // replace is set to true if the user is currently on a route where a
+  // transaction form is rendered. This way if the user presses the back button
+  // they don't have to back through multiple forms.
+  const location = useLocation();
+  const replace = location.pathname.includes("transaction");
+
   return (
     <div className="fixed bottom-0 w-full h-20 lg:w-3/5 mx-auto bg-white border-t border-gray-300">
       <div className="w-full flex flex-row flex-nowrap justify-evenly items-end h-full">
@@ -34,6 +40,7 @@ export const FooterNav = () => {
         <div className="w-[75px] h-[95px]">
           <Link
             to="/new-transaction"
+            replace={replace}
             className="block rounded-full drop-shadow-lg"
           >
             <IoIosAddCircle className="w-full h-full text-color-dark-blue" />

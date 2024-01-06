@@ -5,15 +5,22 @@ import { createTags } from "../Tag/tagMethods";
 // Utils
 import _pickBy from "lodash/pickBy.js";
 import _isEqual from "lodash/isEqual.js";
+import { LedgerCollection } from "../Ledger/LedgerCollection";
 
 Meteor.methods({
   "transaction.createTransaction"(transaction) {
     if (!this.userId) return;
 
+    const { envelopeId } =
+      LedgerCollection.findOne({
+        _id: transaction.ledgerId,
+      }) || {};
+
     const user = Meteor.user();
     const newTransaction = {
       ...transaction,
       accountId: user.accountId,
+      envelopeId,
       loggedBy: {
         userId: user._id,
         firstName: user.profile.firstName,
@@ -47,44 +54,17 @@ Meteor.methods({
   },
   "transaction.updateTransaction"(transaction) {
     if (!this.userId) return;
-    const oldTransaction = TransactionCollection.findOne({
-      _id: transaction._id,
-    });
-    const { ledgerId, envelopeId } = transaction;
     createAndAssignTags(transaction);
-
-    const updateModifier = _pickBy(transaction, (value, key) => {
-      // Create a new object of only the fields that have changed.
-      // This will be used as the modifier to update the document.
-      if (isObject(value)) {
-        // If the value is an object then it is the loggedBy field which I don't
-        //  want to update
-        return false;
-      }
-
-      if (value instanceof Date) {
-        return !_isEqual(oldTransaction[key], value);
-      }
-
-      if (value instanceof Array && key == "tags") {
-        return true;
-      }
-      return oldTransaction[key] != value;
-    });
+    const { ledgerId, _id: transactionId } = transaction;
+    TransactionCollection.simpleSchema().clean(transaction);
 
     const unsetModifier =
-      !ledgerId || !envelopeId
-        ? {
-            ledgerId: "",
-            envelopeId: "",
-          }
-        : {};
+      ledgerId === "uncategorized" ? { ledgerId: "", envelopeId: "" } : {};
 
     TransactionCollection.update(
-      { _id: oldTransaction._id },
-      { $set: { ...updateModifier }, $unset: { ...unsetModifier } },
-      (err, result) => {
-        console.log({ err, result });
+      { _id: transactionId },
+      { $set: { ...transaction }, $unset: { ...unsetModifier } },
+      (err) => {
         if (err && Meteor.isServer && err.invalidKeys?.length == 0) {
           // This is not a validation error. Console.log the error.
           console.log(err);

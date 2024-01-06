@@ -4,7 +4,8 @@ import { createBrowserRouter, redirect } from "react-router-dom";
 
 // Components
 import { LoginForm, loginFormLoader } from "../imports/ui/components/LoginForm";
-import { TransactionForm } from "../imports/ui/components/TransactionForm";
+import { EditTransactionForm } from "../imports/ui/components/EditTransactionForm";
+import { CreateTransactionForm } from "../imports/ui/components/CreateTransactionForm";
 import { Layout } from "../imports/ui/pages/Layout";
 
 // Pages
@@ -51,11 +52,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "/ledger/:ledgerId/transactions/new",
-        element: <TransactionForm />,
+        element: <CreateTransactionForm />,
       },
       {
         path: "/ledger/:ledgerId/transaction/:transactionId/edit",
-        element: <TransactionForm />,
+        element: <EditTransactionForm />,
       },
       {
         path: "/account",
@@ -108,7 +109,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/new-transaction",
-        element: <TransactionForm />,
+        element: <CreateTransactionForm />,
       },
     ],
   },

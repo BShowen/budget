@@ -10,7 +10,7 @@ import { TagCollection } from "../../api/Tag/TagCollection";
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 
 // Utils
-import { cap } from ".././util/cap";
+import { cap } from "../util/cap";
 import { dates } from "../util/dates";
 import { formatDollarAmount } from "../util/formatDollarAmount";
 
@@ -20,7 +20,7 @@ import { AiOutlinePlusCircle } from "react-icons/ai";
 // App context
 import { RootContext } from "../pages/AppData";
 
-export function TransactionForm() {
+export function EditTransactionForm() {
   const formRef = useRef(null);
   const navigate = useNavigate();
   const rootContext = useContext(RootContext);
@@ -52,18 +52,12 @@ export function TransactionForm() {
     return { ledgers, ledgerSelection };
   });
 
-  // Find the ledger that this transaction belongs to so I can auto-select it
-  // in the form's ledger selection field.
-  // ledger is defined if user is editing a previous transaction otherwise it is
-  // set to null. If null then set ledger to null.
-  const ledger = ledgerId
-    ? ledgers.find((ledger) => ledger._id === ledgerId)
-    : null;
+  // Get the ledger document that this transaction belongs to so it can
+  // be used to pre-select the ledger in form's ledger selection field.
+  const ledger = ledgers.find((ledger) => ledger._id === ledgerId);
 
-  // transaction is defined if user is editing a previous transaction otherwise
-  // it is set to null
+  // Get the transaction document
   const transaction = useTracker(() => {
-    if (!transactionId) return null;
     const transaction = TransactionCollection.findOne(
       { _id: transactionId },
       { fields: { accountId: 0 } }
@@ -74,40 +68,17 @@ export function TransactionForm() {
     };
   });
 
-  // If user is creating a new transaction and ledger is null then active is
-  // set to "expense".
-  // If user is  creating a new transaction and ledger is defined then active is
-  // set to the type of ledger e.g. "income" or "expense" ledger
-  // If user is editing a transaction then ledger is defined and transaction is
-  // defined so I set active to "income" if this is an income ledger. If it's
-  // not an income ledger then I set active to the type of transaction
-  // e.g. "income" or "expense".
   const [active, setActiveTab] = useState(
-    ledger
-      ? ledger.kind === "income" || ledger.kind === "savings"
-        ? "income"
-        : (transaction && transaction.type) || "expense"
-      : "expense"
+    ledger.kind === "income" || ledger.kind === "savings"
+      ? "income"
+      : (transaction && transaction.type) || "expense"
   ); //expense or income
 
-  const [formData, setFormData] = useState(
-    transaction
-      ? {
-          ...transaction,
-          note: transaction?.note || "",
-        }
-      : {
-          createdAt: dates.format(new Date(), { forHtml: true }),
-          ledgerId: ledger?._id || "uncategorized",
-          type: "",
-          amount: "",
-          merchant: "",
-          tags: "",
-          note: "",
-          newTags: "",
-          budgetId,
-        }
-  );
+  // Store only the data that the user changes.
+  const [formData, setFormData] = useState({
+    _id: transaction._id,
+    tags: transaction.tags,
+  });
 
   useEffect(() => {
     function handleKeyDown(e) {
@@ -123,6 +94,7 @@ export function TransactionForm() {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [formData]);
+  // }, [formData]);
 
   function handleInputChange(e) {
     const name = e.target.name;
@@ -143,46 +115,26 @@ export function TransactionForm() {
   }
 
   function submit() {
-    const form = new FormData(formRef.current);
-    const tags = form.getAll("tags");
-    const newTags = form.getAll("newTags");
-    // If formData.ledgerId is defined and doesn't equal "uncategorized" then
-    // envelopeId does not need to be defined because the user is creating an
-    // uncategorized transaction.
-    const { envelopeId } =
-      formData.ledgerId && formData.ledgerId != "uncategorized"
-        ? ledgers.find((ledger) => ledger._id === formData.ledgerId)
-        : {};
     try {
-      // Set the correct date
-      const [year, month, day] = formData.createdAt.split("-");
-      const formattedDate = new Date(year, month - 1, day);
-      const newTransaction = {
-        ...formData,
-        createdAt: formattedDate,
+      const formDetails = { ...formData };
+      const form = new FormData(formRef.current);
+      const tags = form.getAll("tags");
+      const newTags = form.getAll("newTags");
+      if (formDetails.createdAt) {
+        // Set the correct date
+        const [year, month, day] = formData.createdAt.split("-");
+        const formattedDate = new Date(year, month - 1, day);
+        formDetails.createdAt = formattedDate;
+      }
+      Meteor.call("transaction.updateTransaction", {
+        ...formDetails,
         tags,
         newTags,
-        budgetId,
-        envelopeId,
-        type: active,
-      };
-
-      if (newTransaction.ledgerId == "uncategorized") {
-        delete newTransaction.ledgerId;
-        delete newTransaction.envelopeId;
-      }
-
-      if (formData._id) {
-        // update
-        Meteor.call("transaction.updateTransaction", newTransaction);
-      } else {
-        // create
-        Meteor.call("transaction.createTransaction", newTransaction);
-      }
+      });
+      navigate(-1, { replace: true });
     } catch (error) {
       console.log("Error ----> ", error);
     }
-    navigate(-1);
   }
 
   function setRange(e) {
@@ -194,16 +146,16 @@ export function TransactionForm() {
       <div className="page-header w-full lg:w-3/5 bg-header p-2 flex flex-col justify-start">
         <div className="w-full px-1 py-2 grid grid-cols-12 font-bold text-center items-center">
           <h2
-            className="col-start-1 col-end-4 text-white lg:hover:cursor-pointer"
+            className="col-start-1 col-end-3 text-white lg:hover:cursor-pointer"
             onClick={() => navigate(-1)}
           >
             Cancel
           </h2>
-          <h2 className="col-start-4 col-end-10 text-white text-xl">
-            {ledger?.kind == "income" ? "Add income" : "Add transaction"}
+          <h2 className="col-start-3 col-end-11 text-white text-xl">
+            Update transaction
           </h2>
           <h2
-            className="col-start-10 col-end-13 text-white lg:hover:cursor-pointer"
+            className="col-start-11 col-end-13 text-white lg:hover:cursor-pointer"
             onClick={submit}
           >
             Done
@@ -212,7 +164,10 @@ export function TransactionForm() {
 
         <ButtonGroup
           active={active}
-          setActiveTab={setActiveTab}
+          setActiveTab={(active) => {
+            setActiveTab(active);
+            setFormData((prev) => ({ ...prev, type: active }));
+          }}
           disableChange={ledger?.kind === "income"}
         />
       </div>
@@ -226,7 +181,7 @@ export function TransactionForm() {
               <input
                 type="date"
                 name="createdAt"
-                value={formData.createdAt}
+                value={formData.createdAt || transaction?.createdAt}
                 onChange={handleInputChange}
                 required
                 id="date"
@@ -246,11 +201,9 @@ export function TransactionForm() {
                 required
                 name="amount"
                 id="amount"
-                value={formData.amount}
+                value={formData?.amount || transaction?.amount}
                 onInput={handleInputChange}
                 min={0}
-                // autoFocus only when creating a new transaction
-                autoFocus={formData.amount == ""}
                 className="px-0 w-1/2 text-end focus:ring-0 border-0"
               />
             </InputContainer>
@@ -267,7 +220,7 @@ export function TransactionForm() {
                 required
                 id="merchant"
                 name="merchant"
-                value={formData.merchant}
+                value={formData?.merchant || transaction?.merchant}
                 onInput={handleInputChange}
                 className="px-0 w-1/2 text-end focus:ring-0 border-0"
               />
@@ -289,7 +242,7 @@ export function TransactionForm() {
               <select
                 className="px-0 w-full focus:ring-0 border-0"
                 name="ledgerId"
-                value={formData.ledgerId}
+                value={formData?.ledgerId || transaction?.ledgerId}
                 onChange={handleInputChange}
               >
                 {ledgerSelection}
@@ -302,28 +255,26 @@ export function TransactionForm() {
               <textarea
                 rows={2}
                 placeholder="Add a note"
-                value={formData.note}
+                value={formData?.note || transaction?.note || ""}
                 onInput={handleInputChange}
                 name="note"
                 className="px-0 text-left w-full focus:ring-0 border-0"
               />
             </InputContainer>
           </InputGroup>
-          {transaction && (
-            <div className="flex flex-row justify-center items-center w-full p-2 pb-14">
-              <h2
-                onClick={() => {
-                  navigate(-1);
-                  Meteor.call("transaction.deleteTransaction", {
-                    transactionId,
-                  });
-                }}
-                className="inline-block text-center text-xl font-bold text-rose-500 lg:hover:cursor-pointer lg:hover:text-rose-600 lg:hover:underline transition-all duration-150"
-              >
-                Delete transaction
-              </h2>
-            </div>
-          )}
+          <div className="flex flex-row justify-center items-center w-full p-2 pb-14">
+            <h2
+              onClick={() => {
+                navigate(-1);
+                Meteor.call("transaction.deleteTransaction", {
+                  transactionId,
+                });
+              }}
+              className="inline-block text-center text-xl font-bold text-rose-500 lg:hover:cursor-pointer lg:hover:text-rose-600 lg:hover:underline transition-all duration-150"
+            >
+              Delete transaction
+            </h2>
+          </div>
         </form>
       </div>
     </>
