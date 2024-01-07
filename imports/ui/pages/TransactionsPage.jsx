@@ -20,8 +20,8 @@ import {
   LuArrowDownZA,
   LuArrowDownAZ,
   LuSearch,
+  LuSearchX,
 } from "react-icons/lu";
-import { FaMagnifyingGlass } from "react-icons/fa6";
 
 export function TransactionsPage() {
   // const [sortOrder, setSortOrder] = useState("asc");
@@ -112,8 +112,10 @@ export function TransactionsPage() {
               {transactionList.length} Transactions this month
             </h2>
           </div>
-          {/* {transactionList.length > 0 && <Toolbar {...toolbarOptions} />} */}
-          <SearchBar onInput={filterTransactions} />
+          <SearchBar
+            onInput={filterTransactions}
+            searchResults={filteredTransactionList.length > 0}
+          />
           <ul className="list-none z-0">
             {filteredTransactionList.map((transaction) => {
               const [month, day] = dates
@@ -218,11 +220,12 @@ function Insights() {
   );
 }
 
-function SearchBar({ onInput }) {
+function SearchBar({ onInput, searchResults }) {
+  const icon = getIcon({ searchResults });
   return (
     <div className="z-20 sticky position-top-safe px-1 bg-white">
       <div className="px-1 bg-search-bar rounded-xl h-10 flex flex-row justify-start items-center overflow-hidden shadow-sm shadow-gray-300 gap-1">
-        <LuSearch className="text-2xl" />
+        {icon}
         <input
           className="border-none h-10 w-full bg-inherit outline-none text-lg font-semibold"
           type="text"
@@ -231,6 +234,17 @@ function SearchBar({ onInput }) {
       </div>
     </div>
   );
+
+  function getIcon({ searchResults }) {
+    // searchResults = true when found results
+    // searchResults = false when found no results
+    switch (searchResults) {
+      case true:
+        return <LuSearch className="text-2xl" />;
+      case false:
+        return <LuSearchX className="text-2xl" />;
+    }
+  }
 }
 
 function Toolbar(options) {
