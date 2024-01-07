@@ -99,6 +99,9 @@
   .list-transaction-details-right {
     @apply w-2/4 flex flex-row justify-start items-center px-1;
   }
+  .tag {
+    @apply font-semibold border-2 border-color-dark-blue px-2 rounded-md min-w-max bg-color-dark-blue text-white;
+  }
 }
 
 * {

@@ -84,18 +84,17 @@ export function TransactionsPage() {
   const transactionList = useTracker(() =>
     TransactionCollection.find().fetch()
   );
-  const filteredTransactionList = useTracker(() => {
-    return transactionList.filter((transaction) => {
-      const transactionName = transaction.merchant;
-      const transactionAmount = transaction.amount;
-      const searchFilter = filter.toLowerCase();
 
-      return (
-        transactionName.includes(searchFilter) ||
-        toDollars(transactionAmount.toString()).includes(searchFilter)
-      );
-    });
-  }, [filter]);
+  const filteredTransactionList = transactionList.filter((transaction) => {
+    const transactionName = transaction.merchant;
+    const transactionAmount = transaction.amount;
+    const searchFilter = filter.toLowerCase();
+
+    return (
+      transactionName.includes(searchFilter) ||
+      toDollars(transactionAmount.toString()).includes(searchFilter)
+    );
+  });
 
   const filterTransactions = (e) => {
     setFilter(e.target.value);
@@ -109,7 +108,8 @@ export function TransactionsPage() {
         <div className="bg-white py-2 rounded-xl flex flex-col gap-2">
           <div className="w-full text-center">
             <h2 className="font-bold text-xl">
-              {transactionList.length} Transactions this month
+              {/* {transactionList.length} Transactions this month */}
+              Transactions
             </h2>
           </div>
           <SearchBar
@@ -130,7 +130,6 @@ export function TransactionsPage() {
                     transaction={transaction}
                     options={{ month, day }}
                     ledgerId={transaction.ledgerId}
-                    transactionId={transaction._id}
                   />
                 </li>
               );

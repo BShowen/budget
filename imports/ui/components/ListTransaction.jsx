@@ -15,20 +15,9 @@ import { dates } from "../util/dates";
 // Icons
 import { HiMinus, HiPlus } from "react-icons/hi";
 import { LuCheckCircle2, LuCircle } from "react-icons/lu";
-export function ListTransaction({
-  transaction,
-  ledgerId,
-  transactionId,
-  options,
-}) {
-  const ledger = useTracker(() => {
-    return ledgerId
-      ? LedgerCollection.findOne({ _id: ledgerId })
-      : { name: "uncategorized" };
-  });
-  const [isCategorized, setCategorized] = useState(ledgerId);
+export function ListTransaction({ transaction, ledgerId }) {
+  const isCategorized = !!ledgerId;
   const [expanded, setExpanded] = useState(false);
-  const [expandedContent, setExpandedContent] = useState(false);
 
   const [merchant, setMerchant] = useState(
     transaction.merchant.length <= 12
@@ -38,19 +27,6 @@ export function ListTransaction({
 
   const toggleExpandedContent = () => {
     setExpanded((prev) => !prev);
-    if (expanded) {
-      // If content is currently expanded then wait 200ms before calling to
-      // hide the content. This way the closing animation can finish before
-      // the dom element is removed.
-      setTimeout(() => {
-        setExpandedContent((prev) => !prev);
-      }, 200);
-    } else {
-      // If no expanded content is being shown, then immediately call for
-      // the expanded content to be inserted into the dom so the animation
-      // can start.
-      setExpandedContent((prev) => !prev);
-    }
   };
 
   useEffect(() => {
@@ -64,10 +40,8 @@ export function ListTransaction({
           : `${cap(transaction.merchant.slice(0, 10).trim())}...`
       );
     }
-  }, [expanded]);
+  }, [expanded, transaction.merchant]);
 
-  const defaultOptions = { border: "", month: "", day: "" };
-  const { border, month, day } = { ...defaultOptions, ...options };
   return (
     // <Link
     //   to={`/ledger/${ledgerId}/transaction/${transactionId}/edit`}
@@ -76,25 +50,38 @@ export function ListTransaction({
     <div
       onClick={toggleExpandedContent}
       className={`flex flex-col justify-start items-stretch lg:hover:cursor-pointer px-1 transition-all duration-200 ease-in-out relative ${
-        expanded ? "h-64 bg-app shadow-inner" : "h-10"
+        expanded
+          ? transaction.note
+            ? "h-48 bg-app shadow-inner"
+            : "h-40 bg-app shadow-inner"
+          : "h-10"
       } `}
     >
       <div
-        className={`w-full flex flex-row justify-between items-center h-10 absolute top-0 left-0 ps-1 pe-3 transition-colors ${
-          expanded ? "bg-app" : "delay-[225ms] bg-white"
+        className={`w-full flex flex-row justify-between items-center h-10 absolute top-0 left-0 ps-1 pe-3 transition-all ${
+          expanded ? "bg-app" : "bg-white"
         }`}
       >
         <div
-          className={`flex flex-row flex-wrap justify-start items-center gap-1 ${
-            expanded ? "grow" : ""
+          className={`transition-all duration-200 flex flex-row flex-nowrap justify-start items-center gap-1 ${
+            expanded ? "w-9/12" : "w-32"
           }`}
         >
-          {isCategorized ? (
-            <LuCheckCircle2 className="text-xl text-color-light-blue" />
-          ) : (
-            <LuCircle className="text-xl text-color-danger" />
-          )}
-          <p className="font-medium text-md">{merchant}</p>
+          <div className="w-5 h-5 shrink-0">
+            {isCategorized ? (
+              <LuCheckCircle2 className="w-full h-full text-color-light-blue" />
+            ) : (
+              <LuCircle className="w-full h-full text-color-danger" />
+            )}
+          </div>
+          <p
+            className={`${
+              expanded ? "font-bold text-lg" : "font-medium text-md"
+            } truncate whitespace-nowrap w-full`}
+          >
+            {/* {merchant} */}
+            {cap(transaction.merchant)}
+          </p>
         </div>
         <div className="text-md font-semibold flex flex-row items-center gap-1">
           <span>
@@ -104,7 +91,13 @@ export function ListTransaction({
               <HiPlus className="text-green-600 text-xl" />
             )}
           </span>
-          <p>{toDollars(transaction.amount)}</p>
+          <p
+            className={`${
+              expanded ? "font-bold text-lg" : "font-medium text-md"
+            }`}
+          >
+            {toDollars(transaction.amount)}
+          </p>
         </div>
       </div>
 
@@ -125,7 +118,11 @@ function ExpandedContent({ transaction, expanded }) {
       _id: { $in: transaction.tags || [] },
     }).fetch();
     if (tags.length > 0) {
-      return tags.map((tag) => <span key={tag._id}>{tag.name}</span>);
+      return tags.map((tag) => (
+        <div className="tag text-sm" key={tag._id}>
+          {cap(tag.name)}
+        </div>
+      ));
     } else {
       return "No tags";
     }
@@ -133,84 +130,44 @@ function ExpandedContent({ transaction, expanded }) {
 
   return (
     <div
-      className={`w-full transition-all duration-200 ease-in flex flex-col items-stretch justify-center overflow-hidden ${
+      className={`w-full transition-all duration-200 ease-in overflow-x-hidden overflow-y-scroll flex flex-col justify-between items-stretch mt-10 overscroll-auto ${
         expanded ? "h-full" : "h-0"
       }`}
     >
-      <div className="list-transaction-details-container">
-        <div className="list-transaction-details-left">
-          <p>Transaction date:</p>
+      <div className="flex flex-col justify-start items-stretch gap-1 ps-7">
+        <div className="flex flex-row justify-start items-center gap-1">
+          <div className="tag bg-gray-400 border-gray-400">
+            {cap(ledger?.name || "Uncategorized")}
+          </div>
+          <div className="tag bg-gray-400 border-gray-400">
+            {cap(envelope?.name || "Uncategorized")}
+          </div>
         </div>
-        <div className="list-transaction-details-right">
-          <p>
-            {dates.format(transaction.createdAt, {
-              forAllocation: true,
-            })}
+
+        <div className="text-left flex flex-row gap-1">
+          <p className="font-semibold text-gray-500 text-md">Tags:</p>
+          <div className="rounded-md flex flex-row justify-start items-center gap-1 overflow-x-scroll w-full scrollbar-hide">
+            {tagList}
+          </div>
+        </div>
+
+        <div className="text-left">
+          <p className="font-semibold text-gray-500 text-md">
+            Notes:{" "}
+            <span className="text-gray-400 font-normal text-sm">
+              {transaction.note}
+            </span>
           </p>
         </div>
       </div>
 
-      <div className="list-transaction-details-container">
-        <div className="list-transaction-details-left">
-          <p>Envelope:</p>
-        </div>
-        <div className="list-transaction-details-right">
-          <p>{cap(envelope?.name || "Uncategorized")}</p>
-        </div>
-      </div>
-
-      <div className="list-transaction-details-container">
-        <div className="list-transaction-details-left">
-          <p>Ledger:</p>
-        </div>
-        <div className="list-transaction-details-right">
-          <p>{cap(ledger?.name || "Uncategorized")}</p>
-        </div>
-      </div>
-
-      <div className="list-transaction-details-container">
-        <div className="list-transaction-details-left">
-          <p>Transaction amount:</p>
-        </div>
-        <div className="list-transaction-details-right">
-          <p>{toDollars(transaction.amount)}</p>
-        </div>
-      </div>
-
-      <div className="list-transaction-details-container">
-        <div className="list-transaction-details-left">
-          <p>Logged by:</p>
-        </div>
-        <div className="list-transaction-details-right">
-          <p>{cap(transaction.loggedBy.firstName)}</p>
-        </div>
-      </div>
-
-      <div className="list-transaction-details-container">
-        <div className="list-transaction-details-left"></div>
-        <div className="list-transaction-details-right"></div>
-      </div>
-
-      <div className="list-transaction-details-container">
-        <div className="list-transaction-details-left">
-          <p>Tags:</p>
-        </div>
-        <div className="list-transaction-details-right">
-          <p>{tagList}</p>
-        </div>
-      </div>
-
-      <div className="flex flex-col justify-start items-stretch">
-        <div className="list-transaction-details-container">
-          <div className="list-transaction-details-left">
-            <p className="font-bold">Notes:</p>
-          </div>
-        </div>
-        {transaction.note && (
-          <div className="w-full bg-white rounded-lg px-2 shadow-sm">
-            <p>{transaction.note}</p>
-          </div>
-        )}
+      <div className="flex flex-row justify-center items-center mb-1">
+        <p className="font-bold text-gray-400 text-md">
+          Created by {cap("bradley")} on{" "}
+          {dates.format(transaction.createdAt, {
+            forAllocation: true,
+          })}
+        </p>
       </div>
     </div>
   );
