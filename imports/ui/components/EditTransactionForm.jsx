@@ -215,7 +215,11 @@ export function EditTransactionForm() {
                 required
                 id="merchant"
                 name="merchant"
-                value={formData?.merchant || transaction?.merchant}
+                value={
+                  "merchant" in formData
+                    ? formData?.merchant
+                    : transaction?.merchant
+                }
                 onInput={handleInputChange}
                 className="px-0 w-1/2 text-end focus:ring-0 border-0 form-input"
               />
