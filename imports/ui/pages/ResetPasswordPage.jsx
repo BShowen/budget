@@ -59,7 +59,7 @@ export function ResetPassword() {
               required
               name="oldPassword"
               placeholder="Old password"
-              className={`form-input ${
+              className={`form-input app-form-input ${
                 errors.oldPassword ? "border-rose-400" : ""
               }`}
             />
@@ -76,7 +76,7 @@ export function ResetPassword() {
               required
               name="newPassword"
               placeholder="New password"
-              className={`form-input ${
+              className={`form-input app-form-input ${
                 errors.newPassword ? "border-rose-400" : ""
               }`}
             />
@@ -94,7 +94,7 @@ export function ResetPassword() {
               required
               name="confirmPassword"
               placeholder="Confirm password"
-              className={`form-input ${
+              className={`form-input app-form-input ${
                 errors.confirmPassword ? "border-rose-400" : ""
               }`}
             />

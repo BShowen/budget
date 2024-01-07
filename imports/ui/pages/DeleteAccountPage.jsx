@@ -53,7 +53,9 @@ export function DeleteAccount() {
           id="password"
           placeholder="Password"
           required
-          className={`form-input ${errors.password ? "border-rose-400" : ""}`}
+          className={`form-input app-form-input ${
+            errors.password ? "border-rose-400" : ""
+          }`}
         />
 
         <button className="btn-primary">Delete my account</button>
