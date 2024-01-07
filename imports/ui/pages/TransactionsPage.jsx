@@ -19,64 +19,86 @@ import {
   LuArrowDown10,
   LuArrowDownZA,
   LuArrowDownAZ,
+  LuSearch,
 } from "react-icons/lu";
+import { FaMagnifyingGlass } from "react-icons/fa6";
 
 export function TransactionsPage() {
-  const [sortOrder, setSortOrder] = useState("asc");
-  const [sortProperty, setSortProperty] = useState("createdAt");
-  const toggleSortOrder = () => {
-    setSortOrder((prev) => {
-      if (prev == "asc") {
-        return "desc";
-      } else {
-        return "asc";
-      }
+  // const [sortOrder, setSortOrder] = useState("asc");
+  // const [sortProperty, setSortProperty] = useState("createdAt");
+  // const toggleSortOrder = () => {
+  //   setSortOrder((prev) => {
+  //     if (prev == "asc") {
+  //       return "desc";
+  //     } else {
+  //       return "asc";
+  //     }
+  //   });
+  // };
+  // const transactionList = useTracker(() => {
+  //   const transactions = TransactionCollection.find().fetch();
+
+  //   switch (sortProperty) {
+  //     case "createdAt":
+  //       return transactions.sort((a, b) => {
+  //         if (sortOrder == "asc") {
+  //           return b[sortProperty] - a[sortProperty];
+  //         } else {
+  //           return a[sortProperty] - b[sortProperty];
+  //         }
+  //       });
+  //     case "merchant":
+  //       if (sortOrder == "asc") {
+  //         return transactions.sort(
+  //           (a, b) =>
+  //             b[sortProperty].charCodeAt(0) - a[sortProperty].charCodeAt(0)
+  //         );
+  //       } else {
+  //         return transactions.sort(
+  //           (a, b) =>
+  //             a[sortProperty].charCodeAt(0) - b[sortProperty].charCodeAt(0)
+  //         );
+  //       }
+  //     case "amount":
+  //       if (sortOrder == "asc") {
+  //         return transactions.sort((a, b) => {
+  //           return a.amount - b.amount;
+  //         });
+  //       } else {
+  //         return transactions.sort((a, b) => {
+  //           return b.amount - a.amount;
+  //         });
+  //       }
+  //     default:
+  //       return transactions;
+  //   }
+  // }, [sortOrder]);
+
+  // const toolbarOptions = {
+  //   sortOrder: sortOrder,
+  //   toggleSortOrder: toggleSortOrder,
+  //   sortProperty: sortProperty,
+  //   setSortProperty: setSortProperty,
+  // };
+  const [filter, setFilter] = useState("");
+  const transactionList = useTracker(() =>
+    TransactionCollection.find().fetch()
+  );
+  const filteredTransactionList = useTracker(() => {
+    return transactionList.filter((transaction) => {
+      const transactionName = transaction.merchant;
+      const transactionAmount = transaction.amount;
+      const searchFilter = filter.toLowerCase();
+
+      return (
+        transactionName.includes(searchFilter) ||
+        toDollars(transactionAmount.toString()).includes(searchFilter)
+      );
     });
-  };
-  const transactionList = useTracker(() => {
-    const transactions = TransactionCollection.find().fetch();
+  }, [filter]);
 
-    switch (sortProperty) {
-      case "createdAt":
-        return transactions.sort((a, b) => {
-          if (sortOrder == "asc") {
-            return b[sortProperty] - a[sortProperty];
-          } else {
-            return a[sortProperty] - b[sortProperty];
-          }
-        });
-      case "merchant":
-        if (sortOrder == "asc") {
-          return transactions.sort(
-            (a, b) =>
-              b[sortProperty].charCodeAt(0) - a[sortProperty].charCodeAt(0)
-          );
-        } else {
-          return transactions.sort(
-            (a, b) =>
-              a[sortProperty].charCodeAt(0) - b[sortProperty].charCodeAt(0)
-          );
-        }
-      case "amount":
-        if (sortOrder == "asc") {
-          return transactions.sort((a, b) => {
-            return a.amount - b.amount;
-          });
-        } else {
-          return transactions.sort((a, b) => {
-            return b.amount - a.amount;
-          });
-        }
-      default:
-        return transactions;
-    }
-  }, [sortOrder]);
-
-  const toolbarOptions = {
-    sortOrder: sortOrder,
-    toggleSortOrder: toggleSortOrder,
-    sortProperty: sortProperty,
-    setSortProperty: setSortProperty,
+  const filterTransactions = (e) => {
+    setFilter(e.target.value);
   };
 
   return (
@@ -90,9 +112,10 @@ export function TransactionsPage() {
               {transactionList.length} Transactions this month
             </h2>
           </div>
-          {transactionList.length > 0 && <Toolbar {...toolbarOptions} />}
-          <ul className="list-none">
-            {transactionList.map((transaction) => {
+          {/* {transactionList.length > 0 && <Toolbar {...toolbarOptions} />} */}
+          <SearchBar onInput={filterTransactions} />
+          <ul className="list-none z-0">
+            {filteredTransactionList.map((transaction) => {
               const [month, day] = dates
                 .format(transaction.createdAt, {
                   forTransaction: true,
@@ -190,6 +213,21 @@ function Insights() {
           <div>Remaining</div>
           <div>{toDollars(incomeReceived - spentSoFar)}</div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function SearchBar({ onInput }) {
+  return (
+    <div className="z-20 sticky position-top-safe px-1 bg-white">
+      <div className="px-1 bg-search-bar rounded-xl h-10 flex flex-row justify-start items-center overflow-hidden shadow-sm shadow-gray-300 gap-1">
+        <LuSearch className="text-2xl" />
+        <input
+          className="border-none h-10 w-full bg-inherit outline-none text-lg font-semibold"
+          type="text"
+          onInput={onInput}
+        />
       </div>
     </div>
   );
