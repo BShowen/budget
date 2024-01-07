@@ -43,6 +43,8 @@ export function UpdateLedgerForm({ toggleForm, ledger }) {
       } catch (error) {
         console.log(error);
       }
+    } else {
+      toggleForm();
     }
   }
 
@@ -64,7 +66,7 @@ export function UpdateLedgerForm({ toggleForm, ledger }) {
       <form className="w-full flex flex-row justify-between h-full">
         <input
           type="text"
-          className="focus:ring-0 border-0 w-1/3 h-full p-0 m-0 bg-inherit font-semibold"
+          className="form-input focus:ring-0 border-0 w-8/12 h-full p-0 m-0 bg-inherit font-semibold"
           name="name"
           placeholder="Item name"
           value={cap(formState.name)}
@@ -83,7 +85,7 @@ export function UpdateLedgerForm({ toggleForm, ledger }) {
         <input
           type="text"
           inputMode="decimal"
-          className="focus:ring-0 border-0 w-1/3 h-full p-0 m-0 bg-inherit text-right"
+          className="form-input focus:ring-0 border-0 w-4/12 h-full p-0 m-0 bg-inherit text-right"
           name="allocatedAmount"
           autoFocus={true}
           placeholder="$0.00"

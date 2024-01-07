@@ -112,7 +112,11 @@ function EnvelopeFooter({ envelopeId }) {
 
   return (
     <div className="envelope-footer">
-      <NewLedgerForm toggleForm={toggleForm} envelopeId={envelopeId}>
+      <NewLedgerForm
+        toggleForm={toggleForm}
+        envelopeId={envelopeId}
+        placeholderText={"Savings name"}
+      >
         {!isFormActive && (
           <div className="w-full flex flex-row justify-between items-center">
             <div className="w-full flex flex-row justify-between items-center gap-3">

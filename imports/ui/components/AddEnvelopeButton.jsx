@@ -12,7 +12,7 @@ export const AddEnvelopeButton = ({ budgetId }) => {
         className="text-xl font-bold text-green-500 lg:hover:cursor-pointer lg:hover:text-green-600 lg:hover:underline transition-text duration-150"
         onClick={handleClick}
       >
-        Add envelope
+        New category
       </h2>
     </button>
   );

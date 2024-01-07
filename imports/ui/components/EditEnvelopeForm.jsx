@@ -20,16 +20,20 @@ export const EditEnvelopeForm = ({ envelopeId, envelopeName, toggleForm }) => {
         ...Object.fromEntries(new FormData(formElement).entries()),
         envelopeId,
       };
-      setFormTimeoutId(
-        setTimeout(() => {
-          Meteor.call("envelope.updateEnvelope", formData, (error) => {
-            if (error) {
-              console.log(error);
-            }
-            toggleForm();
-          });
-        }, 10)
-      );
+      if (formData.name.trim()) {
+        setFormTimeoutId(
+          setTimeout(() => {
+            Meteor.call("envelope.updateEnvelope", formData, (error) => {
+              if (error) {
+                console.log(error);
+              }
+              toggleForm();
+            });
+          }, 10)
+        );
+      } else {
+        toggleForm();
+      }
     } else if (focused == "trashCan") {
       handleTrashCanClick(e);
     } else {
@@ -67,7 +71,7 @@ export const EditEnvelopeForm = ({ envelopeId, envelopeName, toggleForm }) => {
     <div className="w-full h-full flex flex-row items-center">
       <form className="w-full h-full flex flex-row justify-between items-center ">
         <input
-          className="focus:ring-0 border-0 h-full p-0 font-bold text-xl font-extra-bold"
+          className="h-full p-0 font-bold text-xl font-extra-bold form-input outline-none border-0 focus:ring-0 w-8/12"
           autoFocus
           type="text"
           name="name"

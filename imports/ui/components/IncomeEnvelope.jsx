@@ -115,7 +115,11 @@ function EnvelopeFooter({ envelopeId }) {
 
   return (
     <div className="envelope-footer">
-      <NewLedgerForm toggleForm={toggleForm} envelopeId={envelopeId}>
+      <NewLedgerForm
+        toggleForm={toggleForm}
+        envelopeId={envelopeId}
+        placeholderText={"Income name"}
+      >
         {!isFormActive && (
           <div className="w-full flex flex-row justify-start items-center gap-1">
             <LuPlusCircle className="text-lg" />
@@ -127,7 +131,7 @@ function EnvelopeFooter({ envelopeId }) {
               }}
               className="font-semibold text-sm lg:hover:cursor-pointer"
             >
-              Add income
+              Add income source
             </p>
           </div>
         )}

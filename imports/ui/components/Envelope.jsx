@@ -137,7 +137,7 @@ function EnvelopeFooter({ envelopeId }) {
                 }}
                 className="font-semibold text-sm lg:hover:cursor-pointer"
               >
-                Create category
+                Create ledger
               </p>
             </div>
           </div>
