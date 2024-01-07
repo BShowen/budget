@@ -3,8 +3,6 @@ import { TransactionCollection } from "./TransactionCollection";
 import { createTags } from "../Tag/tagMethods";
 
 // Utils
-import _pickBy from "lodash/pickBy.js";
-import _isEqual from "lodash/isEqual.js";
 import { LedgerCollection } from "../Ledger/LedgerCollection";
 
 Meteor.methods({
@@ -56,10 +54,15 @@ Meteor.methods({
     if (!this.userId) return;
     createAndAssignTags(transaction);
     const { ledgerId, _id: transactionId } = transaction;
-    TransactionCollection.simpleSchema().clean(transaction);
 
     const unsetModifier =
       ledgerId === "uncategorized" ? { ledgerId: "", envelopeId: "" } : {};
+
+    if ("note" in transaction && transaction.note.trim().length == 0) {
+      unsetModifier.note = "";
+    }
+
+    TransactionCollection.simpleSchema().clean(transaction);
 
     TransactionCollection.update(
       { _id: transactionId },

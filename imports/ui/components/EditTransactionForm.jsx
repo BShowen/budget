@@ -250,7 +250,9 @@ export function EditTransactionForm() {
               <textarea
                 rows={2}
                 placeholder="Add a note"
-                value={formData?.note || transaction?.note || ""}
+                value={
+                  "note" in formData ? formData.note : transaction.note || ""
+                }
                 onInput={handleInputChange}
                 name="note"
                 className="px-0 text-left w-full focus:ring-0 border-0 form-input"
