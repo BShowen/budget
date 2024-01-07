@@ -31,7 +31,7 @@ export function CreateTransactionForm() {
 
   // Get all the ledgers in this budget. This list is used to populate the
   // form selection
-  const { ledgers, ledgerSelection } = useTracker(() => {
+  const { ledgerSelection } = useTracker(() => {
     const ledgers = LedgerCollection.find().fetch();
 
     const ledgerSelection = [
@@ -193,7 +193,7 @@ export function CreateTransactionForm() {
                 onChange={handleInputChange}
                 required
                 id="date"
-                className="px-0 w-1/2 focus:ring-0 border-0"
+                className="px-0 w-1/2 focus:ring-0 border-0 form-input"
               />
             </InputContainer>
             <InputContainer>
@@ -213,7 +213,7 @@ export function CreateTransactionForm() {
                 onInput={handleInputChange}
                 min={0}
                 autoFocus
-                className="px-0 w-1/2 text-end focus:ring-0 border-0"
+                className="px-0 w-1/2 text-end focus:ring-0 border-0 form-input"
               />
             </InputContainer>
             <InputContainer options={{ border: false }}>
@@ -231,7 +231,7 @@ export function CreateTransactionForm() {
                 name="merchant"
                 value={formData.merchant}
                 onInput={handleInputChange}
-                className="px-0 w-1/2 text-end focus:ring-0 border-0"
+                className="px-0 w-1/2 text-end focus:ring-0 border-0 form-input"
               />
             </InputContainer>
           </InputGroup>
@@ -245,7 +245,7 @@ export function CreateTransactionForm() {
           <InputGroup>
             <InputContainer options={{ border: false }}>
               <select
-                className="px-0 w-full focus:ring-0 border-0"
+                className="px-0 w-full focus:ring-0 border-0 form-input"
                 name="ledgerId"
                 value={formData.ledgerId}
                 onChange={handleInputChange}
@@ -263,7 +263,7 @@ export function CreateTransactionForm() {
                 value={formData.note}
                 onInput={handleInputChange}
                 name="note"
-                className="px-0 text-left w-full focus:ring-0 border-0"
+                className="px-0 text-left w-full focus:ring-0 border-0 form-input"
               />
             </InputContainer>
           </InputGroup>
@@ -376,7 +376,7 @@ function Tag({ tag, isChecked }) {
     >
       <p>{cap(tag.name)}</p>
       <input
-        className="hidden"
+        className="hidden form-input"
         type="checkbox"
         value={tag._id}
         checked={checked}
@@ -511,7 +511,7 @@ function NewTag({ defaultValue, removeTag, saveTag, id, autoFocus }) {
       </p>
       <input
         ref={inputRef}
-        className="focus:ring-0 border-0 m-0 p-0 w-24 h-6 text-center bg-inherit text-inherit transition-width duration-100"
+        className="focus:ring-0 border-0 m-0 p-0 w-24 h-6 text-center bg-inherit text-inherit transition-width duration-100  form-input"
         style={{
           width: `${inputWidth}px`,
         }}
@@ -527,7 +527,7 @@ function NewTag({ defaultValue, removeTag, saveTag, id, autoFocus }) {
         type="checkbox"
         checked
         readOnly
-        className="hidden"
+        className="hidden form-input"
         value={tagName}
         name="newTags"
       />

@@ -79,7 +79,7 @@ export function NewLedgerForm({
       <div className="w-full h-8 relative z-0 px-2 py-1 bg-slate-100 rounded-md lg:hover:cursor-pointer flex flex-row justify-between items-center">
         <form className="w-full flex flex-row justify-between h-full">
           <input
-            className="focus:ring-0 border-0 w-1/3 h-full p-0 m-0 bg-inherit font-semibold"
+            className="focus:ring-0 border-0 w-1/3 h-full p-0 m-0 bg-inherit font-semibold form-input"
             name="name"
             placeholder="Item name"
             autoFocus={true}
@@ -95,7 +95,7 @@ export function NewLedgerForm({
             onBlur={() => setTimeoutId(setTimeout(handleSubmit, 10))}
           />
           <input
-            className="focus:ring-0 border-0 w-1/3 h-full p-0 m-0 bg-inherit text-right"
+            className="focus:ring-0 border-0 w-1/3 h-full p-0 m-0 bg-inherit text-right form-input"
             name="allocatedAmount"
             placeholder="$0.00"
             pattern="[0-9]*"

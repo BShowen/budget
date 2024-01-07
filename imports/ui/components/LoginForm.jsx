@@ -77,7 +77,7 @@ export function LoginForm() {
         >
           <div>
             <input
-              className={`form-input border ${
+              className={`form-input app-form-input border ${
                 error.field === "email" ? "border-rose-400" : "border-gray-300"
               }`}
               id="email"
@@ -91,7 +91,7 @@ export function LoginForm() {
           </div>
           <div>
             <input
-              className={`form-input border ${
+              className={`form-input app-form-input border ${
                 error.field === "password"
                   ? "border-rose-400"
                   : "border-gray-300"

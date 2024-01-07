@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { Meteor } from "meteor/meteor";
 
 // Utils
 import { dates } from "../util/dates";
@@ -32,7 +33,7 @@ export function NewAllocationPage() {
           onSubmit={handleSubmit}
         >
           <input
-            className="form-input"
+            className="form-input app-form-input"
             placeholder="Allocation name"
             type="text"
             name="name"
@@ -47,7 +48,7 @@ export function NewAllocationPage() {
             value={formData.goalAmount.toString()}
             onInput={handleChange}
             min={0}
-            className="form-input"
+            className="form-input app-form-input"
           />
           <input
             type="text"
@@ -57,12 +58,12 @@ export function NewAllocationPage() {
             value={formData.startingBalance.toString()}
             onInput={handleChange}
             min={0}
-            className="form-input"
+            className="form-input app-form-input"
           />
           <div>
             <label htmlFor="goalDate">Goal date</label>
             <input
-              className="form-input"
+              className="form-input app-form-input"
               type="date"
               name="endDate"
               value={formData.endDate}
@@ -110,7 +111,7 @@ export function NewAllocationPage() {
 function PageHeader() {
   const navigate = useNavigate();
   return (
-    <div className="page-header w-full lg:w-3/5 flex flex-row justify-start items-center relative bg-sky-500 shadow-sm text-white">
+    <div className="page-header w-full lg:w-3/5 flex flex-row justify-start items-center relative bg-header shadow-sm text-white">
       <div className="flex flex-row items-center p-1 h-11">
         <Link
           className="text-xl font-bold flex flex-row justify-start items-center w-24 lg:hover:cursor-pointer"

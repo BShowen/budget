@@ -1,7 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import { Random } from "meteor/random";
 import { useTracker } from "meteor/react-meteor-data";
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 // Collections
@@ -17,14 +17,9 @@ import { formatDollarAmount } from "../util/formatDollarAmount";
 // Icons
 import { AiOutlinePlusCircle } from "react-icons/ai";
 
-// App context
-import { RootContext } from "../pages/AppData";
-
 export function EditTransactionForm() {
   const formRef = useRef(null);
   const navigate = useNavigate();
-  const rootContext = useContext(RootContext);
-  const { currentBudgetId: budgetId } = rootContext;
   const { ledgerId, transactionId } = useParams();
 
   // Get all the ledgers in this budget. This list is used to populate the
@@ -185,7 +180,7 @@ export function EditTransactionForm() {
                 onChange={handleInputChange}
                 required
                 id="date"
-                className="px-0 w-1/2 focus:ring-0 border-0"
+                className="px-0 w-1/2 focus:ring-0 border-0 form-input"
               />
             </InputContainer>
             <InputContainer>
@@ -204,7 +199,7 @@ export function EditTransactionForm() {
                 value={formData?.amount || transaction?.amount}
                 onInput={handleInputChange}
                 min={0}
-                className="px-0 w-1/2 text-end focus:ring-0 border-0"
+                className="px-0 w-1/2 text-end focus:ring-0 border-0 form-input"
               />
             </InputContainer>
             <InputContainer options={{ border: false }}>
@@ -222,7 +217,7 @@ export function EditTransactionForm() {
                 name="merchant"
                 value={formData?.merchant || transaction?.merchant}
                 onInput={handleInputChange}
-                className="px-0 w-1/2 text-end focus:ring-0 border-0"
+                className="px-0 w-1/2 text-end focus:ring-0 border-0 form-input"
               />
             </InputContainer>
           </InputGroup>
@@ -240,7 +235,7 @@ export function EditTransactionForm() {
           <InputGroup>
             <InputContainer options={{ border: false }}>
               <select
-                className="px-0 w-full focus:ring-0 border-0"
+                className="px-0 w-full focus:ring-0 border-0 form-input"
                 name="ledgerId"
                 value={formData?.ledgerId || transaction?.ledgerId}
                 onChange={handleInputChange}
@@ -258,7 +253,7 @@ export function EditTransactionForm() {
                 value={formData?.note || transaction?.note || ""}
                 onInput={handleInputChange}
                 name="note"
-                className="px-0 text-left w-full focus:ring-0 border-0"
+                className="px-0 text-left w-full focus:ring-0 border-0 form-input"
               />
             </InputContainer>
           </InputGroup>
@@ -384,7 +379,7 @@ function Tag({ tag, isChecked }) {
     >
       <p>{cap(tag.name)}</p>
       <input
-        className="hidden"
+        className="hidden form-input"
         type="checkbox"
         value={tag._id}
         checked={checked}
@@ -519,7 +514,7 @@ function NewTag({ defaultValue, removeTag, saveTag, id, autoFocus }) {
       </p>
       <input
         ref={inputRef}
-        className="focus:ring-0 border-0 m-0 p-0 w-24 h-6 text-center bg-inherit text-inherit transition-width duration-100"
+        className="focus:ring-0 border-0 m-0 p-0 w-24 h-6 text-center bg-inherit text-inherit transition-width duration-100  form-input"
         style={{
           width: `${inputWidth}px`,
         }}
@@ -535,7 +530,7 @@ function NewTag({ defaultValue, removeTag, saveTag, id, autoFocus }) {
         type="checkbox"
         checked
         readOnly
-        className="hidden"
+        className="hidden form-input"
         value={tagName}
         name="newTags"
       />
