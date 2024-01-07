@@ -52,8 +52,8 @@ export function ListTransaction({ transaction, ledgerId }) {
       className={`flex flex-col justify-start items-stretch lg:hover:cursor-pointer px-1 transition-all duration-200 ease-in-out relative ${
         expanded
           ? transaction.note
-            ? "h-48 bg-app shadow-inner"
-            : "h-40 bg-app shadow-inner"
+            ? "h-56 bg-app shadow-inner"
+            : "h-48 bg-app shadow-inner"
           : "h-10"
       } `}
     >
@@ -63,8 +63,8 @@ export function ListTransaction({ transaction, ledgerId }) {
         }`}
       >
         <div
-          className={`transition-all duration-200 flex flex-row flex-nowrap justify-start items-center gap-1 ${
-            expanded ? "w-9/12" : "w-32"
+          className={`transition-all duration-200 flex flex-row flex-nowrap justify-start items-center gap-1 overflow-hidden ${
+            expanded ? "w-full" : "w-3/5"
           }`}
         >
           <div className="w-5 h-5 shrink-0">
@@ -77,9 +77,8 @@ export function ListTransaction({ transaction, ledgerId }) {
           <p
             className={`${
               expanded ? "font-bold text-lg" : "font-medium text-md"
-            } truncate whitespace-nowrap w-full`}
+            } truncate w-full`}
           >
-            {/* {merchant} */}
             {cap(transaction.merchant)}
           </p>
         </div>
@@ -124,36 +123,49 @@ function ExpandedContent({ transaction, expanded }) {
         </div>
       ));
     } else {
-      return "No tags";
+      return [];
     }
   });
 
   return (
     <div
-      className={`w-full transition-all duration-200 ease-in overflow-x-hidden overflow-y-scroll flex flex-col justify-between items-stretch mt-10 overscroll-auto ${
+      className={`w-full transition-all duration-200 ease-in overflow-x-hidden overflow-y-scroll flex flex-col justify-start items-stretch mt-10 overscroll-auto ${
         expanded ? "h-full" : "h-0"
       }`}
     >
       <div className="flex flex-col justify-start items-stretch gap-1 ps-7">
+        <div className="flex flex-row justify-center items-center mb-1 border border-color-dark-blue rounded-md bg-color-dark-blue w-max px-1">
+          <p className="font-bold text-white text-md">
+            Created by {cap("bradley")} on{" "}
+            {dates.format(transaction.createdAt, {
+              forAllocation: true,
+            })}
+          </p>
+        </div>
+
         <div className="flex flex-row justify-start items-center gap-1">
-          <div className="tag bg-gray-400 border-gray-400">
-            {cap(ledger?.name || "Uncategorized")}
-          </div>
           <div className="tag bg-gray-400 border-gray-400">
             {cap(envelope?.name || "Uncategorized")}
           </div>
-        </div>
-
-        <div className="text-left flex flex-row gap-1">
-          <p className="font-semibold text-gray-500 text-md">Tags:</p>
-          <div className="rounded-md flex flex-row justify-start items-center gap-1 overflow-x-scroll w-full scrollbar-hide">
-            {tagList}
+          <div className="tag bg-gray-400 border-gray-400">
+            {cap(ledger?.name || "Uncategorized")}
           </div>
         </div>
 
-        <div className="text-left">
+        <div className="text-left flex flex-row gap-1 items-center">
           <p className="font-semibold text-gray-500 text-md">
-            Notes:{" "}
+            {tagList.length > 0 ? "Tags:" : "No tags"}
+          </p>
+          {tagList.length > 0 && (
+            <div className="rounded-md flex flex-row justify-start items-center gap-1 overflow-x-scroll w-full scrollbar-hide">
+              {tagList}
+            </div>
+          )}
+        </div>
+
+        <div className="text-left flex flex-row gap-1 items-center">
+          <p className="font-semibold text-gray-500 text-md">
+            {transaction.note ? "Notes:" : "No notes"}{" "}
             <span className="text-gray-400 font-normal text-sm">
               {transaction.note}
             </span>
@@ -161,13 +173,25 @@ function ExpandedContent({ transaction, expanded }) {
         </div>
       </div>
 
-      <div className="flex flex-row justify-center items-center mb-1">
-        <p className="font-bold text-gray-400 text-md">
-          Created by {cap("bradley")} on{" "}
-          {dates.format(transaction.createdAt, {
-            forAllocation: true,
-          })}
-        </p>
+      <div className="flex flex-row justify-center items-center gap-2">
+        <button
+          className="tag bg-gray-400 border-gray-400 font-medium"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
+          Edit
+        </button>
+        <button
+          className="tag bg-rose-500 border-rose-500 font-medium"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
+          Delete
+        </button>
       </div>
     </div>
   );

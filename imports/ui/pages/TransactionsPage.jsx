@@ -95,6 +95,7 @@ export function TransactionsPage() {
       toDollars(transactionAmount.toString()).includes(searchFilter)
     );
   });
+  const transactionCount = filteredTransactionList.length;
 
   const filterTransactions = (e) => {
     setFilter(e.target.value);
@@ -105,11 +106,12 @@ export function TransactionsPage() {
       <div className="empty-page-header"></div>
       <div className="flex flex-col justify-start items-stretch p-2 pb-28 gap-5 bg-gray-100">
         <Insights />
-        <div className="bg-white py-2 rounded-xl flex flex-col gap-2">
+        <div className="bg-white pt-2 pb-3 rounded-xl flex flex-col gap-2">
           <div className="w-full text-center">
             <h2 className="font-bold text-xl">
-              {/* {transactionList.length} Transactions this month */}
-              Transactions
+              {transactionCount == 1
+                ? `${transactionCount} transaction`
+                : `${transactionCount} transactions`}
             </h2>
           </div>
           <SearchBar
@@ -117,14 +119,19 @@ export function TransactionsPage() {
             searchResults={filteredTransactionList.length > 0}
           />
           <ul className="list-none z-0">
-            {filteredTransactionList.map((transaction) => {
+            {filteredTransactionList.map((transaction, i) => {
               const [month, day] = dates
                 .format(transaction.createdAt, {
                   forTransaction: true,
                 })
                 .split(" ");
               return (
-                <li className="border-t" key={transaction._id}>
+                <li
+                  className={
+                    i == transactionCount - 1 ? "border-t border-b" : "border-t"
+                  }
+                  key={transaction._id}
+                >
                   <ListTransaction
                     key={transaction._id}
                     transaction={transaction}

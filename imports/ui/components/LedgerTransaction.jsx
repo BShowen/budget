@@ -27,8 +27,10 @@ export function LedgerTransaction({
           <p className="text-xs">{day}</p>
         </div>
       </div>
-      <div className="basis-0 grow ps-1">
-        <p className="font-semibold text-lg">{cap(transaction.merchant)}</p>
+      <div className="w-full overflow-hidden">
+        <p className="font-semibold text-md truncate">
+          {cap(transaction.merchant)}
+        </p>
         <p className="text-sm text-gray-400 font-semibold">
           Logged by {cap(transaction.loggedBy.firstName)}
         </p>
