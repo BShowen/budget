@@ -22,7 +22,9 @@ export const FooterNav = () => {
   // transaction form is rendered. This way if the user presses the back button
   // they don't have to back through multiple forms.
   const location = useLocation();
-  const replace = location.pathname.includes("transaction");
+  // const replace = location.pathname.includes("transaction");
+  const pattern = /\btransaction\b/;
+  const replace = pattern.test(location.pathname);
 
   return (
     <div className="fixed bottom-0 w-full h-20 lg:w-3/5 mx-auto bg-white border-t border-gray-300">

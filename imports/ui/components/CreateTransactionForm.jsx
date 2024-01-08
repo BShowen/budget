@@ -140,6 +140,7 @@ export function CreateTransactionForm() {
         tags,
         newTags,
       });
+      console.log("navigating");
       navigate(-1, { replace: true });
     } catch (error) {
       console.log(error);

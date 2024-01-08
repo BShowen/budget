@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTracker } from "meteor/react-meteor-data";
+import { Meteor } from "meteor/meteor";
 
 // Collections
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
@@ -43,10 +44,6 @@ export function ListTransaction({ transaction, ledgerId }) {
   }, [expanded, transaction.merchant]);
 
   return (
-    // <Link
-    //   to={`/ledger/${ledgerId}/transaction/${transactionId}/edit`}
-    //   className="flex flex-row flex-nowrap justify-between items-center lg:hover:cursor-pointer h-8"
-    // />
     <div
       onClick={toggleExpandedContent}
       className={`flex flex-col justify-start items-stretch lg:hover:cursor-pointer px-1 transition-all duration-200 ease-in-out relative ${
@@ -174,25 +171,62 @@ function ExpandedContent({ transaction, expanded }) {
       </div>
 
       <div className="flex flex-row justify-center items-center gap-2">
-        <button
-          className="tag bg-gray-400 border-gray-400 font-medium"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-          }}
-        >
-          Edit
-        </button>
-        <button
-          className="tag bg-rose-500 border-rose-500 font-medium"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-          }}
-        >
-          Delete
-        </button>
+        <EditTransactionButton transaction={transaction} />
+        <DeleteTransactionButton transaction={transaction} />
       </div>
     </div>
+  );
+}
+
+function EditTransactionButton({ transaction }) {
+  return (
+    <Link
+      to={`/ledger/${transaction.ledgerId}/transaction/${transaction._id}/edit`}
+      className="tag bg-gray-400 border-gray-400 font-medium"
+      onClick={(e) => {
+        // Prevent this click from closing the expanded content.
+        e.stopPropagation();
+      }}
+    >
+      Edit
+    </Link>
+  );
+}
+
+function DeleteTransactionButton({ transaction }) {
+  const deleteTransaction = () => {
+    try {
+      Meteor.call(
+        "transaction.deleteTransaction",
+        { transactionId: transaction._id },
+        (error) => {
+          if (error) {
+            // The transaction.deleteTransaction method encountered an error.
+            // Display a message for the user to try again.
+            console.log({ error });
+          } else {
+            // The deletion was successful. Display a message to the user that
+            // the document was deleted.
+          }
+        }
+      );
+    } catch (error) {
+      console.log("Got an error", error.message);
+      // There was an error calling the Meteor method.
+      // I should display some notification to the user that they should try
+      // again.
+    }
+  };
+  return (
+    <button
+      className="tag bg-rose-500 border-rose-500 font-medium"
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        deleteTransaction();
+      }}
+    >
+      Delete
+    </button>
   );
 }

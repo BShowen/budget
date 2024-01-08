@@ -64,7 +64,7 @@ export function EditTransactionForm() {
   });
 
   const [active, setActiveTab] = useState(
-    ledger.kind === "income" || ledger.kind === "savings"
+    ledger?.kind === "income" || ledger?.kind === "savings"
       ? "income"
       : (transaction && transaction.type) || "expense"
   ); //expense or income
@@ -241,7 +241,9 @@ export function EditTransactionForm() {
               <select
                 className="px-0 w-full focus:ring-0 border-0 form-input"
                 name="ledgerId"
-                value={formData?.ledgerId || transaction?.ledgerId}
+                value={
+                  formData?.ledgerId || transaction?.ledgerId || "uncategorized"
+                }
                 onChange={handleInputChange}
               >
                 {ledgerSelection}
