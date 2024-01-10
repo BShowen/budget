@@ -24,7 +24,11 @@ export function EditTransactionForm() {
 
   // Get all the ledgers in this budget. This list is used to populate the
   // form selection
-  const { ledgerSelection, ledgers } = useTracker(() => {
+  const { ledgerSelection, ledgers, ledger } = useTracker(() => {
+    // Get the ledger document that this transaction belongs to so it can
+    // be used to pre-select the ledger in form's ledger selection field.
+    const ledger = ledgerId ? LedgerCollection.findOne({ _id: ledgerId }) : {};
+
     const ledgers = [
       ...LedgerCollection.find().fetch(),
       { _id: "uncategorized", name: "uncategorized", kind: "expense" },
@@ -44,12 +48,8 @@ export function EditTransactionForm() {
           {cap(ledger.name)}
         </option>
       ));
-    return { ledgers, ledgerSelection };
+    return { ledger, ledgers, ledgerSelection };
   });
-
-  // Get the ledger document that this transaction belongs to so it can
-  // be used to pre-select the ledger in form's ledger selection field.
-  const ledger = ledgers.find((ledger) => ledger._id === ledgerId);
 
   // Get the transaction document
   const transaction = useTracker(() => {
@@ -62,12 +62,6 @@ export function EditTransactionForm() {
       createdAt: dates.format(transaction.createdAt, { forHtml: true }),
     };
   });
-
-  const [active, setActiveTab] = useState(
-    ledger?.kind === "income" || ledger?.kind === "savings"
-      ? "income"
-      : (transaction && transaction.type) || "expense"
-  ); //expense or income
 
   // Store only the data that the user changes.
   const [formData, setFormData] = useState({
@@ -101,12 +95,23 @@ export function EditTransactionForm() {
         }));
         break;
       case "ledgerId": {
-        // If user is changing the ledger then set the formData.kind to the
+        // If user is changing the ledger then set the formData.type to the
         // same value as the selected ledger.type. This sets the type to "income"
         // for income ledgers and "expense" for expense ledgers.
         const selectedLedger = ledgers.find((ledger) => ledger._id == value);
         setFormData((prev) => {
-          return { ...prev, ledgerId: value, type: selectedLedger.kind };
+          if (selectedLedger.kind == "income") {
+            return {
+              ...prev,
+              ledgerId: value,
+              type: selectedLedger.kind,
+            };
+          } else {
+            return {
+              ...prev,
+              ledgerId: value,
+            };
+          }
         });
         break;
       }
@@ -167,12 +172,11 @@ export function EditTransactionForm() {
         </div>
 
         <ButtonGroup
-          active={formData?.type || active}
+          active={formData?.type || transaction.type || "expense"}
           setActiveTab={(active) => {
             setFormData((prev) => {
               return { ...prev, type: active };
             });
-            setActiveTab(active);
           }}
           ledgerSelectionId={formData?.ledgerId || ledger?._id || undefined}
         />
@@ -216,7 +220,7 @@ export function EditTransactionForm() {
             <InputContainer options={{ border: false }}>
               <label className="w-1/2" htmlFor="merchant">
                 <p className="font-semibold">
-                  {active === "expense" ? "Merchant" : "Source"}
+                  {formData.type === "expense" ? "Merchant" : "Source"}
                 </p>
               </label>
               <input
@@ -253,7 +257,7 @@ export function EditTransactionForm() {
                 className="px-0 w-full focus:ring-0 border-0 form-input"
                 name="ledgerId"
                 value={
-                  formData?.ledgerId || transaction?.ledgerId || "uncategorized"
+                  formData?.ledgerId || transaction.ledgerId || "uncategorized"
                 }
                 onChange={handleInputChange}
               >
