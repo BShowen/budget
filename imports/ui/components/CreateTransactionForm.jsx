@@ -31,15 +31,15 @@ export function CreateTransactionForm() {
 
   // Get all the ledgers in this budget. This list is used to populate the
   // form selection
-  const { ledgerSelection } = useTracker(() => {
-    const ledgers = LedgerCollection.find().fetch();
+  const { ledgerSelection, ledgers } = useTracker(() => {
+    // Add uncategorized ledger document to the ledgers list. This is the
+    // default ledger selection when creating a new transaction.
+    const ledgers = [
+      ...LedgerCollection.find().fetch(),
+      { _id: "uncategorized", name: "uncategorized", kind: "expense" },
+    ];
 
-    const ledgerSelection = [
-      ...ledgers,
-      // This is the selection that a user can select in order to make an
-      // uncategorized transaction
-      { _id: "uncategorized", name: "uncategorized" },
-    ]
+    const ledgerSelection = [...ledgers]
       .sort((a, b) => {
         return (
           a.name.toLowerCase().charCodeAt(0) -
@@ -54,17 +54,28 @@ export function CreateTransactionForm() {
     return { ledgers, ledgerSelection };
   });
 
-  const [active, setActiveTab] = useState("expense"); //expense or income
+  const ledger = useTracker(() => {
+    if (!ledgerId) return undefined;
+    return LedgerCollection.findOne({ _id: ledgerId });
+  });
 
   const [formData, setFormData] = useState({
+    // if ledgerId is set then user is creating a new transaction from within
+    // the ledgerTransactions page. Otherwise the user is creating a new
+    // transaction from clicking the blue plus icon in the footer nav and no
+    // ledger is preselected in the form so it is set to "uncategorized"
     ledgerId: ledgerId || "uncategorized",
     createdAt: dates.format(new Date(), { forHtml: true }),
     budgetId,
-    type: active,
+    type: ledger ? ledger.kind : "expense",
     amount: "0.00",
     merchant: "",
     note: "",
   });
+
+  const setActiveTab = (active) => {
+    setFormData((prev) => ({ ...prev, type: active }));
+  };
 
   useEffect(() => {
     function handleKeyDown(e) {
@@ -81,30 +92,6 @@ export function CreateTransactionForm() {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [formData]);
 
-  useEffect(() => {
-    // This useEffect resets the formState during a specific
-    // react-router-dom navigation.
-
-    // This useEffect gets triggered when react-router-dom is navigating
-    // from  ledger/:ledgerId/transactions/new to /new-transaction
-    // Both of these routes render the same form component (this) and
-    // react-router-dom will preserve the state between navigation's that
-    // render the same component. This useEffect resets the state between
-    // this navigation.
-    if (ledgerId == undefined) {
-      setFormData({
-        // Reset formData to default
-        ledgerId: "uncategorized",
-        createdAt: dates.format(new Date(), { forHtml: true }),
-        budgetId,
-        type: active,
-        amount: "0.00",
-        merchant: "",
-        note: "",
-      });
-    }
-  }, [ledgerId]);
-
   function handleInputChange(e) {
     const name = e.target.name;
     const value = e.target.value;
@@ -115,6 +102,16 @@ export function CreateTransactionForm() {
           [name]: formatDollarAmount(value),
         }));
         break;
+      case "ledgerId": {
+        // If user is changing the ledger then set the formData.kind to the
+        // same value as the selected ledger.type. This sets the type to "income"
+        // for income ledgers and "expense" for expense ledgers.
+        const selectedLedger = ledgers.find((ledger) => ledger._id == value);
+        setFormData((prev) => {
+          return { ...prev, ledgerId: value, type: selectedLedger.kind };
+        });
+        break;
+      }
       default:
         setFormData((prev) => ({
           ...prev,
@@ -140,7 +137,6 @@ export function CreateTransactionForm() {
         tags,
         newTags,
       });
-      console.log("navigating");
       navigate(-1, { replace: true });
     } catch (error) {
       console.log(error);
@@ -173,11 +169,12 @@ export function CreateTransactionForm() {
         </div>
 
         <ButtonGroup
-          active={active}
-          setActiveTab={(active) => {
-            setActiveTab(active);
-            setFormData((prev) => ({ ...prev, type: active }));
-          }}
+          active={formData.type}
+          setActiveTab={setActiveTab}
+          formData={{ ...formData }}
+          ledgerSelectionId={
+            formData.ledgerId == "uncategorized" ? undefined : formData.ledgerId
+          }
         />
       </div>
       <div className="h-full w-full pt-24 p-2">
@@ -220,7 +217,7 @@ export function CreateTransactionForm() {
             <InputContainer options={{ border: false }}>
               <label className="w-1/2" htmlFor="merchant">
                 <p className="font-semibold">
-                  {active === "expense" ? "Merchant" : "Source"}
+                  {formData.type === "expense" ? "Merchant" : "Source"}
                 </p>
               </label>
               <input
@@ -295,14 +292,23 @@ function InputGroup({ children }) {
   );
 }
 
-function ButtonGroup({ active, setActiveTab, disableChange }) {
+function ButtonGroup({ active, setActiveTab, ledgerSelectionId }) {
+  const isDisabled = useTracker(() => {
+    // Track what ledger the user has selected. If they have selected an income
+    // ledger then don't allow them to change the transaction type as it is
+    // already set to "income" and user's cannot add an expense to an income
+    // ledger.
+    if (!ledgerSelectionId) return false;
+    const selectedLedger = LedgerCollection.findOne({ _id: ledgerSelectionId });
+    return selectedLedger?.kind == "income";
+  });
+
   const slugList = ["expense", "income"];
   const buttonList = slugList.map((btnText) => {
-    const isDisabled = disableChange ? btnText != active : false;
     return (
       <button
         key={btnText}
-        onClick={isDisabled ? () => {} : setActiveTab.bind(null, btnText)}
+        onClick={isDisabled ? () => {} : () => setActiveTab(btnText)}
         className={`basis-0 grow text-white font-bold flex flex-row justify-center items-center ${
           isDisabled ? "md:hover:cursor-not-allowed" : "md:hover:cursor-pointer"
         }`}

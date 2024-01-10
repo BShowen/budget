@@ -308,13 +308,15 @@ function InputGroup({ children }) {
 function ButtonGroup({ active, setActiveTab, disableChange }) {
   const slugList = ["expense", "income"];
   const buttonList = slugList.map((btnText) => {
-    const isDisabled = disableChange ? btnText != active : false;
+    // const isDisabled = disableChange ? btnText != active : false;
     return (
       <button
         key={btnText}
-        onClick={isDisabled ? () => {} : setActiveTab.bind(null, btnText)}
+        onClick={disableChange ? () => {} : setActiveTab.bind(null, btnText)}
         className={`basis-0 grow text-white font-bold flex flex-row justify-center items-center ${
-          isDisabled ? "md:hover:cursor-not-allowed" : "md:hover:cursor-pointer"
+          disableChange
+            ? "md:hover:cursor-not-allowed"
+            : "md:hover:cursor-pointer"
         }`}
       >
         <h2>{cap(btnText)}</h2>
