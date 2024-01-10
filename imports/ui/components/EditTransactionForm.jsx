@@ -24,15 +24,15 @@ export function EditTransactionForm() {
 
   // Get all the ledgers in this budget. This list is used to populate the
   // form selection
-  const { ledgers, ledgerSelection } = useTracker(() => {
-    const ledgers = LedgerCollection.find().fetch();
+  const { ledgerSelection, ledgers } = useTracker(() => {
+    const ledgers = [
+      ...LedgerCollection.find().fetch(),
+      { _id: "uncategorized", name: "uncategorized", kind: "expense" },
+    ];
 
-    const ledgerSelection = [
-      ...ledgers,
-      // This is the selection that a user can select in order to make an
-      // uncategorized transaction
-      { _id: "uncategorized", name: "uncategorized" },
-    ]
+    // This is the selection that a user can select in order to make an
+    // uncategorized transaction
+    const ledgerSelection = [...ledgers]
       .sort((a, b) => {
         return (
           a.name.toLowerCase().charCodeAt(0) -
@@ -89,7 +89,6 @@ export function EditTransactionForm() {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [formData]);
-  // }, [formData]);
 
   function handleInputChange(e) {
     const name = e.target.name;
@@ -101,6 +100,16 @@ export function EditTransactionForm() {
           [name]: formatDollarAmount(value),
         }));
         break;
+      case "ledgerId": {
+        // If user is changing the ledger then set the formData.kind to the
+        // same value as the selected ledger.type. This sets the type to "income"
+        // for income ledgers and "expense" for expense ledgers.
+        const selectedLedger = ledgers.find((ledger) => ledger._id == value);
+        setFormData((prev) => {
+          return { ...prev, ledgerId: value, type: selectedLedger.kind };
+        });
+        break;
+      }
       default:
         setFormData((prev) => ({
           ...prev,
@@ -158,12 +167,14 @@ export function EditTransactionForm() {
         </div>
 
         <ButtonGroup
-          active={active}
+          active={formData?.type || active}
           setActiveTab={(active) => {
+            setFormData((prev) => {
+              return { ...prev, type: active };
+            });
             setActiveTab(active);
-            setFormData((prev) => ({ ...prev, type: active }));
           }}
-          disableChange={ledger?.kind === "income"}
+          ledgerSelectionId={formData?.ledgerId || ledger?._id || undefined}
         />
       </div>
       <div className="h-full w-full pt-24 p-2">
@@ -305,18 +316,25 @@ function InputGroup({ children }) {
   );
 }
 
-function ButtonGroup({ active, setActiveTab, disableChange }) {
+function ButtonGroup({ active, setActiveTab, ledgerSelectionId }) {
+  const isDisabled = useTracker(() => {
+    // Track what ledger the user has selected. If they have selected an income
+    // ledger then don't allow them to change the transaction type as it is
+    // already set to "income" and user's cannot add an expense to an income
+    // ledger.
+    if (!ledgerSelectionId) return false;
+    const selectedLedger = LedgerCollection.findOne({ _id: ledgerSelectionId });
+    return selectedLedger?.kind == "income";
+  });
+
   const slugList = ["expense", "income"];
   const buttonList = slugList.map((btnText) => {
-    // const isDisabled = disableChange ? btnText != active : false;
     return (
       <button
         key={btnText}
-        onClick={disableChange ? () => {} : setActiveTab.bind(null, btnText)}
+        onClick={isDisabled ? () => {} : () => setActiveTab(btnText)}
         className={`basis-0 grow text-white font-bold flex flex-row justify-center items-center ${
-          disableChange
-            ? "md:hover:cursor-not-allowed"
-            : "md:hover:cursor-pointer"
+          isDisabled ? "md:hover:cursor-not-allowed" : "md:hover:cursor-pointer"
         }`}
       >
         <h2>{cap(btnText)}</h2>
