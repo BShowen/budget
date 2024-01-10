@@ -53,6 +53,14 @@ Meteor.methods({
   "transaction.updateTransaction"(transaction) {
     if (!this.userId) return;
     createAndAssignTags(transaction);
+
+    // Assigned the transaction to the envelope that the ledger belongs to.
+    const { envelopeId } =
+      LedgerCollection.findOne({
+        _id: transaction.ledgerId,
+      }) || {};
+    transaction.envelopeId = envelopeId;
+
     const { ledgerId, _id: transactionId } = transaction;
 
     const unsetModifier =

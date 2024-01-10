@@ -171,7 +171,6 @@ export function CreateTransactionForm() {
         <ButtonGroup
           active={formData.type}
           setActiveTab={setActiveTab}
-          formData={{ ...formData }}
           ledgerSelectionId={
             formData.ledgerId == "uncategorized" ? undefined : formData.ledgerId
           }
