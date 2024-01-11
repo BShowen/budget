@@ -3,6 +3,7 @@ import { Meteor } from "meteor/meteor";
 // Collections
 import { LedgerCollection } from "./LedgerCollection";
 import { EnvelopeCollection } from "../Envelope/EnvelopeCollection";
+import { TransactionCollection } from "../Transaction/TransactionCollection";
 
 Meteor.methods({
   "ledger.createLedger"(input) {
@@ -59,23 +60,35 @@ Meteor.methods({
   },
   "ledger.deleteLedger"({ ledgerId }) {
     if (!this.userId) return;
-
-    LedgerCollection.countDocuments({ _id: ledgerId }).then(
-      (count, countError) => {
-        if (count > 0) {
-          LedgerCollection.remove({ _id: ledgerId }, (err) => {
-            if (err && Meteor.isServer && err.invalidKeys?.length == 0) {
-              // This is not a validation error. Console.log the error.
-              console.log(err);
-            }
-          });
-        }
-
-        if (countError && Meteor.isServer) {
-          console.log(countError);
-        }
+    TransactionCollection.remove({ ledgerId }, (transactionError) => {
+      if (transactionError) {
+        // Console log the error on the server.
+        Meteor.isServer &&
+          console.log(
+            "ledger.deleteLedger\nError deleting transactions",
+            transactionError
+          );
+        throw new Meteor.Error(
+          "ledger.deleteLedger",
+          "Error deleting transactions associated with ledger. "
+        );
+      } else {
+        LedgerCollection.remove({ _id: ledgerId }, (ledgerError) => {
+          if (ledgerError) {
+            // Console log the error on the server.
+            Meteor.isServer &&
+              console.log(
+                "ledger.deleteLedger\nError deleting ledger",
+                ledgerError
+              );
+            throw new Meteor.Error(
+              "ledger.deleteLedger",
+              "Error deleting ledger."
+            );
+          }
+        });
       }
-    );
+    });
   },
   "ledger.createAllocationLedger"({
     name,
