@@ -165,6 +165,7 @@ html {
   top: 0;
   width: 100%;
   background-color: inherit;
+  z-index: 50;
 }
 
 .position-top-safe {
