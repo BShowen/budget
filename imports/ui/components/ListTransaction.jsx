@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useTracker } from "meteor/react-meteor-data";
 import { Meteor } from "meteor/meteor";
@@ -20,28 +20,9 @@ export function ListTransaction({ transaction, ledgerId }) {
   const isCategorized = !!ledgerId;
   const [expanded, setExpanded] = useState(false);
 
-  const [merchant, setMerchant] = useState(
-    transaction.merchant.length <= 12
-      ? cap(transaction.merchant)
-      : `${cap(transaction.merchant.slice(0, 10).trim())}...`
-  );
-
   const toggleExpandedContent = () => {
     setExpanded((prev) => !prev);
   };
-
-  useEffect(() => {
-    // Change merchant name based on whether or not the transaction is expanded.
-    if (expanded) {
-      setMerchant(cap(transaction.merchant));
-    } else {
-      setMerchant(
-        transaction.merchant.length <= 12
-          ? cap(transaction.merchant)
-          : `${cap(transaction.merchant.slice(0, 10).trim())}...`
-      );
-    }
-  }, [expanded, transaction.merchant]);
 
   return (
     <div
@@ -144,9 +125,14 @@ function ExpandedContent({ transaction, expanded }) {
           <div className="tag bg-gray-400 border-gray-400">
             {cap(envelope?.name || "Uncategorized")}
           </div>
-          <div className="tag bg-gray-400 border-gray-400">
+
+          <Link
+            to={`/ledger/${ledger._id}/transactions`}
+            className="tag bg-gray-400 border-gray-400"
+            onClick={(e) => e.stopPropagation()}
+          >
             {cap(ledger?.name || "Uncategorized")}
-          </div>
+          </Link>
         </div>
 
         <div className="text-left flex flex-row gap-1 items-center">

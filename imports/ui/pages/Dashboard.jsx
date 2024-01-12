@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTracker } from "meteor/react-meteor-data";
 
 // Collections
@@ -56,7 +56,14 @@ export const Dashboard = () => {
       }, envelopes);
     }
   );
-  const [activeTab, setActiveTab] = useState("planned"); // "planned", "spent", "remaining"
+  const [activeTab, setActiveTab] = useState(
+    window.localStorage.getItem("activeTab") || "planned"
+  ); // "planned", "spent", "remaining"
+
+  useEffect(() => {
+    // Persist the users activeTab selection.
+    window.localStorage.setItem("activeTab", activeTab);
+  }, [activeTab]);
 
   return (
     <div className="w-full pb-12 flex flex-col items-stretch gap-5 relative z-0">
