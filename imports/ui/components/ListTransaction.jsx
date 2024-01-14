@@ -18,25 +18,30 @@ import { HiMinus, HiPlus } from "react-icons/hi";
 import { LuCheckCircle2, LuCircle } from "react-icons/lu";
 export function ListTransaction({ transaction, ledgerId }) {
   const isCategorized = !!ledgerId;
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(
+    window.localStorage.getItem(transaction._id) == "true" || false
+  );
 
   const toggleExpandedContent = () => {
-    setExpanded((prev) => !prev);
+    setExpanded((prev) => {
+      window.localStorage.setItem(transaction._id, !prev);
+      return !prev;
+    });
   };
 
   return (
     <div
-      onClick={toggleExpandedContent}
-      className={`flex flex-col justify-start items-stretch lg:hover:cursor-pointer px-1 transition-all duration-200 ease-in-out relative ${
+      className={`flex flex-col justify-start items-stretch px-1 transition-all duration-200 ease-in-out relative ${
         expanded
           ? transaction.note
-            ? "h-56 bg-app shadow-inner"
-            : "h-48 bg-app shadow-inner"
+            ? "h-60 bg-app shadow-inner"
+            : "h-52 bg-app shadow-inner"
           : "h-10"
       } `}
     >
       <div
-        className={`w-full flex flex-row justify-between items-center h-10 absolute top-0 left-0 ps-1 pe-3 transition-all ${
+        onClick={toggleExpandedContent}
+        className={`w-full flex flex-row justify-between items-center h-10 absolute top-0 left-0 ps-1 pe-3 transition-all lg:hover:cursor-pointer ${
           expanded ? "bg-app" : "bg-white"
         }`}
       >
@@ -107,7 +112,7 @@ function ExpandedContent({ transaction, expanded }) {
 
   return (
     <div
-      className={`w-full transition-all duration-200 ease-in overflow-x-hidden overflow-y-scroll flex flex-col justify-start items-stretch mt-10 overscroll-auto ${
+      className={`w-full transition-all duration-200 ease-in overflow-x-hidden overflow-y-scroll flex flex-col justify-start items-stretch mt-10 overscroll-auto pt-2 ${
         expanded ? "h-full" : "h-0"
       }`}
     >

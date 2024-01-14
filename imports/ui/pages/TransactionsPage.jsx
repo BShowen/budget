@@ -106,18 +106,20 @@ export function TransactionsPage() {
       <div className="empty-page-header"></div>
       <div className="flex flex-col justify-start items-stretch p-2 pb-28 gap-5 bg-gray-100">
         <Insights />
-        <div className="bg-white pt-2 pb-3 rounded-xl flex flex-col gap-2">
-          <div className="w-full text-center">
-            <h2 className="font-bold text-xl">
-              {transactionCount == 1
-                ? `${transactionCount} transaction`
-                : `${transactionCount} transactions`}
-            </h2>
+        <div className="bg-white pt-2 pb-3 rounded-xl flex flex-col">
+          <div className="sticky position-top-safe z-20 bg-white gap-2 p-2 rounded-xl">
+            <div className="w-full text-center">
+              <h2 className="font-bold text-xl">
+                {transactionCount == 1
+                  ? `${transactionCount} transaction`
+                  : `${transactionCount} transactions`}
+              </h2>
+            </div>
+            <SearchBar
+              onInput={filterTransactions}
+              searchResults={filteredTransactionList.length > 0}
+            />
           </div>
-          <SearchBar
-            onInput={filterTransactions}
-            searchResults={filteredTransactionList.length > 0}
-          />
           <ul className="list-none z-0">
             {filteredTransactionList.map((transaction, i) => {
               const [month, day] = dates
@@ -229,15 +231,13 @@ function Insights() {
 function SearchBar({ onInput, searchResults }) {
   const icon = getIcon({ searchResults });
   return (
-    <div className="z-20 sticky position-top-safe px-1 bg-white">
-      <div className="px-1 bg-search-bar rounded-xl h-10 flex flex-row justify-start items-center overflow-hidden shadow-sm shadow-gray-300 gap-1">
-        {icon}
-        <input
-          className="border-none h-10 w-full bg-inherit outline-none text-lg font-semibold"
-          type="text"
-          onInput={onInput}
-        />
-      </div>
+    <div className="px-1 bg-search-bar rounded-xl h-10 flex flex-row justify-start items-center overflow-hidden shadow-sm shadow-gray-300 gap-1">
+      {icon}
+      <input
+        className="border-none h-10 w-full bg-inherit outline-none text-lg font-semibold"
+        type="text"
+        onInput={onInput}
+      />
     </div>
   );
 
