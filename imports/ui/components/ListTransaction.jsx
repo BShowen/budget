@@ -131,13 +131,15 @@ function ExpandedContent({ transaction, expanded }) {
             {cap(envelope?.name || "Uncategorized")}
           </div>
 
-          <Link
-            to={`/ledger/${ledger._id}/transactions`}
-            className="tag bg-gray-400 border-gray-400"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {cap(ledger?.name || "Uncategorized")}
-          </Link>
+          {ledger && (
+            <Link
+              to={`/ledger/${ledger._id}/transactions`}
+              className="tag bg-gray-400 border-gray-400"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {cap(ledger?.name || "Uncategorized")}
+            </Link>
+          )}
         </div>
 
         <div className="text-left flex flex-row gap-1 items-center">
