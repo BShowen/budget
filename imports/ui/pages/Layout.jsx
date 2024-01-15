@@ -19,7 +19,14 @@ export const Layout = () => {
           // to the dashboard. If I don't want to restore scroll for
           // /transactions then I would check
           // if location.pathname === "/transactions" return location.pathname
-          if (location.pathname === "/") {
+
+          // If this is the ledger transaction page then restore scroll.
+          // ledger/:ledgerId/transactions
+          const isLedger =
+            location.pathname.split("/")[1] === "ledger" &&
+            location.pathname.split("/")[3] === "transactions";
+
+          if (location.pathname === "/" || isLedger) {
             return location.pathname;
           } else {
             return location.key;

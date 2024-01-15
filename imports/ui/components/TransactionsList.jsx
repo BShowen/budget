@@ -31,11 +31,6 @@ import { BsFillPlusCircleFill } from "react-icons/bs";
 export const TransactionsList = () => {
   const { ledgerId } = useParams();
 
-  useEffect(() => {
-    // Make sure the transactions list is always scrolled to the top.
-    window.scrollTo(0, 0);
-  }, []);
-
   return (
     <div className="w-full">
       <PageHeader ledgerId={ledgerId} />
