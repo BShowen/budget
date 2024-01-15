@@ -33,12 +33,21 @@ export function DashboardHeader({
   return (
     <div className="page-header lg:w-3/5 mx-auto z-50 w-full flex flex-col justify-start items-stretch shadow-sm bg-header">
       <div className="pb-4 z-50 shadow-sm text-white">
-        <div className="w-full flex flex-row justify-start items-stretch h-14">
+        <div className="w-full flex flex-row justify-between items-stretch h-14">
+          <div className="ms-2 flex flex-row justify-center items-center">
+            <img src="/icon.png" width="40px" />
+            <div
+              className="flex flex-col justify-center items-stretch font-medium
+             text-xs"
+            >
+              <p>Dough</p>
+              <p>Tracker</p>
+            </div>
+          </div>
           <div className="flex flex-row justify-start items-center px-2 gap-2">
-            <h1 className="text-3xl font-bold lg:hover:cursor-pointer w-min">
-              {currentMonth}
+            <h1 className="text-3xl font-bold lg:hover:cursor-pointer w-max">
+              {currentMonth} <span className="font-extralight">{year}</span>
             </h1>
-            <p className="text-md font-semibold">{year}</p>
           </div>
         </div>
         <div className="w-full px-1">
