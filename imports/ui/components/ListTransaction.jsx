@@ -119,7 +119,7 @@ function ExpandedContent({ transaction, expanded }) {
       <div className="flex flex-col justify-start items-stretch gap-1 ps-7">
         <div className="flex flex-row justify-center items-center mb-1 border border-color-dark-blue rounded-md bg-color-dark-blue w-max px-1">
           <p className="font-bold text-white text-md">
-            Created by {cap("bradley")} on{" "}
+            Logged by {cap(transaction.loggedBy.firstName)} on{" "}
             {dates.format(transaction.createdAt, {
               forAllocation: true,
             })}
