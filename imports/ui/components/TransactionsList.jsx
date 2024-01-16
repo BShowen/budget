@@ -423,11 +423,21 @@ function TagSelector({ tagIdList, toggleTag, activeFilterTags }) {
 
 function ListTransactions({ ledgerId }) {
   const ledger = useTracker(() => LedgerCollection.findOne({ _id: ledgerId }));
-  const transactionList = useTracker(() => {
+  const [activeTags, setActiveTags] = useState([]);
+
+  const { transactionList, filteredTransactions } = useTracker(() => {
     if (!Meteor.userId()) return {};
-    return TransactionCollection.find({
+    const transactionList = TransactionCollection.find({
       ledgerId: ledger._id,
     }).fetch();
+    const filteredTransactions = transactionList.filter((transaction) => {
+      if (activeTags.length === 0) return true;
+      return (
+        transaction.tags &&
+        transaction.tags.some((tag) => activeTags.includes(tag))
+      );
+    });
+    return { transactionList, filteredTransactions };
   });
 
   const tagIdList = useTracker(() => {
@@ -441,8 +451,6 @@ function ListTransactions({ ledgerId }) {
       return [...new Set([...acc, ...tags])];
     }, []);
   });
-
-  const [activeTags, setActiveTags] = useState([]);
 
   const toggleTag = (tagId) => {
     if (!tagId) {
@@ -460,6 +468,13 @@ function ListTransactions({ ledgerId }) {
     }
   };
 
+  const transactionInfo =
+    ledger.kind === "income"
+      ? "Income this month"
+      : `${filteredTransactions.length} ${
+          filteredTransactions.length == 1 ? "transaction" : "transactions"
+        }`;
+
   return (
     <>
       <TagSelector
@@ -471,9 +486,7 @@ function ListTransactions({ ledgerId }) {
         <div className="w-full flex flex-row justify-between items-center py-2 px-1 h-12">
           <div>
             <h2 className="font-bold text-gray-400 text-md">
-              {ledger.kind === "income"
-                ? "Income this month"
-                : "Transactions this month"}
+              {transactionInfo}
             </h2>
           </div>
           <div>
@@ -485,31 +498,23 @@ function ListTransactions({ ledgerId }) {
             </Link>
           </div>
         </div>
-        {transactionList
-          .filter((transaction) => {
-            if (activeTags.length === 0) return true;
-            return (
-              transaction.tags &&
-              transaction.tags.some((tag) => activeTags.includes(tag))
-            );
-          })
-          .map((transaction, i) => {
-            const border = i === 0 ? "" : "border-t";
-            const [month, day] = dates
-              .format(transaction.createdAt, {
-                forTransaction: true,
-              })
-              .split(" ");
-            return (
-              <LedgerTransaction
-                key={transaction._id}
-                ledgerId={ledger._id}
-                transactionId={transaction._id}
-                transaction={transaction}
-                options={{ border, month, day }}
-              />
-            );
-          })}
+        {filteredTransactions.map((transaction, i) => {
+          const border = i === 0 ? "" : "border-t";
+          const [month, day] = dates
+            .format(transaction.createdAt, {
+              forTransaction: true,
+            })
+            .split(" ");
+          return (
+            <LedgerTransaction
+              key={transaction._id}
+              ledgerId={ledger._id}
+              transactionId={transaction._id}
+              transaction={transaction}
+              options={{ border, month, day }}
+            />
+          );
+        })}
       </div>
     </>
   );
