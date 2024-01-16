@@ -414,6 +414,13 @@ function ListTransactions({ ledgerId }) {
     return { transactionList, filteredTransactions };
   });
 
+  const {
+    income: filteredTransactionsIncome,
+    expense: filteredTransactionsExpense,
+  } = reduceTransactions({
+    transactions: filteredTransactions,
+  });
+
   const tagIdList = useTracker(() => {
     // Return only the tags that have been used in this ledger's transactionList
 
@@ -464,12 +471,21 @@ function ListTransactions({ ledgerId }) {
             </h2>
           </div>
           <div>
-            <Link
-              to={`/ledger/${ledger._id}/transactions/new`}
-              className="text-color-light-blue font-bold"
-            >
-              {ledger.kind === "income" ? "Add income" : "Add transaction"}
-            </Link>
+            {activeTags.length > 0 ? (
+              <p className="font-bold text-gray-400 text-md">
+                Spent{" "}
+                {toDollars(
+                  filteredTransactionsExpense - filteredTransactionsIncome
+                )}
+              </p>
+            ) : (
+              <Link
+                to={`/ledger/${ledger._id}/transactions/new`}
+                className="text-color-light-blue font-bold"
+              >
+                {ledger.kind === "income" ? "Add income" : "Add transaction"}
+              </Link>
+            )}
           </div>
         </div>
         {filteredTransactions.map((transaction, i) => {
