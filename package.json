@@ -31,7 +31,7 @@
     "react-router-dom": "^6.18.0",
     "simpl-schema": "^1.13.1",
     "tailwind-scrollbar-hide": "^1.1.7",
-    "tailwindcss": "^3.0.23"
+    "tailwindcss": "^3.4.1"
   },
   "meteor": {
     "mainModule": {

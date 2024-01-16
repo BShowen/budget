@@ -25,7 +25,6 @@ import { dates } from "../util/dates";
 // Icons
 import { IoIosArrowBack } from "react-icons/io";
 import { BiDollar, BiCheck, BiX } from "react-icons/bi";
-import { TfiAngleDown, TfiAngleUp } from "react-icons/tfi";
 import { BsFillPlusCircleFill } from "react-icons/bs";
 
 export const TransactionsList = () => {
@@ -60,8 +59,8 @@ function PageHeader({ ledgerId }) {
 function ProgressHeader({ children, percent, pathColor, logo }) {
   const navigate = useNavigate();
   return (
-    <div className="page-header w-full lg:w-3/5 h-48 bg-header flex flex-col justify-start">
-      <div className="relative flex flex-row items-center text-white p-1 h-11">
+    <div className="page-header w-full lg:w-3/5 h-48 bg-header flex flex-col justify-start z-50">
+      <div className="relative z-0 flex flex-row items-center text-white p-1 h-11">
         {/* Back button */}
         <div className="w-full flex flex-row justify-start items-center">
           <Link
@@ -72,7 +71,7 @@ function ProgressHeader({ children, percent, pathColor, logo }) {
           </Link>
         </div>
         {/* Progress circle */}
-        <div className="absolute right-2 top-2">
+        <div className="absolute z-10 right-2 top-2">
           <div className="w-[80px] h-[80px] rounded-full ">
             <CircularProgressbarWithChildren
               value={percent}
@@ -372,8 +371,6 @@ function TagSelector({ tagIdList, toggleTag, activeFilterTags }) {
     return { tags };
   });
 
-  const [expanded, setExpanded] = useState(false);
-
   const tagList = tags.map((tag) => (
     <button
       key={tag._id}
@@ -387,35 +384,12 @@ function TagSelector({ tagIdList, toggleTag, activeFilterTags }) {
   ));
 
   return tagList.length > 0 ? (
-    <div className="bg-white shadow-sm py-2 rounded-lg px-3 flex flex-row items-center">
-      <div
-        className={`w-full flex flex-col gap-2 justify-start overflow-hidden ${
-          expanded ? "h-auto" : "h-8"
-        }`}
-      >
-        <div className="w-full flex flex-row justify-between items-center">
-          <h2 className="text-md text-gray-400 font-semibold">Tags</h2>
-          <div
-            className="w-7 h-7 lg:hover:cursor-pointer flex flex-row justify-center items-center text-xl"
-            onClick={() => {
-              if (expanded) {
-                // Clear filters and close
-                toggleTag();
-              }
-              // Apply filter
-              setExpanded((prev) => !prev);
-            }}
-          >
-            {expanded ? (
-              <TfiAngleUp className="text-inherit" />
-            ) : (
-              <TfiAngleDown className="text-inherit" />
-            )}
-          </div>
-        </div>
-        <div className="w-full flex flex-row flex-wrap gap-2 items-center justify-start text-grey-700">
-          {tagList}
-        </div>
+    <div className="bg-white shadow-sm rounded-xl p-1 flex flex-col gap-[2px] justify-start items-stretch relative">
+      <div className="absolute top-0 bottom-0 left-0 rounded-s-xl flex flex-row justify-center items-center w-12 px-1 bg-color-light-blue">
+        <p className="font-bold text-white text-md">Tags</p>
+      </div>
+      <div className="w-full flex flex-row flex-wrap gap-2 items-center justify-start overflow-scroll scrollbar-hide ps-12 min-h-9 max-h-36">
+        {tagList}
       </div>
     </div>
   ) : null;
