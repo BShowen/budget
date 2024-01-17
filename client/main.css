@@ -134,7 +134,7 @@ desktop devices. */
 html,
 body {
   /* lg:...classes in order to restore natural scrolling behavior on desktop */
-  @apply w-full h-dvh overflow-hidden overscroll-none bg-app lg:overflow-scroll lg:overscroll-auto lg:h-auto;
+  @apply w-full h-screen overflow-hidden overscroll-none bg-app lg:overflow-scroll lg:overscroll-auto lg:h-auto;
 }
 #app {
   /* lg:h-auto to restore natural scrolling behavior on desktop */

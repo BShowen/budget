@@ -404,16 +404,14 @@ function LedgerNotes({ ledgerId }) {
   const [updatedNotes, setUpdatedNotes] = useState(notes);
   const textareaRef = useRef(null);
 
-  useEffect(() => {
-    function handleKeyDown(e) {
-      const key = e.key;
-      if (key.toLowerCase() === "enter") {
-        submit({ blurTextarea: true });
-      }
+  function handleKeyDown(e) {
+    const isEnterKey = e.key.toLowerCase() === "enter";
+    const isMetaKey = e.metaKey;
+
+    if (isMetaKey && isEnterKey) {
+      submit({ blurTextarea: true });
     }
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }
 
   return (
     <div className="bg-white shadow-sm py-1 px-3 rounded-xl flex flex-col justify-center items-stretch">
@@ -426,7 +424,11 @@ function LedgerNotes({ ledgerId }) {
         onChange={(e) => {
           setUpdatedNotes(e.target.value);
         }}
+        onFocus={() => {
+          document.addEventListener("keydown", handleKeyDown);
+        }}
         onBlur={() => {
+          document.removeEventListener("keydown", handleKeyDown);
           setUpdatedNotes(updatedNotes.trim());
           submit();
         }}
