@@ -117,37 +117,27 @@ body::-webkit-scrollbar {
 }
 
 /* Fallback incase javascript doesn't set the height of --app-height variable */
-:root {
+/* :root {
   --app-height: 100%;
-}
-
-/* html {
-  min-height: calc(var(--app-height) + env(safe-area-inset-top));
-}
-
-body {
-  min-height: inherit;
-}
-
-#app {
-  min-height: inherit;
-}
-
-#layout {
-  min-height: inherit;
 } */
 
+/* -------------------------------------------------------------------------- */
+/* I am hiding the scrollbar to make the app feel more like a native app. But in
+order to do this I have to set the html, body to a fixed height. This works 
+great on mobile. However, on desktop this makes the scroll behavior unnatural. 
+So, I have added lg:... class attributes that undo the fixed height, overflow, 
+and overscroll behavior in order to restore natural scrolling behavior on 
+desktop devices. */
 html,
-body,
-#app,
-#layout {
-  /* height: calc(var(--app-height) + env(safe-area-inset-top)); */
-  min-height: calc(var(--app-height) + env(safe-area-inset-top));
+body {
+  /* lg:...classes in order to restore natural scrolling behavior on desktop */
+  @apply w-full h-screen overflow-hidden overscroll-none bg-app lg:overflow-scroll lg:overscroll-auto lg:h-auto;
 }
-
-html {
-  background-color: #f3f4f6;
+#app {
+  /* lg:h-auto to restore natural scrolling behavior on desktop */
+  @apply scrollbar-hide overflow-scroll overscroll-auto h-dvh lg:h-auto scroll-smooth;
 }
+/* -------------------------------------------------------------------------- */
 
 .padding-safe-area-top {
   padding-top: calc(env(safe-area-inset-top));
