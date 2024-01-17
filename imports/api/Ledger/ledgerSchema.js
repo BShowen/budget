@@ -31,6 +31,10 @@ export const ledgerSchema = new SimpleSchema(
       type: String,
       allowedValues: ["income", "expense", "savings", "allocation"],
     },
+    notes: {
+      type: String,
+      optional: true,
+    },
     isRecurring: {
       type: Boolean,
       autoValue: function () {

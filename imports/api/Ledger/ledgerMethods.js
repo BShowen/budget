@@ -38,8 +38,16 @@ Meteor.methods({
       if (count > 0) {
         const { _id: ledgerId } = input;
         const updatedLedgerFields = {
-          name: input.name,
-          allocatedAmount: input.allocatedAmount,
+          ...(input.name && { name: input.name }),
+          ...(input.allocatedAmount && {
+            allocatedAmount: input.allocatedAmount,
+          }),
+          // If input.name || input.allocatedAmount then notes is not defined.
+          // If input.name || input.allocatedAmount are false then notes is
+          // defined
+          ...(input.name || input.allocatedAmount
+            ? false
+            : { notes: input.notes }),
         };
         LedgerCollection.update(
           { _id: ledgerId },

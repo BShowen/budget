@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -34,6 +34,7 @@ export const TransactionsList = () => {
     <div className="w-full">
       <PageHeader ledgerId={ledgerId} />
       <div className="flex flex-col gap-3 p-2 pt-52 pb-16">
+        <LedgerNotes ledgerId={ledgerId} />
         <ListTransactions ledgerId={ledgerId} />
         <DeleteLedger ledgerId={ledgerId} />
       </div>
@@ -395,6 +396,63 @@ function TagSelector({ tagIdList, toggleTag, activeFilterTags }) {
   ) : null;
 }
 
+function LedgerNotes({ ledgerId }) {
+  const { ledger, notes } = useTracker(() => {
+    const ledger = LedgerCollection.findOne({ _id: ledgerId });
+    return { ledger, notes: ledger?.notes || "" };
+  });
+  const [updatedNotes, setUpdatedNotes] = useState(notes);
+  const textareaRef = useRef(null);
+
+  useEffect(() => {
+    function handleKeyDown(e) {
+      const key = e.key;
+      if (key.toLowerCase() === "enter") {
+        submit({ blurTextarea: true });
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  return (
+    <div className="bg-white shadow-sm py-1 px-3 rounded-xl flex flex-col justify-center items-stretch">
+      <textarea
+        ref={textareaRef}
+        className="font-medium w-full form-textarea focus:ring-0 border-0 placeholder:text-color-light-gray text-color-primary resize-none h-full p-0"
+        rows={2}
+        placeholder="Tap to add a note"
+        value={updatedNotes}
+        onChange={(e) => {
+          setUpdatedNotes(e.target.value);
+        }}
+        onBlur={() => {
+          setUpdatedNotes(updatedNotes.trim());
+          submit();
+        }}
+      />
+    </div>
+  );
+
+  function submit(opts = { blurTextarea: false }) {
+    if (opts.blurTextarea) {
+      // When blurTextarea == true it's because the user has pressed the enter
+      // key and useEffect as registered a keydown handler which calls this
+      // function. The textarea has an onBlur handler that will then call this
+      // function without any options which will submit this data.
+      return textareaRef.current.blur();
+    }
+    try {
+      Meteor.call("ledger.updateLedger", {
+        _id: ledger._id,
+        notes: updatedNotes,
+      });
+    } catch (error) {
+      console.log("Error updating", error);
+    }
+  }
+}
+
 function ListTransactions({ ledgerId }) {
   const ledger = useTracker(() => LedgerCollection.findOne({ _id: ledgerId }));
   const [activeTags, setActiveTags] = useState([]);
@@ -466,13 +524,13 @@ function ListTransactions({ ledgerId }) {
       <div className="bg-white shadow-sm py-0 pb-2 rounded-lg px-3">
         <div className="w-full flex flex-row justify-between items-center py-2 px-1 h-12">
           <div>
-            <h2 className="font-bold text-gray-400 text-md">
+            <h2 className="font-bold text-color-light-gray text-md">
               {transactionInfo}
             </h2>
           </div>
           <div>
             {activeTags.length > 0 ? (
-              <p className="font-bold text-gray-400 text-md">
+              <p className="font-bold text-color-light-gray text-md">
                 Spent{" "}
                 {toDollars(
                   filteredTransactionsExpense - filteredTransactionsIncome

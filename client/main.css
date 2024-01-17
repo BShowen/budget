@@ -22,6 +22,9 @@
   .text-color-danger {
     @apply text-pink-500;
   }
+  .text-color-light-gray {
+    @apply text-gray-400;
+  }
   /* **********BG COLORS********** */
   .bg-header {
     /* Main header with months */
