@@ -20,7 +20,7 @@ import {
   LuArrowDownZA,
   LuArrowDownAZ,
   LuSearch,
-  LuSearchX,
+  LuXCircle,
 } from "react-icons/lu";
 
 export function TransactionsPage() {
@@ -115,10 +115,7 @@ export function TransactionsPage() {
                   : `${transactionCount} transactions`}
               </h2>
             </div>
-            <SearchBar
-              onInput={filterTransactions}
-              searchResults={filteredTransactionList.length > 0}
-            />
+            <SearchBar onInput={filterTransactions} />
           </div>
           <ul className="list-none z-0">
             {filteredTransactionList.map((transaction, i) => {
@@ -228,28 +225,40 @@ function Insights() {
   );
 }
 
-function SearchBar({ onInput, searchResults }) {
-  const icon = getIcon({ searchResults });
+function SearchBar({ onInput }) {
+  // Store the string the user has typed, if any.
+  // If the string.length > 0 then show the reset button.
+  const [searchString, setSearchString] = useState("");
+  const icon =
+    searchString.length > 0 ? (
+      <LuXCircle
+        className="text-2xl lg:hover:cursor-pointer lg:hover:text-red-500"
+        onClick={resetSearch}
+      />
+    ) : (
+      <LuSearch className="text-2xl" />
+    );
+
   return (
     <div className="px-1 bg-search-bar rounded-xl h-10 flex flex-row justify-start items-center overflow-hidden shadow-sm shadow-gray-300 gap-1">
       {icon}
       <input
         className="border-none h-10 w-full bg-inherit outline-none text-lg font-semibold"
         type="text"
-        onInput={onInput}
+        value={searchString}
+        onChange={updateSearch}
       />
     </div>
   );
 
-  function getIcon({ searchResults }) {
-    // searchResults = true when found results
-    // searchResults = false when found no results
-    switch (searchResults) {
-      case true:
-        return <LuSearch className="text-2xl" />;
-      case false:
-        return <LuSearchX className="text-2xl" />;
-    }
+  function resetSearch() {
+    setSearchString("");
+    onInput({ target: { value: "" } });
+  }
+
+  function updateSearch(e) {
+    setSearchString(e.target.value);
+    onInput(e);
   }
 }
 
