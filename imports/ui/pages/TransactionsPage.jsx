@@ -243,8 +243,9 @@ function SearchBar({ onInput }) {
     <div className="px-1 bg-search-bar rounded-xl h-10 flex flex-row justify-start items-center overflow-hidden shadow-sm shadow-gray-300 gap-1">
       {icon}
       <input
-        className="border-none h-10 w-full bg-inherit outline-none text-lg font-semibold"
+        className="border-none h-10 w-full bg-inherit outline-none text-lg font-semibold placeholder:font-normal"
         type="text"
+        placeholder="Search"
         value={searchString}
         onChange={updateSearch}
       />
