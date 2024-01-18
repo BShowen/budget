@@ -77,9 +77,13 @@ function RemainingMoneyBanner({ incomeEnvelope }) {
     const ledgers = LedgerCollection.find({
       envelopeId: { $ne: incomeEnvelope._id },
     }).fetch();
-    return ledgers.reduce((total, ledger) => {
-      return ledger.allocatedAmount + total;
-    }, 0);
+    return Number.parseFloat(
+      ledgers
+        .reduce((total, ledger) => {
+          return Number.parseFloat((ledger.allocatedAmount + total).toFixed(2));
+        }, 0)
+        .toFixed(2)
+    );
   });
 
   const displayBalance = toDollars(
