@@ -449,6 +449,7 @@ function LedgerNotes({ ledgerId }) {
         _id: ledger._id,
         notes: updatedNotes,
       });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
       console.log("Error updating", error);
     }

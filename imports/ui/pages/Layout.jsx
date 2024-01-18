@@ -26,7 +26,7 @@ export const Layout = () => {
             location.pathname.split("/")[1] === "ledger" &&
             location.pathname.split("/")[3] === "transactions";
 
-          if (location.pathname === "/" || isLedger) {
+          if (location.pathname === "/") {
             return location.pathname;
           } else {
             return location.key;
