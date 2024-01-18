@@ -24,11 +24,11 @@ export const ledgerSchema = new SimpleSchema(
       type: Number,
       autoValue: function () {
         if (this.isInsert) {
-          return 0; // default value
-        }
-
-        if (this.isSet) {
-          return Number.parseFloat(this.value);
+          if (this.isSet) {
+            return Number.parseFloat(this.value);
+          } else {
+            return 0;
+          }
         }
       },
     },
