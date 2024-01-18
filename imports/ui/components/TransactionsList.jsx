@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -405,7 +405,7 @@ function LedgerNotes({ ledgerId }) {
   const textareaRef = useRef(null);
   const [textareaRows, setTextareaRows] = useState(notes.split("\n").length);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Resize the textarea component to accommodate all the text that the user
     // is typing.
     // The textarea will grow/shrink as the user types.
@@ -443,14 +443,7 @@ function LedgerNotes({ ledgerId }) {
     }
   }
 
-  function submit(opts = { blurTextarea: false }) {
-    if (opts.blurTextarea) {
-      // When blurTextarea == true it's because the user has pressed the enter
-      // key and useEffect as registered a keydown handler which calls this
-      // function. The textarea has an onBlur handler that will then call this
-      // function without any options which will submit this data.
-      return textareaRef.current.blur();
-    }
+  function submit() {
     try {
       Meteor.call("ledger.updateLedger", {
         _id: ledger._id,
