@@ -403,22 +403,21 @@ function LedgerNotes({ ledgerId }) {
   });
   const [updatedNotes, setUpdatedNotes] = useState(notes);
   const textareaRef = useRef(null);
+  const [textareaRows, setTextareaRows] = useState(notes.split("\n").length);
 
-  function handleKeyDown(e) {
-    const isEnterKey = e.key.toLowerCase() === "enter";
-    const isMetaKey = e.metaKey;
-
-    if (isMetaKey && isEnterKey) {
-      submit({ blurTextarea: true });
-    }
-  }
+  useEffect(() => {
+    // Resize the textarea component to accommodate all the text that the user
+    // is typing.
+    // The textarea will grow/shrink as the user types.
+    setTextareaRows(updatedNotes.split("\n").length);
+  }, [updatedNotes]);
 
   return (
     <div className="bg-white shadow-sm py-1 px-3 rounded-xl flex flex-col justify-center items-stretch">
       <textarea
         ref={textareaRef}
         className="font-medium w-full form-textarea focus:ring-0 border-0 placeholder:text-color-light-gray text-color-primary resize-none h-full p-0"
-        rows={2}
+        rows={textareaRows <= 1 ? 2 : textareaRows}
         placeholder="Tap to add a note"
         value={updatedNotes}
         onChange={(e) => {
@@ -435,6 +434,14 @@ function LedgerNotes({ ledgerId }) {
       />
     </div>
   );
+
+  function handleKeyDown(e) {
+    const isEscapeKey = e.key.toLowerCase() === "escape";
+    if (isEscapeKey) {
+      // This will remove focus from the textarea and also submit the data.
+      textareaRef.current.blur();
+    }
+  }
 
   function submit(opts = { blurTextarea: false }) {
     if (opts.blurTextarea) {

@@ -23,8 +23,13 @@ export const ledgerSchema = new SimpleSchema(
     allocatedAmount: {
       type: Number,
       autoValue: function () {
-        const defaultValue = 0;
-        return this.value ? Number.parseFloat(this.value) : defaultValue;
+        if (this.isInsert) {
+          return 0; // default value
+        }
+
+        if (this.isSet) {
+          return Number.parseFloat(this.value);
+        }
       },
     },
     kind: {
