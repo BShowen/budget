@@ -145,3 +145,12 @@ body {
 .position-top-safe {
   top: calc(env(safe-area-inset-top, 0));
 }
+
+.gooey {
+  -webkit-filter: url("#goo");
+  filter: url("#goo");
+}
+
+#gooey-svg {
+  display: none;
+}

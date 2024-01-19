@@ -27,8 +27,8 @@ export const FooterNav = () => {
   const replace = pattern.test(location.pathname);
 
   return (
-    <div className="fixed bottom-0 w-full h-20 lg:w-3/5 mx-auto bg-white border-t border-gray-300">
-      <div className="w-full flex flex-row flex-nowrap justify-evenly items-end h-full">
+    <div className="fixed bottom-0 w-full h-20 lg:w-3/5 mx-auto bg-white">
+      <div className="w-full flex flex-row flex-nowrap justify-evenly items-end h-full gooey bg-inherit">
         <FooterLink to="/" text="Budget">
           <LuCircleDollarSign className="text-inherit w-full h-full" />
         </FooterLink>
@@ -39,15 +39,7 @@ export const FooterNav = () => {
         >
           <LuListMinus className="text-inherit w-full h-full" />
         </FooterLink>
-        <div className="w-[70px] h-[90px]">
-          <Link
-            to="/new-transaction"
-            replace={replace}
-            className="block rounded-full drop-shadow-lg"
-          >
-            <IoIosAddCircle className="w-full h-full text-color-light-blue" />
-          </Link>
-        </div>
+        <div className="w-[70px] bg-inherit rounded-full h-full relative -top-4" />
         <FooterLink to="/account" text="Account">
           <LuUserCircle2 className="text-inherit w-full h-full" />
         </FooterLink>
@@ -55,6 +47,13 @@ export const FooterNav = () => {
           <LuLogOut className="text-inherit w-full h-full" />
         </FooterLink>
       </div>
+      <Link
+        to="/new-transaction"
+        replace={replace}
+        className="fixed bottom-6 w-min left-[50%] translate-x-[-50%]"
+      >
+        <IoIosAddCircle className="text-color-light-blue text-7xl" />
+      </Link>
     </div>
   );
 };
