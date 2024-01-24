@@ -8,6 +8,9 @@
     touch-action: manipulation;
     user-select: none;
   }
+  .prevent-scroll {
+    overflow: hidden;
+  }
   /* **********TEXT COLORS********** */
   .text-color-dark-blue {
     /* color: #0060e6; */
@@ -70,6 +73,9 @@
   .border-color-app {
     border-color: #f1f1f2;
   }
+  .border-color-light-gray {
+    @apply border-gray-400;
+  }
 }
 
 @layer components {
@@ -127,6 +133,10 @@ body {
   padding-top: calc(env(safe-area-inset-top));
 }
 
+.padding-safe-area-bottom {
+  padding-bottom: calc(env(safe-area-inset-bottom));
+}
+
 .page-header {
   padding-top: calc(env(safe-area-inset-top));
   position: fixed;
@@ -138,8 +148,8 @@ body {
   position: fixed;
   top: 0;
   width: 100%;
-  background-color: inherit;
   z-index: 50;
+  @apply bg-header;
 }
 
 .position-top-safe {

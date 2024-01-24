@@ -103,7 +103,7 @@ export function TransactionsPage() {
 
   return (
     <>
-      <div className="empty-page-header"></div>
+      <div className="empty-page-header bg-header"></div>
       <div className="flex flex-col justify-start items-stretch p-2 pb-28 gap-5 bg-gray-100">
         <Insights />
         <div className="bg-white pt-2 pb-3 rounded-xl flex flex-col">
