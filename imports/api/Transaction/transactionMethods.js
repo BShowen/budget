@@ -1,87 +1,58 @@
 import { Meteor } from "meteor/meteor";
-import { TransactionCollection } from "./TransactionCollection";
-import { createTags } from "../Tag/tagMethods";
+import { Random } from "meteor/random";
 
-// Utils
+// Collections
+import { TransactionCollection } from "./TransactionCollection";
 import { LedgerCollection } from "../Ledger/LedgerCollection";
 
+// Utils
+import { createTags } from "../Tag/tagMethods";
+
+// Methods
+import { createTransaction } from "./createTransaction";
+
 Meteor.methods({
-  "transaction.createTransaction"(transaction) {
+  "transaction.updateTransaction"({
+    transactionIdList,
+    createdAt,
+    budgetId,
+    type,
+    amount,
+    merchant,
+    note,
+    allocations,
+    tags,
+    newTags,
+  }) {
     if (!this.userId) return;
-
-    const { envelopeId } =
-      LedgerCollection.findOne({
-        _id: transaction.ledgerId,
-      }) || {};
-
-    const user = Meteor.user();
-    const newTransaction = {
-      ...transaction,
-      accountId: user.accountId,
-      envelopeId,
-      loggedBy: {
-        userId: user._id,
-        firstName: user.profile.firstName,
-        lastName: user.profile.lastName,
-      },
-    };
-
-    if (newTransaction.newTags) {
-      // input.newTags is an array of strings (tag-names) which are names
-      // for tags that need to be created and associated with this transaction.
-
-      newTransaction.tags = [
-        ...new Set([
-          // keep any tags that previously exist / the user has selected.
-          ...transaction.tags,
-          // create new tags and associate them with this transaction.
-          ...createTags({ tagNameList: transaction.newTags }),
-        ]),
-      ];
-      // Remove field - No longer needed. I could let the validate function
-      // remove but, but this is more explicit.
-      delete transaction.newTags;
-    }
-
-    TransactionCollection.insert(newTransaction, (err) => {
-      if (err && Meteor.isServer && err.invalidKeys?.length == 0) {
-        // This is not a validation error. Console.log the error.
-        console.log(err);
-      }
+    // Validate the incoming transaction args.
+    // I am re-using the createTransaction.validate method because the logic is
+    // exactly the same. I have to call the validate method with "this" because
+    // the validate methods expected the user to be logged in by checking
+    // this.userId()
+    createTransaction.validate.call(this, {
+      createdAt,
+      budgetId,
+      type,
+      merchant,
+      note,
+      allocations,
+      amount,
     });
-  },
-  "transaction.updateTransaction"(transaction) {
-    if (!this.userId) return;
-    createAndAssignTags(transaction);
-
-    // Assigned the transaction to the envelope that the ledger belongs to.
-    const { envelopeId } =
-      LedgerCollection.findOne({
-        _id: transaction.ledgerId,
-      }) || {};
-    transaction.envelopeId = envelopeId;
-
-    const { ledgerId, _id: transactionId } = transaction;
-
-    const unsetModifier =
-      ledgerId === "uncategorized" ? { ledgerId: "", envelopeId: "" } : {};
-
-    if ("note" in transaction && transaction.note.trim().length == 0) {
-      unsetModifier.note = "";
-    }
-
-    TransactionCollection.simpleSchema().clean(transaction);
-
-    TransactionCollection.update(
-      { _id: transactionId },
-      { $set: { ...transaction }, $unset: { ...unsetModifier } },
-      (err) => {
-        if (err && Meteor.isServer && err.invalidKeys?.length == 0) {
-          // This is not a validation error. Console.log the error.
-          console.log(err);
-        }
-      }
-    );
+    transactionIdList.forEach((id) => {
+      TransactionCollection.remove({ _id: id });
+    });
+    return createTransaction.run.call(this, {
+      createdAt,
+      budgetId,
+      type,
+      amount,
+      merchant,
+      note,
+      allocations,
+      tags,
+      newTags,
+    });
   },
   "transaction.deleteTransaction"({ transactionId }) {
     if (!this.userId) return;
@@ -112,16 +83,3 @@ function createAndAssignTags(transaction) {
     delete transaction.newTags;
   }
 }
-
-function isObject(value) {
-  return (
-    value instanceof Object &&
-    !(value instanceof Array) &&
-    !(value instanceof Date)
-  );
-}
-
-const t = {
-  set: {},
-  unset: {},
-};

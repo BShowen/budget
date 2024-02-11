@@ -78,6 +78,15 @@ export const transactionSchema = new SimpleSchema(
       type: String,
       regEx: SimpleSchema.RegEx.Id,
     },
+    isSplitTransaction: {
+      type: Boolean,
+      optional: true,
+    },
+    splitTransactionId: {
+      type: String,
+      regEx: SimpleSchema.RegEx.Id,
+      optional: true,
+    },
   },
   { clean: { mutate: true } }
 );

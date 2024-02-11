@@ -138,6 +138,8 @@ export function CreateTransactionForm() {
     },
   });
 
+  const [isFormValid, setIsFormValid] = useState(false);
+
   const setActiveTab = (active) => {
     setFormData((prev) => ({
       ...prev,
@@ -296,32 +298,57 @@ export function CreateTransactionForm() {
   }
 
   function submit() {
-    try {
-      const formDetails = { ...formData };
-      const form = new FormData(formRef.current);
-      const tags = form.getAll("tags");
-      const newTags = form.getAll("newTags");
-      if (formDetails.createdAt) {
-        // Set the correct date
-        const [year, month, day] = formData.createdAt.split("-");
-        const formattedDate = new Date(year, month - 1, day);
-        formDetails.createdAt = formattedDate;
-      }
-      console.log({
-        ...formDetails,
-        tags,
-        newTags,
-      });
-      return;
-      Meteor.call("transaction.createTransaction", {
-        ...formDetails,
-        tags,
-        newTags,
-      });
-      navigate(-1, { replace: true });
-    } catch (error) {
-      console.log(error);
+    if (!isFormValid) return;
+    // Handle tags.
+    const form = new FormData(formRef.current);
+    const tags = form.getAll("tags");
+    const newTags = form.getAll("newTags");
+
+    // Split selectedLedgers from formData.
+    const { selectedLedgers, ...formDetails } = { ...formData };
+
+    // Format the date
+    if (formDetails.createdAt) {
+      // Set the correct date
+      const [year, month, day] = formData.createdAt.split("-");
+      const formattedDate = new Date(year, month - 1, day);
+      formDetails.createdAt = formattedDate;
     }
+
+    // Format selectedLedgers
+    // convert
+    // {
+    //   JPMBuvTg5PwJCTtjy: { willUnmount: false, splitAmount: '34.00', isLocked: true },
+    //   QWXoBfB9wec6P7Mk3: { willUnmount: false, splitAmount: '66.00', isLocked: false }
+    // }
+    // into
+    // [
+    //   { ledgerId: "ledgerPrimaryKey", amount: "34.00" },
+    //   { ledgerId: "ledgerPrimaryKey", amount: "66.00" }
+    // ]
+    const allocations = Object.entries(selectedLedgers).reduce((acc, item) => {
+      const [ledgerId, meta] = item;
+      return [...acc, { ledgerId: ledgerId, amount: meta.splitAmount }];
+    }, []);
+
+    Meteor.call(
+      "transaction.createTransaction",
+      {
+        ...{
+          ...formDetails,
+          allocations,
+          tags,
+          newTags,
+        },
+      },
+      (error) => {
+        if (error) {
+          console.log(error.details);
+        } else {
+          navigate(-1, { replace: true });
+        }
+      }
+    );
   }
 
   function setRange(e) {
@@ -379,7 +406,7 @@ export function CreateTransactionForm() {
     }
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [formData, categorySelector]);
+  }, [formData, categorySelector, isFormValid]);
 
   useEffect(() => {
     // When transaction type changes from "income" to "expense" and vice versa
@@ -410,6 +437,34 @@ export function CreateTransactionForm() {
     }
   }, [formData.type]);
 
+  // Update isFormValid when formData changes.
+  useEffect(() => {
+    const isSplitTransaction = Object.keys(formData.selectedLedgers).length > 1;
+    const correctBalance = isSplitTransaction
+      ? Object.values(formData.selectedLedgers).reduce(
+          (total, meta) => total + parseFloat(meta.splitAmount),
+          0
+        ) == parseFloat(formData.amount)
+      : true;
+    const noZeroDollarBalance = isSplitTransaction
+      ? Object.values(formData.selectedLedgers).every(
+          (meta) => parseFloat(meta.splitAmount) > 0
+        )
+      : true;
+    /* prettier-ignore */
+    setIsFormValid(
+      formData.amount != undefined &&
+      parseFloat(formData.amount) > 0.0 &&
+      formData.createdAt != undefined &&
+      new Date(formData.createdAt) != "Invalid Date" &&
+      formData.merchant != undefined &&
+      formData.merchant.trim().length > 0 &&
+      Object.keys(formData.selectedLedgers).length > 0 &&
+      correctBalance &&
+      noZeroDollarBalance
+    );
+  }, [formData]);
+
   return (
     <>
       <div className="page-header w-full lg:w-3/5 bg-header p-2 flex flex-col justify-start z-50">
@@ -423,12 +478,17 @@ export function CreateTransactionForm() {
           <h2 className="col-start-3 col-end-11 text-white text-xl">
             New transaction
           </h2>
-          <h2
-            className="col-start-11 col-end-13 text-white lg:hover:cursor-pointer"
-            onClick={submit}
+          <button
+            className={`col-start-11 col-end-13 ${
+              isFormValid
+                ? "text-white lg:hover:cursor-pointer"
+                : "text-gray-700 lg:hover:cursor-not-allowed"
+            }`}
+            onClick={isFormValid ? submit : undefined}
+            type="submit"
           >
             Done
-          </h2>
+          </button>
         </div>
 
         <ButtonGroup active={formData.type} setActiveTab={setActiveTab} />
@@ -519,8 +579,8 @@ export function CreateTransactionForm() {
             <TagSelection preSelectedTags={undefined} key={ledgerId} />
           </div>
 
-          <div className="w-full rounded-xl overflow-hidden px-2 py-1 bg-white flex flex-col justify-start items-stretch min-h-10">
-            <div className="w-full text-start">
+          <div className="w-full rounded-xl overflow-hidden px-1 py-1 bg-white flex flex-col justify-start items-stretch min-h-10">
+            <div className="w-full text-start px-1">
               <p className="font-semibold">Category</p>
             </div>
 
@@ -539,13 +599,14 @@ export function CreateTransactionForm() {
                 }
               />
             ))}
-            <div
+            <button
+              type="button"
               onClick={openDialog}
-              className="w-full h-10 flex flex-row justify-start items-center gap-2"
+              className="w-full h-10 flex flex-row justify-start items-center gap-2 px-1"
             >
               <IoIosAdd className="rounded-full w-6 h-6 text-white bg-green-600" />
               <p className="font-semibold text-lg">Add category</p>
-            </div>
+            </button>
 
             <Dialog
               closeDialog={closeDialog}
@@ -592,8 +653,10 @@ function SelectedLedger({
           deselecting || willUnmount ? "h-0 opacity-0" : "h-10 opacity-100"
         }`}
       >
-        <div className="w-full flex flex-row justify-start items-center h-10 gap-2">
+        <div className="w-full flex flex-row justify-start items-center h-10 gap-2 px-1">
           <IoIosRemove
+            role="button"
+            tabIndex={0}
             className="rounded-full w-6 h-6 text-white bg-rose-500 shrink-0"
             onClick={() => {
               setDeselecting(true);
@@ -626,14 +689,15 @@ function SelectedLedger({
                 min={0}
                 className="font-semibold form-input border-none focus:ring-0 h-full text-right w-full"
               />
-              <div
+              <button
+                type="button"
                 onClick={toggleLocked}
                 className={`h-full flex flex-row justify-center items-center text-xl transition-colors duration-300 ease-in-out ${
                   isLocked ? "text-green-600" : "text-color-primary"
                 }`}
               >
                 {isLocked ? <FaLock /> : <FaLockOpen />}
-              </div>
+              </button>
             </div>
           )}
         </div>

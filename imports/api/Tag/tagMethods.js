@@ -7,21 +7,24 @@ import { TagCollection } from "./TagCollection";
 // This method returns a tag id for each tag-name provided. Any tag that doesn't
 // exist is created and it's tag id returned.
 // Think of this method as an "insert-if-absent" database operation for the tag collection.
-export function createTags({ tagNameList }) {
-  // tagNameList is an array of strings.
+// Returns an array of unique tag-name strings. ["tag-A", "tag-B", ... , "tag-Z"]
+export function createTags({ selectedTagIdList, newTagNameList }) {
+  // newTagNameList is an array of strings.
   // Each string is a tag-name
-  if (!Array.isArray(tagNameList)) {
-    throw new Error("tagNameList must be an array.");
+  if (!Array.isArray(newTagNameList)) {
+    throw new Error("newTagNameList must be an array.");
   } else {
-    // Convert all tag names to lowercase
-    tagNameList = [...tagNameList].map((tagName) =>
+    // Convert all tag names to lowercase.
+    // Trim whitespace.
+    // Use Set to remove duplicates, if any.
+    newTagNameList = [...new Set([...newTagNameList])].map((tagName) =>
       tagName.toLowerCase().trim()
     );
   }
 
   const user = Meteor.user();
 
-  const { existing, nonExisting } = partitionByExistence({ tagNameList });
+  const { existing, nonExisting } = partitionByExistence({ newTagNameList });
 
   // Create new tags and store their IDs in an array
   const created = nonExisting.map((tagName) => {
@@ -35,22 +38,22 @@ export function createTags({ tagNameList }) {
     });
   });
 
-  return [...existing, ...created];
+  return [...new Set([...existing, ...created, ...selectedTagIdList])];
 }
 
-export function partitionByExistence({ tagNameList }) {
-  // tagNameList is an array of strings (tag-names)
+export function partitionByExistence({ newTagNameList }) {
+  // newTagNameList is an array of strings (tag-names)
 
   // Create array of tag documents that already exist.
   const existingTagsList = TagCollection.find({
-    name: { $in: tagNameList },
+    name: { $in: newTagNameList },
   }).fetch();
 
   // Create array of the existing tag's names.
   const existingTagsNameList = existingTagsList.map((tagDoc) => tagDoc.name);
 
   // Create array of tag names that don't exist.
-  const nonExisting = tagNameList.filter(
+  const nonExisting = newTagNameList.filter(
     (tagName) => !existingTagsNameList.includes(tagName)
   );
 
