@@ -55,31 +55,17 @@ Meteor.methods({
     });
   },
   "transaction.deleteTransaction"({ transactionId }) {
-    if (!this.userId) return;
-    TransactionCollection.remove({ _id: transactionId }, (err) => {
-      if (err && Meteor.isServer && err.invalidKeys?.length == 0) {
-        // This is not a validation error. Console.log the error.
-        console.log(err);
+    if (!this.userId || !transactionId) return;
+
+    TransactionCollection.remove(
+      {
+        $or: [{ _id: transactionId }, { splitTransactionId: transactionId }],
+      },
+      (error) => {
+        if (error && Meteor.isServer) {
+          console.log("---transaction.delete.Transaction---\n", error);
+        }
       }
-    });
+    );
   },
 });
-
-function createAndAssignTags(transaction) {
-  if (transaction.newTags) {
-    // input.newTags is an array of strings (tag-names) which are names
-    // for tags that need to be created and associated with this transaction.
-
-    transaction.tags = [
-      ...new Set([
-        // keep any tags that previously exist / the user has selected.
-        ...transaction.tags,
-        // create new tags and associate them with this transaction.
-        ...createTags({ tagNameList: transaction.newTags }),
-      ]),
-    ];
-    // Remove field - No longer needed. I could let the validate function
-    // remove but, but this is more explicit.
-    delete transaction.newTags;
-  }
-}

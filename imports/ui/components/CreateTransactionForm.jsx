@@ -126,8 +126,8 @@ export function CreateTransactionForm() {
     merchant: "",
     note: "",
     selectedLedgers: {
-      // If ledgerId is truthy then this is a preselected ledger. This form has
-      // been rendered with a preselected ledger selected.
+      // If ledgerId is truthy then this form has been rendered with a
+      // preselected ledger.
       ...(ledgerId && {
         [ledgerId]: {
           willUnmount: false, //Set to true 301ms before this ledger is removed.
@@ -149,9 +149,6 @@ export function CreateTransactionForm() {
       // income ledgers can't have expenses.
       ...(active === "expense" &&
         (() => {
-          // Make a copy of the previous selected ledgers to work with.
-          // const selectedLedgers = { ...prev.selectedLedgers };
-
           // Return an object from this method because the return value is used
           // in the spread operator.
           return {
@@ -334,12 +331,10 @@ export function CreateTransactionForm() {
     Meteor.call(
       "transaction.createTransaction",
       {
-        ...{
-          ...formDetails,
-          allocations,
-          tags,
-          newTags,
-        },
+        ...formDetails,
+        allocations,
+        tags,
+        newTags,
       },
       (error) => {
         if (error) {

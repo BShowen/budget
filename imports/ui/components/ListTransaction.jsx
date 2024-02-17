@@ -7,6 +7,7 @@ import { Meteor } from "meteor/meteor";
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
 import { EnvelopeCollection } from "../../api/Envelope/EnvelopeCollection";
 import { TagCollection } from "../../api/Tag/TagCollection";
+import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 
 // Utils
 import { cap } from "../util/cap";
@@ -191,7 +192,11 @@ function DeleteTransactionButton({ transaction }) {
     try {
       Meteor.call(
         "transaction.deleteTransaction",
-        { transactionId: transaction._id },
+        {
+          transactionId: transaction.isSplitTransaction
+            ? transaction.splitTransactionId
+            : transaction._id,
+        },
         (error) => {
           if (error) {
             // The transaction.deleteTransaction method encountered an error.
@@ -216,7 +221,20 @@ function DeleteTransactionButton({ transaction }) {
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        deleteTransaction();
+
+        if (transaction.isSplitTransaction) {
+          const transactionCount = TransactionCollection.find({
+            splitTransactionId: transaction.splitTransactionId,
+          }).fetch().length;
+          const confirm = window.confirm(
+            `This is a split transaction and will delete ${transactionCount} transactions.`
+          );
+          if (confirm) {
+            deleteTransaction();
+          }
+        } else {
+          deleteTransaction();
+        }
       }}
     >
       Delete
