@@ -28,12 +28,13 @@ export const IncomeLedger = ({ ledger, activeTab }) => {
     return incomeReceived;
   });
 
-  const remainingToReceive = ledger.allocatedAmount - incomeReceived;
+  const remainingToReceive =
+    Math.round((ledger.allocatedAmount - incomeReceived) * 100) / 100;
 
   const calculateDisplayBalance = () => {
     switch (activeTab) {
       case "planned":
-        return parseFloat(ledger.allocatedAmount).toFixed(2);
+        return Math.round(ledger.allocatedAmount * 100) / 100;
       case "spent":
         return incomeReceived;
       case "remaining":
@@ -42,19 +43,17 @@ export const IncomeLedger = ({ ledger, activeTab }) => {
   };
 
   const calculateProgress = () => {
-    let progress = undefined;
     if (activeTab === "planned") {
-      progress = 0;
+      return 0;
     } else if (activeTab === "spent") {
-      progress = ledger.allocatedAmount
-        ? (incomeReceived / ledger.allocatedAmount) * 100
+      return ledger.allocatedAmount
+        ? Math.round((incomeReceived / ledger.allocatedAmount) * 100)
         : 0;
     } else if (activeTab === "remaining") {
-      progress = ledger.allocatedAmount
-        ? (remainingToReceive / ledger.allocatedAmount) * 100
+      return ledger.allocatedAmount
+        ? Math.round((remainingToReceive / ledger.allocatedAmount) * 100)
         : 0;
     }
-    return Number.parseInt(progress.toFixed(0));
   };
 
   const activateForm = (e) => {

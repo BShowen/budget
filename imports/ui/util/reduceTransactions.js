@@ -15,7 +15,9 @@ export function reduceTransactions({ transactions }) {
       const transType = transaction.type;
       return {
         ...ledgerTotals,
-        [transType]: ledgerTotals[transType] + transaction.amount,
+        [transType]:
+          Math.round((ledgerTotals[transType] + transaction.amount) * 100) /
+          100,
       };
     },
     { income: 0, expense: 0 }

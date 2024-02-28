@@ -26,18 +26,22 @@ export const CategoryLedger = ({ ledger, activeTab }) => {
     // Calculate this ledgers expense and income from it's transactions
     const { expense, income } = reduceTransactions({ transactions });
     // Calculate how much has been spent out of this ledger.
-    const spent = expense - income;
+    const spent = Math.round((expense - income) * 100) / 100;
     return spent;
   });
 
-  const remaining = ledger.allocatedAmount - spent;
+  const remaining = Math.round((ledger.allocatedAmount - spent) * 100) / 100;
 
   const calculateDisplayBalance = () => {
     switch (activeTab) {
       case "planned":
-        return parseFloat(ledger.allocatedAmount).toFixed(2);
+        return Math.round(ledger.allocatedAmount * 100) / 100;
       case "spent":
-        return spent;
+        // If spent is less than 0 then you haven't technically "spent" anything.
+        // That is why I am returning 0 when spent is negative.
+        // Spent can be negative when carrying over a balance from the previous
+        // month or when a ledger receives a refund more than the allocation amount.
+        return spent < 0 ? 0 : spent;
       case "remaining":
         return remaining;
     }
@@ -49,19 +53,27 @@ export const CategoryLedger = ({ ledger, activeTab }) => {
       progress = 0;
     } else if (activeTab === "spent") {
       if (ledger.allocatedAmount > 0) {
-        progress = Math.ceil((spent / ledger.allocatedAmount) * 100);
+        progress = Math.floor((spent / ledger.allocatedAmount) * 100);
       }
     } else if (activeTab === "remaining") {
-      if (remaining < 0) {
+      if (remaining > ledger.allocatedAmount) {
+        // If remaining is greater than allocated amount then progress should
+        // always be 100. Otherwise progress will be red when it should be
+        // green. This can happen when a ledger balance is carried over from
+        // a previous month or when a refund is received in a ledger that
+        // causes the remaining balance for that ledger to be greater than the
+        // allocated amount for that ledger for the month.
+        progress = 100;
+      } else if (remaining < 0) {
         progress = 101;
       } else if (remaining >= 0) {
-        progress = (Math.abs(remaining) / ledger.allocatedAmount) * 100;
+        progress = Math.floor(
+          (Math.abs(remaining) / ledger.allocatedAmount) * 100
+        );
       }
     }
-
     // Normalize the percentage.Before: 58.333333333 After: 58
     progress = Math.floor(progress > 100 ? 101 : progress);
-
     return Number.parseInt(progress.toFixed(0));
   };
 

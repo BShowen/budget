@@ -106,7 +106,7 @@ function CategoryHeader({ ledger }) {
     const { income, expense } = reduceTransactions({
       transactions: transactionList,
     });
-    const spent = expense - income;
+    const spent = Math.round((expense - income) * 100) / 100;
     return spent;
   });
 
@@ -125,7 +125,7 @@ function CategoryHeader({ ledger }) {
     setPercentSpent(percentSpent);
   }, [ledger]);
 
-  const remaining = ledger.allocatedAmount - spent;
+  const remaining = Math.round((ledger.allocatedAmount - spent) * 100) / 100;
   const logo =
     remaining == 0 ? (
       <BiCheck className="text-4xl text-emerald-400" />

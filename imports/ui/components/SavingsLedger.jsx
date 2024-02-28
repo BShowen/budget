@@ -27,12 +27,15 @@ export const SavingsLedger = ({ ledger, activeTab }) => {
     return reduceTransactions({ transactions });
   });
 
-  const remainingToReceive = ledger.allocatedAmount - savedThisMonth;
+  const remainingToReceive =
+    Math.round((ledger.allocatedAmount - savedThisMonth) * 100) / 100 < 0
+      ? 0
+      : Math.round((ledger.allocatedAmount - savedThisMonth) * 100) / 100;
 
   const calculateDisplayBalance = () => {
     switch (activeTab) {
       case "planned":
-        return parseFloat(ledger.allocatedAmount).toFixed(2);
+        return Math.round(ledger.allocatedAmount * 100) / 100;
       case "spent":
         return expense;
       case "remaining":
@@ -45,13 +48,13 @@ export const SavingsLedger = ({ ledger, activeTab }) => {
     if (activeTab === "planned") {
       progress = 0;
     } else if (activeTab === "spent") {
-      progress = (expense / ledger.allocatedAmount) * 100;
+      progress = ((expense / ledger.allocatedAmount) * 100).toFixed(2);
     } else if (activeTab === "remaining") {
       progress = remainingToReceive
-        ? (remainingToReceive / ledger.allocatedAmount) * 100
+        ? ((remainingToReceive / ledger.allocatedAmount) * 100).toFixed(2)
         : 0;
     }
-    return Number.parseInt(progress.toFixed(0));
+    return progress;
   };
 
   const activateForm = (e) => {

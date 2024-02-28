@@ -45,7 +45,11 @@ export const SavingsEnvelope = ({ _id, name, activeTab }) => {
     transactions,
   });
 
-  const leftToReceive = plannedToSave - savedThisMonth;
+  const leftToReceive =
+    Math.round((plannedToSave - savedThisMonth) * 100) / 100 <= 0
+      ? 0
+      : Math.round((plannedToSave - savedThisMonth) * 100) / 100;
+
   const displayBalance =
     activeTab === "spent"
       ? savedThisMonth
