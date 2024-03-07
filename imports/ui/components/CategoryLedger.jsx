@@ -37,11 +37,7 @@ export const CategoryLedger = ({ ledger, activeTab }) => {
       case "planned":
         return Math.round(ledger.allocatedAmount * 100) / 100;
       case "spent":
-        // If spent is less than 0 then you haven't technically "spent" anything.
-        // That is why I am returning 0 when spent is negative.
-        // Spent can be negative when carrying over a balance from the previous
-        // month or when a ledger receives a refund more than the allocation amount.
-        return spent < 0 ? 0 : spent;
+        return spent;
       case "remaining":
         return remaining;
     }
@@ -102,8 +98,16 @@ export const CategoryLedger = ({ ledger, activeTab }) => {
           <h2 className="font-semibold z-20">{cap(ledger.name)}</h2>
           <h2
             onClick={activateForm}
+            // If displayBalance < 0 and remaining > ledger.allocated amount
+            // then I don't want display balance to be red in UI because I
+            // haven't actually spent more than my allocated amount for this
+            // ledger. What is true is my display balance is greater than
+            // my allocated amount because there is a carryover balance or
+            // because there is a refund in the ledger.
             className={`font-bold z-20 ${
-              displayBalance < 0 ? "text-rose-500" : ""
+              displayBalance < 0 && remaining < ledger.allocatedAmount
+                ? "text-rose-500"
+                : ""
             }`}
           >
             {toDollars(displayBalance)}
