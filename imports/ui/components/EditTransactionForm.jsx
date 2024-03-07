@@ -241,27 +241,40 @@ export function EditTransactionForm() {
       // Make a copy of previous selected ledgers to work with.
       const prevLedgers = { ...prev.selectedLedgers };
 
+      /* prettier-ignore */
       // Calculate the remaining balance to split amongst the ledgers.
-      const remainingBalance = (
-        parseFloat(prev.amount) -
-        parseFloat(
-          Object.entries(prevLedgers).reduce((acc, selectedLedger) => {
-            const [prevLedgerId, ledgerMeta] = selectedLedger;
-            if (prevLedgerId == ledgerId) {
-              return (
-                parseFloat(acc) + parseFloat(formatDollarAmount(amount))
-              ).toFixed(2);
-            } else if (ledgerMeta.isLocked) {
-              return (
-                parseFloat(acc) +
-                parseFloat(formatDollarAmount(ledgerMeta.splitAmount))
-              ).toFixed(2);
-            } else {
-              return acc;
-            }
-          }, 0)
-        ).toFixed(2)
-      ).toFixed(2);
+      const remainingBalance =
+        Math.floor(
+          (
+            parseFloat(prev.amount) -
+            parseFloat(
+              Object.entries(prevLedgers).reduce((acc, selectedLedger) => {
+                const [prevLedgerId, ledgerMeta] = selectedLedger;
+                if (prevLedgerId == ledgerId) {
+                  return (
+                    Math.floor(
+                      (parseFloat(acc) +
+                        parseFloat(formatDollarAmount(amount))) *
+                        100
+                    ) / 100
+                  );
+                } else if (ledgerMeta.isLocked) {
+                  return (
+                    Math.floor(
+                      (parseFloat(acc) +
+                        parseFloat(
+                          formatDollarAmount(ledgerMeta.splitAmount)
+                        )) *
+                        100
+                    ) / 100
+                  );
+                } else {
+                  return acc;
+                }
+              }, 0)
+            )
+          ) * 100
+        ) / 100;
 
       // Split the remaining balance into equal parts.
       // This is an array where each index holds a string value floating point
@@ -474,9 +487,10 @@ export function EditTransactionForm() {
     const isSplitTransaction = Object.keys(formData.selectedLedgers).length > 1;
     const correctBalance = isSplitTransaction
       ? Object.values(formData.selectedLedgers).reduce((total, meta) => {
-          return total + parseFloat(meta.splitAmount);
+          return Math.floor((total + parseFloat(meta.splitAmount)) * 100) / 100;
         }, 0) == parseFloat(formData.amount)
       : true;
+
     const noZeroDollarBalance = isSplitTransaction
       ? Object.values(formData.selectedLedgers).every(
           (meta) => meta.splitAmount > 0
