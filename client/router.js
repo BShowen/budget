@@ -24,6 +24,7 @@ import { NewAllocationPage } from "../imports/ui/pages/NewAllocationPage";
 
 // Loaders
 import { logoutLoader } from "../imports/ui/components/Logout";
+import { loader as editTransactionLoader } from "../imports/ui/components/EditTransactionForm";
 
 const checkLoginStatus = () => {
   if (Meteor.loggingOut()) {
@@ -57,6 +58,7 @@ export const router = createBrowserRouter([
       {
         path: "/ledger/:ledgerId/transaction/:transactionId/edit",
         element: <EditTransactionForm />,
+        loader: editTransactionLoader,
       },
       {
         path: "/account",

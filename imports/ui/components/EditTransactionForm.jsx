@@ -8,7 +8,7 @@ import React, {
   useContext,
   useCallback,
 } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { redirect, useNavigate, useParams } from "react-router-dom";
 import { pickBy } from "lodash";
 
 // Collections
@@ -34,6 +34,18 @@ import { FaLock, FaLockOpen } from "react-icons/fa";
 // App context
 import { RootContext } from "../pages/AppData";
 
+export function loader({ params: { transactionId } }) {
+  const transaction = TransactionCollection.findOne(
+    { _id: transactionId },
+    { fields: { isSplitTransaction: 1, splitTransactionId: 1 } }
+  );
+  if (transaction) {
+    return transaction;
+  } else {
+    return redirect(`/`);
+  }
+}
+
 export function EditTransactionForm() {
   const navigate = useNavigate();
   const rootContext = useContext(RootContext);
@@ -42,12 +54,12 @@ export function EditTransactionForm() {
   const [categorySelector, setCategorySelector] = useState("closed");
   const { currentBudgetId: budgetId } = rootContext;
 
-  const { ledgerId } = params;
+  const { ledgerId, transactionId } = params;
   // I am using useState rather than useTracker because using useTracker causes
   // a error to be logged to the console after the user updates a transaction.
   // This is because the transactionId changes after the transaction is updated
-  // and the transactionId in the url becomes stale thus causing findOne to
-  // return undefined when findOne is expected to find a document.
+  // and the transactionId in the url becomes stale causing findOne to return
+  // undefined when findOne is expected to find a document.
   // const { ledger, transactionList } = useTracker(() => {
   const [{ ledger, transactionList }, _] = useState(() => {
     const { ledgerId, transactionId } = params;
@@ -60,7 +72,6 @@ export function EditTransactionForm() {
     const transactionList = isSplitTransaction
       ? TransactionCollection.find({ splitTransactionId }).fetch()
       : [TransactionCollection.findOne({ _id: transactionId })];
-
     return { ledger, transactionList };
   });
 
@@ -639,6 +650,30 @@ export function EditTransactionForm() {
               selectedLedgerIdList={Object.keys(formData.selectedLedgers)}
               transactionType={formData.type}
             />
+          </div>
+
+          <div className="w-full flex flex-row justify-center items-center h-16">
+            <button
+              className="text-xl font-bold text-rose-500 lg:hover:cursor-pointer lg:hover:text-rose-600 lg:hover:underline transition-text duration-150"
+              type="button"
+              onClick={() =>
+                Meteor.call(
+                  "transaction.deleteTransaction",
+                  {
+                    transactionId,
+                  },
+                  (error) => {
+                    if (error) {
+                      console.log({ error });
+                    } else {
+                      navigate(-1, { replace: true });
+                    }
+                  }
+                )
+              }
+            >
+              Delete transaction
+            </button>
           </div>
         </form>
       </div>
