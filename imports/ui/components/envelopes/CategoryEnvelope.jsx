@@ -3,23 +3,23 @@ import React, { useState } from "react";
 import { useTracker } from "meteor/react-meteor-data";
 
 // Collections
-import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
-import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
-import { EditEnvelopeForm } from "./EditEnvelopeForm";
+import { LedgerCollection } from "../../../api/Ledger/LedgerCollection";
+import { TransactionCollection } from "../../../api/Transaction/TransactionCollection";
+import { EditEnvelopeForm } from "../forms/EnvelopeFormUpdate";
 
 // Utils
-import { cap } from "../util/cap";
-import { toDollars } from "../util/toDollars";
-import { reduceTransactions } from "../util/reduceTransactions";
+import { cap } from "../../util/cap";
+import { toDollars } from "../../util/toDollars";
+import { reduceTransactions } from "../../util/reduceTransactions";
 
 // Components
-import { CategoryLedger } from "./CategoryLedger";
-import { NewLedgerForm } from "./NewLedgerForm";
+import { CategoryLedger } from "../ledgers/CategoryLedger";
+import { NewLedgerForm } from "../forms/LedgerFormCreate";
 
 // Icons
 import { LuPlusCircle } from "react-icons/lu";
 
-export const Envelope = ({ _id, name, activeTab }) => {
+export const CategoryEnvelope = ({ _id, name, activeTab }) => {
   const { ledgers } = useTracker(() => {
     if (!Meteor.userId()) return {};
     // Return the ledgers that belong to this envelope

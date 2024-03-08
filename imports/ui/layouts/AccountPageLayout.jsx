@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, Outlet } from "react-router-dom";
 
 // Icons
 import { IoIosArrowBack } from "react-icons/io";
@@ -19,7 +19,7 @@ export function AccountPageLayout({ children }) {
         </div>
       </div>
       <div className="pt-12 p-2 flex flex-col justify-start items-stretch gap-3">
-        {children}
+        <Outlet />
       </div>
     </>
   );

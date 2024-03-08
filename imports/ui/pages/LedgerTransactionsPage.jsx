@@ -14,7 +14,7 @@ import {
   buildStyles,
 } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { LedgerTransaction } from "./LedgerTransaction";
+import { LedgerTransaction } from "../components/ledgers/ledgerComponents/LedgerTransaction";
 
 // Utils
 import { cap } from "../util/cap";
@@ -25,9 +25,8 @@ import { dates } from "../util/dates";
 // Icons
 import { IoIosArrowBack } from "react-icons/io";
 import { BiDollar, BiCheck, BiX } from "react-icons/bi";
-import { BsFillPlusCircleFill } from "react-icons/bs";
 
-export const TransactionsList = () => {
+export const LedgerTransactionsPage = () => {
   const { ledgerId } = useParams();
 
   return (
@@ -590,19 +589,6 @@ function DeleteLedger({ ledgerId }) {
       >
         Delete ledger
       </button>
-    </div>
-  );
-}
-
-function AddTransactionsCircle({ ledgerId }) {
-  return (
-    <div className="fixed bottom-4 right-4 w-14 h-14 bg-white rounded-full flex flex-row justify-center items-center z-20">
-      <Link
-        className="w-full h-full"
-        to={`/ledger/${ledgerId}/transactions/new`}
-      >
-        <BsFillPlusCircleFill className="text-sky-700 w-full h-full" />
-      </Link>
     </div>
   );
 }

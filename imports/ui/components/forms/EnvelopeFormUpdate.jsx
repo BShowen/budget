@@ -5,7 +5,7 @@ import { Meteor } from "meteor/meteor";
 import { FaRegTrashAlt } from "react-icons/fa";
 
 // Utils
-import { cap } from "../util/cap";
+import { cap } from "../../util/cap";
 
 export const EditEnvelopeForm = ({ envelopeId, envelopeName, toggleForm }) => {
   const [submitFormTimeoutId, setFormTimeoutId] = useState(null);

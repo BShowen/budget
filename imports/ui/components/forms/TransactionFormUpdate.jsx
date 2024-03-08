@@ -8,21 +8,22 @@ import React, {
   useContext,
   useCallback,
 } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { redirect, useNavigate, useParams } from "react-router-dom";
 import { pickBy } from "lodash";
 
 // Collections
-import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
-import { TagCollection } from "../../api/Tag/TagCollection";
-import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
-import { EnvelopeCollection } from "../../api/Envelope/EnvelopeCollection";
+import { LedgerCollection } from "../../../api/Ledger/LedgerCollection";
+import { TagCollection } from "../../../api/Tag/TagCollection";
+import { TransactionCollection } from "../../../api/Transaction/TransactionCollection";
+import { EnvelopeCollection } from "../../../api/Envelope/EnvelopeCollection";
 
 // Utils
-import { cap } from "../util/cap";
-import { dates } from "../util/dates";
-import { formatDollarAmount } from "../util/formatDollarAmount";
-import { reduceTransactions } from "../util/reduceTransactions";
-import { splitDollars } from "../util/splitDollars";
+import { cap } from "../../util/cap";
+import { dates } from "../../util/dates";
+import { formatDollarAmount } from "../../util/formatDollarAmount";
+import { reduceTransactions } from "../../util/reduceTransactions";
+import { splitDollars } from "../../util/splitDollars";
+import { toDollars } from "../../util/toDollars";
 
 // Icons
 import { AiOutlinePlusCircle } from "react-icons/ai";
@@ -31,10 +32,21 @@ import { LuCheckCircle, LuCircle } from "react-icons/lu";
 import { FaLock, FaLockOpen } from "react-icons/fa";
 
 // App context
-import { RootContext } from "../pages/AppData";
-import { toDollars } from "../util/toDollars";
+import { RootContext } from "../../layouts/AppData";
 
-export function CreateTransactionForm() {
+export function loader({ params: { transactionId } }) {
+  const transaction = TransactionCollection.findOne(
+    { _id: transactionId },
+    { fields: { isSplitTransaction: 1, splitTransactionId: 1 } }
+  );
+  if (transaction) {
+    return transaction;
+  } else {
+    return redirect(`/`);
+  }
+}
+
+export function EditTransactionForm() {
   const navigate = useNavigate();
   const rootContext = useContext(RootContext);
   const formRef = useRef(null);
@@ -42,12 +54,25 @@ export function CreateTransactionForm() {
   const [categorySelector, setCategorySelector] = useState("closed");
   const { currentBudgetId: budgetId } = rootContext;
 
-  // ledgerId will be truthy if the user is creating a new transaction for a
-  // specific ledger.
-  const { ledgerId } = params;
-  const ledger = useTracker(() => {
-    if (!ledgerId) return undefined;
-    return LedgerCollection.findOne({ _id: ledgerId });
+  const { ledgerId, transactionId } = params;
+  // I am using useState rather than useTracker because using useTracker causes
+  // a error to be logged to the console after the user updates a transaction.
+  // This is because the transactionId changes after the transaction is updated
+  // and the transactionId in the url becomes stale causing findOne to return
+  // undefined when findOne is expected to find a document.
+  // const { ledger, transactionList } = useTracker(() => {
+  const [{ ledger, transactionList }, _] = useState(() => {
+    const { ledgerId, transactionId } = params;
+    const ledger = LedgerCollection.findOne({ _id: ledgerId });
+    const { isSplitTransaction, splitTransactionId } =
+      TransactionCollection.findOne(
+        { _id: transactionId },
+        { fields: { isSplitTransaction: 1, splitTransactionId: 1 } }
+      );
+    const transactionList = isSplitTransaction
+      ? TransactionCollection.find({ splitTransactionId }).fetch()
+      : [TransactionCollection.findOne({ _id: transactionId })];
+    return { ledger, transactionList };
   });
 
   const envelopeNames = useTracker(() => {
@@ -119,22 +144,31 @@ export function CreateTransactionForm() {
   });
 
   const [formData, setFormData] = useState({
-    createdAt: dates.format(new Date(), { forHtml: true }),
+    // ----------------------------------------------------------------------
+    // transactionIdList is the list of id(s) for the current transaction(s)
+    // The resolver will need these id(s) in order to update the transaction(s)
+    transactionIdList: transactionList.map((t) => t._id),
+    // ----------------------------------------------------------------------
+    createdAt: dates.format(transactionList[0].createdAt, { forHtml: true }),
     budgetId,
     type: ledger ? ledger.kind : "expense",
-    amount: "0.00",
-    merchant: "",
-    note: "",
+    amount: transactionList.reduce(
+      (total, transaction) => total + transaction.amount,
+      0
+    ),
+    merchant: transactionList[0].merchant,
+    note: transactionList[0].note,
     selectedLedgers: {
-      // If ledgerId is truthy then this form has been rendered with a
-      // preselected ledger.
-      ...(ledgerId && {
-        [ledgerId]: {
-          willUnmount: false, //Set to true 301ms before this ledger is removed.
-          splitAmount: formatDollarAmount(0),
-          isLocked: false, //Set to true when the user has set the splitAmount.
-        },
-      }),
+      ...transactionList.reduce((acc, transaction) => {
+        return {
+          ...acc,
+          [transaction.ledgerId]: {
+            willUnmount: false, //Set to true 301ms before this ledger is removed.
+            splitAmount: transaction.amount,
+            isLocked: false, //Set to true when the user has set the splitAmount.
+          },
+        };
+      }, {}),
     },
   });
 
@@ -149,6 +183,9 @@ export function CreateTransactionForm() {
       // income ledgers can't have expenses.
       ...(active === "expense" &&
         (() => {
+          // Make a copy of the previous selected ledgers to work with.
+          // const selectedLedgers = { ...prev.selectedLedgers };
+
           // Return an object from this method because the return value is used
           // in the spread operator.
           return {
@@ -204,27 +241,40 @@ export function CreateTransactionForm() {
       // Make a copy of previous selected ledgers to work with.
       const prevLedgers = { ...prev.selectedLedgers };
 
+      /* prettier-ignore */
       // Calculate the remaining balance to split amongst the ledgers.
-      const remainingBalance = (
-        parseFloat(prev.amount) -
-        parseFloat(
-          Object.entries(prevLedgers).reduce((acc, selectedLedger) => {
-            const [prevLedgerId, ledgerMeta] = selectedLedger;
-            if (prevLedgerId == ledgerId) {
-              return (
-                parseFloat(acc) + parseFloat(formatDollarAmount(amount))
-              ).toFixed(2);
-            } else if (ledgerMeta.isLocked) {
-              return (
-                parseFloat(acc) +
-                parseFloat(formatDollarAmount(ledgerMeta.splitAmount))
-              ).toFixed(2);
-            } else {
-              return acc;
-            }
-          }, 0)
-        ).toFixed(2)
-      ).toFixed(2);
+      const remainingBalance =
+        Math.floor(
+          (
+            parseFloat(prev.amount) -
+            parseFloat(
+              Object.entries(prevLedgers).reduce((acc, selectedLedger) => {
+                const [prevLedgerId, ledgerMeta] = selectedLedger;
+                if (prevLedgerId == ledgerId) {
+                  return (
+                    Math.floor(
+                      (parseFloat(acc) +
+                        parseFloat(formatDollarAmount(amount))) *
+                        100
+                    ) / 100
+                  );
+                } else if (ledgerMeta.isLocked) {
+                  return (
+                    Math.floor(
+                      (parseFloat(acc) +
+                        parseFloat(
+                          formatDollarAmount(ledgerMeta.splitAmount)
+                        )) *
+                        100
+                    ) / 100
+                  );
+                } else {
+                  return acc;
+                }
+              }, 0)
+            )
+          ) * 100
+        ) / 100;
 
       // Split the remaining balance into equal parts.
       // This is an array where each index holds a string value floating point
@@ -329,7 +379,7 @@ export function CreateTransactionForm() {
     }, []);
 
     Meteor.call(
-      "transaction.createTransaction",
+      "transaction.updateTransaction",
       {
         ...formDetails,
         allocations,
@@ -436,14 +486,14 @@ export function CreateTransactionForm() {
   useEffect(() => {
     const isSplitTransaction = Object.keys(formData.selectedLedgers).length > 1;
     const correctBalance = isSplitTransaction
-      ? Object.values(formData.selectedLedgers).reduce(
-          (total, meta) => total + parseFloat(meta.splitAmount),
-          0
-        ) == parseFloat(formData.amount)
+      ? Object.values(formData.selectedLedgers).reduce((total, meta) => {
+          return Math.floor((total + parseFloat(meta.splitAmount)) * 100) / 100;
+        }, 0) == parseFloat(formData.amount)
       : true;
+
     const noZeroDollarBalance = isSplitTransaction
       ? Object.values(formData.selectedLedgers).every(
-          (meta) => parseFloat(meta.splitAmount) > 0
+          (meta) => meta.splitAmount > 0
         )
       : true;
     /* prettier-ignore */
@@ -471,7 +521,7 @@ export function CreateTransactionForm() {
             Cancel
           </h2>
           <h2 className="col-start-3 col-end-11 text-white text-xl">
-            New transaction
+            Edit transaction
           </h2>
           <button
             className={`col-start-11 col-end-13 ${
@@ -510,7 +560,6 @@ export function CreateTransactionForm() {
                 handleInputChange({ target: { value: value, name: "amount" } });
               }}
               min={0}
-              autoFocus
               className="w-full h-full focus:ring-0 border-0 form-input text-center p-0 m-0 text-7xl font-bold bg-transparent"
             />
           </div>
@@ -571,7 +620,10 @@ export function CreateTransactionForm() {
           </div>
 
           <div className="w-full flex flex-col items-stretch justify-start bg-white rounded-xl overflow-hidden shadow-md shadow-gray-200 px-2 py-1">
-            <TagSelection preSelectedTags={undefined} key={ledgerId} />
+            <TagSelection
+              preSelectedTags={transactionList[0].tags || []}
+              key={ledgerId}
+            />
           </div>
 
           <div className="w-full rounded-xl overflow-hidden px-1 py-1 bg-white flex flex-col justify-start items-stretch min-h-10">
@@ -612,6 +664,30 @@ export function CreateTransactionForm() {
               selectedLedgerIdList={Object.keys(formData.selectedLedgers)}
               transactionType={formData.type}
             />
+          </div>
+
+          <div className="w-full flex flex-row justify-center items-center h-16">
+            <button
+              className="text-xl font-bold text-rose-500 lg:hover:cursor-pointer lg:hover:text-rose-600 lg:hover:underline transition-text duration-150"
+              type="button"
+              onClick={() =>
+                Meteor.call(
+                  "transaction.deleteTransaction",
+                  {
+                    transactionId,
+                  },
+                  (error) => {
+                    if (error) {
+                      console.log({ error });
+                    } else {
+                      navigate(-1, { replace: true });
+                    }
+                  }
+                )
+              }
+            >
+              Delete transaction
+            </button>
           </div>
         </form>
       </div>
@@ -670,7 +746,8 @@ function SelectedLedger({
                 placeholder="$0.00"
                 required
                 name="splitAmount"
-                value={toDollars(formatDollarAmount(splitAmount))}
+                // value={toDollars(formatDollarAmount(splitAmount))}
+                value={toDollars(splitAmount)}
                 onInput={(e) => {
                   updateSplitAmount({
                     ledgerId,

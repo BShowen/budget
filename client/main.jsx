@@ -8,7 +8,7 @@ import { RouterProvider } from "react-router-dom";
 import { router } from "./router";
 
 // Components
-import { AppData } from "../imports/ui/pages/AppData.jsx";
+import { AppData } from "../imports/ui/layouts/AppData.jsx";
 
 Meteor.startup(() => {
   const root = createRoot(document.getElementById("app"));

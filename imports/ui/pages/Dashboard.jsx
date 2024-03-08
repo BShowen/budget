@@ -6,11 +6,11 @@ import { BudgetCollection } from "../../api/Budget/BudgetCollection";
 import { EnvelopeCollection } from "../../api/Envelope/EnvelopeCollection";
 
 // Components
-import { DashboardHeader } from "../components/DashboardHeader";
-import { Envelope } from "../components/Envelope";
-import { IncomeEnvelope } from "../components/IncomeEnvelope";
-import { SavingsEnvelope } from "../components/SavingsEnvelope";
-import { AddEnvelopeButton } from "../components/AddEnvelopeButton";
+import { CategoryEnvelope } from "../components/envelopes/CategoryEnvelope";
+import { IncomeEnvelope } from "../components/envelopes/IncomeEnvelope";
+import { SavingsEnvelope } from "../components/envelopes/SavingsEnvelope";
+import { DashboardHeader } from "../components/dashboardComponents/DashboardHeader";
+import { NewEnvelopeButton } from "../components/dashboardComponents/DashboardNewEnvelopeButton";
 
 export const Dashboard = () => {
   const { budget } = useTracker(() => {
@@ -92,9 +92,13 @@ export const Dashboard = () => {
         {/* Allocation envelope will go here.  */}
 
         {expenseEnvelopes.map((envelope) => (
-          <Envelope key={envelope._id} {...envelope} activeTab={activeTab} />
+          <CategoryEnvelope
+            key={envelope._id}
+            {...envelope}
+            activeTab={activeTab}
+          />
         ))}
-        <AddEnvelopeButton budgetId={budget._id} />
+        <NewEnvelopeButton budgetId={budget._id} />
       </div>
     </div>
   );

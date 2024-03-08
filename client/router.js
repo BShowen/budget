@@ -3,28 +3,31 @@ import React from "react";
 import { createBrowserRouter, redirect } from "react-router-dom";
 
 // Components
-import { LoginForm, loginFormLoader } from "../imports/ui/components/LoginForm";
-import { EditTransactionForm } from "../imports/ui/components/EditTransactionForm";
-import { CreateTransactionForm } from "../imports/ui/components/CreateTransactionForm";
-import { Layout } from "../imports/ui/pages/Layout";
+import {
+  LoginForm,
+  loginFormLoader,
+} from "../imports/ui/components/forms/LoginForm";
+import { EditTransactionForm } from "../imports/ui/components/forms/TransactionFormUpdate";
+import { CreateTransactionForm } from "../imports/ui/components/forms/TransactionFormCreate";
+import { AppLayout } from "../imports/ui/layouts/AppLayout";
 
 // Pages
 import { Dashboard } from "../imports/ui/pages/Dashboard";
-import { TransactionsList } from "../imports/ui/components/TransactionsList";
-import { SignupForm } from "../imports/ui/components/SignupForm";
+import { LedgerTransactionsPage } from "../imports/ui/pages/LedgerTransactionsPage";
+import { SignupForm } from "../imports/ui/components/forms/SignupForm";
 import { AccountPage } from "../imports/ui/pages/AccountPage";
 import { ErrorPage } from "../imports/ui/pages/ErrorPage";
 import { InvitationPage } from "../imports/ui/pages/InvitationPage";
 import { ResetPassword } from "../imports/ui/pages/ResetPasswordPage";
 import { DeleteAccount } from "../imports/ui/pages/DeleteAccountPage";
 import { ManageUsersPage } from "../imports/ui/pages/ManageUsersPage";
-import { AccountPageLayout } from "../imports/ui/pages/AccountPageLayout";
-import { TransactionsPage } from "../imports/ui/pages/TransactionsPage";
+import { AccountPageLayout } from "../imports/ui/layouts/AccountPageLayout";
+import { TransactionListPage } from "../imports/ui/pages/TransactionListPage";
 import { NewAllocationPage } from "../imports/ui/pages/NewAllocationPage";
 
 // Loaders
 import { logoutLoader } from "../imports/ui/components/Logout";
-import { loader as editTransactionLoader } from "../imports/ui/components/EditTransactionForm";
+import { loader as editTransactionLoader } from "../imports/ui/components/forms/TransactionFormCreate";
 
 const checkLoginStatus = () => {
   if (Meteor.loggingOut()) {
@@ -40,7 +43,7 @@ export const router = createBrowserRouter([
   {
     path: "/",
     loader: checkLoginStatus,
-    element: <Layout />,
+    element: <AppLayout />,
     errorElement: <ErrorPage />,
     children: [
       {
@@ -49,7 +52,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/ledger/:ledgerId/transactions",
-        element: <TransactionsList />,
+        element: <LedgerTransactionsPage />,
       },
       {
         path: "/ledger/:ledgerId/transactions/new",
@@ -62,6 +65,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/account",
+        element: <AccountPageLayout />,
         children: [
           {
             index: true,
@@ -69,27 +73,15 @@ export const router = createBrowserRouter([
           },
           {
             path: "invite",
-            element: (
-              <AccountPageLayout>
-                <InvitationPage />
-              </AccountPageLayout>
-            ),
+            element: <InvitationPage />,
           },
           {
             path: "reset-password",
-            element: (
-              <AccountPageLayout header="Reset your password">
-                <ResetPassword />
-              </AccountPageLayout>
-            ),
+            element: <ResetPassword />,
           },
           {
             path: "delete-account",
-            element: (
-              <AccountPageLayout>
-                <DeleteAccount />
-              </AccountPageLayout>
-            ),
+            element: <DeleteAccount />,
           },
           {
             path: "manage-users",
@@ -103,7 +95,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/transactions",
-        element: <TransactionsPage />,
+        element: <TransactionListPage />,
       },
       {
         path: "/new-allocation",

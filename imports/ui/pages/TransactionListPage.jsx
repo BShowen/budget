@@ -23,7 +23,7 @@ import {
   LuXCircle,
 } from "react-icons/lu";
 
-export function TransactionsPage() {
+export function TransactionListPage() {
   // const [sortOrder, setSortOrder] = useState("asc");
   // const [sortProperty, setSortProperty] = useState("createdAt");
   // const toggleSortOrder = () => {

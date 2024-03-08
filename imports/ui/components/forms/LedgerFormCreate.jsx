@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Meteor } from "meteor/meteor";
 
 // Utils
-import { formatDollarAmount } from "../util/formatDollarAmount";
+import { formatDollarAmount } from "../../util/formatDollarAmount";
 
 export function NewLedgerForm({
   children,

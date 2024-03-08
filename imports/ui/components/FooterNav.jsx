@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { NavLink, Link, useLocation } from "react-router-dom";
 
 // Context
-import { RootContext } from "../pages/AppData";
+import { RootContext } from "../layouts/AppData";
 
 // Icons
 import {

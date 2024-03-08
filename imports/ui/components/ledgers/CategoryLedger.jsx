@@ -4,16 +4,16 @@ import { useTracker } from "meteor/react-meteor-data";
 import { Link } from "react-router-dom";
 
 // Utils
-import { cap } from "../util/cap";
-import { toDollars } from "../util/toDollars";
-import { reduceTransactions } from "../util/reduceTransactions";
+import { cap } from "../../util/cap";
+import { toDollars } from "../../util/toDollars";
+import { reduceTransactions } from "../../util/reduceTransactions";
 
 // Components
-import { Progress } from "./Progress";
-import { UpdateLedgerForm } from "./UpdateLedgerForm";
+import { LedgerProgress } from "./ledgerComponents/LedgerProgress";
+import { UpdateLedgerForm } from "../forms/LedgerFormUpdate";
 
 // Collections
-import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
+import { TransactionCollection } from "../../../api/Transaction/TransactionCollection";
 
 export const CategoryLedger = ({ ledger, activeTab }) => {
   const [isFormActive, setFormActive] = useState(false);
@@ -88,7 +88,7 @@ export const CategoryLedger = ({ ledger, activeTab }) => {
             toggleForm={() => setFormActive(false)}
             ledger={ledger}
           />
-          <Progress percent={calculateProgress()} />
+          <LedgerProgress percent={calculateProgress()} />
         </>
       ) : (
         <Link
@@ -112,7 +112,7 @@ export const CategoryLedger = ({ ledger, activeTab }) => {
           >
             {toDollars(displayBalance)}
           </h2>
-          <Progress percent={calculateProgress()} />
+          <LedgerProgress percent={calculateProgress()} />
         </Link>
       )}
     </div>

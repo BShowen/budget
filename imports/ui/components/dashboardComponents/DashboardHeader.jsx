@@ -2,16 +2,16 @@ import React, { useContext } from "react";
 import { useTracker } from "meteor/react-meteor-data";
 
 // Collections
-import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
+import { LedgerCollection } from "../../../api/Ledger/LedgerCollection";
 
 // Components
 import { DashboardButtonGroup } from "./DashboardButtonGroup";
 
 // Utils
-import { toDollars } from "../util/toDollars";
+import { toDollars } from "../../util/toDollars";
 
 // Context
-import { RootContext } from "../pages/AppData";
+import { RootContext } from "../../layouts/AppData";
 
 export function DashboardHeader({
   setActiveTab,

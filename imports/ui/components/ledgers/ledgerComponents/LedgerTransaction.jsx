@@ -2,8 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 // Utils
-import { cap } from "../util/cap";
-import { toDollars } from "../util/toDollars";
+import { cap } from "../../../util/cap";
+import { toDollars } from "../../../util/toDollars";
 
 // Icons
 import { HiMinus, HiPlus } from "react-icons/hi";

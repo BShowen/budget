@@ -1,7 +1,7 @@
 import React from "react";
 import { Meteor } from "meteor/meteor";
 
-export const AddEnvelopeButton = ({ budgetId }) => {
+export const NewEnvelopeButton = ({ budgetId }) => {
   const handleClick = () => {
     Meteor.call("envelope.createEnvelope", { budgetId });
   };

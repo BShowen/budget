@@ -3,7 +3,7 @@ import { Outlet, ScrollRestoration } from "react-router-dom";
 
 // Components
 import { FooterNav } from "../components/FooterNav.jsx";
-export const Layout = () => {
+export const AppLayout = () => {
   return (
     <div
       id="layout"

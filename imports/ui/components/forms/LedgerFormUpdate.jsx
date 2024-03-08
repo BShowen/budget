@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Meteor } from "meteor/meteor";
 
 // Utils
-import { formatDollarAmount } from "../util/formatDollarAmount";
-import { cap } from "../util/cap";
+import { formatDollarAmount } from "../../util/formatDollarAmount";
+import { cap } from "../../util/cap";
 
 export function UpdateLedgerForm({ toggleForm, ledger }) {
   const [formState, setFormState] = useState({

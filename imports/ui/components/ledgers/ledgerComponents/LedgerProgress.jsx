@@ -1,6 +1,6 @@
 import React from "react";
 
-export const Progress = (options) => {
+export const LedgerProgress = (options) => {
   const percent = options.percent < 0 ? 0 : options.percent;
   const bgColor =
     percent <= 100 ? "progress-bg-color-good" : "progress-bg-color-bad";
