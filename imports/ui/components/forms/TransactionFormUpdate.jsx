@@ -151,7 +151,7 @@ export function EditTransactionForm() {
     // ----------------------------------------------------------------------
     createdAt: dates.format(transactionList[0].createdAt, { forHtml: true }),
     budgetId,
-    type: ledger ? ledger.kind : "expense",
+    type: ledger?.kind === "expense" ? "expense" : "income",
     amount: transactionList.reduce(
       (total, transaction) => total + transaction.amount,
       0
