@@ -242,51 +242,53 @@ function Insights() {
   });
 
   return (
-    <div className="bg-white p-2 rounded-xl">
-      <div className="w-full flex flex-col justify-start items-stretch font-semibold gap-2">
-        <div className="bg-slate-100 rounded-md p-1">
-          <h1 className="text-xl font-bold text-center">Income</h1>
-          <div className="w-full flex flex-row justify-between">
-            <div>Expected</div>
-            <div>{toDollars(anticipatedIncome)}</div>
-          </div>
-          <div className="w-full flex flex-row justify-between">
-            <div>Received</div>
-            <div>{toDollars(incomeReceived)}</div>
-          </div>
+    <div className="w-full flex flex-col justify-start items-stretch font-semibold gap-2">
+      <div className="bg-white rounded-xl p-2 flex flex-col gap-1">
+        <h1 className="text-lg font-bold">Income</h1>
+
+        <div className="w-full flex flex-row justify-between bg-slate-100 rounded-md px-2">
+          <div>Expected</div>
+          <div>{toDollars(anticipatedIncome)}</div>
         </div>
 
-        <div className="bg-slate-100 rounded-md p-1">
-          <h1 className="text-xl font-bold text-center">Saved</h1>
-          <div className="w-full flex flex-row justify-between">
-            <div>Savings</div>
-            <div>{toDollars(Math.floor(savings * 100) / 100)}</div>
-          </div>
-          <div className="w-full flex flex-row justify-between">
-            <div>Allocations</div>
-            <div>{toDollars(Math.floor(allocations * 100) / 100)}</div>
-          </div>
+        <div className="w-full flex flex-row justify-between bg-slate-100 rounded-md px-2">
+          <div>Received</div>
+          <div>{toDollars(incomeReceived)}</div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-xl p-2 flex flex-col gap-1">
+        <h1 className="text-lg font-bold ">Saved</h1>
+
+        <div className="w-full flex flex-row justify-between bg-slate-100 rounded-md px-2">
+          <div>Savings</div>
+          <div>{toDollars(Math.floor(savings * 100) / 100)}</div>
         </div>
 
-        <div className="bg-slate-100 rounded-md p-1">
-          <h1 className="text-xl font-bold text-center">Spent</h1>
-          <div className="w-full flex flex-row justify-between">
-            <div>Spent this month</div>
-            <div>{toDollars(spentSoFar)}</div>
-          </div>
+        <div className="w-full flex flex-row justify-between bg-slate-100 rounded-md px-2">
+          <div>Allocations</div>
+          <div>{toDollars(Math.floor(allocations * 100) / 100)}</div>
         </div>
+      </div>
 
-        <div className="bg-slate-100 rounded-md p-1">
-          <h1 className="text-xl font-bold text-center">Remaining</h1>
-          <div className="w-full flex flex-row justify-between">
-            <div>Left to spend</div>
-            <div>
-              {toDollars(
-                Math.floor(
-                  (incomeReceived - spentSoFar - savings - allocations) * 100
-                ) / 100
-              )}
-            </div>
+      <div className="bg-white rounded-xl p-2 flex flex-col gap-1">
+        <h1 className="text-xl font-bold ">Spent</h1>
+        <div className="w-full flex flex-row justify-between bg-slate-100 rounded-md px-2">
+          <div>Spent this month</div>
+          <div>{toDollars(spentSoFar)}</div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-xl p-2 flex flex-col gap-1">
+        <h1 className="text-xl font-bold ">Remaining</h1>
+        <div className="w-full flex flex-row justify-between bg-slate-100 rounded-md px-2">
+          <div>Left to spend</div>
+          <div>
+            {toDollars(
+              Math.floor(
+                (incomeReceived - spentSoFar - savings - allocations) * 100
+              ) / 100
+            )}
           </div>
         </div>
       </div>
