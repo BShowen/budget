@@ -461,9 +461,12 @@ function ListTransactions({ ledgerId }) {
 
   const { transactionList, filteredTransactions } = useTracker(() => {
     if (!Meteor.userId()) return {};
-    const transactionList = TransactionCollection.find({
-      ledgerId: ledger._id,
-    }).fetch();
+    const transactionList = TransactionCollection.find(
+      {
+        ledgerId: ledger._id,
+      },
+      { sort: { createdAt: -1 } }
+    ).fetch();
     const filteredTransactions = transactionList.filter((transaction) => {
       if (activeTags.length === 0) return true;
       return (

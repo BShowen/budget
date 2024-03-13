@@ -82,7 +82,7 @@ export function TransactionListPage() {
   // };
   const [filter, setFilter] = useState("");
   const transactionList = useTracker(() =>
-    TransactionCollection.find().fetch()
+    TransactionCollection.find({}, { sort: { createdAt: -1 } }).fetch()
   );
 
   const filteredTransactionList = transactionList.filter((transaction) => {
