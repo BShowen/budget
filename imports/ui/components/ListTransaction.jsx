@@ -113,7 +113,7 @@ function ExpandedContent({ transaction, expanded }) {
 
   return (
     <div
-      className={`w-full transition-all duration-200 ease-in overflow-x-hidden overflow-y-scroll flex flex-col justify-start items-stretch mt-10 overscroll-auto pt-2 ${
+      className={`w-full transition-all duration-200 ease-in overflow-x-hidden overflow-y-scroll flex flex-col justify-start items-stretch mt-10 overscroll-auto pt-2 scrollbar-hide ${
         expanded ? "h-full" : "h-0"
       }`}
     >

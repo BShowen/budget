@@ -126,9 +126,9 @@ export function TransactionListPage() {
                 .split(" ");
               return (
                 <li
-                  className={
+                  className={`${
                     i == transactionCount - 1 ? "border-t border-b" : "border-t"
-                  }
+                  } overflow-hidden`}
                   key={transaction._id}
                 >
                   <ListTransaction
