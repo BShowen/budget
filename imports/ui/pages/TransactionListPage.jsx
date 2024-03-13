@@ -192,33 +192,102 @@ function Insights() {
       .fetch()
       .reduce((acc, tx) => {
         if (tx.type == "expense") {
-          return acc + tx.amount;
+          return Math.floor((acc + tx.amount) * 100) / 100;
         } else {
-          return acc - tx.amount;
+          return Math.floor((acc - tx.amount) * 100) / 100;
         }
       }, 0);
   });
+
+  // This is the sum of all the income transactions in allocation ledgers.
+  const allocations = useTracker(() => {
+    // An array of all allocation ledger id's.
+    const allocationLedgers = LedgerCollection.find({ kind: "allocation" })
+      .fetch()
+      .map((ledger) => ledger._id);
+    /* prettier-ignore */
+    // Get all income transactions associated with the allocations
+    const transactions = TransactionCollection.find({
+      $and: [
+        { ledgerId: { $in: allocationLedgers } },
+        { type: "income" }
+      ],
+    }).fetch();
+    // Sum the transaction totals.
+    const sum = transactions.reduce((acc, transaction) => {
+      return Math.floor((acc + transaction.amount) * 100) / 100;
+    }, 0);
+    return sum;
+  });
+
+  // This is the sum of all the income transactions in the savings ledgers.
+  const savings = useTracker(() => {
+    // An array of all savings ledger id's
+    const savingsLedgerIdList = LedgerCollection.find({ kind: "savings" })
+      .fetch()
+      ?.map((ledger) => ledger._id);
+    /* prettier-ignore */
+    // Get a list of all the transactions associated with the saving ledgers.
+    const transactions = TransactionCollection.find({
+      $and: [
+        { ledgerId: { $in: savingsLedgerIdList } },
+        { type: "income" }
+      ],
+    }).fetch();
+    // Sum the total of all the transactions.
+    const sum = transactions.reduce((acc, transaction) => {
+      return Math.floor((transaction.amount + acc) * 100) / 100;
+    }, 0);
+    return sum;
+  });
+
   return (
     <div className="bg-white p-2 rounded-xl">
-      <div className="w-full text-center text-xl font-bold h-10">
-        <h1>Overview</h1>
-      </div>
-      <div className="w-full flex flex-col justify-start items-stretch font-semibold">
-        <div className="w-full flex flex-row justify-between">
-          <div>Income expected this month</div>
-          <div>{toDollars(anticipatedIncome)}</div>
+      <div className="w-full flex flex-col justify-start items-stretch font-semibold gap-2">
+        <div className="bg-slate-100 rounded-md p-1">
+          <h1 className="text-xl font-bold text-center">Income</h1>
+          <div className="w-full flex flex-row justify-between">
+            <div>Expected</div>
+            <div>{toDollars(anticipatedIncome)}</div>
+          </div>
+          <div className="w-full flex flex-row justify-between">
+            <div>Received</div>
+            <div>{toDollars(incomeReceived)}</div>
+          </div>
         </div>
-        <div className="w-full flex flex-row justify-between">
-          <div>Income received so far</div>
-          <div>{toDollars(incomeReceived)}</div>
+
+        <div className="bg-slate-100 rounded-md p-1">
+          <h1 className="text-xl font-bold text-center">Saved</h1>
+          <div className="w-full flex flex-row justify-between">
+            <div>Savings</div>
+            <div>{toDollars(Math.floor(savings * 100) / 100)}</div>
+          </div>
+          <div className="w-full flex flex-row justify-between">
+            <div>Allocations</div>
+            <div>{toDollars(Math.floor(allocations * 100) / 100)}</div>
+          </div>
         </div>
-        <div className="w-full flex flex-row justify-between border-b">
-          <div>Total spent so far</div>
-          <div>{toDollars(spentSoFar)}</div>
+
+        <div className="bg-slate-100 rounded-md p-1">
+          <h1 className="text-xl font-bold text-center">Spent</h1>
+          <div className="w-full flex flex-row justify-between">
+            <div>Spent this month</div>
+            <div>{toDollars(spentSoFar)}</div>
+          </div>
         </div>
-        <div className="w-full flex flex-row justify-between">
-          <div>Remaining</div>
-          <div>{toDollars(incomeReceived - spentSoFar)}</div>
+
+        <div className="bg-slate-100 rounded-md p-1">
+          <h1 className="text-xl font-bold text-center">Remaining</h1>
+          <div className="w-full flex flex-row justify-between">
+            <div>Left to spend</div>
+            <div>
+              {toDollars(
+                Math.floor(
+                  (incomeReceived - spentSoFar - savings - allocations) * 100
+                ) / 100
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
