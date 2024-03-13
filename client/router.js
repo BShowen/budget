@@ -27,7 +27,7 @@ import { NewAllocationPage } from "../imports/ui/pages/NewAllocationPage";
 
 // Loaders
 import { logoutLoader } from "../imports/ui/components/Logout";
-import { loader as editTransactionLoader } from "../imports/ui/components/forms/TransactionFormCreate";
+import { loader as editTransactionLoader } from "../imports/ui/components/forms/TransactionFormUpdate";
 
 const checkLoginStatus = () => {
   if (Meteor.loggingOut()) {

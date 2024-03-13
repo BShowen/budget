@@ -8,7 +8,12 @@ import React, {
   useContext,
   useCallback,
 } from "react";
-import { redirect, useNavigate, useParams } from "react-router-dom";
+import {
+  redirect,
+  useNavigate,
+  useParams,
+  useLoaderData,
+} from "react-router-dom";
 import { pickBy } from "lodash";
 
 // Collections
@@ -36,8 +41,8 @@ import { RootContext } from "../../layouts/AppData";
 
 export function loader({ params: { transactionId } }) {
   const transaction = TransactionCollection.findOne(
-    { _id: transactionId },
-    { fields: { isSplitTransaction: 1, splitTransactionId: 1 } }
+    { _id: transactionId }
+    // { fields: { isSplitTransaction: 1, splitTransactionId: 1 } }
   );
   if (transaction) {
     return transaction;
@@ -51,6 +56,7 @@ export function EditTransactionForm() {
   const rootContext = useContext(RootContext);
   const formRef = useRef(null);
   const params = useParams();
+  const transaction = useLoaderData();
   const [categorySelector, setCategorySelector] = useState("closed");
   const { currentBudgetId: budgetId } = rootContext;
 
@@ -151,7 +157,7 @@ export function EditTransactionForm() {
     // ----------------------------------------------------------------------
     createdAt: dates.format(transactionList[0].createdAt, { forHtml: true }),
     budgetId,
-    type: ledger?.kind === "expense" ? "expense" : "income",
+    type: transaction.type,
     amount: transactionList.reduce(
       (total, transaction) => total + transaction.amount,
       0
