@@ -121,7 +121,8 @@ export function CreateTransactionForm() {
   const [formData, setFormData] = useState({
     createdAt: dates.format(new Date(), { forHtml: true }),
     budgetId,
-    type: ledger?.kind === "expense" ? "expense" : "income",
+    // type: ledger?.kind === "expense" ? "expense" : "income",
+    type: ledger ? ledger.kind : "expense",
     amount: "0.00",
     merchant: "",
     note: "",
