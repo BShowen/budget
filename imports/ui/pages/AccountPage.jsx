@@ -28,7 +28,7 @@ export function AccountPage() {
   return (
     <>
       <div className="empty-page-header"></div>
-      <div className="w-full h-full p-2 pb-24 text-gray-700">
+      <div className="w-full h-full p-2 pb-24 text-color-primary">
         <div className="h-20 flex flex-col justify-start items-start">
           <h1 className="font-bold text-3xl text-gray-700">
             {cap(firstName)} {cap(lastName)}
@@ -89,7 +89,7 @@ export function AccountPage() {
 
         <div className="py-3">
           <Link
-            className="border rounded-lg bg-blue-500 w-full h-10 flex flex-row justify-center items-center"
+            className="border rounded-lg bg-blue-500 w-full h-10 flex flex-row justify-center items-center text-white font-semibold"
             to="/logout"
           >
             Log out

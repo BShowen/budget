@@ -86,11 +86,7 @@ export const router = createBrowserRouter([
           },
           {
             path: "manage-users",
-            element: (
-              <AccountPageLayout>
-                <ManageUsersPage />
-              </AccountPageLayout>
-            ),
+            element: <ManageUsersPage />,
           },
         ],
       },
