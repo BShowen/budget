@@ -1,5 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useTracker } from "meteor/react-meteor-data";
+
+// Context
+import { RootContext } from "../layouts/AppData";
 
 // Collections
 import { BudgetCollection } from "../../api/Budget/BudgetCollection";
@@ -13,14 +16,10 @@ import { DashboardHeader } from "../components/dashboardComponents/DashboardHead
 import { NewEnvelopeButton } from "../components/dashboardComponents/DashboardNewEnvelopeButton";
 
 export const Dashboard = () => {
-  const { budget } = useTracker(() => {
-    // BudgetCollection will never contain more than one document.
-    // This is on purpose because the budget publication returns one document.
-    const budget = BudgetCollection.findOne();
-    return {
-      budget,
-    };
-  });
+  const { currentBudgetId } = useContext(RootContext);
+  const budget = useTracker(() =>
+    BudgetCollection.findOne({ _id: currentBudgetId })
+  );
 
   const { expenseEnvelopes, incomeEnvelope, savingsEnvelope } = useTracker(
     () => {

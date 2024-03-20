@@ -24,7 +24,18 @@ export const AppData = ({ children }) => {
     // get the most recent budget and return it
     const budgetHandler = Meteor.subscribe("budget", date);
     if (Meteor.userId() && budgetHandler.ready()) {
-      return { budget: BudgetCollection.findOne() };
+      return {
+        budget: BudgetCollection.findOne({
+          createdAt: {
+            $gte: date,
+            $lte: new Date(
+              date.getFullYear(),
+              date.getMonth() + 1,
+              date.getDate() - 1
+            ),
+          },
+        }),
+      };
     } else {
       return { budget: undefined };
     }
@@ -37,14 +48,15 @@ export const AppData = ({ children }) => {
     const userDataHandler = Meteor.subscribe("userData", budget?._id);
     const tagHandler = Meteor.subscribe("tags");
     const allUsers = Meteor.subscribe("allUsers");
-
+    const allBudgets = Meteor.subscribe("allBudgets");
     return !(
       envelopeHandler.ready() &&
       ledgerHandler.ready() &&
       transactionHandler.ready() &&
       userDataHandler.ready() &&
       tagHandler.ready() &&
-      allUsers.ready()
+      allUsers.ready() &&
+      allBudgets.ready()
     );
   });
 
@@ -67,17 +79,8 @@ export const AppData = ({ children }) => {
   ) : (
     <RootContext.Provider
       value={{
-        goPreviousMonth: () => {
-          setDate(
-            (prevDate) =>
-              new Date(prevDate.getFullYear(), prevDate.getMonth() - 1, 1)
-          );
-        },
-        goNextMonth: () => {
-          setDate(
-            (prevDate) =>
-              new Date(prevDate.getFullYear(), prevDate.getMonth() + 1, 1)
-          );
+        goToBudget: ({ date }) => {
+          setDate(date);
         },
         currentBudgetId: budget?._id,
         uncategorizedTransactions,

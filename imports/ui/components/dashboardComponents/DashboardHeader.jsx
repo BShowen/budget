@@ -6,12 +6,10 @@ import { LedgerCollection } from "../../../api/Ledger/LedgerCollection";
 
 // Components
 import { DashboardButtonGroup } from "./DashboardButtonGroup";
+import { MonthSelector } from "./MonthSelector";
 
 // Utils
 import { toDollars } from "../../util/toDollars";
-
-// Context
-import { RootContext } from "../../layouts/AppData";
 
 export function DashboardHeader({
   setActiveTab,
@@ -19,14 +17,6 @@ export function DashboardHeader({
   date,
   incomeEnvelope,
 }) {
-  const { goPreviousMonth, goNextMonth } = useContext(RootContext);
-
-  const prevDate = new Date(date.getFullYear(), date.getMonth() - 1, 1);
-  const prevMonth = prevDate.toLocaleDateString("en-US", { month: "long" });
-
-  const nextDate = new Date(date.getFullYear(), date.getMonth() + 1, 1);
-  const nextMonth = nextDate.toLocaleDateString("en-US", { month: "long" });
-
   const year = date.toLocaleString("en-US", { year: "numeric" });
   const currentMonth = date.toLocaleString("en-US", { month: "long" });
 
@@ -48,6 +38,7 @@ export function DashboardHeader({
             <h1 className="text-3xl font-bold lg:hover:cursor-pointer w-max">
               {currentMonth} <span className="font-extralight">{year}</span>
             </h1>
+            <MonthSelector currentDate={date} />
           </div>
         </div>
         <div className="w-full px-1">

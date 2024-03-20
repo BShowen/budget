@@ -156,3 +156,11 @@ Meteor.publish("budget", function (date) {
     { sort: { createdAt: -1 }, limit: 1 }
   );
 });
+
+Meteor.publish("allBudgets", function () {
+  if (!this.userId) {
+    return this.ready();
+  }
+  const { accountId } = Meteor.user();
+  return BudgetCollection.find({ accountId });
+});
