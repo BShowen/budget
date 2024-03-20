@@ -338,13 +338,10 @@ export function CreateTransactionForm() {
         newTags,
       },
       (error) => {
-        if (error) {
-          console.log(error.details);
-        } else {
-          navigate(-1, { replace: true });
-        }
+        if (error) console.log(error.details);
       }
     );
+    navigate(-1, { replace: true });
   }
 
   function setRange(e) {
