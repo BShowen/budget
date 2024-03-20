@@ -26,10 +26,19 @@ export const FooterNav = () => {
   const pattern = /\btransaction\b/;
   const replace = pattern.test(location.pathname);
 
-  const visible = location.pathname != "/new-transaction";
+  // Determine if the footer nav should be visible.
+  // FooterNave should never be visible when a form is rendered.
+  // const visible = location.pathname != "/new-transaction";
+  const regex = /^\/ledger\/\w+\/transactions\/new$/gm;
+  const isNewTransactionFormVisible = location.pathname == "/new-transaction";
+  const isEditTransactionFormVisible = regex.test(location.pathname);
+  // If isNewTransactionFormVisible is true then return false
+  // If isEditTransactionFormVisible is true then return false
+  const footerNavVisible =
+    !isNewTransactionFormVisible && !isEditTransactionFormVisible;
 
   return (
-    visible && (
+    footerNavVisible && (
       <div className="fixed bottom-0 w-full h-20 lg:w-3/5 mx-auto bg-white">
         <div className="w-full flex flex-row flex-nowrap justify-evenly items-end h-full gooey bg-inherit">
           <FooterLink to="/" text="Budget">
