@@ -28,7 +28,7 @@ export function AccountPage() {
   return (
     <>
       <div className="empty-page-header"></div>
-      <div className="w-full h-full p-2 text-gray-700">
+      <div className="w-full h-full p-2 pb-24 text-gray-700">
         <div className="h-20 flex flex-col justify-start items-start">
           <h1 className="font-bold text-3xl text-gray-700">
             {cap(firstName)} {cap(lastName)}
@@ -36,7 +36,7 @@ export function AccountPage() {
           <p className="text-sm font-semibold">{email}</p>
         </div>
         <p className="font-semibold text-lg py-3">Account settings</p>
-        <div className="bg-white rounded-lg drop-shadow-sm flex flex-col items-stretch px-2 py-2 gap-2 relative z-0 font-medium text-lg">
+        <div className="bg-white rounded-lg drop-shadow-sm flex flex-col items-stretch px-2 py-2 gap-2 z-0 font-medium text-lg">
           <Link className="w-full flex flex-row justify-start items-center">
             <LuListChecks className="text-xl" />
             <p className="ps-1 me-auto">Reconcile</p>
@@ -65,7 +65,7 @@ export function AccountPage() {
         {isAdmin && (
           <>
             <p className="font-semibold text-lg py-3">User settings</p>
-            <div className="bg-white rounded-lg drop-shadow-sm flex flex-col items-stretch px-2 py-2 gap-2 relative z-0 font-medium text-lg">
+            <div className="bg-white rounded-lg drop-shadow-sm flex flex-col items-stretch px-2 py-2 gap-2 z-0 font-medium text-lg">
               <Link
                 to="invite"
                 className="w-full flex flex-row justify-start items-center"
@@ -86,6 +86,15 @@ export function AccountPage() {
             </div>
           </>
         )}
+
+        <div className="py-3">
+          <Link
+            className="border rounded-lg bg-blue-500 w-full h-10 flex flex-row justify-center items-center"
+            to="/logout"
+          >
+            Log out
+          </Link>
+        </div>
       </div>
     </>
   );
