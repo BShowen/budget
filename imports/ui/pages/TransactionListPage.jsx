@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useTracker } from "meteor/react-meteor-data";
 
 // Components
@@ -300,6 +300,7 @@ function SearchBar({ onInput }) {
   // Store the string the user has typed, if any.
   // If the string.length > 0 then show the reset button.
   const [searchString, setSearchString] = useState("");
+  const searchBarRef = useRef(null);
   const icon =
     searchString.length > 0 ? (
       <LuXCircle
@@ -314,6 +315,7 @@ function SearchBar({ onInput }) {
     <div className="px-1 bg-search-bar rounded-xl h-10 flex flex-row justify-start items-center overflow-hidden shadow-sm shadow-gray-300 gap-1">
       {icon}
       <input
+        ref={searchBarRef}
         className="border-none h-10 w-full bg-inherit outline-none text-lg font-semibold placeholder:font-normal"
         type="text"
         placeholder="Search"
@@ -325,7 +327,9 @@ function SearchBar({ onInput }) {
 
   function resetSearch() {
     setSearchString("");
+    // Call the onInput argument to reset the search filter.
     onInput({ target: { value: "" } });
+    searchBarRef.current.focus();
   }
 
   function updateSearch(e) {
