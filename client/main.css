@@ -61,7 +61,8 @@
     @apply bg-rose-400/50;
   }
   .bg-search-bar {
-    background-color: #eaeff4;
+    /* background-color: #eaeff4; */
+    background-color: white;
   }
   /* **********BORDER COLORS********** */
   .border-color-light-blue {

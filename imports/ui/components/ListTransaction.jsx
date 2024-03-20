@@ -32,12 +32,8 @@ export function ListTransaction({ transaction, ledgerId }) {
 
   return (
     <div
-      className={`flex flex-col justify-start items-stretch px-1 transition-all duration-200 ease-in-out relative ${
-        expanded
-          ? transaction.note
-            ? "h-60 bg-app shadow-inner"
-            : "h-52 bg-app shadow-inner"
-          : "h-10"
+      className={`flex flex-col justify-start items-stretch px-1 transition-all duration-300 ease-in-out relative ${
+        expanded ? (transaction.note ? "h-60 bg-app" : "h-52 bg-app") : "h-10"
       } `}
     >
       <div
@@ -111,12 +107,8 @@ function ExpandedContent({ transaction, expanded }) {
     }
   });
 
-  return (
-    <div
-      className={`w-full transition-all duration-200 ease-in overflow-x-hidden overflow-y-scroll flex flex-col justify-start items-stretch mt-10 overscroll-auto pt-2 scrollbar-hide ${
-        expanded ? "h-full" : "h-0"
-      }`}
-    >
+  return expanded ? (
+    <div className="w-full overflow-x-hidden overflow-y-scroll flex flex-col justify-start items-stretch mt-10 overscroll-auto pt-2 scrollbar-hide h-full">
       <div className="flex flex-col justify-start items-stretch gap-1 ps-7">
         <div className="flex flex-row justify-center items-center mb-1 border border-color-dark-blue rounded-md bg-color-dark-blue w-max px-1">
           <p className="font-bold text-white text-md">
@@ -169,6 +161,8 @@ function ExpandedContent({ transaction, expanded }) {
         <DeleteTransactionButton transaction={transaction} />
       </div>
     </div>
+  ) : (
+    ""
   );
 }
 

@@ -24,6 +24,7 @@ import { ManageUsersPage } from "../imports/ui/pages/ManageUsersPage";
 import { AccountPageLayout } from "../imports/ui/layouts/AccountPageLayout";
 import { TransactionListPage } from "../imports/ui/pages/TransactionListPage";
 import { NewAllocationPage } from "../imports/ui/pages/NewAllocationPage";
+import { InsightsPage } from "../imports/ui/pages/InsightsPage";
 
 // Loaders
 import { logoutLoader } from "../imports/ui/components/Logout";
@@ -96,6 +97,10 @@ export const router = createBrowserRouter([
       {
         path: "/transactions",
         element: <TransactionListPage />,
+      },
+      {
+        path: "/insights",
+        element: <InsightsPage />,
       },
       {
         path: "/new-allocation",

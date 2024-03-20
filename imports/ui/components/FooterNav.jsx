@@ -9,8 +9,7 @@ import {
   LuCircleDollarSign,
   LuListMinus,
   LuUserCircle2,
-  LuLogOut,
-  LuPlusCircle,
+  LuLineChart,
 } from "react-icons/lu";
 import { IoIosAddCircle } from "react-icons/io";
 
@@ -52,11 +51,12 @@ export const FooterNav = () => {
             <LuListMinus className="text-inherit w-full h-full" />
           </FooterLink>
           <div className="w-[70px] bg-inherit rounded-full h-full relative -top-4" />
+
+          <FooterLink to="/insights" text="Insights">
+            <LuLineChart className="text-inherit w-full h-full" />
+          </FooterLink>
           <FooterLink to="/account" text="Account">
             <LuUserCircle2 className="text-inherit w-full h-full" />
-          </FooterLink>
-          <FooterLink to="/logout" text="Logout">
-            <LuLogOut className="text-inherit w-full h-full" />
           </FooterLink>
         </div>
         <Link

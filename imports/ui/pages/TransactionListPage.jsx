@@ -1,12 +1,11 @@
 import React, { useState, useRef } from "react";
 import { useTracker } from "meteor/react-meteor-data";
+import { Link, useNavigate } from "react-router-dom";
 
 // Components
 import { ListTransaction } from "../components/ListTransaction";
 
 // Collections
-import { EnvelopeCollection } from "../../api/Envelope/EnvelopeCollection";
-import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 
 // Utils
@@ -22,6 +21,7 @@ import {
   LuSearch,
   LuXCircle,
 } from "react-icons/lu";
+import { IoIosArrowBack } from "react-icons/io";
 
 export function TransactionListPage() {
   // const [sortOrder, setSortOrder] = useState("asc");
@@ -80,6 +80,7 @@ export function TransactionListPage() {
   //   sortProperty: sortProperty,
   //   setSortProperty: setSortProperty,
   // };
+  const navigate = useNavigate();
   const [filter, setFilter] = useState("");
   const transactionList = useTracker(() =>
     TransactionCollection.find({}, { sort: { createdAt: -1 } }).fetch()
@@ -103,196 +104,49 @@ export function TransactionListPage() {
 
   return (
     <>
-      <div className="empty-page-header bg-header"></div>
-      <div className="flex flex-col justify-start items-stretch p-2 pb-28 gap-5 bg-gray-100">
-        <Insights />
-        <div className="bg-white pt-2 pb-3 rounded-xl flex flex-col">
-          <div className="sticky position-top-safe z-20 bg-white gap-2 p-2 rounded-xl">
-            <div className="w-full text-center">
-              <h2 className="font-bold text-xl">
-                {transactionCount == 1
-                  ? `${transactionCount} transaction`
-                  : `${transactionCount} transactions`}
-              </h2>
-            </div>
-            <SearchBar onInput={filterTransactions} />
-          </div>
-          <ul className="list-none z-0">
-            {filteredTransactionList.map((transaction, i) => {
-              const [month, day] = dates
-                .format(transaction.createdAt, {
-                  forTransaction: true,
-                })
-                .split(" ");
-              return (
-                <li
-                  className={`${
-                    i == transactionCount - 1 ? "border-t border-b" : "border-t"
-                  } overflow-hidden`}
-                  key={transaction._id}
-                >
-                  <ListTransaction
-                    key={transaction._id}
-                    transaction={transaction}
-                    options={{ month, day }}
-                    ledgerId={transaction.ledgerId}
-                  />
-                </li>
-              );
-            })}
-          </ul>
+      <div className="page-header z-50 w-full lg:w-3/5 flex flex-row justify-start items-center relative bg-header shadow-sm text-white">
+        <div className="flex flex-row items-center p-1 h-11">
+          <Link
+            className="text-xl font-bold flex flex-row justify-start items-center w-24 lg:hover:cursor-pointer"
+            onClick={() => navigate(-1)}
+          >
+            <IoIosArrowBack className="text-2xl" /> Back
+          </Link>
         </div>
+      </div>
+      <div className="flex flex-col justify-start items-stretch mt-12 pb-28 z-0 relative px-2">
+        <div className="flex flex-col justify-start gap-4 pt-4 items-center w-full h-28">
+          <h2 className="font-bold text-2xl">
+            {transactionCount == 1
+              ? `${transactionCount} transaction`
+              : `${transactionCount} transactions`}
+          </h2>
+          <SearchBar onInput={filterTransactions} />
+        </div>
+        <ul className="z-0 mt-5 rounded-xl overflow-hidden">
+          {filteredTransactionList.map((transaction, i) => {
+            const [month, day] = dates
+              .format(transaction.createdAt, {
+                forTransaction: true,
+              })
+              .split(" ");
+            return (
+              <li
+                className={`${i == 0 ? "" : "border-t"} overflow-hidden`}
+                key={transaction._id}
+              >
+                <ListTransaction
+                  key={transaction._id}
+                  transaction={transaction}
+                  options={{ month, day }}
+                  ledgerId={transaction.ledgerId}
+                />
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </>
-  );
-}
-
-function Insights() {
-  const anticipatedIncome = useTracker(() =>
-    LedgerCollection.find(
-      { kind: "income" },
-      { fields: { allocatedAmount: true } }
-    )
-      .fetch()
-      .reduce((acc, ledger) => acc + ledger.allocatedAmount, 0)
-  );
-
-  const incomeReceived = useTracker(() => {
-    // Get all transactions that belong to the income envelope and accumulate
-    // their totals into a single dollar amount.
-    const incomeEnvelope = EnvelopeCollection.findOne(
-      { kind: "income" },
-      { fields: { _id: true } }
-    );
-
-    return TransactionCollection.find(
-      { envelopeId: incomeEnvelope._id },
-      { fields: { amount: true } }
-    )
-      .fetch()
-      .reduce((acc, tx) => acc + tx.amount, 0);
-  });
-
-  const spentSoFar = useTracker(() => {
-    // Get all transactions that do not belong to incomeEnvelope or savingsEnvelope
-    const [env1, env2] = EnvelopeCollection.find(
-      { $or: [{ kind: "income" }, { kind: "savings" }] },
-      { fields: { _id: true } }
-    ).fetch();
-
-    return TransactionCollection.find(
-      {
-        $and: [
-          { envelopeId: { $not: env1._id } },
-          { envelopeId: { $not: env2._id } },
-        ],
-      },
-      { fields: { amount: true, type: true } }
-    )
-      .fetch()
-      .reduce((acc, tx) => {
-        if (tx.type == "expense") {
-          return Math.floor((acc + tx.amount) * 100) / 100;
-        } else {
-          return Math.floor((acc - tx.amount) * 100) / 100;
-        }
-      }, 0);
-  });
-
-  // This is the sum of all the income transactions in allocation ledgers.
-  const allocations = useTracker(() => {
-    // An array of all allocation ledger id's.
-    const allocationLedgers = LedgerCollection.find({ kind: "allocation" })
-      .fetch()
-      .map((ledger) => ledger._id);
-    /* prettier-ignore */
-    // Get all income transactions associated with the allocations
-    const transactions = TransactionCollection.find({
-      $and: [
-        { ledgerId: { $in: allocationLedgers } },
-        { type: "income" }
-      ],
-    }).fetch();
-    // Sum the transaction totals.
-    const sum = transactions.reduce((acc, transaction) => {
-      return Math.floor((acc + transaction.amount) * 100) / 100;
-    }, 0);
-    return sum;
-  });
-
-  // This is the sum of all the income transactions in the savings ledgers.
-  const savings = useTracker(() => {
-    // An array of all savings ledger id's
-    const savingsLedgerIdList = LedgerCollection.find({ kind: "savings" })
-      .fetch()
-      ?.map((ledger) => ledger._id);
-    /* prettier-ignore */
-    // Get a list of all the transactions associated with the saving ledgers.
-    const transactions = TransactionCollection.find({
-      $and: [
-        { ledgerId: { $in: savingsLedgerIdList } },
-        { type: "income" }
-      ],
-    }).fetch();
-    // Sum the total of all the transactions.
-    const sum = transactions.reduce((acc, transaction) => {
-      return Math.floor((transaction.amount + acc) * 100) / 100;
-    }, 0);
-    return sum;
-  });
-
-  return (
-    <div className="w-full flex flex-col justify-start items-stretch font-semibold gap-2">
-      <div className="bg-white rounded-xl p-2 flex flex-col gap-1">
-        <h1 className="text-lg font-bold">Income</h1>
-
-        <div className="w-full flex flex-row justify-between bg-slate-100 rounded-md px-2">
-          <div>Expected</div>
-          <div>{toDollars(anticipatedIncome)}</div>
-        </div>
-
-        <div className="w-full flex flex-row justify-between bg-slate-100 rounded-md px-2">
-          <div>Received</div>
-          <div>{toDollars(incomeReceived)}</div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-xl p-2 flex flex-col gap-1">
-        <h1 className="text-lg font-bold ">Saved</h1>
-
-        <div className="w-full flex flex-row justify-between bg-slate-100 rounded-md px-2">
-          <div>Savings</div>
-          <div>{toDollars(Math.floor(savings * 100) / 100)}</div>
-        </div>
-
-        <div className="w-full flex flex-row justify-between bg-slate-100 rounded-md px-2">
-          <div>Allocations</div>
-          <div>{toDollars(Math.floor(allocations * 100) / 100)}</div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-xl p-2 flex flex-col gap-1">
-        <h1 className="text-xl font-bold ">Spent</h1>
-        <div className="w-full flex flex-row justify-between bg-slate-100 rounded-md px-2">
-          <div>Spent this month</div>
-          <div>{toDollars(spentSoFar)}</div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-xl p-2 flex flex-col gap-1">
-        <h1 className="text-xl font-bold ">Remaining</h1>
-        <div className="w-full flex flex-row justify-between bg-slate-100 rounded-md px-2">
-          <div>Left to spend</div>
-          <div>
-            {toDollars(
-              Math.floor(
-                (incomeReceived - spentSoFar - savings - allocations) * 100
-              ) / 100
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
   );
 }
 
@@ -312,7 +166,7 @@ function SearchBar({ onInput }) {
     );
 
   return (
-    <div className="px-1 bg-search-bar rounded-xl h-10 flex flex-row justify-start items-center overflow-hidden shadow-sm shadow-gray-300 gap-1">
+    <div className="w-full px-3 bg-search-bar rounded-xl h-12 flex flex-row justify-start items-center overflow-hidden gap-1">
       {icon}
       <input
         ref={searchBarRef}
