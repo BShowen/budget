@@ -22,9 +22,11 @@ export function MonthSelector({ currentDate }) {
   });
 
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [canAnimate, setCanAnimate] = useState(false);
 
   function toggleDropdown() {
     setDropdownOpen((prev) => !prev);
+    setCanAnimate(true);
   }
 
   const { goToBudget } = useContext(RootContext);
@@ -46,38 +48,40 @@ export function MonthSelector({ currentDate }) {
         }`}
         onClick={toggleDropdown}
       />
-      {isDropdownOpen && (
-        <div className="z-50 text-color-primary flex flex-row items-stretch absolute left-0 right-0 h-[85px] bg-white mt-3">
-          <ul className="list-none w-full flex flex-row justify-start items-center gap-2 overflow-y-hidden overflow-x-scroll scrollbar-hide px-2 shadow-md">
-            {budgetList.map((budget) => {
-              const active =
-                currentDate.getTime() == budget.createdAt.getTime();
-              const element = (
-                <li
-                  key={budget._id}
-                  className="max-w-24 min-w-24 h-14"
-                  id={active ? "active" : undefined}
+
+      <div
+        className={`z-50 text-color-primary flex flex-row items-center absolute left-0 right-0 bg-white mt-3 overflow-hidden  ${
+          isDropdownOpen ? "fade-in" : canAnimate ? "fade-out" : "h-0"
+        }`}
+      >
+        <ul className="list-none w-full flex flex-row justify-start items-center gap-2 overflow-y-hidden overflow-x-scroll scrollbar-hide px-2 shadow-md h-full">
+          {budgetList.map((budget) => {
+            const active = currentDate.getTime() == budget.createdAt.getTime();
+            const element = (
+              <li
+                key={budget._id}
+                className="max-w-24 min-w-24 h-14"
+                id={active ? "active" : undefined}
+              >
+                <button
+                  className={`w-full h-full rounded-lg border p-1 ${
+                    active
+                      ? "bg-color-light-blue text-white border-color-dark-blue"
+                      : "bg-app text-color-primary"
+                  }`}
+                  type="button"
+                  onClick={() => goToBudget({ date: budget.createdAt })}
                 >
-                  <button
-                    className={`w-full h-full rounded-lg border p-1 ${
-                      active
-                        ? "bg-color-light-blue text-white border-color-dark-blue"
-                        : "bg-app text-color-primary"
-                    }`}
-                    type="button"
-                    onClick={() => goToBudget({ date: budget.createdAt })}
-                  >
-                    <p className="font-semibold">
-                      {dates.format(budget.createdAt, { forPageHeader: true })}
-                    </p>
-                  </button>
-                </li>
-              );
-              return element;
-            })}
-          </ul>
-        </div>
-      )}
+                  <p className="font-semibold">
+                    {dates.format(budget.createdAt, { forPageHeader: true })}
+                  </p>
+                </button>
+              </li>
+            );
+            return element;
+          })}
+        </ul>
+      </div>
     </div>
   );
 }

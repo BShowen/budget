@@ -165,3 +165,31 @@ body {
 #gooey-svg {
   display: none;
 }
+
+.fade-in {
+  animation: fade-in 250ms;
+  animation-fill-mode: forwards;
+}
+
+.fade-out {
+  animation: fade-out 250ms;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fade-in {
+  from {
+    height: 0px;
+  }
+  to {
+    height: 85px;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    height: 85px;
+  }
+  to {
+    height: 0px;
+  }
+}
