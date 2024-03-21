@@ -39,7 +39,7 @@ export function MonthSelector({ currentDate }) {
   }, [isDropdownOpen]);
 
   return (
-    <div className="">
+    <div>
       <IoIosArrowDropdown
         className={`text-3xl transition-all duration-300 ease-in-out ${
           isDropdownOpen ? "rotate-180" : ""
@@ -47,7 +47,7 @@ export function MonthSelector({ currentDate }) {
         onClick={toggleDropdown}
       />
       {isDropdownOpen && (
-        <div className="z-50 text-color-primary flex flex-row items-stretch absolute top-14 left-0 right-0 h-[85px] bg-white">
+        <div className="z-50 text-color-primary flex flex-row items-stretch absolute left-0 right-0 h-[85px] bg-white mt-3">
           <ul className="list-none w-full flex flex-row justify-start items-center gap-2 overflow-y-hidden overflow-x-scroll scrollbar-hide px-2 shadow-md">
             {budgetList.map((budget) => {
               const active =
