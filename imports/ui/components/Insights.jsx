@@ -106,14 +106,6 @@ export function Insights() {
     return sum;
   });
 
-  console.log({
-    anticipatedIncome,
-    incomeReceived,
-    spentSoFar,
-    allocations,
-    savings,
-  });
-
   return (
     <div className="w-full flex flex-col justify-start items-stretch font-semibold gap-2">
       <div className="bg-white rounded-xl p-2 flex flex-col gap-1">
