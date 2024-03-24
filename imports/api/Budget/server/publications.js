@@ -53,6 +53,7 @@ Meteor.publish("budget", function (date) {
     },
     { sort: { createdAt: -1 } }
   );
+
   if (prevBudget) {
     // Get previous envelopes
     const prevEnvelopes = EnvelopeCollection.find({
@@ -71,46 +72,51 @@ Meteor.publish("budget", function (date) {
     });
 
     // Iterate through each previous envelope...
-    prevEnvelopes.forEach((envelope) => {
-      // Get the previous ledgers for this envelope.
-      const ledgers = prevLedgers.filter(
-        (ledger) => ledger.envelopeId == envelope._id
-      );
-
+    prevEnvelopes.forEach((prevEnvelope) => {
       // Create a new envelope based off the old envelope and associate it with
       // the new budget.
-      const newEnvelope = { ...envelope, budgetId: newBudgetId };
+      const newEnvelope = { ...prevEnvelope, budgetId: newBudgetId };
       // Remove the old _id from the envelope so Mongo will generate a new one.
       delete newEnvelope._id;
       // Insert the new envelope
       const newEnvelopeId = EnvelopeCollection.insert(newEnvelope);
 
-      // For this envelope, iterate through each ledger and create a new ledger
-      // based off the previous ledger and associate the new ledger with the
-      // new envelope.
-      ledgers.forEach((ledger) => {
+      // Get the previous ledgers for this envelope.
+      const ledgers = prevLedgers.filter(
+        (ledger) => ledger.envelopeId == prevEnvelope._id
+      );
+      // Iterate through each of the previous envelope's ledgers and create a
+      // new ledger based off the previous ledger and associate the new ledger
+      // with the new envelope.
+      ledgers.forEach((prevLedger) => {
         // Create the new ledger
         const newLedger = {
-          ...ledger,
+          ...prevLedger,
           budgetId: newBudgetId,
           envelopeId: newEnvelopeId,
         };
         // Remove the old _id from the ledger
         delete newLedger._id;
 
-        if (ledger.isRecurring) {
+        if (prevLedger.isRecurring) {
           // Calculate ledger balance.
           const transactions = TransactionCollection.find({
             accountId: user.accountId,
-            ledgerId: ledger._id,
+            ledgerId: prevLedger._id,
           }).fetch();
-          const { income, expense } = reduceTransactions({ transactions });
-          newLedger.startingBalance = ledger.startingBalance + income - expense;
+          const { income: prevIncome, expense: prevExpense } =
+            reduceTransactions({ transactions });
+          newLedger.startingBalance =
+            Math.round(
+              (prevLedger.startingBalance + prevIncome - prevExpense) * 100
+            ) / 100;
 
           // Update ledger running total if it is an allocationLedger
-          if (ledger.kind == "allocation") {
+          if (prevLedger.kind == "allocation") {
             newLedger.allocation.runningTotal =
-              ledger.allocation.runningTotal + income;
+              Math.round(
+                (prevLedger.allocation.runningTotal + prevIncome) * 100
+              ) / 100;
           }
         }
         // Insert the new ledger
