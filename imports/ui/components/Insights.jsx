@@ -16,7 +16,10 @@ export function Insights() {
       { fields: { allocatedAmount: true } }
     )
       .fetch()
-      .reduce((acc, ledger) => acc + ledger.allocatedAmount, 0)
+      .reduce(
+        (acc, ledger) => Math.round((acc + ledger.allocatedAmount) * 100) / 100,
+        0
+      )
   );
 
   const incomeReceived = useTracker(() => {
@@ -32,7 +35,7 @@ export function Insights() {
       { fields: { amount: true } }
     )
       .fetch()
-      .reduce((acc, tx) => acc + tx.amount, 0);
+      .reduce((acc, tx) => Math.round((acc + tx.amount) * 100) / 100, 0);
   });
 
   const spentSoFar = useTracker(() => {
@@ -54,9 +57,9 @@ export function Insights() {
       .fetch()
       .reduce((acc, tx) => {
         if (tx.type == "expense") {
-          return Math.floor((acc + tx.amount) * 100) / 100;
+          return Math.round((acc + tx.amount) * 100) / 100;
         } else {
-          return Math.floor((acc - tx.amount) * 100) / 100;
+          return Math.round((acc - tx.amount) * 100) / 100;
         }
       }, 0);
   });
@@ -77,7 +80,7 @@ export function Insights() {
     }).fetch();
     // Sum the transaction totals.
     const sum = transactions.reduce((acc, transaction) => {
-      return Math.floor((acc + transaction.amount) * 100) / 100;
+      return Math.round((acc + transaction.amount) * 100) / 100;
     }, 0);
     return sum;
   });
@@ -98,9 +101,17 @@ export function Insights() {
     }).fetch();
     // Sum the total of all the transactions.
     const sum = transactions.reduce((acc, transaction) => {
-      return Math.floor((transaction.amount + acc) * 100) / 100;
+      return Math.round((transaction.amount + acc) * 100) / 100;
     }, 0);
     return sum;
+  });
+
+  console.log({
+    anticipatedIncome,
+    incomeReceived,
+    spentSoFar,
+    allocations,
+    savings,
   });
 
   return (
@@ -124,12 +135,12 @@ export function Insights() {
 
         <div className="w-full flex flex-row justify-between bg-slate-100 rounded-md px-2">
           <div>Savings</div>
-          <div>{toDollars(Math.floor(savings * 100) / 100)}</div>
+          <div>{toDollars(Math.round(savings * 100) / 100)}</div>
         </div>
 
         <div className="w-full flex flex-row justify-between bg-slate-100 rounded-md px-2">
           <div>Allocations</div>
-          <div>{toDollars(Math.floor(allocations * 100) / 100)}</div>
+          <div>{toDollars(Math.round(allocations * 100) / 100)}</div>
         </div>
       </div>
 
@@ -147,7 +158,7 @@ export function Insights() {
           <div>Left to spend</div>
           <div>
             {toDollars(
-              Math.floor(
+              Math.round(
                 (incomeReceived - spentSoFar - savings - allocations) * 100
               ) / 100
             )}
