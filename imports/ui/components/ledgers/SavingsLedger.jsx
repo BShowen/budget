@@ -45,10 +45,8 @@ export const SavingsLedger = ({ ledger, activeTab }) => {
 
   const calculateProgress = () => {
     let progress = undefined;
-    if (activeTab === "planned") {
+    if (activeTab === "planned" || activeTab === "spent") {
       progress = 0;
-    } else if (activeTab === "spent") {
-      progress = ((expense / ledger.allocatedAmount) * 100).toFixed(2);
     } else if (activeTab === "remaining") {
       progress = remainingToReceive
         ? ((remainingToReceive / ledger.allocatedAmount) * 100).toFixed(2)
