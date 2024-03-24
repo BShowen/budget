@@ -122,7 +122,9 @@ export function CreateTransactionForm() {
     createdAt: dates.format(new Date(), { forHtml: true }),
     budgetId,
     type:
-      ledger?.kind === "income" || ledger?.kind === "savings"
+      ledger?.kind === "income" ||
+      ledger?.kind === "savings" ||
+      ledger?.kind == "allocation"
         ? "income"
         : "expense",
     amount: "0.00",
