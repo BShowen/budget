@@ -51,7 +51,11 @@ export function MonthSelector({ currentDate }) {
 
       <div
         className={`z-50 text-color-primary flex flex-row items-center absolute left-0 right-0 bg-white mt-3 overflow-hidden  ${
-          isDropdownOpen ? "fade-in" : canAnimate ? "fade-out" : "h-0"
+          isDropdownOpen
+            ? "month-selector-slide-in"
+            : canAnimate
+            ? "month-selector-slide-out"
+            : "h-0"
         }`}
       >
         <ul className="list-none w-full flex flex-row justify-start items-center gap-2 overflow-y-hidden overflow-x-scroll scrollbar-hide px-2 shadow-md h-full">

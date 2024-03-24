@@ -166,17 +166,17 @@ body {
   display: none;
 }
 
-.fade-in {
-  animation: fade-in 250ms;
+.month-selector-slide-in {
+  animation: month-selector-slide-in 250ms;
   animation-fill-mode: forwards;
 }
 
-.fade-out {
-  animation: fade-out 250ms;
+.month-selector-slide-out {
+  animation: month-selector-slide-out 250ms;
   animation-fill-mode: forwards;
 }
 
-@keyframes fade-in {
+@keyframes month-selector-slide-in {
   from {
     height: 0px;
   }
@@ -185,7 +185,7 @@ body {
   }
 }
 
-@keyframes fade-out {
+@keyframes month-selector-slide-out {
   from {
     height: 85px;
   }
