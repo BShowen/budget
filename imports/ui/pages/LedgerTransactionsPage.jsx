@@ -179,7 +179,7 @@ function IncomeHeader({ ledger }) {
   const [percentReceived, setPercentReceived] = useState(0);
 
   const incomeReceived = transactionList.reduce((total, transaction) => {
-    return total + transaction.amount;
+    return Math.round((total + transaction.amount) * 100) / 100;
   }, 0);
   const expectedIncome = ledger.allocatedAmount;
 
@@ -245,7 +245,8 @@ function SavingsHeader({ ledger }) {
   });
   const totalSavedThisMonth = income;
   const plannedToSaveThisMonth = ledger.allocatedAmount;
-  const balance = ledger.startingBalance - expense + income;
+  const balance =
+    Math.round((ledger.startingBalance - expense + income) * 100) / 100;
 
   useEffect(() => {
     // After component mounts, update the percentSaved so it animates from zero
