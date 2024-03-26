@@ -14,6 +14,7 @@ import { IncomeEnvelope } from "../components/envelopes/IncomeEnvelope";
 import { SavingsEnvelope } from "../components/envelopes/SavingsEnvelope";
 import { DashboardHeader } from "../components/dashboardComponents/DashboardHeader";
 import { NewEnvelopeButton } from "../components/dashboardComponents/DashboardNewEnvelopeButton";
+import { WelcomeComponent } from "../components/dashboardComponents/WelcomeComponent";
 
 export const Dashboard = () => {
   const { currentBudgetId } = useContext(RootContext);
@@ -73,9 +74,9 @@ export const Dashboard = () => {
         incomeEnvelope={incomeEnvelope}
       />
 
-      <div className="mt-40 pb-16 px-2 flex flex-col items-stretch gap-4 z-0">
+      <div className="mt-[105px] pb-16 px-2 flex flex-col items-stretch gap-4 z-0">
+        <WelcomeComponent incomeEnvelope={incomeEnvelope} />
         {/* Categories container */}
-
         <IncomeEnvelope
           key={incomeEnvelope._id}
           {...incomeEnvelope}

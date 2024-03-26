@@ -21,8 +21,8 @@ export function DashboardHeader({
   const currentMonth = date.toLocaleString("en-US", { month: "long" });
 
   return (
-    <div className="page-header lg:w-3/5 mx-auto z-50 w-full flex flex-col justify-start items-stretch shadow-sm bg-header">
-      <div className="pb-4 z-50 shadow-sm text-white">
+    <div className="page-header lg:w-3/5 mx-auto z-50 w-full flex flex-col justify-start items-stretch bg-header rounded-b-xl overflow-hidden shadow-sm">
+      <div className="pb-2 z-50 shadow-sm text-white">
         <div className="w-full flex flex-row justify-between items-stretch h-14">
           <div className="ms-2 flex flex-row justify-center items-center">
             <img src="/icon.png" width="40px" />
@@ -48,7 +48,7 @@ export function DashboardHeader({
           />
         </div>
       </div>
-      <RemainingMoneyBanner incomeEnvelope={incomeEnvelope} />
+      {/* <RemainingMoneyBanner incomeEnvelope={incomeEnvelope} /> */}
     </div>
   );
 }
@@ -68,20 +68,19 @@ function RemainingMoneyBanner({ incomeEnvelope }) {
     const ledgers = LedgerCollection.find({
       envelopeId: { $ne: incomeEnvelope._id },
     }).fetch();
-    return Number.parseFloat(
-      ledgers
-        .reduce((total, ledger) => {
-          return Number.parseFloat((ledger.allocatedAmount + total).toFixed(2));
-        }, 0)
-        .toFixed(2)
-    );
+    return ledgers.reduce((total, ledger) => {
+      return Math.round((ledger.allocatedAmount + total) * 100) / 100;
+    }, 0);
   });
 
   const displayBalance = toDollars(
-    Math.abs(expectedMonthlyIncome - totalIncomeBudgeted)
+    Math.abs(
+      Math.round((expectedMonthlyIncome - totalIncomeBudgeted) * 100) / 100
+    )
   );
 
-  const isOverBudget = expectedMonthlyIncome - totalIncomeBudgeted < 0;
+  const isOverBudget =
+    Math.round((expectedMonthlyIncome - totalIncomeBudgeted) * 100) / 100 < 0;
 
   return (
     <div className="w-full h-8 bg-white flex flex-row flex-nowrap justify-center items-center">
