@@ -517,9 +517,9 @@ export function CreateTransactionForm() {
             />
           </div>
 
-          <div className="w-full flex flex-row items-center justify-end h-9 relative bg-white rounded-xl  overflow-hidden shadow-md shadow-gray-200">
+          <div className="w-full flex flex-row items-center justify-end h-9 relative bg-white rounded-xl  overflow-hidden shadow-sm">
             <label
-              className="bg-color-light-blue text-white rounded-sm w-4/12 flex flex-row justify-center items-center text-lg absolute left-0 h-full"
+              className="bg-color-light-blue text-white rounded-xl w-4/12 flex flex-row justify-center items-center text-lg absolute left-0 h-full"
               htmlFor="date"
             >
               <p className="font-semibold">Date</p>
@@ -537,9 +537,9 @@ export function CreateTransactionForm() {
             </div>
           </div>
 
-          <div className="w-full flex flex-row items-stretch justify-end h-9 relative bg-white rounded-xl overflow-hidden shadow-md shadow-gray-200">
+          <div className="w-full flex flex-row items-stretch justify-end h-9 relative bg-white rounded-xl overflow-hidden shadow-sm">
             <label
-              className="bg-color-light-blue text-white rounded-sm w-4/12 flex flex-row justify-center items-center text-lg absolute left-0 h-full"
+              className="bg-color-light-blue text-white rounded-xl w-4/12 flex flex-row justify-center items-center text-lg absolute left-0 h-full"
               htmlFor="merchant"
             >
               <p className="font-semibold">
@@ -561,7 +561,7 @@ export function CreateTransactionForm() {
             </div>
           </div>
 
-          <div className="w-full flex flex-row items-stretch justify-end min-h-9 bg-white rounded-xl overflow-hidden shadow-md shadow-gray-200">
+          <div className="w-full flex flex-row items-stretch justify-end min-h-9 bg-white rounded-xl overflow-hidden shadow-sm">
             <textarea
               rows={2}
               placeholder="Add a note"
@@ -572,11 +572,11 @@ export function CreateTransactionForm() {
             />
           </div>
 
-          <div className="w-full flex flex-col items-stretch justify-start bg-white rounded-xl overflow-hidden shadow-md shadow-gray-200 px-2 py-1">
+          <div className="w-full flex flex-col items-stretch justify-start bg-white rounded-xl overflow-hidden shadow-sm px-2 py-1">
             <TagSelection preSelectedTags={undefined} key={ledgerId} />
           </div>
 
-          <div className="w-full rounded-xl overflow-hidden px-1 py-1 bg-white flex flex-col justify-start items-stretch min-h-10">
+          <div className="w-full rounded-xl overflow-hidden px-1 py-1 bg-white flex flex-col justify-start items-stretch min-h-10 shadow-sm">
             <div className="w-full text-start px-1">
               <p className="font-semibold">Category</p>
             </div>
@@ -737,7 +737,7 @@ function Dialog({
           <button
             //Prevent this button from submitting the underlying form
             type="button"
-            className="absolute left-5"
+            className="absolute right-5 text-white"
             onClick={closeDialog}
           >
             Done
@@ -955,7 +955,7 @@ function ButtonGroup({ active, setActiveTab }) {
     const position = index === 0 ? "left-0" : "left-2/4";
     return (
       <div
-        className={`${position} w-2/4 relative z-2 h-7 rounded-md bg-header transition-all duration-250`}
+        className={`${position} w-2/4 relative z-2 h-[29px] rounded-lg bg-header transition-all duration-250`}
       />
     );
   }, []);
@@ -974,7 +974,7 @@ function ButtonGroup({ active, setActiveTab }) {
   });
 
   return (
-    <div className="w-full flex flex-row justify-start p-1 bg-header-darker rounded-md h-9 relative z-0">
+    <div className="w-full flex flex-row justify-start p-1 bg-header-darker rounded-xl h-9 relative z-0 items-center">
       <Slider index={index} />
       <div className="absolute top-0 bottom-0 left-0 right-0 flex flex-row flex-nowrap z-3">
         {buttonList}

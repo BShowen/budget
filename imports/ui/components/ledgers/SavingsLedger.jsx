@@ -63,7 +63,7 @@ export const SavingsLedger = ({ ledger, activeTab }) => {
 
   const displayBalance = calculateDisplayBalance();
   return (
-    <div className="w-full h-8 relative z-0 px-2 py-1 bg-slate-100 rounded-md lg:hover:cursor-pointer flex flex-row justify-between items-center">
+    <div className="w-full h-8 relative z-0 px-2 py-1 bg-slate-100 rounded-lg lg:hover:cursor-pointer flex flex-row justify-between items-center">
       {isFormActive ? (
         <>
           <UpdateLedgerForm

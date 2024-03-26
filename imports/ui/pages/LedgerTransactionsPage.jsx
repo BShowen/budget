@@ -375,7 +375,7 @@ function TagSelector({ tagIdList, toggleTag, activeFilterTags }) {
   const tagList = tags.map((tag) => (
     <button
       key={tag._id}
-      className={`transition-all duration-250 no-tap-button text-md font-semibold border-2 border-blue-600 px-2 rounded-full min-w-max ${
+      className={`transition-all duration-250 no-tap-button text-md font-semibold border-2 border-blue-600 px-2 rounded-lg min-w-max ${
         activeFilterTags.includes(tag._id) ? "bg-blue-600 text-white" : ""
       }`}
       onClick={() => toggleTag(tag._id)}
@@ -527,7 +527,7 @@ function ListTransactions({ ledgerId }) {
         toggleTag={toggleTag}
         activeFilterTags={activeTags}
       />
-      <div className="bg-white shadow-sm py-0 pb-2 rounded-lg px-3">
+      <div className="bg-white shadow-sm py-0 pb-2 rounded-xl px-3">
         <div className="w-full flex flex-row justify-between items-center py-2 px-1 h-12">
           <div>
             <h2 className="font-bold text-color-light-gray text-md">

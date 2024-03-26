@@ -68,7 +68,9 @@ export function LoginForm() {
       <div className="empty-page-header !bg-gray-100"></div>
       <div className="w-full bg-inherit p-2 flex flex-col justify-start items-stretch gap-7 padding-safe-area-top">
         <div className="w-full h-14 flex flex-col justify-end items-center">
-          <h1 className="text-3xl font-semibold">Login to Dough Tracker</h1>
+          <h1 className="text-3xl font-semibold text-color-primary">
+            Login to Dough Tracker
+          </h1>
         </div>
 
         <form

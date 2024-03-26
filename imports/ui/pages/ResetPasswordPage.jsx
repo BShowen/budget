@@ -40,6 +40,7 @@ export function ResetPassword() {
         <h1 className="font-bold text-3xl">Reset your password</h1>
       </div>
       <form
+        className="text-color-primary font-semibold"
         onSubmit={(e) => {
           e.preventDefault();
           const formData = Object.fromEntries(new FormData(e.target).entries());
@@ -49,7 +50,7 @@ export function ResetPassword() {
         <div className="flex flex-col justify-start items-stretch gap-2">
           <div>
             <div className="w-full flex flex-row justify-between">
-              <p>Old password</p>
+              {/* <p>Old password</p> */}
               {errors.oldPassword && (
                 <p className="text-rose-400">{errors.oldPassword}</p>
               )}
@@ -66,7 +67,7 @@ export function ResetPassword() {
           </div>
           <div>
             <div className="w-full flex flex-row justify-between">
-              <p>New password</p>
+              {/* <p>New password</p> */}
               {errors.password && (
                 <p className="text-rose-400">{errors.password}</p>
               )}
@@ -83,7 +84,7 @@ export function ResetPassword() {
           </div>
           <div>
             <div className="w-full flex flex-row justify-between">
-              <p>Confirm password</p>
+              {/* <p>Confirm password</p> */}
               {errors.confirmPassword && (
                 <p className="text-rose-400">{errors.confirmPassword}</p>
               )}

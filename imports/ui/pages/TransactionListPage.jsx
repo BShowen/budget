@@ -123,7 +123,7 @@ export function TransactionListPage() {
           </h2>
           <SearchBar onInput={filterTransactions} />
         </div>
-        <ul className="z-0 mt-5 rounded-xl overflow-hidden">
+        <ul className="z-0 mt-5 rounded-xl overflow-hidden shadow-sm">
           {filteredTransactionList.map((transaction, i) => {
             const [month, day] = dates
               .format(transaction.createdAt, {
@@ -166,7 +166,7 @@ function SearchBar({ onInput }) {
     );
 
   return (
-    <div className="w-full px-3 bg-search-bar rounded-xl h-12 flex flex-row justify-start items-center overflow-hidden gap-1">
+    <div className="w-full px-3 bg-search-bar rounded-xl h-12 flex flex-row justify-start items-center overflow-hidden gap-1 shadow-sm">
       {icon}
       <input
         ref={searchBarRef}

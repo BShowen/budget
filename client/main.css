@@ -82,14 +82,14 @@
 @layer components {
   /* Default styling for all form inputs in the app. */
   .app-form-input {
-    @apply appearance-none w-full border-2 border-gray-200 rounded-md font-medium placeholder:font-medium h-10 outline-none;
+    @apply appearance-none w-full border-none rounded-lg font-medium placeholder:font-medium h-10 outline-none  shadow-sm shadow-slate-100;
   }
   /* Default styling for all form buttons in the app. */
   .btn-primary {
-    @apply w-full h-10 bg-color-light-blue text-center font-medium text-lg text-white rounded-md shadow-sm active:text-gray-400 active:bg-color-dark-blue lg:hover:cursor-pointer;
+    @apply w-full h-10 bg-color-light-blue font-semibold text-white rounded-lg shadow-sm active:text-gray-400 active:bg-color-dark-blue lg:hover:cursor-pointer flex flex-row justify-center items-center;
   }
   .envelope {
-    @apply rounded-lg flex flex-col items-stretch gap-2 relative z-0 overflow-hidden bg-white;
+    @apply rounded-xl flex flex-col items-stretch gap-2 relative z-0 overflow-hidden bg-white shadow-sm;
   }
   .envelope-header {
     @apply flex flex-col justify-start items-start p-1 px-2 overflow-hidden relative z-0 w-full font-extrabold text-xl h-14;
@@ -110,7 +110,7 @@
     @apply w-2/4 flex flex-row justify-start items-center px-1;
   }
   .tag {
-    @apply font-semibold border-2 border-color-dark-blue px-2 rounded-md min-w-max bg-color-dark-blue text-white;
+    @apply font-semibold border-2 border-color-dark-blue px-2 rounded-lg min-w-max bg-color-dark-blue text-white;
   }
 }
 

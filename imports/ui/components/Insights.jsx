@@ -107,47 +107,55 @@ export function Insights() {
   });
 
   return (
-    <div className="w-full flex flex-col justify-start items-stretch font-semibold gap-2">
-      <div className="bg-white rounded-xl p-2 flex flex-col gap-1">
-        <h1 className="text-lg font-bold">Income</h1>
+    <div className="w-full flex flex-col justify-start items-stretch font-semibold gap-3">
+      <div className="bg-white rounded-xl p-2 flex flex-col shadow-sm">
+        <h1 className="text-lg font-bold">Income this month</h1>
 
-        <div className="w-full flex flex-row justify-between bg-slate-100 rounded-md px-2">
+        <div className="w-full flex flex-row gap-1 items-center px-2 justify-between">
           <div>Expected</div>
+          <hr className="border-t-2 border-dashed border-slate-400 grow mx-1" />
           <div>{toDollars(anticipatedIncome)}</div>
         </div>
 
-        <div className="w-full flex flex-row justify-between bg-slate-100 rounded-md px-2">
+        <div className="w-full flex flex-row gap-1 items-center px-2">
           <div>Received</div>
+          <hr className="border-t-2 border-dashed border-slate-400 grow mx-1" />
           <div>{toDollars(incomeReceived)}</div>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl p-2 flex flex-col gap-1">
-        <h1 className="text-lg font-bold ">Saved</h1>
+      <div className="bg-white rounded-xl p-2 flex flex-col shadow-sm">
+        <h1 className="text-lg font-bold ">Saved this month</h1>
 
-        <div className="w-full flex flex-row justify-between bg-slate-100 rounded-md px-2">
+        <div className="w-full flex flex-row gap-1 items-center px-2 justify-between">
           <div>Savings</div>
-          <div>{toDollars(Math.round(savings * 100) / 100)}</div>
+          <hr className="border-t-2 border-dashed border-slate-400 grow mx-1" />
+          <div>{toDollars(savings)}</div>
         </div>
 
-        <div className="w-full flex flex-row justify-between bg-slate-100 rounded-md px-2">
-          <div>Allocations</div>
-          <div>{toDollars(Math.round(allocations * 100) / 100)}</div>
-        </div>
+        {allocations > 0 && (
+          <div className="w-full flex flex-row gap-1 items-center px-2 justify-between">
+            <div>Allocations</div>
+            <hr className="border-t-2 border-dashed border-slate-400 grow mx-1" />
+            <div>{toDollars(allocations)}</div>
+          </div>
+        )}
       </div>
 
-      <div className="bg-white rounded-xl p-2 flex flex-col gap-1">
-        <h1 className="text-xl font-bold ">Spent</h1>
-        <div className="w-full flex flex-row justify-between bg-slate-100 rounded-md px-2">
-          <div>Spent this month</div>
+      <div className="bg-white rounded-xl p-2 flex flex-col shadow-sm">
+        <h1 className="text-xl font-bold ">Spent this month</h1>
+        <div className="w-full flex flex-row gap-1 items-center px-2 justify-between">
+          <div>Spent</div>
+          <hr className="border-t-2 border-dashed border-slate-400 grow mx-1" />
           <div>{toDollars(spentSoFar)}</div>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl p-2 flex flex-col gap-1">
+      <div className="bg-white rounded-xl p-2 flex flex-col shadow-sm">
         <h1 className="text-xl font-bold ">Remaining</h1>
-        <div className="w-full flex flex-row justify-between bg-slate-100 rounded-md px-2">
-          <div>Left to spend</div>
+        <div className="w-full flex flex-row gap-1 items-center px-2 justify-between">
+          <div className="min-w-content">Left to spend</div>
+          <hr className="border-t-2 border-dashed border-slate-400 grow mx-1" />
           <div>
             {toDollars(
               Math.round(
