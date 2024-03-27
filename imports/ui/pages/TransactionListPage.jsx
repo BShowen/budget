@@ -166,8 +166,7 @@ function SearchBar({ onInput }) {
     );
 
   return (
-    <div className="w-full px-3 bg-search-bar rounded-xl h-12 flex flex-row justify-start items-center overflow-hidden gap-1 shadow-sm">
-      {icon}
+    <div className="w-full px-3 bg-search-bar rounded-full h-10 flex flex-row justify-start items-center overflow-hidden gap-1 shadow-sm">
       <input
         ref={searchBarRef}
         className="border-none h-10 w-full bg-inherit outline-none text-lg font-semibold placeholder:font-normal"
@@ -176,6 +175,7 @@ function SearchBar({ onInput }) {
         value={searchString}
         onChange={updateSearch}
       />
+      {icon}
     </div>
   );
 
