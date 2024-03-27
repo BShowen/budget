@@ -13,73 +13,10 @@ import { dates } from "../util/dates";
 import { toDollars } from "../util/toDollars";
 
 // Icons
-import {
-  LuArrowDown01,
-  LuArrowDown10,
-  LuArrowDownZA,
-  LuArrowDownAZ,
-  LuSearch,
-  LuXCircle,
-} from "react-icons/lu";
+import { LuSearch, LuXCircle } from "react-icons/lu";
 import { IoIosArrowBack } from "react-icons/io";
 
 export function TransactionListPage() {
-  // const [sortOrder, setSortOrder] = useState("asc");
-  // const [sortProperty, setSortProperty] = useState("createdAt");
-  // const toggleSortOrder = () => {
-  //   setSortOrder((prev) => {
-  //     if (prev == "asc") {
-  //       return "desc";
-  //     } else {
-  //       return "asc";
-  //     }
-  //   });
-  // };
-  // const transactionList = useTracker(() => {
-  //   const transactions = TransactionCollection.find().fetch();
-
-  //   switch (sortProperty) {
-  //     case "createdAt":
-  //       return transactions.sort((a, b) => {
-  //         if (sortOrder == "asc") {
-  //           return b[sortProperty] - a[sortProperty];
-  //         } else {
-  //           return a[sortProperty] - b[sortProperty];
-  //         }
-  //       });
-  //     case "merchant":
-  //       if (sortOrder == "asc") {
-  //         return transactions.sort(
-  //           (a, b) =>
-  //             b[sortProperty].charCodeAt(0) - a[sortProperty].charCodeAt(0)
-  //         );
-  //       } else {
-  //         return transactions.sort(
-  //           (a, b) =>
-  //             a[sortProperty].charCodeAt(0) - b[sortProperty].charCodeAt(0)
-  //         );
-  //       }
-  //     case "amount":
-  //       if (sortOrder == "asc") {
-  //         return transactions.sort((a, b) => {
-  //           return a.amount - b.amount;
-  //         });
-  //       } else {
-  //         return transactions.sort((a, b) => {
-  //           return b.amount - a.amount;
-  //         });
-  //       }
-  //     default:
-  //       return transactions;
-  //   }
-  // }, [sortOrder]);
-
-  // const toolbarOptions = {
-  //   sortOrder: sortOrder,
-  //   toggleSortOrder: toggleSortOrder,
-  //   sortProperty: sortProperty,
-  //   setSortProperty: setSortProperty,
-  // };
   const navigate = useNavigate();
   const [filter, setFilter] = useState("");
   const transactionList = useTracker(() =>
@@ -93,7 +30,11 @@ export function TransactionListPage() {
 
     return (
       transactionName.includes(searchFilter) ||
-      toDollars(transactionAmount.toString()).includes(searchFilter)
+      toDollars(transactionAmount.toString()).includes(searchFilter) ||
+      toDollars(transactionAmount.toString())
+        .split(",")
+        .join("")
+        .includes(searchFilter)
     );
   });
   const transactionCount = filteredTransactionList.length;
@@ -190,106 +131,4 @@ function SearchBar({ onInput }) {
     setSearchString(e.target.value);
     onInput(e);
   }
-}
-
-function Toolbar(options) {
-  return (
-    <div className="sticky position-top-safe px-1 bg-gray-50 rounded-xl h-11 shadow-md mb-3">
-      <div className="w-full h-full flex flex-row justify-center items-stretch gap-1 font-bold text-sm py-1">
-        <SortByDate {...options} />
-        <SortByName {...options} />
-        <SortByAmount {...options} />
-      </div>
-    </div>
-  );
-}
-
-function SortByDate({
-  toggleSortOrder,
-  sortOrder,
-  sortProperty,
-  setSortProperty,
-}) {
-  return (
-    <div
-      className={`px-2 flex flex-row justify-center items-center gap-1 rounded-lg md:hover:cursor-pointer grow basis-0 ${
-        sortProperty == "createdAt" ? "bg-gray-300" : "bg-gray-100"
-      }`}
-      onClick={() => {
-        setSortProperty("createdAt");
-        toggleSortOrder();
-      }}
-    >
-      <button>Date</button>
-      {sortProperty == "createdAt" ? (
-        sortOrder == "asc" ? (
-          <LuArrowDown10 className="text-2xl" />
-        ) : (
-          <LuArrowDown01 className="text-2xl" />
-        )
-      ) : (
-        ""
-      )}
-    </div>
-  );
-}
-
-function SortByName({
-  toggleSortOrder,
-  sortOrder,
-  sortProperty,
-  setSortProperty,
-}) {
-  return (
-    <div
-      className={`px-2 flex flex-row justify-center items-center gap-1 rounded-lg md:hover:cursor-pointer grow basis-0 ${
-        sortProperty == "merchant" ? "bg-gray-300" : "bg-gray-100"
-      }`}
-      onClick={() => {
-        setSortProperty("merchant");
-        toggleSortOrder();
-      }}
-    >
-      <button>Name</button>
-      {sortProperty == "merchant" ? (
-        sortOrder == "asc" ? (
-          <LuArrowDownZA className="text-2xl" />
-        ) : (
-          <LuArrowDownAZ className="text-2xl" />
-        )
-      ) : (
-        ""
-      )}
-    </div>
-  );
-}
-
-function SortByAmount({
-  toggleSortOrder,
-  sortOrder,
-  sortProperty,
-  setSortProperty,
-}) {
-  return (
-    <div
-      className={`px-2 flex flex-row justify-center items-center gap-1 rounded-lg md:hover:cursor-pointer grow basis-0 ${
-        sortProperty == "amount" ? "bg-gray-300" : "bg-gray-100"
-      }`}
-      onClick={() => {
-        setSortProperty("amount");
-        toggleSortOrder();
-      }}
-    >
-      <button>Amount</button>
-      {sortProperty == "amount" ? (
-        sortOrder == "asc" ? (
-          <LuArrowDown01 className="text-2xl" />
-        ) : (
-          <LuArrowDown10 className="text-2xl" />
-        )
-      ) : (
-        ""
-      )}
-    </div>
-  );
 }
