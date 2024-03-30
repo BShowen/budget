@@ -89,8 +89,9 @@ export function TransactionListPage() {
           </h1>
         </div>
       </div>
-      <div className="mt-11 h-16 fixed position-top-safe w-full lg:w-3/5 z-50 px-2 flex flex-col justify-center items-stretch bg-app">
+      <div className="mt-11 h-16 fixed position-top-safe w-full lg:w-3/5 z-50 px-2 flex flex-row justify-start items-center bg-app">
         <SearchBar onInput={filterTransactions} />
+        <SearchBarTotal transactions={filteredTransactionList} />
       </div>
       <div className="flex flex-col justify-start items-stretch pb-28 mt-28">
         <div className="z-0 shadow-sm bg-white">{transactionGroups}</div>
@@ -115,7 +116,11 @@ function SearchBar({ onInput }) {
     );
 
   return (
-    <div className="w-full px-3 bg-search-bar rounded-full min-h-10 flex flex-row justify-start items-center overflow-hidden gap-1 shadow-sm">
+    <div
+      className={`${
+        searchString ? "w-4/6" : "w-full"
+      } z-50 px-3 bg-search-bar rounded-full min-h-10 flex flex-row justify-start items-center overflow-hidden gap-1 shadow-sm transition-all duration-300 ease-in-out`}
+    >
       <input
         ref={searchBarRef}
         className="border-none h-10 w-full bg-inherit outline-none text-lg font-semibold placeholder:font-normal"
@@ -139,6 +144,15 @@ function SearchBar({ onInput }) {
     setSearchString(e.target.value);
     onInput(e);
   }
+}
+
+function SearchBarTotal({ transactions }) {
+  const { income, expense } = reduceTransactions({ transactions });
+  return (
+    <div className="absolute right-[10px] w-2/6 flex flex-row justify-center items-center rounded-e-full min-h-8 border-blue-500 border-2 font-semibold z-40">
+      <p>{toDollars(Math.round((expense - income) * 100) / 100)}</p>
+    </div>
+  );
 }
 
 function TransactionGroup({ date, transactions }) {
