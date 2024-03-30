@@ -10,6 +10,9 @@ import { router } from "./router";
 // Components
 import { AppData } from "../imports/ui/layouts/AppData.jsx";
 
+// Utils
+import "../imports/ui/util/appHeight.js";
+
 Meteor.startup(() => {
   const root = createRoot(document.getElementById("app"));
   root.render(

@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Fallback incase javascript doesn't set the height of --app-height variable */
+:root {
+  --app-height: 100%;
+}
+
 @layer utilities {
   .no-tap-button {
     -webkit-tap-highlight-color: transparent;
@@ -10,8 +15,9 @@
   }
   .prevent-scroll {
     overflow: hidden;
+    overscroll-behavior: none;
   }
-  /* **********TEXT COLORS********** */
+  /*                                       **********TEXT COLORS********** */
   .text-color-dark-blue {
     /* color: #0060e6; */
     @apply text-blue-700;
@@ -28,7 +34,7 @@
   .text-color-light-gray {
     @apply text-gray-400;
   }
-  /* **********BG COLORS********** */
+  /*                                         **********BG COLORS********** */
   .bg-header {
     /* Main header with months */
     /* dark */
@@ -64,7 +70,7 @@
     /* background-color: #eaeff4; */
     background-color: white;
   }
-  /* **********BORDER COLORS********** */
+  /*                                     **********BORDER COLORS********** */
   .border-color-light-blue {
     @apply border-blue-600;
   }
@@ -109,6 +115,10 @@
   .list-transaction-details-right {
     @apply w-2/4 flex flex-row justify-start items-center px-1;
   }
+  .list-transaction-date {
+    @apply bg-slate-200/50 min-h-7 flex flex-row gap-2 justify-between items-center backdrop-blur-md p-2 font-semibold border-b sticky z-50 shadow-sm;
+    top: calc(env(safe-area-inset-top, 0) + 108px);
+  }
   .tag {
     @apply font-semibold border-2 border-color-dark-blue px-2 rounded-lg min-w-max bg-color-dark-blue text-white;
   }
@@ -119,15 +129,15 @@
   box-sizing: border-box;
 }
 
-/* Fallback incase javascript doesn't set the height of --app-height variable */
-:root {
-  --app-height: 100%;
-}
-
 html,
 body {
   min-height: calc(var(--app-height) + env(safe-area-inset-top));
   @apply bg-app;
+}
+
+/* My own full height class */
+.height-full {
+  height: var(--app-height);
 }
 
 .padding-safe-area-top {

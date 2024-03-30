@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { redirect, useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
 
 export const loginFormLoader = () => {
   // If user is logged in, redirect to budget.
@@ -63,10 +62,19 @@ export function LoginForm() {
     });
   }
 
+  useEffect(() => {
+    document.getElementsByTagName("html")[0].classList.add("prevent-scroll");
+    return () => {
+      document
+        .getElementsByTagName("html")[0]
+        .classList.remove("prevent-scroll");
+    };
+  });
+
   return (
     <>
       <div className="empty-page-header !bg-gray-100"></div>
-      <div className="w-full bg-inherit p-2 flex flex-col justify-start items-stretch gap-7 padding-safe-area-top">
+      <div className="w-full bg-inherit p-2 flex flex-col justify-start items-stretch gap-7 padding-safe-area-top bg-app">
         <div className="w-full h-14 flex flex-col justify-end items-center">
           <h1 className="text-3xl font-semibold text-color-primary">
             Login to Dough Tracker

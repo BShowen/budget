@@ -21,7 +21,7 @@ export function InsightsPage() {
           </Link>
         </div>
       </div>
-      <div className="pt-12 px-2">
+      <div className="pt-12 px-2 height-full">
         <Insights />
       </div>
     </>
