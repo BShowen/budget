@@ -191,13 +191,13 @@ body {
     height: 0px;
   }
   to {
-    height: 85px;
+    height: 52px;
   }
 }
 
 @keyframes month-selector-slide-out {
   from {
-    height: 85px;
+    height: 52px;
   }
   to {
     height: 0px;

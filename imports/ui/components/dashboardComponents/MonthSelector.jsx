@@ -43,14 +43,14 @@ export function MonthSelector({ currentDate }) {
   return (
     <div>
       <IoIosArrowDropdown
-        className={`text-3xl transition-all duration-300 ease-in-out ${
+        className={`text-2xl transition-all duration-300 ease-in-out ${
           isDropdownOpen ? "rotate-180" : ""
         }`}
         onClick={toggleDropdown}
       />
 
       <div
-        className={`z-50 text-color-primary flex flex-row items-center absolute left-0 right-0 bg-white mt-3 overflow-hidden  ${
+        className={`z-50 text-color-primary flex flex-row items-center absolute left-0 right-0 bg-white mt-2 rounded-b-lg shadow-inner ${
           isDropdownOpen
             ? "month-selector-slide-in"
             : canAnimate
@@ -58,34 +58,42 @@ export function MonthSelector({ currentDate }) {
             : "h-0"
         }`}
       >
-        <ul className="list-none w-full flex flex-row justify-start items-center gap-2 overflow-y-hidden overflow-x-scroll scrollbar-hide px-2 shadow-md h-full">
-          {budgetList.map((budget) => {
-            const active = currentDate.getTime() == budget.createdAt.getTime();
-            const element = (
-              <li
-                key={budget._id}
-                className="max-w-24 min-w-24 h-14"
-                id={active ? "active" : undefined}
-              >
-                <button
-                  className={`w-full h-full rounded-lg border p-1 ${
-                    active
-                      ? "bg-color-light-blue text-white border-color-dark-blue"
-                      : "bg-app text-color-primary"
-                  }`}
-                  type="button"
-                  onClick={() => goToBudget({ date: budget.createdAt })}
-                >
-                  <p className="font-semibold">
-                    {dates.format(budget.createdAt, { forPageHeader: true })}
-                  </p>
-                </button>
-              </li>
-            );
-            return element;
-          })}
+        <ul className="list-none w-full flex flex-row justify-start items-center gap-2 overflow-y-hidden overflow-x-scroll scrollbar-hide px-2 h-full overscroll-x-contain">
+          {budgetList.map((budget) => (
+            <MonthSelectorButton
+              key={budget._id}
+              onClickHandler={goToBudget}
+              currentDate={currentDate}
+              budget={budget}
+            />
+          ))}
         </ul>
       </div>
     </div>
+  );
+}
+
+function MonthSelectorButton({ onClickHandler, currentDate, budget }) {
+  const active = currentDate.getTime() == budget.createdAt.getTime();
+  return (
+    <li
+      key={budget._id}
+      className="min-w-max h-8 drop-shadow-sm"
+      id={active ? "active" : undefined}
+    >
+      <button
+        className={`w-full h-full rounded-lg p-1 ${
+          active
+            ? "bg-color-light-blue text-white"
+            : "bg-app text-color-primary"
+        }`}
+        type="button"
+        onClick={() => onClickHandler({ date: budget.createdAt })}
+      >
+        <p className="font-semibold">
+          {dates.format(budget.createdAt, { forPageHeader: true })}
+        </p>
+      </button>
+    </li>
   );
 }
