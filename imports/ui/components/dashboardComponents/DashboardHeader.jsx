@@ -1,22 +1,10 @@
-import React, { useContext } from "react";
-import { useTracker } from "meteor/react-meteor-data";
-
-// Collections
-import { LedgerCollection } from "../../../api/Ledger/LedgerCollection";
+import React from "react";
 
 // Components
 import { DashboardButtonGroup } from "./DashboardButtonGroup";
 import { MonthSelector } from "./MonthSelector";
 
-// Utils
-import { toDollars } from "../../util/toDollars";
-
-export function DashboardHeader({
-  setActiveTab,
-  activeTab,
-  date,
-  incomeEnvelope,
-}) {
+export function DashboardHeader({ setActiveTab, activeTab, date }) {
   const year = date.toLocaleString("en-US", { year: "numeric" });
   const currentMonth = date.toLocaleString("en-US", { month: "long" });
 
@@ -36,7 +24,7 @@ export function DashboardHeader({
           </div>
           <div className="flex flex-row justify-start items-center px-2 gap-2">
             <h1 className="text-3xl font-bold lg:hover:cursor-pointer w-max">
-              {currentMonth} <span className="font-extralight">{year}</span>
+              {currentMonth} <span className="font-thin">{year}</span>
             </h1>
             <MonthSelector currentDate={date} />
           </div>
@@ -48,55 +36,6 @@ export function DashboardHeader({
           />
         </div>
       </div>
-      {/* <RemainingMoneyBanner incomeEnvelope={incomeEnvelope} /> */}
-    </div>
-  );
-}
-
-function RemainingMoneyBanner({ incomeEnvelope }) {
-  const expectedMonthlyIncome = useTracker(() => {
-    const ledgers = LedgerCollection.find({
-      envelopeId: incomeEnvelope._id,
-    }).fetch();
-
-    return ledgers.reduce((total, ledger) => {
-      return ledger.allocatedAmount + total;
-    }, 0);
-  });
-
-  const totalIncomeBudgeted = useTracker(() => {
-    const ledgers = LedgerCollection.find({
-      envelopeId: { $ne: incomeEnvelope._id },
-    }).fetch();
-    return ledgers.reduce((total, ledger) => {
-      return Math.round((ledger.allocatedAmount + total) * 100) / 100;
-    }, 0);
-  });
-
-  const displayBalance = toDollars(
-    Math.abs(
-      Math.round((expectedMonthlyIncome - totalIncomeBudgeted) * 100) / 100
-    )
-  );
-
-  const isOverBudget =
-    Math.round((expectedMonthlyIncome - totalIncomeBudgeted) * 100) / 100 < 0;
-
-  return (
-    <div className="w-full h-8 bg-white flex flex-row flex-nowrap justify-center items-center">
-      <p>
-        {isOverBudget ? (
-          <>
-            <span className="font-bold text-rose-500">{displayBalance}</span>{" "}
-            <span className="text-sm font-medium">over budget</span>
-          </>
-        ) : (
-          <>
-            <span className="font-bold">{displayBalance}</span>{" "}
-            <span className="text-sm font-medium">left to budget</span>
-          </>
-        )}
-      </p>
     </div>
   );
 }

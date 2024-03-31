@@ -13,12 +13,25 @@ import { BudgetCollection } from "../../../api/Budget/BudgetCollection";
 import { dates } from "../../util/dates";
 
 export function MonthSelector({ currentDate }) {
-  const budgetList = useTracker(() => {
-    const budgets = BudgetCollection.find(
-      {},
-      { sort: { createdAt: 1 } }
-    ).fetch();
-    return budgets;
+  const budgetDateList = useTracker(() => {
+    const budgetDates = BudgetCollection.find({}, { sort: { createdAt: 1 } })
+      .fetch()
+      .reduce((acc, budget) => [...acc, budget.createdAt], []);
+
+    // If the latestBudgetDate is greater than todays date, then don't add a new date to the list.
+    // If the latestBudgetDate is less than todays date, then add a new date to the list.
+    const today = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+    const latestBudgetDate = budgetDates[budgetDates.length - 1];
+    if (latestBudgetDate.getTime() <= today.getTime()) {
+      budgetDates.push(
+        new Date(
+          latestBudgetDate.getFullYear(),
+          latestBudgetDate.getMonth() + 1,
+          1
+        )
+      );
+    }
+    return budgetDates;
   });
 
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -59,39 +72,48 @@ export function MonthSelector({ currentDate }) {
         }`}
       >
         <ul className="list-none w-full flex flex-row justify-start items-center gap-2 overflow-y-hidden overflow-x-scroll scrollbar-hide px-2 h-full overscroll-x-contain">
-          {budgetList.map((budget) => (
-            <MonthSelectorButton
-              key={budget._id}
-              onClickHandler={goToBudget}
-              currentDate={currentDate}
-              budget={budget}
-            />
-          ))}
+          {budgetDateList.map((date, i) => {
+            const isLastElement = budgetDateList.length - 1 == i;
+            return (
+              <MonthSelectorButton
+                key={date.getTime()}
+                clickHandler={goToBudget}
+                activeBudgetDate={currentDate}
+                budgetDate={date}
+                isFutureDate={isLastElement}
+              />
+            );
+          })}
         </ul>
       </div>
     </div>
   );
 }
 
-function MonthSelectorButton({ onClickHandler, currentDate, budget }) {
-  const active = currentDate.getTime() == budget.createdAt.getTime();
+function MonthSelectorButton({
+  clickHandler,
+  activeBudgetDate,
+  budgetDate,
+  isFutureDate,
+}) {
+  const active = activeBudgetDate.getTime() == budgetDate.getTime();
+  const activeStyling = isFutureDate
+    ? "bg-app border-2 border-color-light-blue border-dashed text-primary"
+    : active
+    ? "bg-color-light-blue text-white"
+    : "bg-app text-color-primary";
   return (
     <li
-      key={budget._id}
       className="min-w-max h-8 drop-shadow-sm"
       id={active ? "active" : undefined}
     >
       <button
-        className={`w-full h-full rounded-lg p-1 ${
-          active
-            ? "bg-color-light-blue text-white"
-            : "bg-app text-color-primary"
-        }`}
+        className={`w-full h-full rounded-lg p-1 flex flex-row justify-center items-center ${activeStyling}`}
         type="button"
-        onClick={() => onClickHandler({ date: budget.createdAt })}
+        onClick={() => clickHandler({ date: budgetDate })}
       >
         <p className="font-semibold">
-          {dates.format(budget.createdAt, { forPageHeader: true })}
+          {dates.format(budgetDate, { forPageHeader: true })}
         </p>
       </button>
     </li>
