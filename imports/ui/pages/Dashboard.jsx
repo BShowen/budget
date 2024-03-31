@@ -75,7 +75,7 @@ export const Dashboard = () => {
       />
 
       <div className="mt-[105px] pb-16 px-2 flex flex-col items-stretch gap-4 z-0">
-        <WelcomeComponent incomeEnvelope={incomeEnvelope} />
+        <WelcomeComponent budgetDate={budget.createdAt} />
         {/* Categories container */}
         <IncomeEnvelope
           key={incomeEnvelope._id}

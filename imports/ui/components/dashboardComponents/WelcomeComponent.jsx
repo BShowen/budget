@@ -10,7 +10,14 @@ import { LedgerCollection } from "../../../api/Ledger/LedgerCollection";
 import { cap } from "../../util/cap";
 import { toDollars } from "../../util/toDollars";
 
-export function WelcomeComponent() {
+// Icons
+import { LuAlertCircle } from "react-icons/lu";
+
+export function WelcomeComponent({ budgetDate }) {
+  const isFutureBudget =
+    new Date(new Date().getFullYear(), new Date().getMonth(), 1).getTime() <
+    budgetDate.getTime();
+
   const firstName = cap(Meteor.user().profile.firstName);
 
   const anticipatedIncome = useTracker(() =>
@@ -122,6 +129,7 @@ export function WelcomeComponent() {
 
   return (
     <div className="text-color-light-gray font-semibold">
+      {isFutureBudget && <FutureBudgetWarning />}
       <p className="text-2xl">Hi {firstName}</p>
       {leftToBudget > 0 && (
         <p>You still have {toDollars(leftToBudget)} left to budget 💰</p>
@@ -148,6 +156,15 @@ export function WelcomeComponent() {
           ) / 100
         )} available to spend on your budget 💵`}
       </p>
+    </div>
+  );
+}
+
+function FutureBudgetWarning() {
+  return (
+    <div className="text-red-500 border border-red-500 rounded-full px-2 py-1 bg-red-500/5 shadow-sm flex flex-row justify-start items-center gap-2">
+      <LuAlertCircle className="text-lg" />
+      <p>You're viewing a future budget.</p>
     </div>
   );
 }
