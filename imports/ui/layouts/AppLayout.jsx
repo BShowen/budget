@@ -1,9 +1,7 @@
 import React from "react";
-import { Outlet, ScrollRestoration } from "react-router-dom";
+import { ScrollRestoration } from "react-router-dom";
 
-// Components
-import { FooterNav } from "../components/FooterNav.jsx";
-export const AppLayout = () => {
+export const AppLayout = ({ children }) => {
   return (
     <div
       id="layout"
@@ -33,8 +31,7 @@ export const AppLayout = () => {
           }
         }}
       />
-      <Outlet />
-      <FooterNav />
+      {children}
     </div>
   );
 };

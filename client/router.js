@@ -9,7 +9,6 @@ import {
 } from "../imports/ui/components/forms/LoginForm";
 import { EditTransactionForm } from "../imports/ui/components/forms/TransactionFormUpdate";
 import { CreateTransactionForm } from "../imports/ui/components/forms/TransactionFormCreate";
-import { AppLayout } from "../imports/ui/layouts/AppLayout";
 
 // Pages
 import { Dashboard } from "../imports/ui/pages/Dashboard";
@@ -27,6 +26,7 @@ import { NewAllocationPage } from "../imports/ui/pages/NewAllocationPage";
 import { InsightsPage } from "../imports/ui/pages/InsightsPage";
 
 // Loaders
+import { AppData } from "../imports/ui/layouts/AppData";
 import { logoutLoader } from "../imports/ui/components/Logout";
 import { loader as editTransactionLoader } from "../imports/ui/components/forms/TransactionFormUpdate";
 
@@ -44,7 +44,7 @@ export const router = createBrowserRouter([
   {
     path: "/",
     loader: checkLoginStatus,
-    element: <AppLayout />,
+    element: <AppData />,
     errorElement: <ErrorPage />,
     children: [
       {

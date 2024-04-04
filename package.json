@@ -16,10 +16,13 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.15.4",
+    "@emotion/is-prop-valid": "^1.2.2",
     "@headlessui/react": "^1.7.17",
     "@tailwindcss/forms": "^0.5.6",
     "autoprefixer": "^10.4.4",
     "bcrypt": "^5.1.1",
+    "framer-motion": "^11.0.24",
+    "ldrs": "^1.0.1",
     "lodash": "^4.17.21",
     "meteor-node-stubs": "^1.2.1",
     "postcss": "^8.4.31",
