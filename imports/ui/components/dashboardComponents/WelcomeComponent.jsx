@@ -13,7 +13,7 @@ import { toDollars } from "../../util/toDollars";
 // Icons
 import { LuAlertCircle } from "react-icons/lu";
 
-export function WelcomeComponent({ budgetDate }) {
+export function WelcomeComponent({ budgetDate, budgetId }) {
   const isFutureBudget =
     new Date(new Date().getFullYear(), new Date().getMonth(), 1).getTime() <
     budgetDate.getTime();
@@ -22,7 +22,7 @@ export function WelcomeComponent({ budgetDate }) {
 
   const anticipatedIncome = useTracker(() =>
     LedgerCollection.find(
-      { kind: "income" },
+      { kind: "income", budgetId },
       { fields: { allocatedAmount: true } }
     )
       .fetch()
@@ -35,12 +35,12 @@ export function WelcomeComponent({ budgetDate }) {
     // Get all transactions that belong to the income envelope and accumulate
     // their totals into a single dollar amount.
     const incomeEnvelope = EnvelopeCollection.findOne(
-      { kind: "income" },
+      { kind: "income", budgetId },
       { fields: { _id: true } }
     );
 
     return TransactionCollection.find(
-      { envelopeId: incomeEnvelope._id },
+      { envelopeId: incomeEnvelope._id, budgetId },
       { fields: { amount: true } }
     )
       .fetch()
@@ -50,15 +50,20 @@ export function WelcomeComponent({ budgetDate }) {
   const spentSoFar = useTracker(() => {
     // Get all transactions that do not belong to incomeEnvelope or savingsEnvelope
     const [env1, env2] = EnvelopeCollection.find(
-      { $or: [{ kind: "income" }, { kind: "savings" }] },
+      {
+        $or: [
+          { kind: "income", budgetId },
+          { kind: "savings", budgetId },
+        ],
+      },
       { fields: { _id: true } }
     ).fetch();
 
     return TransactionCollection.find(
       {
         $and: [
-          { envelopeId: { $not: env1._id } },
-          { envelopeId: { $not: env2._id } },
+          { envelopeId: { $not: env1._id }, budgetId },
+          { envelopeId: { $not: env2._id }, budgetId },
         ],
       },
       { fields: { amount: true, type: true } }
@@ -76,7 +81,10 @@ export function WelcomeComponent({ budgetDate }) {
   // This is the sum of all the income transactions in allocation ledgers.
   const allocations = useTracker(() => {
     // An array of all allocation ledger id's.
-    const allocationLedgers = LedgerCollection.find({ kind: "allocation" })
+    const allocationLedgers = LedgerCollection.find({
+      kind: "allocation",
+      budgetId,
+    })
       .fetch()
       .map((ledger) => ledger._id);
     /* prettier-ignore */
@@ -84,7 +92,8 @@ export function WelcomeComponent({ budgetDate }) {
     const transactions = TransactionCollection.find({
       $and: [
         { ledgerId: { $in: allocationLedgers } },
-        { type: "income" }
+        { type: "income" }, 
+        { budgetId }
       ],
     }).fetch();
     // Sum the transaction totals.
@@ -97,7 +106,10 @@ export function WelcomeComponent({ budgetDate }) {
   // This is the sum of all the income transactions in the savings ledgers.
   const savings = useTracker(() => {
     // An array of all savings ledger id's
-    const savingsLedgerIdList = LedgerCollection.find({ kind: "savings" })
+    const savingsLedgerIdList = LedgerCollection.find({
+      kind: "savings",
+      budgetId,
+    })
       .fetch()
       ?.map((ledger) => ledger._id);
     /* prettier-ignore */
@@ -105,7 +117,8 @@ export function WelcomeComponent({ budgetDate }) {
     const transactions = TransactionCollection.find({
       $and: [
         { ledgerId: { $in: savingsLedgerIdList } },
-        { type: "income" }
+        { type: "income" },
+        { budgetId }
       ],
     }).fetch();
     // Sum the total of all the transactions.
@@ -118,6 +131,7 @@ export function WelcomeComponent({ budgetDate }) {
   const totalIncomeBudgeted = useTracker(() => {
     const ledgers = LedgerCollection.find({
       kind: { $ne: "income" },
+      budgetId,
     }).fetch();
     return ledgers.reduce((total, ledger) => {
       return Math.round((ledger.allocatedAmount + total) * 100) / 100;
