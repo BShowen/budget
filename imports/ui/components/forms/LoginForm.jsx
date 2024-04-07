@@ -54,6 +54,13 @@ export function LoginForm() {
   }
 
   function handleInput(e) {
+    setError((prev) => {
+      if (prev.field == e.target.name) {
+        return {};
+      } else {
+        return prev;
+      }
+    });
     setFormValues((prevValues) => {
       return {
         ...prevValues,
@@ -63,11 +70,9 @@ export function LoginForm() {
   }
 
   useEffect(() => {
-    document.getElementsByTagName("html")[0].classList.add("prevent-scroll");
+    document.body.classList.add("prevent-scroll");
     return () => {
-      document
-        .getElementsByTagName("html")[0]
-        .classList.remove("prevent-scroll");
+      document.body.classList.remove("prevent-scroll");
     };
   });
 
@@ -87,8 +92,8 @@ export function LoginForm() {
         >
           <div>
             <input
-              className={`form-input app-form-input border ${
-                error.field === "email" ? "border-rose-400" : "border-gray-300"
+              className={`form-input app-form-input ${
+                error.field === "email" ? "text-red-500" : ""
               }`}
               id="email"
               type="email"
@@ -102,9 +107,7 @@ export function LoginForm() {
           <div>
             <input
               className={`form-input app-form-input border ${
-                error.field === "password"
-                  ? "border-rose-400"
-                  : "border-gray-300"
+                error.field === "password" ? "text-red-500" : ""
               }`}
               id="password"
               type="password"
