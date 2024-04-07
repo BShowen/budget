@@ -143,6 +143,11 @@ export const AppData = () => {
 function Loading() {
   squircle.register();
 
+  useEffect(() => {
+    document.body.classList.add("prevent-scroll");
+    return () => document.body.classList.remove("prevent-scroll");
+  }, []);
+
   return (
     <motion.div
       initial={{ scale: 0, opacity: 0 }}
