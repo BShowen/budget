@@ -108,7 +108,7 @@ function ExpandedContent({ transaction, expanded }) {
   });
 
   return expanded ? (
-    <div className="w-full overflow-x-hidden overflow-y-scroll flex flex-col justify-start items-stretch mt-10 overscroll-auto pt-2 scrollbar-hide h-full">
+    <div className="w-full overflow-x-hidden overflow-hidden flex flex-col justify-start items-stretch mt-10 overscroll-auto pt-2 scrollbar-hide h-full">
       <div className="flex flex-col justify-start items-stretch gap-1 ps-7">
         <div className="flex flex-row justify-center items-center mb-1 border border-color-dark-blue rounded-md bg-color-dark-blue w-max px-1">
           <p className="font-bold text-white text-md">
