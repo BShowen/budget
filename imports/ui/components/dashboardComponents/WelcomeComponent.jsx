@@ -150,14 +150,9 @@ export function WelcomeComponent({ budgetDate, budgetId }) {
       )}
 
       {leftToBudget < 0 && (
-        <div className="text-red-500 border border-red-500 rounded-xl px-2 py-1 bg-red-500/5 shadow-sm">
-          <p className="">
-            You are over budget by {toDollars(Math.abs(leftToBudget))}
-          </p>
-          <p className="font-normal text-xs">
-            Either you have missed a paycheck or you're over spending in a
-            category.
-          </p>
+        <div className="text-red-500 border border-red-500 rounded-xl px-2 py-1 bg-red-500/5 shadow-sm flex flex-row justify-start items-center">
+          <LuAlertCircle className="text-lg" />
+          <p>You are over budget by {toDollars(Math.abs(leftToBudget))}</p>
         </div>
       )}
 
