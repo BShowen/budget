@@ -1,5 +1,4 @@
 import { Meteor } from "meteor/meteor";
-import { useTracker } from "meteor/react-meteor-data";
 import React, { useEffect, useState, useRef, useContext } from "react";
 import {
   redirect,
@@ -12,7 +11,6 @@ import { pickBy } from "lodash";
 // Collections
 import { LedgerCollection } from "../../../api/Ledger/LedgerCollection";
 import { TransactionCollection } from "../../../api/Transaction/TransactionCollection";
-import { EnvelopeCollection } from "../../../api/Envelope/EnvelopeCollection";
 
 // Components
 import { SelectedLedger } from "./formComponents/SelectedLedger";
@@ -21,7 +19,6 @@ import { ButtonGroup } from "./formComponents/ButtonGroup";
 import { TagSelection } from "./formComponents/TagSelection";
 
 // Utils
-import { cap } from "../../util/cap";
 import { dates } from "../../util/dates";
 import { formatDollarAmount } from "../../util/formatDollarAmount";
 import { splitDollars } from "../../util/splitDollars";
@@ -73,74 +70,6 @@ export function EditTransactionForm() {
       ? TransactionCollection.find({ splitTransactionId }).fetch()
       : [TransactionCollection.findOne({ _id: transactionId })];
     return { ledger, transactionList };
-  });
-
-  const envelopeNames = useTracker(() => {
-    // Return all of the envelopes in an dictionary where each key is the
-    // envelope._id and each value is the envelope name.
-    // { "123abc": "House", "456def": "Vehicles", "789ghi": "Groceries" } etc.
-    return EnvelopeCollection.find({}, { fields: { _id: 1, name: 1 } })
-      .fetch()
-      .reduce(
-        (acc, envelope) => {
-          return { ...acc, [envelope._id]: cap(envelope.name) };
-        },
-        { uncategorized: "uncategorized" }
-      );
-  });
-
-  // Get all the ledgers in this budget. This list is used to populate the
-  // form selection
-  const ledgerList = useTracker(() => {
-    // Add uncategorized ledger document to the ledgers list. This is the
-    // default ledger when creating a new transaction and the user doesn't
-    // select a ledger
-    const ledgerList = [
-      ...LedgerCollection.find().fetch(),
-      {
-        _id: "uncategorized",
-        name: "uncategorized",
-        kind: "expense",
-        envelopeId: "uncategorized",
-      },
-    ].sort((a, b) => {
-      // Sort the ledgers by ledgerName. ASC sort.
-      return (
-        a.name.toLowerCase().charCodeAt(0) - b.name.toLowerCase().charCodeAt(0)
-      );
-    });
-
-    // Group ledgers by their type. income, expense, savings, allocation.
-    const ledgerListGroupedByKind = ledgerList.reduce(
-      (acc, ledger) => {
-        return {
-          ...acc,
-          [ledger.kind]: [
-            ...acc[ledger.kind],
-            { ...ledger, envelopeName: envelopeNames[ledger.envelopeId] },
-          ],
-        };
-      },
-      {
-        income: [],
-        expense: [],
-        savings: [],
-        allocation: [],
-      }
-    );
-
-    // Now sort each ledger by their envelope name. Each ledger list will now
-    // be sorted ASC according to their envelope name and the ledger name.
-    for (const [kind, ledgers] of Object.entries(ledgerListGroupedByKind)) {
-      ledgerListGroupedByKind[kind] = ledgers.sort((a, b) => {
-        return (
-          a.envelopeName.toLowerCase().charCodeAt(0) -
-          b.envelopeName.toLowerCase().charCodeAt(0)
-        );
-      });
-    }
-
-    return ledgerListGroupedByKind;
   });
 
   const [formData, setFormData] = useState({
@@ -401,14 +330,12 @@ export function EditTransactionForm() {
   }
 
   function openDialog() {
-    const body = document.getElementsByTagName("body")[0];
-    body.classList.add("prevent-scroll");
+    document.body.classList.add("prevent-scroll");
     setCategorySelector("open");
   }
 
   function closeDialog() {
-    const body = document.getElementsByTagName("body")[0];
-    body.classList.remove("prevent-scroll");
+    document.body.classList.remove("prevent-scroll");
     // Scroll to bottom of page after adding categories.
     window.scrollTo(0, document.body.scrollHeight);
     setCategorySelector("closed");
@@ -658,7 +585,6 @@ export function EditTransactionForm() {
             <Dialog
               closeDialog={closeDialog}
               isOpen={categorySelector === "open"}
-              ledgerList={ledgerList}
               selectLedger={selectLedger}
               deselectLedger={deselectLedger}
               selectedLedgerIdList={Object.keys(formData.selectedLedgers)}
