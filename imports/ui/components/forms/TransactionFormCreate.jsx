@@ -2,7 +2,7 @@ import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { pickBy } from "lodash";
+import { initial, pickBy } from "lodash";
 
 // Components
 import { SelectedLedger } from "./formComponents/SelectedLedger";
@@ -12,11 +12,13 @@ import { TagSelection } from "./formComponents/TagSelection";
 import { DateInput } from "./formComponents/DateInput";
 import { AmountInput } from "./formComponents/AmountInput";
 import { MerchantInput } from "./formComponents/MerchantInput";
+import { NotesInput } from "./formComponents/NotesInput";
 
 // Hooks
 import { useFormDateInput } from "./formHooks/useFormDateInput";
 import { useFormAmountInput } from "./formHooks/useFormAmountInput";
 import { useFormMerchantInput } from "./formHooks/useFormMerchantInput";
+import { useFormNotesInput } from "./formHooks/useFormNotesInput";
 
 // Collections
 import { LedgerCollection } from "../../../api/Ledger/LedgerCollection";
@@ -55,6 +57,7 @@ export function CreateTransactionForm() {
   const amountInputProps = useFormAmountInput({ initialValue: "0.00" });
 
   const merchantInputProps = useFormMerchantInput({ initialValue: "" });
+
   const [transactionType, setTransactionType] = useState(
     ledger?.kind === "income" ||
       ledger?.kind === "savings" ||
@@ -63,18 +66,20 @@ export function CreateTransactionForm() {
       : "expense"
   );
 
+  const notesInputProps = useFormNotesInput({ initialValue: "" });
+
   const [formData, setFormData] = useState({
-    createdAt: dates.format(new Date(), { forHtml: true }),
+    // createdAt: dates.format(new Date(), { forHtml: true }),
     budgetId,
-    type:
-      ledger?.kind === "income" ||
-      ledger?.kind === "savings" ||
-      ledger?.kind == "allocation"
-        ? "income"
-        : "expense",
-    amount: "0.00",
-    merchant: "",
-    note: "",
+    // type:
+    //   ledger?.kind === "income" ||
+    //   ledger?.kind === "savings" ||
+    //   ledger?.kind == "allocation"
+    //     ? "income"
+    //     : "expense",
+    // amount: "0.00",
+    // merchant: "",
+    // note: "",
     selectedLedgers: {
       // If ledgerId is truthy then this form has been rendered with a
       // preselected ledger.
@@ -130,24 +135,24 @@ export function CreateTransactionForm() {
   //   }));
   // };
 
-  function handleInputChange(e) {
-    const name = e.target.name;
-    const value = e.target.value;
-    switch (name) {
-      case "amount":
-        setFormData((prev) => ({
-          ...prev,
-          [name]: formatDollarAmount(value),
-        }));
-        updateSplitAmount({ ledgerId: null, amount: null });
-        break;
-      default:
-        setFormData((prev) => ({
-          ...prev,
-          [name]: value,
-        }));
-    }
-  }
+  // function handleInputChange(e) {
+  //   const name = e.target.name;
+  //   const value = e.target.value;
+  //   switch (name) {
+  //     case "amount":
+  //       setFormData((prev) => ({
+  //         ...prev,
+  //         [name]: formatDollarAmount(value),
+  //       }));
+  //       updateSplitAmount({ ledgerId: null, amount: null });
+  //       break;
+  //     default:
+  //       setFormData((prev) => ({
+  //         ...prev,
+  //         [name]: value,
+  //       }));
+  //   }
+  // }
 
   function updateSplitAmount({ ledgerId, amount }) {
     setFormData((prev) => {
@@ -250,6 +255,7 @@ export function CreateTransactionForm() {
       date: dateInputProps.value,
       amount: amountInputProps.value,
       merchant: merchantInputProps.value,
+      notes: notesInputProps.value,
     });
 
     return;
@@ -449,17 +455,7 @@ export function CreateTransactionForm() {
             transactionType={transactionType}
             {...merchantInputProps}
           />
-
-          <div className="w-full flex flex-row items-stretch justify-end min-h-9 bg-white rounded-xl overflow-hidden shadow-sm">
-            <textarea
-              rows={2}
-              placeholder="Add a note"
-              value={formData.note}
-              onInput={handleInputChange}
-              name="note"
-              className="text-left w-full focus:ring-0 border-0 form-input h-full placeholder:font-semibold flex flex-row justify-start items-center px-2 py-1"
-            />
-          </div>
+          <NotesInput {...notesInputProps} />
 
           <div className="w-full flex flex-col items-stretch justify-start bg-white rounded-xl overflow-hidden shadow-sm px-2 py-1">
             <TagSelection preSelectedTags={undefined} key={ledgerId} />
@@ -500,7 +496,7 @@ export function CreateTransactionForm() {
               selectLedger={selectLedger}
               deselectLedger={deselectLedger}
               selectedLedgerIdList={Object.keys(formData.selectedLedgers)}
-              transactionType={formData.type}
+              transactionType={transactionType}
             />
           </div>
         </form>
