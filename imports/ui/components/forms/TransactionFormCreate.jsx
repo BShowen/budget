@@ -10,9 +10,11 @@ import { Dialog } from "./formComponents/Dialog";
 import { ButtonGroup } from "./formComponents/ButtonGroup";
 import { TagSelection } from "./formComponents/TagSelection";
 import { DateInput } from "./formComponents/DateInput";
+import { AmountInput } from "./formComponents/AmountInput";
 
 // Hooks
 import { useFormDateInput } from "./formHooks/useFormDateInput";
+import { useFormAmountInput } from "./formHooks/useFormAmountInput";
 
 // Collections
 import { LedgerCollection } from "../../../api/Ledger/LedgerCollection";
@@ -27,7 +29,6 @@ import { IoIosAdd } from "react-icons/io";
 
 // App context
 import { RootContext } from "../../layouts/AppData";
-import { toDollars } from "../../util/toDollars";
 
 export function CreateTransactionForm() {
   const navigate = useNavigate();
@@ -48,6 +49,9 @@ export function CreateTransactionForm() {
   const dateInputProps = useFormDateInput({
     initialValue: dates.format(new Date(), { forHtml: true }),
   });
+
+  const amountInputProps = useFormAmountInput({ initialValue: "0.00" });
+
   const [formData, setFormData] = useState({
     createdAt: dates.format(new Date(), { forHtml: true }),
     budgetId,
@@ -230,7 +234,11 @@ export function CreateTransactionForm() {
   }
 
   function submit() {
-    console.log({ formData, date: dateInputProps.value });
+    console.log({
+      formData,
+      date: dateInputProps.value,
+      amount: amountInputProps.value,
+    });
 
     return;
     if (!isFormValid) return;
@@ -423,31 +431,7 @@ export function CreateTransactionForm() {
       </div>
       <div className="h-full w-full pt-24 p-2 mb-24">
         <form ref={formRef} className="flex flex-col justify-start gap-2">
-          <div className="w-full h-32">
-            <input
-              onFocus={setRange}
-              type="text"
-              inputMode="decimal"
-              // pattern="[0-9]*"
-              placeholder="$0.00"
-              required
-              name="amount"
-              id="amount"
-              value={toDollars(formData.amount)}
-              onInput={(e) => {
-                const value = e.target.value
-                  .split("$")
-                  .join("")
-                  .split(",")
-                  .join("");
-                handleInputChange({ target: { value: value, name: "amount" } });
-              }}
-              min={0}
-              autoFocus
-              className="w-full h-full focus:ring-0 border-0 form-input text-center p-0 m-0 text-7xl font-bold bg-transparent"
-            />
-          </div>
-
+          <AmountInput {...amountInputProps} />
           <DateInput {...dateInputProps} />
 
           <div className="w-full flex flex-row items-stretch justify-end h-9 relative bg-white rounded-xl overflow-hidden shadow-sm">
