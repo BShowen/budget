@@ -9,6 +9,10 @@ import { SelectedLedger } from "./formComponents/SelectedLedger";
 import { Dialog } from "./formComponents/Dialog";
 import { ButtonGroup } from "./formComponents/ButtonGroup";
 import { TagSelection } from "./formComponents/TagSelection";
+import { DateInput } from "./formComponents/DateInput";
+
+// Hooks
+import { useFormDateInput } from "./formHooks/useFormDateInput";
 
 // Collections
 import { LedgerCollection } from "../../../api/Ledger/LedgerCollection";
@@ -41,6 +45,9 @@ export function CreateTransactionForm() {
     return LedgerCollection.findOne({ _id: ledgerId });
   });
 
+  const dateInputProps = useFormDateInput({
+    initialValue: dates.format(new Date(), { forHtml: true }),
+  });
   const [formData, setFormData] = useState({
     createdAt: dates.format(new Date(), { forHtml: true }),
     budgetId,
@@ -223,6 +230,9 @@ export function CreateTransactionForm() {
   }
 
   function submit() {
+    console.log({ formData, date: dateInputProps.value });
+
+    return;
     if (!isFormValid) return;
     // Handle tags.
     const form = new FormData(formRef.current);
@@ -438,25 +448,7 @@ export function CreateTransactionForm() {
             />
           </div>
 
-          <div className="w-full flex flex-row items-center justify-end h-9 relative bg-white rounded-xl  overflow-hidden shadow-sm">
-            <label
-              className="bg-color-light-blue text-white rounded-xl w-4/12 flex flex-row justify-center items-center text-lg absolute left-0 h-full"
-              htmlFor="date"
-            >
-              <p className="font-semibold">Date</p>
-            </label>
-            <div className="w-9/12 bg-white flex flex-row justify-center items-center">
-              <input
-                type="date"
-                name="createdAt"
-                value={formData.createdAt}
-                onChange={handleInputChange}
-                required
-                id="date"
-                className="px-0 focus:ring-0 border-0 form-input h-full text-lg placeholder:font-semibold font-semibold"
-              />
-            </div>
-          </div>
+          <DateInput {...dateInputProps} />
 
           <div className="w-full flex flex-row items-stretch justify-end h-9 relative bg-white rounded-xl overflow-hidden shadow-sm">
             <label
