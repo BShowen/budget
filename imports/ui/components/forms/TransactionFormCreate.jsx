@@ -11,10 +11,12 @@ import { ButtonGroup } from "./formComponents/ButtonGroup";
 import { TagSelection } from "./formComponents/TagSelection";
 import { DateInput } from "./formComponents/DateInput";
 import { AmountInput } from "./formComponents/AmountInput";
+import { MerchantInput } from "./formComponents/MerchantInput";
 
 // Hooks
 import { useFormDateInput } from "./formHooks/useFormDateInput";
 import { useFormAmountInput } from "./formHooks/useFormAmountInput";
+import { useFormMerchantInput } from "./formHooks/useFormMerchantInput";
 
 // Collections
 import { LedgerCollection } from "../../../api/Ledger/LedgerCollection";
@@ -52,6 +54,15 @@ export function CreateTransactionForm() {
 
   const amountInputProps = useFormAmountInput({ initialValue: "0.00" });
 
+  const merchantInputProps = useFormMerchantInput({ initialValue: "" });
+  const [transactionType, setTransactionType] = useState(
+    ledger?.kind === "income" ||
+      ledger?.kind === "savings" ||
+      ledger?.kind == "allocation"
+      ? "income"
+      : "expense"
+  );
+
   const [formData, setFormData] = useState({
     createdAt: dates.format(new Date(), { forHtml: true }),
     budgetId,
@@ -79,45 +90,45 @@ export function CreateTransactionForm() {
 
   const [isFormValid, setIsFormValid] = useState(false);
 
-  const setActiveTab = (active) => {
-    setFormData((prev) => ({
-      ...prev,
-      type: active,
-      // Only update this field if active is "expense"
-      // If active is "expense" then remove any ledgers of kind "income" because
-      // income ledgers can't have expenses.
-      ...(active === "expense" &&
-        (() => {
-          // Return an object from this method because the return value is used
-          // in the spread operator.
-          return {
-            // Iterate through formData.selectedLedgers and set every income
-            // ledger's willUnmount field to true.
-            selectedLedgers: Object.fromEntries(
-              Object.entries(prev.selectedLedgers).map((selectedLedger) => {
-                // selectedLedger is an entry like [ledgerId, {willUnmount: false, splitAmount: 0.00}]
-                const [selectedLedgerId, selectedLedgerMeta] = selectedLedger;
+  // const setActiveTab = (active) => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     type: active,
+  //     // Only update this field if active is "expense"
+  //     // If active is "expense" then remove any ledgers of kind "income" because
+  //     // income ledgers can't have expenses.
+  //     ...(active === "expense" &&
+  //       (() => {
+  //         // Return an object from this method because the return value is used
+  //         // in the spread operator.
+  //         return {
+  //           // Iterate through formData.selectedLedgers and set every income
+  //           // ledger's willUnmount field to true.
+  //           selectedLedgers: Object.fromEntries(
+  //             Object.entries(prev.selectedLedgers).map((selectedLedger) => {
+  //               // selectedLedger is an entry like [ledgerId, {willUnmount: false, splitAmount: 0.00}]
+  //               const [selectedLedgerId, selectedLedgerMeta] = selectedLedger;
 
-                // If ledger is true, then this selectedLedger is a ledger of
-                // kind "income" and willUnmount needs to be set to true
-                const ledger = LedgerCollection.findOne({
-                  _id: selectedLedgerId,
-                  kind: "income",
-                });
-                if (ledger) {
-                  return [
-                    [selectedLedgerId],
-                    { ...selectedLedgerMeta, willUnmount: true },
-                  ];
-                } else {
-                  return selectedLedger;
-                }
-              })
-            ),
-          };
-        })()),
-    }));
-  };
+  //               // If ledger is true, then this selectedLedger is a ledger of
+  //               // kind "income" and willUnmount needs to be set to true
+  //               const ledger = LedgerCollection.findOne({
+  //                 _id: selectedLedgerId,
+  //                 kind: "income",
+  //               });
+  //               if (ledger) {
+  //                 return [
+  //                   [selectedLedgerId],
+  //                   { ...selectedLedgerMeta, willUnmount: true },
+  //                 ];
+  //               } else {
+  //                 return selectedLedger;
+  //               }
+  //             })
+  //           ),
+  //         };
+  //       })()),
+  //   }));
+  // };
 
   function handleInputChange(e) {
     const name = e.target.name;
@@ -238,6 +249,7 @@ export function CreateTransactionForm() {
       formData,
       date: dateInputProps.value,
       amount: amountInputProps.value,
+      merchant: merchantInputProps.value,
     });
 
     return;
@@ -287,10 +299,6 @@ export function CreateTransactionForm() {
       }
     );
     navigate(-1, { replace: true });
-  }
-
-  function setRange(e) {
-    e.target.setSelectionRange(0, 999);
   }
 
   function openDialog() {
@@ -420,43 +428,27 @@ export function CreateTransactionForm() {
                 ? "text-white lg:hover:cursor-pointer"
                 : "text-gray-700 lg:hover:cursor-not-allowed"
             }`}
-            onClick={isFormValid ? submit : undefined}
+            // onClick={isFormValid ? submit : undefined}
+            onClick={submit}
             type="submit"
           >
             Done
           </button>
         </div>
 
-        <ButtonGroup active={formData.type} setActiveTab={setActiveTab} />
+        <ButtonGroup
+          active={transactionType}
+          setActiveTab={setTransactionType}
+        />
       </div>
       <div className="h-full w-full pt-24 p-2 mb-24">
         <form ref={formRef} className="flex flex-col justify-start gap-2">
           <AmountInput {...amountInputProps} />
           <DateInput {...dateInputProps} />
-
-          <div className="w-full flex flex-row items-stretch justify-end h-9 relative bg-white rounded-xl overflow-hidden shadow-sm">
-            <label
-              className="bg-color-light-blue text-white rounded-xl w-4/12 flex flex-row justify-center items-center text-lg absolute left-0 h-full"
-              htmlFor="merchant"
-            >
-              <p className="font-semibold">
-                {formData.type === "expense" ? "Merchant" : "Source"}
-              </p>
-            </label>
-            <div className="w-9/12 bg-white flex flex-row justify-center items-center">
-              <input
-                type="text"
-                onFocus={setRange}
-                placeholder="Name"
-                required
-                id="merchant"
-                name="merchant"
-                value={formData.merchant}
-                onInput={handleInputChange}
-                className="px-0 focus:ring-0 border-0 form-input h-full text-lg w-full text-center placeholder:font-semibold font-semibold"
-              />
-            </div>
-          </div>
+          <MerchantInput
+            transactionType={transactionType}
+            {...merchantInputProps}
+          />
 
           <div className="w-full flex flex-row items-stretch justify-end min-h-9 bg-white rounded-xl overflow-hidden shadow-sm">
             <textarea
