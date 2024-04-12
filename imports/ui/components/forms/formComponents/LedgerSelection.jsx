@@ -95,8 +95,8 @@ export function LedgerSelection({
     <div
       onClick={
         selected
-          ? () => deselectLedger({ ledgerId: ledger._id })
-          : () => selectLedger({ ledgerId: ledger._id })
+          ? () => deselectLedger({ ledger })
+          : () => selectLedger({ ledger })
       }
       className={`lg:hover:cursor-pointer w-full rounded-xl overflow-hidden px-2 min-h-16 flex flex-row justify-between items-center border transition-all duration-200 mb-2 ${
         selected
