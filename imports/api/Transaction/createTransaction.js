@@ -23,8 +23,7 @@ export const createTransaction = new ValidatedMethod({
     type,
     merchant,
     note,
-    allocations,
-    amount,
+    selectedLedgerList,
   }) {
     if (!this.userId) {
       throw new Meteor.Error(
@@ -34,22 +33,19 @@ export const createTransaction = new ValidatedMethod({
       );
     }
     const user = Meteor.user();
-    const isSplitTransaction = allocations.length > 1;
+    const isSplitTransaction = selectedLedgerList.length > 1;
     const splitTransactionId = isSplitTransaction
       ? getUniqueMongoId({ collection: TransactionCollection })
       : undefined;
 
-    // This allows creating un-categorized transactions
-    if (allocations.length == 0) {
-      allocations.push({ amount });
-    }
     const invalidFieldList = [
       // ...new Set removes duplicate invalid fields.
       ...new Set(
-        allocations.flatMap((allocation) => {
+        selectedLedgerList.flatMap((ledger) => {
+          // ledger = {_id: String , amount: String}
           // Create the transaction object.
           const transaction = {
-            ...allocation,
+            ...ledger,
             accountId: user.accountId,
             createdAt,
             budgetId,
@@ -65,7 +61,7 @@ export const createTransaction = new ValidatedMethod({
             // If isSplitTransaction then add splitTransactionId
             ...(isSplitTransaction
               ? { isSplitTransaction, splitTransactionId }
-              : { isSplitTransaction, amount }),
+              : { isSplitTransaction }),
           };
           // Validate the transaction object
           const validationContext = transactionSchema.newContext();
@@ -77,8 +73,9 @@ export const createTransaction = new ValidatedMethod({
             .map((error) => error.name);
         })
       ),
+      ...(selectedLedgerList.length == 0 ? ["Ledger is required"] : []),
     ].reduce(
-      (arr, fieldName) => [...arr, { name: fieldName, type: "required" }],
+      (acc, fieldName) => [...acc, { name: fieldName, type: "required" }],
       []
     );
     if (invalidFieldList.length > 0) {
@@ -89,24 +86,18 @@ export const createTransaction = new ValidatedMethod({
     createdAt,
     budgetId,
     type,
-    amount,
     merchant,
     note,
-    allocations,
+    selectedLedgerList,
     tags,
     newTags,
   }) {
     const user = Meteor.user();
 
-    const isSplitTransaction = allocations.length > 1;
+    const isSplitTransaction = selectedLedgerList.length > 1;
     const splitTransactionId = isSplitTransaction
       ? getUniqueMongoId({ collection: TransactionCollection })
       : undefined;
-
-    // This allows creating un-categorized transactions
-    if (allocations.length == 0) {
-      allocations.push({ amount });
-    }
 
     // Create and insert new tags, if any.
     // tags is an array of tag Ids (Mongo Ids).
@@ -114,15 +105,24 @@ export const createTransaction = new ValidatedMethod({
       ? createTags({ selectedTagIdList: tags, newTagNameList: newTags })
       : tags;
 
-    allocations.forEach((allocation) => {
-      // Get the envelope this transaction will belong to.
-      const { envelopeId } =
-        LedgerCollection.findOne({ _id: allocation?.ledgerId }) || {};
+    selectedLedgerList.forEach((ledger) => {
+      // Get envelopeId that this ledger belongs to.
+      // Will be undefined for uncategorized transactions.
+      // Will be defined if user selected a ledger.
+      const { envelopeId, _id: ledgerId } =
+        ledger._id == "uncategorized" || ledger._id === undefined
+          ? { envelopeId: undefined, _id: undefined }
+          : LedgerCollection.findOne(
+              { _id: ledger._id },
+              { fields: { _id: true, envelopeId: true } }
+            );
+
       TransactionCollection.insert(
         {
-          ...allocation,
+          amount: ledger.amount,
           accountId: user.accountId,
           envelopeId,
+          ledgerId,
           createdAt,
           budgetId,
           type,
@@ -138,7 +138,7 @@ export const createTransaction = new ValidatedMethod({
           // If isSplitTransaction then add splitTransactionId
           ...(isSplitTransaction
             ? { isSplitTransaction, splitTransactionId }
-            : { isSplitTransaction, amount }),
+            : { isSplitTransaction }),
         },
         (error) => {
           if (error) console.log(error);

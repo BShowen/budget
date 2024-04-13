@@ -75,46 +75,31 @@ export function CreateTransactionForm() {
   const tagInputProps = useFormTags();
 
   function submit() {
-    console.log({
-      createAt: dateInputProps.value,
-      budgetId,
-      type: transactionType,
-      amount: amountInputProps.value,
-      merchant: merchantInputProps.value,
-      note: notesInputProps.value,
-      selectedLedgers: ledgerSelectionInputProps.selectedLedgerList.map(
-        (ledger) => ({ ledgerId: ledger._id, amount: ledger.amount })
-      ),
-      tags: tagInputProps.tagList
-        .filter((tag) => !tag.isNew)
-        .map((tag) => ({ name: tag.name, _id: tag._id })),
-      newTags: tagInputProps.tagList
-        .filter((tag) => tag.isNew)
-        .map((tag) => ({ name: tag.name })),
-    });
-    // Meteor.call(
-    //   "transaction.createTransaction",
-    //   {
-    //     createAt: dateInputProps.value,
-    //     budgetId,
-    //     type: transactionType,
-    //     amount: amountInputProps.value,
-    //     merchant: merchantInputProps.value,
-    //     note: notesInputProps.value,
-    //     selectedLedgers: ledgerSelectionInputProps.selectedLedgerList.map(
-    //       (ledger) => ({ ledgerId: ledger._id, amount: ledger.amount })
-    //     ),
-    //     tags: tagInputProps.tagList
-    //       .filter((tag) => !tag.isNew)
-    //       .map((tag) => ({ name: tag.name, _id: tag._id })),
-    //     newTags: tagInputProps.tagList
-    //       .filter((tag) => tag.isNew)
-    //       .map((tag) => ({ name: tag.name })),
-    //   },
-    //   (error) => {
-    //     if (error) console.log(error.details);
-    //   }
-    // );
+    const [year, month, day] = dateInputProps.value.split("-");
+    const formattedDate = new Date(year, month - 1, day);
+    Meteor.call(
+      "transaction.createTransaction",
+      {
+        createdAt: formattedDate,
+        budgetId,
+        type: transactionType,
+        amount: amountInputProps.value,
+        merchant: merchantInputProps.value,
+        note: notesInputProps.value,
+        selectedLedgerList: ledgerSelectionInputProps.selectedLedgerList.map(
+          (ledger) => ({ _id: ledger._id, amount: ledger.amount })
+        ),
+        tags: tagInputProps.tagList
+          .filter((tag) => !tag.isNew)
+          .map((tag) => ({ name: tag.name, _id: tag._id })),
+        newTags: tagInputProps.tagList
+          .filter((tag) => tag.isNew)
+          .map((tag) => ({ name: tag.name })),
+      },
+      (error) => {
+        if (error) console.log(error.details);
+      }
+    );
     // navigate(-1, { replace: true });
   }
 
