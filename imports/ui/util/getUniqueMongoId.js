@@ -1,3 +1,4 @@
+import { Random } from "meteor/random";
 export function getUniqueMongoId({ collection }) {
   // Create a new id which will be tested for uniqueness against "collection"
   let newId = Random.id();

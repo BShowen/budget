@@ -1,6 +1,6 @@
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
-import React, { useState, useRef, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 // Components
@@ -16,6 +16,7 @@ import { useFormAmounts } from "./formHooks/useFormAmounts";
 import { useFormDateInput } from "./formHooks/useFormDateInput";
 import { useFormMerchantInput } from "./formHooks/useFormMerchantInput";
 import { useFormNotesInput } from "./formHooks/useFormNotesInput";
+import { useFormTags } from "./formHooks/useFormTags";
 
 // Collections
 import { LedgerCollection } from "../../../api/Ledger/LedgerCollection";
@@ -30,7 +31,6 @@ import { CategorySelectionInput } from "./formComponents/CategorySelectionInput"
 export function CreateTransactionForm() {
   const navigate = useNavigate();
   const rootContext = useContext(RootContext);
-  const formRef = useRef(null);
   const params = useParams();
 
   const { currentBudgetId: budgetId } = rootContext;
@@ -72,80 +72,50 @@ export function CreateTransactionForm() {
 
   const [isFormValid, setIsFormValid] = useState(false);
 
-  // const [formData, setFormData] = useState({
-  //   createdAt: dates.format(new Date(), { forHtml: true }),
-  //   budgetId,
-  //   type:
-  //     ledger?.kind === "income" ||
-  //     ledger?.kind === "savings" ||
-  //     ledger?.kind == "allocation"
-  //       ? "income"
-  //       : "expense",
-  //   amount: "0.00",
-  //   merchant: "",
-  //   note: "",
-  //   selectedLedgers: {
-  //     // If ledgerId is truthy then this form has been rendered with a
-  //     // preselected ledger.
-  //     ...(ledgerId && {
-  //       [ledgerId]: {
-  //         willUnmount: false, //Set to true 301ms before this ledger is removed.
-  //         splitAmount: formatDollarAmount(0),
-  //         isLocked: false, //Set to true when the user has set the splitAmount.
-  //       },
-  //     }),
-  //   },
-  // });
+  const tagInputProps = useFormTags();
 
   function submit() {
-    console.log("submit");
-    return;
-    if (!isFormValid) return;
-    // Handle tags.
-    const form = new FormData(formRef.current);
-    const tags = form.getAll("tags");
-    const newTags = form.getAll("newTags");
-
-    // Split selectedLedgers from formData.
-    const { selectedLedgers, ...formDetails } = { ...formData };
-
-    // Format the date
-    if (formDetails.createdAt) {
-      // Set the correct date
-      const [year, month, day] = formData.createdAt.split("-");
-      const formattedDate = new Date(year, month - 1, day);
-      formDetails.createdAt = formattedDate;
-    }
-
-    // Format selectedLedgers
-    // convert
-    // {
-    //   JPMBuvTg5PwJCTtjy: { willUnmount: false, splitAmount: '34.00', isLocked: true },
-    //   QWXoBfB9wec6P7Mk3: { willUnmount: false, splitAmount: '66.00', isLocked: false }
-    // }
-    // into
-    // [
-    //   { ledgerId: "ledgerPrimaryKey", amount: "34.00" },
-    //   { ledgerId: "ledgerPrimaryKey", amount: "66.00" }
-    // ]
-    const allocations = Object.entries(selectedLedgers).reduce((acc, item) => {
-      const [ledgerId, meta] = item;
-      return [...acc, { ledgerId: ledgerId, amount: meta.splitAmount }];
-    }, []);
-
-    Meteor.call(
-      "transaction.createTransaction",
-      {
-        ...formDetails,
-        allocations,
-        tags,
-        newTags,
-      },
-      (error) => {
-        if (error) console.log(error.details);
-      }
-    );
-    navigate(-1, { replace: true });
+    console.log({
+      createAt: dateInputProps.value,
+      budgetId,
+      type: transactionType,
+      amount: amountInputProps.value,
+      merchant: merchantInputProps.value,
+      note: notesInputProps.value,
+      selectedLedgers: ledgerSelectionInputProps.selectedLedgerList.map(
+        (ledger) => ({ ledgerId: ledger._id, amount: ledger.amount })
+      ),
+      tags: tagInputProps.tagList
+        .filter((tag) => !tag.isNew)
+        .map((tag) => ({ name: tag.name, _id: tag._id })),
+      newTags: tagInputProps.tagList
+        .filter((tag) => tag.isNew)
+        .map((tag) => ({ name: tag.name })),
+    });
+    // Meteor.call(
+    //   "transaction.createTransaction",
+    //   {
+    //     createAt: dateInputProps.value,
+    //     budgetId,
+    //     type: transactionType,
+    //     amount: amountInputProps.value,
+    //     merchant: merchantInputProps.value,
+    //     note: notesInputProps.value,
+    //     selectedLedgers: ledgerSelectionInputProps.selectedLedgerList.map(
+    //       (ledger) => ({ ledgerId: ledger._id, amount: ledger.amount })
+    //     ),
+    //     tags: tagInputProps.tagList
+    //       .filter((tag) => !tag.isNew)
+    //       .map((tag) => ({ name: tag.name, _id: tag._id })),
+    //     newTags: tagInputProps.tagList
+    //       .filter((tag) => tag.isNew)
+    //       .map((tag) => ({ name: tag.name })),
+    //   },
+    //   (error) => {
+    //     if (error) console.log(error.details);
+    //   }
+    // );
+    // navigate(-1, { replace: true });
   }
 
   // Handle "escape" and "enter" keydown events.
@@ -233,16 +203,12 @@ export function CreateTransactionForm() {
         />
       </div>
       <div className="h-full w-full pt-24 p-2 mb-24">
-        <form ref={formRef} className="flex flex-col justify-start gap-2">
+        <form className="flex flex-col justify-start gap-2">
           <AmountInput {...amountInputProps} />
           <DateInput {...dateInputProps} />
           <MerchantInput {...{ ...merchantInputProps, transactionType }} />
           <NotesInput {...notesInputProps} />
-
-          <div className="w-full flex flex-col items-stretch justify-start bg-white rounded-xl overflow-hidden shadow-sm px-2 py-1">
-            <TagSelection preSelectedTags={undefined} key={ledgerId} />
-          </div>
-
+          <TagSelection {...tagInputProps} />
           <CategorySelectionInput
             {...{ ...ledgerSelectionInputProps, transactionType }}
           />

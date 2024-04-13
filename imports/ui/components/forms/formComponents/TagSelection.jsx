@@ -1,40 +1,27 @@
 import React from "react";
-import { Meteor } from "meteor/meteor";
-import { useTracker } from "meteor/react-meteor-data";
-
-// Collections
-import { TagCollection } from "../../../../api/Tag/TagCollection";
 
 // Components
-import { CreateTags } from "./CreateTags";
+import { CreateNewTagButton } from "./CreateNewTagButton";
 import { Tag } from "./Tag";
+import { NewTag } from "./NewTag";
 
-export function TagSelection({ preSelectedTags }) {
-  const { tags } = useTracker(() => {
-    if (!Meteor.userId()) return {};
-    const tags = TagCollection.find(
-      {
-        accountId: Meteor.user().accountId,
-      },
-      { sort: { name: 1 } }
-    ).fetch();
-    return { tags };
-  });
-
+export function TagSelection({ tagList, createNewTag }) {
   return (
-    <div className="w-full flex flex-col gap-2 justify-start overflow-hidden lg:hover:cursor-pointer">
+    <div className="w-full flex flex-col gap-2 items-stretch justify-start bg-white rounded-xl overflow-hidden shadow-sm px-2 py-1">
       <div className="w-full flex flex-row justify-between items-center h-full">
         <div className="flex items-center">
           <p className="font-semibold">Tags</p>
         </div>
       </div>
       <div className="w-full flex flex-row flex-nowrap overflow-scroll gap-1 flex-start mb-2 overscroll-contain scrollbar-hide">
-        <CreateTags />
-        {tags.map((tag) => {
-          const isPreSelected =
-            preSelectedTags && preSelectedTags.includes(tag._id);
-          return <Tag key={tag._id} tag={tag} isChecked={isPreSelected} />;
-        })}
+        <CreateNewTagButton createNewTag={createNewTag} />
+        {tagList.map((tagProps) =>
+          tagProps.isNew ? (
+            <NewTag key={tagProps._id} {...tagProps} />
+          ) : (
+            <Tag key={tagProps._id} {...tagProps} />
+          )
+        )}
       </div>
     </div>
   );

@@ -51,9 +51,12 @@ export function useFormLedgerSelection({
   }
 
   function splitBetweenLedgers({ amount, ledgerList }) {
-    if (ledgerList.length <= 1) {
+    if (ledgerList.length == 0) {
+      return ledgerList;
+    } else if (ledgerList.length == 1) {
       // If one ledger is selected then there is nothing to split. The entire
       // total is allocated towards this ledger.
+      ledgerList[0].amount = amount;
       return ledgerList;
     }
 

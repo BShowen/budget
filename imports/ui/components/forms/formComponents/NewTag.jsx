@@ -1,85 +1,58 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 
-export function NewTag({ defaultValue, removeTag, saveTag, id, autoFocus }) {
-  const pRef = useRef();
+// Utils
+import { cap } from "../../../util/cap";
+
+// Icons
+import { LuXCircle } from "react-icons/lu";
+
+export function NewTag({ _id, name, setName, removeTag }) {
+  const [scrollWidth, setScrollWidth] = useState(50);
   const inputRef = useRef();
-  const [tagName, setTagName] = useState(defaultValue || "");
-  const [inputWidth, setInputWidth] = useState(96);
 
-  useEffect(() => {
-    function handleKeyDown(e) {
-      const key = e.key;
-      if (key.toLowerCase() === "enter") {
-        inputRef.current.blur();
-      }
-    }
-    if (inputRef.current) {
-      document.addEventListener("keydown", handleKeyDown);
-      return () => document.removeEventListener("keydown", handleKeyDown);
-    }
-  }, []);
+  function handleChange(e) {
+    setName({ id: _id, newName: e.target.value });
+  }
 
-  const handleInput = (e) => {
-    setTagName(e.target.value);
-    // setTimeout is needed in order to allow the browser to finish painting
-    // before we read the value of the hidden <p> element
-    setTimeout(() => {
-      if (pRef.current) {
-        const pElementWidth = pRef.current.getBoundingClientRect().width;
-        const newWidth = pElementWidth > 96 ? pElementWidth + 10 : 96;
-        setInputWidth(newWidth);
-      }
-    }, 0);
-  };
-
-  const handleBlur = (e) => {
-    if (e.target.value === "") {
-      setTagName(defaultValue);
-      removeTag({ id: id }); //This will tell the parent to remove this component.
-    } else {
-      saveTag({
-        tagName,
-        id,
-      });
+  function handleBlur(e) {
+    if (e.target.value.trim().length == 0) {
+      setName({ id: _id, newName: "New tag" });
     }
-  };
+  }
 
-  const handleClick = (e) => {
-    if (tagName === defaultValue) {
-      e.target.setSelectionRange(0, 99999);
-    }
-  };
+  useLayoutEffect(() => {
+    inputRef.current.style.width = "10px";
+    setScrollWidth(inputRef.current.scrollWidth);
+  }, [name]);
 
   return (
-    <div className="no-tap-button text-md font-semibold border-2 border-color-dark-blue px-2 rounded-md overflow-hidden py-0 bg-color-dark-blue text-white">
-      {/* This hidden p tag gets populated with the value that the user types 
-      for the tag name. I use this to get the width of the element and set the 
-      width of the input tag. I want the input's width to be dynamic and always
-      contain the user's text.  */}
-      <p className="fixed invisible" ref={pRef}>
-        {tagName}
-      </p>
+    <div
+      className="text-md font-semibold border-2 border-color-dark-blue ps-1 pe-2 rounded-md bg-color-dark-blue text-white hover:cursor-text flex flex-row justify-start items-center gap-1"
+      onClick={() => inputRef.current.focus()}
+    >
+      <button
+        type="button"
+        className="h-full  hover:cursor-pointer hover:text-gray-500 transition-color duration-100 ease-in-out"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          removeTag();
+        }}
+      >
+        <LuXCircle className="h-5 w-auto" />
+      </button>
       <input
+        autoFocus
+        onFocus={(e) => e.target.setSelectionRange(0, 1000)}
+        onBlur={handleBlur}
         ref={inputRef}
-        className="focus:ring-0 border-0 m-0 p-0 w-24 h-6 text-center bg-inherit text-inherit transition-width duration-100  form-input"
+        className="outline-none bg-inherit"
         style={{
-          width: `${inputWidth}px`,
+          width: `${scrollWidth}px`,
         }}
         type="text"
-        autoFocus={autoFocus}
-        value={tagName}
-        onInput={handleInput}
-        onBlur={handleBlur}
-        onClick={handleClick}
-        onFocus={handleClick}
-      />
-      <input
-        type="checkbox"
-        checked
-        readOnly
-        className="hidden form-input"
-        value={tagName}
-        name="newTags"
+        onChange={handleChange}
+        value={cap(name)}
       />
     </div>
   );
