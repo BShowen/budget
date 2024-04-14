@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useTracker } from "meteor/react-meteor-data";
 
 // Collections
@@ -90,6 +90,11 @@ export function Dialog({
 
     return ledgerListGroupedByKind;
   });
+
+  useEffect(() => {
+    document.body.classList.add("prevent-scroll");
+    return () => document.body.classList.remove("prevent-scroll");
+  }, []);
 
   return (
     <div className="fixed top-0 bottom-0 left-0 right-0 w-full lg:w-3/5 mx-auto p-0 transition-all duration-300 z-50 bg-white/5 overflow-hidden padding-safe-area-top flex flex-col justify-start">

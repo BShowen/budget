@@ -16,18 +16,6 @@ export function CategorySelectionInput({
   isDialogOpen,
   setIsDialogOpen,
 }) {
-  function openDialog() {
-    document.body.classList.add("prevent-scroll");
-    setIsDialogOpen(true);
-  }
-
-  function closeDialog() {
-    document.body.classList.remove("prevent-scroll");
-    // Scroll to bottom of page after adding categories.
-    window.scrollTo(0, document.body.scrollHeight);
-    setIsDialogOpen(false);
-  }
-
   return (
     <div className="w-full rounded-xl overflow-hidden px-1 py-1 bg-white flex flex-col justify-start items-stretch min-h-10 shadow-sm">
       <div className="w-full text-start px-1">
@@ -47,7 +35,7 @@ export function CategorySelectionInput({
 
       <button
         type="button"
-        onClick={openDialog}
+        onClick={() => setIsDialogOpen(true)}
         className="w-full h-10 flex flex-row justify-start items-center gap-2 px-1"
       >
         <IoIosAdd className="rounded-full w-6 h-6 text-white bg-green-600" />
@@ -56,7 +44,7 @@ export function CategorySelectionInput({
 
       {isDialogOpen && (
         <Dialog
-          closeDialog={closeDialog}
+          closeDialog={() => setIsDialogOpen(false)}
           isOpen={isDialogOpen}
           selectLedger={selectLedger}
           deselectLedger={deselectLedger}
