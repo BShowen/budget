@@ -1,6 +1,6 @@
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 // Components
@@ -74,13 +74,21 @@ export function CreateTransactionForm() {
 
   const tagInputProps = useFormTags();
 
+  useEffect(() => {
+    // Update isFormValid on each re-render
+    const isValid =
+      amountInputProps.isValid() &&
+      dateInputProps.isValid() &&
+      merchantInputProps.isValid();
+    if (isFormValid === isValid) return;
+    setIsFormValid(isValid);
+  });
+
   function submit() {
-    const [year, month, day] = dateInputProps.value.split("-");
-    const formattedDate = new Date(year, month - 1, day);
     Meteor.call(
       "transaction.createTransaction",
       {
-        createdAt: formattedDate,
+        createdAt: dateInputProps.value,
         budgetId,
         type: transactionType,
         amount: amountInputProps.value,
@@ -91,16 +99,16 @@ export function CreateTransactionForm() {
         ),
         tags: tagInputProps.tagList
           .filter((tag) => !tag.isNew)
-          .map((tag) => ({ name: tag.name, _id: tag._id })),
+          .map((tag) => tag._id),
         newTags: tagInputProps.tagList
           .filter((tag) => tag.isNew)
-          .map((tag) => ({ name: tag.name })),
+          .map((tag) => tag.name),
       },
       (error) => {
-        if (error) console.log(error.details);
+        if (error) console.log(error);
       }
     );
-    // navigate(-1, { replace: true });
+    navigate(-1, { replace: true });
   }
 
   // Handle "escape" and "enter" keydown events.
@@ -127,34 +135,6 @@ export function CreateTransactionForm() {
   //   return () => document.removeEventListener("keydown", handleKeyDown);
   // }, [formData, isDialogOpen, isFormValid]);
 
-  // Update isFormValid when formData changes.
-  // useEffect(() => {
-  //   const isSplitTransaction = Object.keys(formData.selectedLedgers).length > 1;
-  //   const correctBalance = isSplitTransaction
-  //     ? Object.values(formData.selectedLedgers).reduce(
-  //         (total, meta) => total + parseFloat(meta.splitAmount),
-  //         0
-  //       ) == parseFloat(formData.amount)
-  //     : true;
-  //   const noZeroDollarBalance = isSplitTransaction
-  //     ? Object.values(formData.selectedLedgers).every(
-  //         (meta) => parseFloat(meta.splitAmount) > 0
-  //       )
-  //     : true;
-  //   /* prettier-ignore */
-  //   setIsFormValid(
-  //     formData.amount != undefined &&
-  //     parseFloat(formData.amount) > 0.0 &&
-  //     formData.createdAt != undefined &&
-  //     new Date(formData.createdAt) != "Invalid Date" &&
-  //     formData.merchant != undefined &&
-  //     formData.merchant.trim().length > 0 &&
-  //     Object.keys(formData.selectedLedgers).length > 0 &&
-  //     correctBalance &&
-  //     noZeroDollarBalance
-  //   );
-  // }, [formData]);
-
   return (
     <>
       <div className="page-header w-full lg:w-3/5 bg-header p-2 flex flex-col justify-start z-50">
@@ -174,8 +154,7 @@ export function CreateTransactionForm() {
                 ? "text-white lg:hover:cursor-pointer"
                 : "text-gray-700 lg:hover:cursor-not-allowed"
             }`}
-            // onClick={isFormValid ? submit : undefined}
-            onClick={submit}
+            onClick={isFormValid ? submit : undefined}
             type="submit"
           >
             Done

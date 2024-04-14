@@ -7,9 +7,14 @@ export function useFormMerchantInput({ initialValue }) {
     setValue(e.target.value);
   }
 
+  function isValid() {
+    return (value != undefined || value != false) && value.trim().length > 0;
+  }
+
   const inputProps = {
     value,
     onChange: handleChange,
+    isValid,
   };
 
   return inputProps;

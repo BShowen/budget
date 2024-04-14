@@ -32,10 +32,18 @@ export function useFormAmounts({
     setSplitAmount(formattedDollarAmount);
   }
 
+  function isValid() {
+    const isAmountValid = amount != undefined && parseFloat(amount) > 0;
+    const isLedgerSelectionValid =
+      ledgerSelectionProps.selectedLedgerList.length != 0;
+    return isAmountValid && isLedgerSelectionValid;
+  }
+
   return {
     amountInputProps: {
       value: amount,
       onChange: handleTransactionAmountChange,
+      isValid,
     },
     ledgerSelectionInputProps: ledgerSelectionProps,
   };

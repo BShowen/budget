@@ -7,9 +7,14 @@ export function useFormDateInput({ initialValue }) {
     setValue(e.target.value);
   }
 
+  function isValid() {
+    return value != undefined && new Date(value) != "Invalid Date";
+  }
+
   const inputProps = {
     value,
     onChange: handleChange,
+    isValid,
   };
 
   return inputProps;
