@@ -8,10 +8,14 @@ export function useFormLedgerSelection({
   initialLedgerSelection,
   initialSplitTotal,
 }) {
+  if (initialLedgerSelection && !Array.isArray(initialLedgerSelection)) {
+    initialLedgerSelection = [initialLedgerSelection];
+  }
+
   const [splitTotal, setSplitTotal] = useState(initialSplitTotal || 0);
 
   const [ledgerList, setLedgerList] = useState(
-    initialLedgerSelection ? [initialLedgerSelection] : []
+    initialLedgerSelection ? initialLedgerSelection : []
   );
 
   function selectLedger({ ledger }) {

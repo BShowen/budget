@@ -1,7 +1,12 @@
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 import React, { useState, useContext, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import {
+  useNavigate,
+  useParams,
+  redirect,
+  useLoaderData,
+} from "react-router-dom";
 
 // Components
 import { ButtonGroup } from "./formComponents/ButtonGroup";
@@ -21,6 +26,7 @@ import { useKeyboard } from "./useKeyboard";
 
 // Collections
 import { LedgerCollection } from "../../../api/Ledger/LedgerCollection";
+import { TransactionCollection } from "../../../api/Transaction/TransactionCollection";
 
 // Utils
 import { dates } from "../../util/dates";
@@ -29,10 +35,52 @@ import { dates } from "../../util/dates";
 import { RootContext } from "../../layouts/AppData";
 import { CategorySelectionInput } from "./formComponents/CategorySelectionInput";
 
-export function CreateTransactionForm() {
+export function loader({ params: { transactionId } }) {
+  let transaction = TransactionCollection.findOne({ _id: transactionId });
+  if (transaction) {
+    if (transaction?.isSplitTransaction) {
+      // Get a list of all the transactions in this split transaction
+      const { splitTransactionId } = transaction;
+      const transactions = TransactionCollection.find({
+        splitTransactionId,
+      }).fetch();
+      // Get a list of all the ledgers associated with these transactions.
+      const ledgers = LedgerCollection.find({
+        _id: { $in: transactions.reduce((acc, t) => [...acc, t.ledgerId], []) },
+      })
+        .fetch()
+        .map((ledger) => {
+          // Add the amount allocated to each ledger
+          const transaction = transactions.find(
+            (t) => t.ledgerId == ledger._id
+          );
+          ledger.amount = transaction.amount;
+          return ledger;
+        });
+      // Create a new transactions object with updated amount, and ledgerSelection
+      const newTransaction = {
+        ...transaction,
+        amount: transactions.reduce(
+          // The transaction total is the sum of all the transaction amounts.
+          (total, t) => Math.round((t.amount + total) * 100) / 100,
+          0
+        ),
+        ledgerSelection: ledgers,
+      };
+      return newTransaction;
+    } else {
+      return transaction;
+    }
+  } else {
+    return redirect(`/`);
+  }
+}
+
+export function TransactionForm() {
   const navigate = useNavigate();
   const rootContext = useContext(RootContext);
   const params = useParams();
+  const transaction = useLoaderData();
 
   const { currentBudgetId: budgetId } = rootContext;
 
@@ -40,14 +88,16 @@ export function CreateTransactionForm() {
 
   // ledgerId will be truthy if the user is creating a new transaction for a
   // specific ledger.
-  const { ledgerId } = params;
   const ledger = useTracker(() => {
+    const { ledgerId } = params;
     if (!ledgerId) return undefined;
     return LedgerCollection.findOne({ _id: ledgerId });
   });
 
   const dateInputProps = useFormDateInput({
-    initialValue: dates.format(new Date(), { forHtml: true }),
+    initialValue: dates.format(transaction?.createdAt || new Date(), {
+      forHtml: true,
+    }),
   });
 
   const [transactionType, setTransactionType] = useState(
@@ -59,8 +109,8 @@ export function CreateTransactionForm() {
   );
 
   const { amountInputProps, ledgerSelectionInputProps } = useFormAmounts({
-    initialLedgerSelection: ledger,
-    initialDollarAmount: 0,
+    initialLedgerSelection: transaction?.ledgerSelection || ledger,
+    initialDollarAmount: transaction?.amount || 0,
   });
 
   function handleTransactionTypeChange(newTransactionType) {
@@ -69,9 +119,13 @@ export function CreateTransactionForm() {
     ledgerSelectionInputProps.setTransactionType(newTransactionType);
   }
 
-  const merchantInputProps = useFormMerchantInput({ initialValue: "" });
+  const merchantInputProps = useFormMerchantInput({
+    initialValue: transaction?.merchant || "",
+  });
 
-  const notesInputProps = useFormNotesInput({ initialValue: "" });
+  const notesInputProps = useFormNotesInput({
+    initialValue: transaction?.note || "",
+  });
 
   const [isFormValid, setIsFormValid] = useState(false);
 

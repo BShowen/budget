@@ -7,8 +7,7 @@ import {
   LoginForm,
   loginFormLoader,
 } from "../imports/ui/components/forms/LoginForm";
-import { EditTransactionForm } from "../imports/ui/components/forms/TransactionFormUpdate";
-import { CreateTransactionForm } from "../imports/ui/components/forms/TransactionFormCreate";
+import { TransactionForm } from "../imports/ui/components/forms/TransactionForm";
 
 // Pages
 import { Dashboard } from "../imports/ui/pages/Dashboard";
@@ -28,7 +27,7 @@ import { InsightsPage } from "../imports/ui/pages/InsightsPage";
 // Loaders
 import { AppData } from "../imports/ui/layouts/AppData";
 import { logoutLoader } from "../imports/ui/components/Logout";
-import { loader as editTransactionLoader } from "../imports/ui/components/forms/TransactionFormUpdate";
+import { loader as editTransactionLoader } from "../imports/ui/components/forms/TransactionForm";
 
 const checkLoginStatus = () => {
   if (Meteor.loggingOut()) {
@@ -57,11 +56,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "/ledger/:ledgerId/transactions/new",
-        element: <CreateTransactionForm />,
+        element: <TransactionForm />,
       },
       {
         path: "/ledger/:ledgerId/transaction/:transactionId/edit",
-        element: <EditTransactionForm />,
+        element: <TransactionForm />,
         loader: editTransactionLoader,
       },
       {
@@ -104,7 +103,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/new-transaction",
-        element: <CreateTransactionForm />,
+        element: <TransactionForm />,
       },
     ],
   },
