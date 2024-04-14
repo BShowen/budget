@@ -17,6 +17,7 @@ import { useFormDateInput } from "./formHooks/useFormDateInput";
 import { useFormMerchantInput } from "./formHooks/useFormMerchantInput";
 import { useFormNotesInput } from "./formHooks/useFormNotesInput";
 import { useFormTags } from "./formHooks/useFormTags";
+import { useKeyboard } from "./useKeyboard";
 
 // Collections
 import { LedgerCollection } from "../../../api/Ledger/LedgerCollection";
@@ -34,6 +35,8 @@ export function CreateTransactionForm() {
   const params = useParams();
 
   const { currentBudgetId: budgetId } = rootContext;
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // ledgerId will be truthy if the user is creating a new transaction for a
   // specific ledger.
@@ -74,6 +77,25 @@ export function CreateTransactionForm() {
 
   const tagInputProps = useFormTags();
 
+  useKeyboard({
+    enter: (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (isDialogOpen) {
+        setIsDialogOpen(false);
+      } else {
+        submit();
+      }
+    },
+    escape: () => {
+      if (isDialogOpen) {
+        setIsDialogOpen(false);
+      } else {
+        navigate(-1);
+      }
+    },
+  });
+
   useEffect(() => {
     // Update isFormValid on each re-render
     const isValid =
@@ -85,6 +107,7 @@ export function CreateTransactionForm() {
   });
 
   function submit() {
+    if (!isFormValid) return;
     Meteor.call(
       "transaction.createTransaction",
       {
@@ -110,30 +133,6 @@ export function CreateTransactionForm() {
     );
     navigate(-1, { replace: true });
   }
-
-  // Handle "escape" and "enter" keydown events.
-  // useEffect(() => {
-  //   function handleKeyDown(e) {
-  //     const key = e.key.toLowerCase();
-  //     if (key === "escape") {
-  //       if (isDialogOpen) {
-  //         closeDialog();
-  //       } else {
-  //         // Close the form when the escape key is pressed
-  //         navigate(-1);
-  //       }
-  //     } else if (key === "enter") {
-  //       if (isDialogOpen) {
-  //         closeDialog();
-  //       } else {
-  //         // Submit the form when the enter key is pressed
-  //         submit();
-  //       }
-  //     }
-  //   }
-  //   document.addEventListener("keydown", handleKeyDown);
-  //   return () => document.removeEventListener("keydown", handleKeyDown);
-  // }, [formData, isDialogOpen, isFormValid]);
 
   return (
     <>
@@ -174,7 +173,10 @@ export function CreateTransactionForm() {
           <NotesInput {...notesInputProps} />
           <TagSelection {...tagInputProps} />
           <CategorySelectionInput
-            {...{ ...ledgerSelectionInputProps, transactionType }}
+            {...ledgerSelectionInputProps}
+            transactionType={transactionType}
+            isDialogOpen={isDialogOpen}
+            setIsDialogOpen={setIsDialogOpen}
           />
         </form>
       </div>

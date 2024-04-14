@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 // Components
 import { SelectedLedger } from "./SelectedLedger";
@@ -13,9 +13,9 @@ export function CategorySelectionInput({
   deselectLedger,
   setLedgerAmount,
   transactionType,
+  isDialogOpen,
+  setIsDialogOpen,
 }) {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-
   function openDialog() {
     document.body.classList.add("prevent-scroll");
     setIsDialogOpen(true);
@@ -54,14 +54,16 @@ export function CategorySelectionInput({
         <p className="font-semibold text-lg">Select category</p>
       </button>
 
-      <Dialog
-        closeDialog={closeDialog}
-        isOpen={isDialogOpen}
-        selectLedger={selectLedger}
-        deselectLedger={deselectLedger}
-        selectedLedgerIdList={selectedLedgerList.map((doc) => doc._id)}
-        transactionType={transactionType}
-      />
+      {isDialogOpen && (
+        <Dialog
+          closeDialog={closeDialog}
+          isOpen={isDialogOpen}
+          selectLedger={selectLedger}
+          deselectLedger={deselectLedger}
+          selectedLedgerIdList={selectedLedgerList.map((doc) => doc._id)}
+          transactionType={transactionType}
+        />
+      )}
     </div>
   );
 }
