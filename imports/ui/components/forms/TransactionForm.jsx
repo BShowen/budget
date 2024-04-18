@@ -80,6 +80,7 @@ export function TransactionForm() {
   const navigate = useNavigate();
   const rootContext = useContext(RootContext);
   const params = useParams();
+  // transaction will be set only when editing a transaction.
   const transaction = useLoaderData();
 
   const { currentBudgetId: budgetId } = rootContext;
@@ -165,6 +166,7 @@ export function TransactionForm() {
     Meteor.call(
       "transaction.createTransaction",
       {
+        ...(transaction ? { transactionId: transaction._id } : {}),
         createdAt: dateInputProps.value,
         budgetId,
         type: transactionType,
@@ -175,10 +177,10 @@ export function TransactionForm() {
           (ledger) => ({ _id: ledger._id, amount: ledger.amount })
         ),
         tags: tagInputProps.tagList
-          .filter((tag) => !tag.isNew)
+          .filter((tag) => tag.isSelected && !tag.isNew)
           .map((tag) => tag._id),
         newTags: tagInputProps.tagList
-          .filter((tag) => tag.isNew)
+          .filter((tag) => tag.isSelected && tag.isNew)
           .map((tag) => tag.name),
       },
       (error) => {
