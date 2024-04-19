@@ -12,22 +12,28 @@ export const transactionSchema = new SimpleSchema(
       type: String,
       regEx: SimpleSchema.RegEx.Id,
     },
-    envelopeId: {
-      // The envelope this document belongs to.
-      type: String,
-      regEx: SimpleSchema.RegEx.Id,
-      required: false, // So transaction can be uncategorized.
+    allocations: {
+      type: Array,
+      defaultValue: [],
     },
-    ledgerId: {
-      // The ledger this document belongs to.
+    "allocations.$": Object,
+    "allocations.$.envelopeId": {
       type: String,
       regEx: SimpleSchema.RegEx.Id,
-      required: false, // So transaction can be uncategorized.
+    },
+    "allocations.$.ledgerId": {
+      type: String,
+      regEx: SimpleSchema.RegEx.Id,
+    },
+    "allocations.$.amount": {
+      type: Number,
+      min: 0.01,
       autoValue: function () {
-        if (this.isSet && this.value.toLowerCase() === "uncategorized") {
-          // If the value is set to "uncategorized" then remove it so this field
-          // is not set on the document.
-          this.unset();
+        if (this.isSet) {
+          // If value contains a comma then Number.parseFloat() will parse only
+          // the digits before the comma. The comma needs to be removed.
+          const parsedValue = this.value.toString().split(",").join("");
+          return Number.parseFloat(parsedValue);
         }
         return undefined;
       },
@@ -80,11 +86,6 @@ export const transactionSchema = new SimpleSchema(
     },
     isSplitTransaction: {
       type: Boolean,
-      optional: true,
-    },
-    splitTransactionId: {
-      type: String,
-      regEx: SimpleSchema.RegEx.Id,
       optional: true,
     },
   },
