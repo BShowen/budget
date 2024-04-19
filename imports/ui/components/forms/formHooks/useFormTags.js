@@ -9,7 +9,7 @@ import { TagCollection } from "../../../../api/Tag/TagCollection";
 import { tagCreator } from "../../../util/tagCreator";
 
 // initialTagSelection is an an array of tag id's
-export function useFormTags({ initialTagSelection } = {}) {
+export function useFormTags({ initialTagSelection = [] } = {}) {
   const props = {
     deselectTag,
     removeTag,

@@ -92,7 +92,7 @@ export function TransactionForm() {
 
   const [isFormValid, setIsFormValid] = useState(false);
 
-  const tagInputProps = useFormTags({ initialTagSelection: transaction.tags });
+  const tagInputProps = useFormTags({ initialTagSelection: transaction?.tags });
 
   useKeyboard({
     enter: (e) => {
