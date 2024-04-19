@@ -8,9 +8,8 @@ import { TagCollection } from "../../../../api/Tag/TagCollection";
 // Utils
 import { tagCreator } from "../../../util/tagCreator";
 
-export function useFormTags({ initialTag } = {}) {
-  // A constructor for crating new tag instances.
-  // I was using a class but it wasn't maintainable or common practice.
+// initialTagSelection is an an array of tag id's
+export function useFormTags({ initialTagSelection } = {}) {
   const props = {
     deselectTag,
     removeTag,
@@ -19,23 +18,26 @@ export function useFormTags({ initialTag } = {}) {
   };
   const createTag = tagCreator(props);
 
-  // Ensure that initialTag is an array if not null
-  if (initialTag) {
-    if (Array.isArray(initialTag)) {
-      initialTag = initialTag.map((tag) => createTag(tag));
-    } else {
-      initialTag = [createTag(initialTag)];
-    }
+  // Ensure that initialTagSelection is an array if not null
+  if (initialTagSelection && !Array.isArray(initialTagSelection)) {
+    initialTagSelection = [initialTagSelection];
   }
 
   const tagList = useTracker(() => {
     if (!Meteor.userId()) return [];
-    return TagCollection.find(
+    const tagList = TagCollection.find(
       { accountId: Meteor.user().accountId },
       { sort: { name: 1 } }
     )
       .fetch()
-      .map((tag) => createTag(tag));
+      .map((tag) => {
+        const isSelected = initialTagSelection.some(
+          (tagId) => tagId == tag._id
+        );
+
+        return createTag((tag = { ...tag, isSelected }));
+      });
+    return tagList;
   });
 
   const [tags, setTags] = useState(tagList);

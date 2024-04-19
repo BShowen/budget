@@ -9,7 +9,7 @@ import { Random } from "meteor/random";
 export function tagCreator({ removeTag, deselectTag, selectTag, setName }) {
   function createTag({
     //Default when no tag is provided
-    tag = { name: "New tag", _id: Random.id() },
+    tag = { name: "New tag", _id: Random.id(), isSelected: true },
     removeTag,
     deselectTag,
     selectTag,
@@ -17,7 +17,7 @@ export function tagCreator({ removeTag, deselectTag, selectTag, setName }) {
   }) {
     const { _id, name } = tag;
     let isNew = name == "New tag";
-    let isSelected = isNew;
+    let isSelected = tag.isSelected;
 
     function handleRemoveTag() {
       removeTag({ id: _id });
