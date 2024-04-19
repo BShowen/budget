@@ -23,7 +23,8 @@ export const createTransaction = new ValidatedMethod({
     type,
     merchant,
     note,
-    selectedLedgerList,
+    allocations,
+    amount,
   }) {
     if (!this.userId) {
       throw new Meteor.Error(
@@ -33,53 +34,30 @@ export const createTransaction = new ValidatedMethod({
       );
     }
     const user = Meteor.user();
-    const isSplitTransaction = selectedLedgerList.length > 1;
-    const splitTransactionId = isSplitTransaction
-      ? getUniqueMongoId({ collection: TransactionCollection })
-      : undefined;
+    // Create the transaction object.
+    const transaction = {
+      amount,
+      createdAt,
+      budgetId,
+      type,
+      merchant,
+      note,
+      allocations,
+      isSplitTransaction: allocations.length > 1,
+      accountId: user.accountId,
+      loggedBy: {
+        userId: user._id,
+        firstName: user.profile.firstName,
+        lastName: user.profile.lastName,
+      },
+    };
 
-    const invalidFieldList = [
-      // ...new Set removes duplicate invalid fields.
-      ...new Set(
-        selectedLedgerList.flatMap((ledger) => {
-          // ledger = {_id: String , amount: String}
-          // Create the transaction object.
-          const transaction = {
-            ...ledger,
-            accountId: user.accountId,
-            createdAt,
-            budgetId,
-            type,
-            merchant,
-            note,
-            loggedBy: {
-              userId: user._id,
-              firstName: user.profile.firstName,
-              lastName: user.profile.lastName,
-            },
-            // Conditionally add splitTransactionId
-            // If isSplitTransaction then add splitTransactionId
-            ...(isSplitTransaction
-              ? { isSplitTransaction, splitTransactionId }
-              : { isSplitTransaction }),
-          };
-          // Validate the transaction object
-          const validationContext = transactionSchema.newContext();
-          validationContext.clean(transaction);
-          validationContext.validate(transaction);
-          // Return just the invalid field names.
-          return validationContext
-            .validationErrors()
-            .map((error) => error.name);
-        })
-      ),
-      ...(selectedLedgerList.length == 0 ? ["Ledger is required"] : []),
-    ].reduce(
-      (acc, fieldName) => [...acc, { name: fieldName, type: "required" }],
-      []
-    );
-    if (invalidFieldList.length > 0) {
-      throw new ValidationError(invalidFieldList);
+    // Validate the transaction object
+    const validationContext = transactionSchema.newContext();
+    validationContext.clean(transaction);
+    validationContext.validate(transaction);
+    if (validationContext.validationErrors().length > 0) {
+      throw new ValidationError(validationContext.validationErrors());
     }
   },
   run({
@@ -88,16 +66,12 @@ export const createTransaction = new ValidatedMethod({
     type,
     merchant,
     note,
-    selectedLedgerList,
+    allocations,
     tags,
     newTags,
+    amount,
   }) {
     const user = Meteor.user();
-
-    const isSplitTransaction = selectedLedgerList.length > 1;
-    const splitTransactionId = isSplitTransaction
-      ? getUniqueMongoId({ collection: TransactionCollection })
-      : undefined;
 
     // Create and insert new tags, if any.
     // tags is an array of tag Ids (Mongo Ids).
@@ -105,56 +79,35 @@ export const createTransaction = new ValidatedMethod({
       ? createTags({ selectedTagIdList: tags, newTagNameList: newTags })
       : tags;
 
-    selectedLedgerList.forEach((ledger) => {
-      // Get envelopeId that this ledger belongs to.
-      // Will be undefined for uncategorized transactions.
-      // Will be defined if user selected a ledger.
-      const { envelopeId, _id: ledgerId } =
-        ledger._id == "uncategorized" || ledger._id === undefined
-          ? { envelopeId: undefined, _id: undefined }
-          : LedgerCollection.findOne(
-              { _id: ledger._id },
-              { fields: { _id: true, envelopeId: true } }
-            );
-
-      TransactionCollection.insert(
-        {
-          amount: ledger.amount,
-          accountId: user.accountId,
-          envelopeId,
-          ledgerId,
-          createdAt: new Date(createdAt.replace(/-/g, "/")),
-          // The date string is received as 'YYYY-MM-DD' from the client.
-          // I convert it to 'YYYY/MM/DD'. If you create a date like:
-          // new Date('2024-04-01') and call toLocaleString() it will
-          // return 03/31/2024 because of timezone reasons. If you use
-          // the same date like this: new Date('2024/04/01') and call
-          // toLocaleString() it will return what you expect: 04/01/2024.
-          // This is the easiest way for me to fix this right now without
-          // handling timezones or using a date/ time library.
-          budgetId,
-          type,
-          merchant,
-          note,
-          tags,
-          loggedBy: {
-            userId: user._id,
-            firstName: user.profile.firstName,
-            lastName: user.profile.lastName,
-          },
-          // Conditionally add splitTransactionId
-          // If isSplitTransaction then add splitTransactionId
-          ...(isSplitTransaction
-            ? { isSplitTransaction, splitTransactionId }
-            : { isSplitTransaction }),
+    TransactionCollection.insert(
+      {
+        amount: amount,
+        accountId: user.accountId,
+        createdAt: new Date(createdAt.replace(/-/g, "/")),
+        // The date string is received as 'YYYY-MM-DD' from the client.
+        // I convert it to 'YYYY/MM/DD'. If you create a date like:
+        // new Date('2024-04-01') and call toLocaleString() it will
+        // return 03/31/2024 because of timezone reasons. If you use
+        // the same date like this: new Date('2024/04/01') and call
+        // toLocaleString() it will return what you expect: 04/01/2024.
+        // This is the easiest way for me to fix this right now without
+        // handling timezones or using a date/ time library.
+        budgetId,
+        type,
+        merchant,
+        note,
+        tags,
+        loggedBy: {
+          userId: user._id,
+          firstName: user.profile.firstName,
+          lastName: user.profile.lastName,
         },
-        (error) => {
-          if (error) console.log(error);
-          if (error && isSplitTransaction && splitTransactionId) {
-            TransactionCollection.remove({ splitTransactionId });
-          }
-        }
-      );
-    });
+        isSplitTransaction: allocations.length > 1,
+        allocations,
+      },
+      (error) => {
+        if (error) console.log(error);
+      }
+    );
   },
 });

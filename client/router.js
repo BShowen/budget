@@ -27,7 +27,7 @@ import { InsightsPage } from "../imports/ui/pages/InsightsPage";
 // Loaders
 import { AppData } from "../imports/ui/layouts/AppData";
 import { logoutLoader } from "../imports/ui/components/Logout";
-import { loader as editTransactionLoader } from "../imports/ui/components/forms/TransactionForm";
+import { editTransactionLoader } from "../imports/ui/components/forms/TransactionForm";
 
 const checkLoginStatus = () => {
   if (Meteor.loggingOut()) {
@@ -59,11 +59,6 @@ export const router = createBrowserRouter([
         element: <TransactionForm />,
       },
       {
-        path: "/ledger/:ledgerId/transaction/:transactionId/edit",
-        element: <TransactionForm />,
-        loader: editTransactionLoader,
-      },
-      {
         path: "/account",
         element: <AccountPageLayout />,
         children: [
@@ -88,6 +83,11 @@ export const router = createBrowserRouter([
             element: <ManageUsersPage />,
           },
         ],
+      },
+      {
+        path: "/transaction/:transactionId/edit",
+        element: <TransactionForm />,
+        loader: editTransactionLoader,
       },
       {
         path: "/transactions",

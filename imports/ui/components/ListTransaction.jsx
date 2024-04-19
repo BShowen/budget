@@ -169,7 +169,7 @@ function ExpandedContent({ transaction, expanded }) {
 function EditTransactionButton({ transaction }) {
   return (
     <Link
-      to={`/ledger/${transaction.ledgerId}/transaction/${transaction._id}/edit`}
+      to={`/transaction/${transaction._id}/edit`}
       className="tag bg-gray-400 border-gray-400 font-medium"
       onClick={(e) => {
         // Prevent this click from closing the expanded content.

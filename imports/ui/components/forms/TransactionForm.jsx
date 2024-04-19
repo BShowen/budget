@@ -35,51 +35,14 @@ import { dates } from "../../util/dates";
 import { RootContext } from "../../layouts/AppData";
 import { CategorySelectionInput } from "./formComponents/CategorySelectionInput";
 
-export function loader({ params: { transactionId } }) {
-  let transaction = TransactionCollection.findOne({ _id: transactionId });
-  if (transaction) {
-    if (transaction?.isSplitTransaction) {
-      // Get a list of all the transactions in this split transaction
-      const { splitTransactionId } = transaction;
-      const transactions = TransactionCollection.find({
-        splitTransactionId,
-      }).fetch();
-      // Get a list of all the ledgers associated with these transactions.
-      const ledgers = LedgerCollection.find({
-        _id: { $in: transactions.reduce((acc, t) => [...acc, t.ledgerId], []) },
-      })
-        .fetch()
-        .map((ledger) => {
-          // Add the amount allocated to each ledger
-          const transaction = transactions.find(
-            (t) => t.ledgerId == ledger._id
-          );
-          ledger.amount = transaction.amount;
-          return ledger;
-        });
-      // Create a new transactions object with updated amount, and ledgerSelection
-      const newTransaction = {
-        ...transaction,
-        amount: transactions.reduce(
-          // The transaction total is the sum of all the transaction amounts.
-          (total, t) => Math.round((t.amount + total) * 100) / 100,
-          0
-        ),
-        ledgerSelection: ledgers,
-      };
-      return newTransaction;
-    } else {
-      return transaction;
-    }
-  } else {
-    return redirect(`/`);
-  }
-}
+export const editTransactionLoader = ({ params: { transactionId } }) =>
+  TransactionCollection.findOne({ _id: transactionId }) || redirect("/");
 
 export function TransactionForm() {
   const navigate = useNavigate();
   const rootContext = useContext(RootContext);
   const params = useParams();
+
   // transaction will be set only when editing a transaction.
   const transaction = useLoaderData();
 
@@ -91,8 +54,7 @@ export function TransactionForm() {
   // specific ledger.
   const ledger = useTracker(() => {
     const { ledgerId } = params;
-    if (!ledgerId) return undefined;
-    return LedgerCollection.findOne({ _id: ledgerId });
+    return ledgerId ? LedgerCollection.findOne({ _id: ledgerId }) : undefined;
   });
 
   const dateInputProps = useFormDateInput({
@@ -110,7 +72,7 @@ export function TransactionForm() {
   );
 
   const { amountInputProps, ledgerSelectionInputProps } = useFormAmounts({
-    initialLedgerSelection: transaction?.ledgerSelection || ledger,
+    initialLedgerSelection: transaction?.allocations || ledger,
     initialDollarAmount: transaction?.amount || 0,
   });
 
@@ -173,9 +135,7 @@ export function TransactionForm() {
         amount: amountInputProps.value,
         merchant: merchantInputProps.value,
         note: notesInputProps.value,
-        selectedLedgerList: ledgerSelectionInputProps.selectedLedgerList.map(
-          (ledger) => ({ _id: ledger._id, amount: ledger.amount })
-        ),
+        allocations: ledgerSelectionInputProps.selectedLedgerList,
         tags: tagInputProps.tagList
           .filter((tag) => tag.isSelected && !tag.isNew)
           .map((tag) => tag._id),

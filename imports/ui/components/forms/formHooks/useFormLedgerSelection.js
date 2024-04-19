@@ -6,26 +6,33 @@ import { splitDollars } from "../../../util/splitDollars";
 
 export function useFormLedgerSelection({
   initialLedgerSelection,
-  initialSplitTotal,
+  initialFormTotal,
 }) {
   if (initialLedgerSelection && !Array.isArray(initialLedgerSelection)) {
     initialLedgerSelection = [initialLedgerSelection];
   }
 
-  const [splitTotal, setSplitTotal] = useState(initialSplitTotal || 0);
+  const [formTotal, setFormTotal] = useState(initialFormTotal || 0);
 
   const [ledgerList, setLedgerList] = useState(
     initialLedgerSelection ? initialLedgerSelection : []
   );
 
   function selectLedger({ ledger }) {
+    const { name, envelopeId, _id: ledgerId } = ledger;
     setLedgerList((prev) => {
       const newLedgerList = [
         ...prev,
-        { ...ledger, amount: 0, isLocked: false },
+        {
+          ledgerId,
+          envelopeId,
+          name,
+          amount: 0,
+          isLocked: false,
+        },
       ];
       return splitBetweenLedgers({
-        amount: splitTotal,
+        amount: formTotal,
         ledgerList: newLedgerList,
       });
     });
@@ -33,9 +40,11 @@ export function useFormLedgerSelection({
 
   function deselectLedger({ ledger }) {
     setLedgerList((prev) => {
-      const newLedgerList = [...prev].filter((doc) => doc._id != ledger._id);
+      const newLedgerList = [...prev].filter(
+        ({ ledgerId }) => ledgerId != ledger._id
+      );
       return splitBetweenLedgers({
-        amount: splitTotal,
+        amount: formTotal,
         ledgerList: newLedgerList,
       });
     });
@@ -44,11 +53,11 @@ export function useFormLedgerSelection({
   function setLedgerAmount({ ledgerId, amount }) {
     setLedgerList((prev) => {
       const newLedgerList = [...prev];
-      const ledger = newLedgerList.find((doc) => doc._id == ledgerId);
+      const ledger = newLedgerList.find(({ ledgerId: id }) => id == ledgerId);
       ledger.amount = formatDollarAmount(amount);
       ledger.isLocked = amount > 0;
       return splitBetweenLedgers({
-        amount: splitTotal,
+        amount: formTotal,
         ledgerList: newLedgerList,
       });
     });
@@ -111,14 +120,14 @@ export function useFormLedgerSelection({
         ledgerList: newLedgerList,
       });
     });
-    setSplitTotal(parseFloat(newTotal));
+    setFormTotal(parseFloat(newTotal));
   }
 
   function removeIncomeLedgers() {
     setLedgerList((prev) => {
       const newLedgerList = [...prev].filter((doc) => doc.kind !== "income");
       return splitBetweenLedgers({
-        amount: splitTotal,
+        amount: formTotal,
         ledgerList: newLedgerList,
       });
     });

@@ -22,11 +22,11 @@ export function CategorySelectionInput({
         <p className="font-semibold">Category</p>
       </div>
 
-      {selectedLedgerList.map((ledger) => (
+      {selectedLedgerList.map(({ ledgerId, amount }) => (
         <SelectedLedger
-          key={ledger._id}
-          ledgerId={ledger._id}
-          amount={ledger.amount}
+          key={ledgerId}
+          ledgerId={ledgerId}
+          amount={amount}
           deselectLedger={deselectLedger}
           setLedgerAmount={setLedgerAmount}
           isSplitTransaction={selectedLedgerList.length > 1}
@@ -48,7 +48,9 @@ export function CategorySelectionInput({
           isOpen={isDialogOpen}
           selectLedger={selectLedger}
           deselectLedger={deselectLedger}
-          selectedLedgerIdList={selectedLedgerList.map((doc) => doc._id)}
+          selectedLedgerIdList={selectedLedgerList.map(
+            ({ ledgerId }) => ledgerId
+          )}
           transactionType={transactionType}
         />
       )}
