@@ -187,9 +187,7 @@ function DeleteTransactionButton({ transaction }) {
       Meteor.call(
         "transaction.deleteTransaction",
         {
-          transactionId: transaction.isSplitTransaction
-            ? transaction.splitTransactionId
-            : transaction._id,
+          transactionId: transaction._id,
         },
         (error) => {
           if (error) {
@@ -217,9 +215,7 @@ function DeleteTransactionButton({ transaction }) {
         e.stopPropagation();
 
         if (transaction.isSplitTransaction) {
-          const transactionCount = TransactionCollection.find({
-            splitTransactionId: transaction.splitTransactionId,
-          }).fetch().length;
+          const transactionCount = transaction.allocations.length;
           const confirm = window.confirm(
             `This is a split transaction and will delete ${transactionCount} transactions.`
           );
