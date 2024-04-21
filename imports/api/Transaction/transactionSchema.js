@@ -19,11 +19,17 @@ export const transactionSchema = new SimpleSchema(
     "allocations.$": Object,
     "allocations.$.envelopeId": {
       type: String,
-      regEx: SimpleSchema.RegEx.Id,
+      // Match "uncategorized" OR SimpleSchema.Regex.Id
+      regEx:
+        "/^(uncategorized|[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17})$/",
+      optional: true,
     },
     "allocations.$.ledgerId": {
       type: String,
-      regEx: SimpleSchema.RegEx.Id,
+      // Match "uncategorized" OR SimpleSchema.Regex.Id
+      regEx:
+        "/^(uncategorized|[23456789ABCDEFGHJKLMNPQRSTWXYZabcdefghijkmnopqrstuvwxyz]{17})$/",
+      optional: true,
     },
     "allocations.$.amount": {
       type: Number,

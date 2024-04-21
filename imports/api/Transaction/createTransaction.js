@@ -12,9 +12,6 @@ import { transactionSchema } from "./transactionSchema";
 // Model methods
 import { createTags } from "../Tag/tagMethods";
 
-// Utils
-import { getUniqueMongoId } from "../../ui/util/getUniqueMongoId";
-
 export const createTransaction = new ValidatedMethod({
   name: "transaction.createTransaction",
   validate: function ({
