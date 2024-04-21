@@ -125,8 +125,11 @@ export function TransactionForm() {
 
   function submit() {
     if (!isFormValid) return;
+    const createOrUpdate = transaction?._id
+      ? "transaction.updateTransaction"
+      : "transaction.createTransaction";
     Meteor.call(
-      "transaction.createTransaction",
+      createOrUpdate,
       {
         ...(transaction ? { transactionId: transaction._id } : {}),
         createdAt: dateInputProps.value,

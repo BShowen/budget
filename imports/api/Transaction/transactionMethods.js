@@ -1,9 +1,7 @@
 import { Meteor } from "meteor/meteor";
-import { Random } from "meteor/random";
 
 // Collections
 import { TransactionCollection } from "./TransactionCollection";
-import { LedgerCollection } from "../Ledger/LedgerCollection";
 
 // Utils
 import { createTags } from "../Tag/tagMethods";
@@ -13,16 +11,16 @@ import { createTransaction } from "./createTransaction";
 
 Meteor.methods({
   "transaction.updateTransaction"({
-    transactionIdList,
+    transactionId,
     createdAt,
     budgetId,
     type,
-    amount,
     merchant,
     note,
     allocations,
     tags,
     newTags,
+    amount,
   }) {
     if (!this.userId) return;
     // Validate the incoming transaction args.
@@ -39,33 +37,34 @@ Meteor.methods({
       allocations,
       amount,
     });
-    transactionIdList.forEach((id) => {
-      TransactionCollection.remove({ _id: id });
-    });
-    return createTransaction.run.call(this, {
-      createdAt,
-      budgetId,
-      type,
-      amount,
-      merchant,
-      note,
-      allocations,
-      tags,
-      newTags,
-    });
+
+    // Create any new tags.
+    tags = newTags
+      ? createTags({ selectedTagIdList: tags, newTagNameList: newTags })
+      : tags;
+
+    return TransactionCollection.update(
+      { _id: transactionId },
+      {
+        $set: {
+          createdAt: new Date(createdAt.replace(/-/g, "/")),
+          type,
+          merchant,
+          note,
+          allocations,
+          tags,
+          amount,
+        },
+      }
+    );
   },
   "transaction.deleteTransaction"({ transactionId }) {
     if (!this.userId || !transactionId) return;
 
-    TransactionCollection.remove(
-      {
-        $or: [{ _id: transactionId }, { splitTransactionId: transactionId }],
-      },
-      (error) => {
-        if (error && Meteor.isServer) {
-          console.log("---transaction.delete.Transaction---\n", error);
-        }
+    return TransactionCollection.remove({ _id: transactionId }, (error) => {
+      if (error && Meteor.isServer) {
+        console.log("---transaction.delete.Transaction---\n", error);
       }
-    );
+    });
   },
 });

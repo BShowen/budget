@@ -7,7 +7,7 @@ import { TagCollection } from "./TagCollection";
 // This method returns a tag id for each tag-name provided. Any tag that doesn't
 // exist is created and it's tag id returned.
 // Think of this method as an "insert-if-absent" database operation for the tag collection.
-// Returns an array of unique tag-name strings. ["tag-A", "tag-B", ... , "tag-Z"]
+// Returns an array of unique tag id's. ["abc123", "def456", ... ]
 export function createTags({ selectedTagIdList, newTagNameList }) {
   // newTagNameList is an array of strings.
   // Each string is a tag-name
