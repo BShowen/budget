@@ -10,7 +10,6 @@ import { FooterNav } from "../components/FooterNav";
 
 // Collections
 import { BudgetCollection } from "../../api/Budget/BudgetCollection";
-import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 
 // Context
 export const RootContext = createContext(null);
@@ -57,20 +56,6 @@ export const AppData = () => {
       return true;
     }
   }, [budget]);
-
-  const uncategorizedTransactions = useTracker(() => {
-    if (isFetchingCollections) return 0;
-
-    const transactions = TransactionCollection.find({
-      $or: [
-        { envelopeId: { $exists: false } },
-        { envelopeId: undefined },
-        { ledgerId: { $exists: false } },
-        { ledgerId: undefined },
-      ],
-    }).fetch();
-    return transactions.length;
-  });
 
   // When the date changes, fetch the new budget for this date.
   useEffect(() => {
@@ -127,7 +112,6 @@ export const AppData = () => {
                   setDate(date);
                 },
                 currentBudgetId: budget?._id,
-                uncategorizedTransactions,
               }}
             >
               <Outlet />

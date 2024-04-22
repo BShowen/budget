@@ -1,8 +1,9 @@
-import React, { useContext } from "react";
+import React from "react";
+import { useTracker } from "meteor/react-meteor-data";
 import { NavLink, Link, useLocation } from "react-router-dom";
 
-// Context
-import { RootContext } from "../layouts/AppData";
+// Collections
+import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 
 // Icons
 import {
@@ -14,8 +15,12 @@ import {
 import { IoIosAddCircle } from "react-icons/io";
 
 export const FooterNav = () => {
-  const rootContext = useContext(RootContext);
-  const { uncategorizedTransactions } = rootContext;
+  const uncategorizedTransactions = useTracker(() => {
+    const transactions = TransactionCollection.find({
+      isCategorized: false,
+    }).fetch();
+    return transactions.length;
+  });
 
   // replace is set to true if the user is currently on a route where a
   // transaction form is rendered. This way if the user presses the back button
