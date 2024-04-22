@@ -43,6 +43,11 @@ Meteor.methods({
       ? createTags({ selectedTagIdList: tags, newTagNameList: newTags })
       : tags;
 
+    const isCategorized = allocations.every(
+      ({ envelopeId, ledgerId }) =>
+        envelopeId != "uncategorized" && ledgerId != "uncategorized"
+    );
+
     return TransactionCollection.update(
       { _id: transactionId },
       {
@@ -54,6 +59,7 @@ Meteor.methods({
           allocations,
           tags,
           amount,
+          isCategorized,
         },
       }
     );

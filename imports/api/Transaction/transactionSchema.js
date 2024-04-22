@@ -94,6 +94,10 @@ export const transactionSchema = new SimpleSchema(
       type: Boolean,
       optional: true,
     },
+    isCategorized: {
+      type: Boolean,
+      defaultValue: false,
+    },
   },
   { clean: { mutate: true } }
 );

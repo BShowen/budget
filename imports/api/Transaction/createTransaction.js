@@ -76,6 +76,11 @@ export const createTransaction = new ValidatedMethod({
       ? createTags({ selectedTagIdList: tags, newTagNameList: newTags })
       : tags;
 
+    const isCategorized = allocations.every(
+      ({ envelopeId, ledgerId }) =>
+        envelopeId != "uncategorized" && ledgerId != "uncategorized"
+    );
+
     TransactionCollection.insert(
       {
         amount: amount,
@@ -101,6 +106,7 @@ export const createTransaction = new ValidatedMethod({
         },
         isSplitTransaction: allocations.length > 1,
         allocations,
+        isCategorized,
       },
       (error) => {
         if (error) console.log(error);

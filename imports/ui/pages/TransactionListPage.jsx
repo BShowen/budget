@@ -179,20 +179,9 @@ function TransactionGroup({ date, transactions }) {
           </div>
         </div>
       </div>
-      {transactions.map((transaction) => {
-        // Add the transactions to the list
-        const [month, day] = dates
-          .format(transaction.createdAt, { forTransaction: true })
-          .split(" ");
-        return (
-          <ListTransaction
-            key={transaction._id}
-            transaction={transaction}
-            options={{ month, day }}
-            ledgerId={transaction.ledgerId}
-          />
-        );
-      })}
+      {transactions.map((transaction) => (
+        <ListTransaction key={transaction._id} transaction={transaction} />
+      ))}
     </div>
   );
 }

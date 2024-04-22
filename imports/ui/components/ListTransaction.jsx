@@ -7,7 +7,6 @@ import { Meteor } from "meteor/meteor";
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
 import { EnvelopeCollection } from "../../api/Envelope/EnvelopeCollection";
 import { TagCollection } from "../../api/Tag/TagCollection";
-import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 
 // Utils
 import { cap } from "../util/cap";
@@ -17,8 +16,12 @@ import { dates } from "../util/dates";
 // Icons
 import { HiMinus, HiPlus } from "react-icons/hi";
 import { LuCheckCircle2, LuCircle } from "react-icons/lu";
-export function ListTransaction({ transaction, ledgerId }) {
-  const isCategorized = !!ledgerId;
+export function ListTransaction({ transaction }) {
+  const isCategorized = transaction.allocations.every(
+    ({ ledgerId, envelopeId }) =>
+      ledgerId != "uncategorized" && envelopeId != "uncategorized"
+  );
+
   const [expanded, setExpanded] = useState(
     window.localStorage.getItem(transaction._id) == "true" || false
   );
@@ -86,12 +89,20 @@ export function ListTransaction({ transaction, ledgerId }) {
 }
 
 function ExpandedContent({ transaction, expanded }) {
-  const envelope = useTracker(() =>
-    EnvelopeCollection.findOne({ _id: transaction.envelopeId })
-  );
-  const ledger = useTracker(() =>
-    LedgerCollection.findOne({ _id: transaction.ledgerId })
-  );
+  const envelopeList = useTracker(() => {
+    const envelopeIdList = transaction.allocations.map(
+      ({ envelopeId }) => envelopeId
+    );
+    return EnvelopeCollection.find({ _id: { $in: envelopeIdList } }).fetch();
+  });
+
+  const ledgerList = useTracker(() => {
+    const ledgerIdList = transaction.allocations.map(
+      ({ ledgerId }) => ledgerId
+    );
+    return LedgerCollection.find({ _id: { $in: ledgerIdList } }).fetch();
+  });
+
   const tagList = useTracker(() => {
     const tags = TagCollection.find({
       _id: { $in: transaction.tags || [] },
@@ -107,6 +118,39 @@ function ExpandedContent({ transaction, expanded }) {
     }
   });
 
+  const envelopes = envelopeList.reduce(
+    (acc, { name, _id }) => {
+      const { _id: ledgerId, name: ledgerName } = ledgerList.find(
+        ({ envelopeId }) => envelopeId == _id
+      );
+      return [
+        ...acc,
+        <div key={_id} className="tag bg-gray-400 border-gray-400">
+          <p className="inline">{cap(name)} - </p>
+          <Link
+            key={ledgerId}
+            to={`/ledger/${ledgerId}/transactions`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {cap(ledgerName)}
+          </Link>
+        </div>,
+      ];
+    },
+    [
+      ...(transaction.isCategorized
+        ? []
+        : [
+            <div
+              key={"uncategorized"}
+              className="tag bg-gray-400 border-gray-400"
+            >
+              <p>Uncategorized</p>
+            </div>,
+          ]),
+    ]
+  );
+
   return expanded ? (
     <div className="w-full overflow-x-hidden overflow-hidden flex flex-col justify-start items-stretch mt-10 overscroll-auto pt-2 scrollbar-hide h-full">
       <div className="flex flex-col justify-start items-stretch gap-1 ps-7">
@@ -119,20 +163,8 @@ function ExpandedContent({ transaction, expanded }) {
           </p>
         </div>
 
-        <div className="flex flex-row justify-start items-center gap-1">
-          <div className="tag bg-gray-400 border-gray-400">
-            {cap(envelope?.name || "Uncategorized")}
-          </div>
-
-          {ledger && (
-            <Link
-              to={`/ledger/${ledger._id}/transactions`}
-              className="tag bg-gray-400 border-gray-400"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {cap(ledger?.name || "Uncategorized")}
-            </Link>
-          )}
+        <div className="flex flex-row justify-start items-center gap-1 flex-wrap">
+          {envelopes}
         </div>
 
         <div className="text-left flex flex-row gap-1 items-center">
