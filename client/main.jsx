@@ -7,9 +7,6 @@ import { RouterProvider } from "react-router-dom";
 // router
 import { router } from "./router";
 
-// Components
-import { AppData } from "../imports/ui/layouts/AppData.jsx";
-
 // Utils
 import "../imports/ui/util/appHeight.js";
 

@@ -4,7 +4,6 @@ import { useTracker } from "meteor/react-meteor-data";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 // Collections
-import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
 import { TagCollection } from "../../api/Tag/TagCollection";
 
@@ -18,13 +17,15 @@ import { LedgerTransaction } from "../components/ledgers/ledgerComponents/Ledger
 
 // Utils
 import { cap } from "../util/cap";
-import { reduceTransactions } from "../util/reduceTransactions";
 import { toDollars } from "../util/toDollars";
 import { dates } from "../util/dates";
 
 // Icons
 import { IoIosArrowBack } from "react-icons/io";
 import { BiDollar, BiCheck, BiX } from "react-icons/bi";
+
+// Hooks
+import { useCategoryLedger } from "../hooks/useCategoryLedger";
 
 export const LedgerTransactionsPage = () => {
   const { ledgerId } = useParams();
@@ -37,22 +38,19 @@ export const LedgerTransactionsPage = () => {
         <ListTransactions ledgerId={ledgerId} />
         <DeleteLedger ledgerId={ledgerId} />
       </div>
-      {/* <AddTransactionsCircle ledgerId={ledgerId} /> */}
     </div>
   );
 };
 
 function PageHeader({ ledgerId }) {
-  const ledger = useTracker(() => LedgerCollection.findOne({ _id: ledgerId }));
-  switch (ledger.kind) {
+  const { kind } = useCategoryLedger({ ledgerId });
+  switch (kind) {
     case "income":
-      return <IncomeHeader ledger={ledger} />;
+      return <IncomeHeader ledgerId={ledgerId} />;
     case "expense":
-      return <CategoryHeader ledger={ledger} />;
+      return <CategoryHeader ledgerId={ledgerId} />;
     case "savings":
-      return <SavingsHeader ledger={ledger} />;
-    case "allocation":
-      return <AllocationHeader ledger={ledger} />;
+      return <SavingsHeader ledgerId={ledgerId} />;
   }
 }
 
@@ -93,73 +91,62 @@ function ProgressHeader({ children, percent, pathColor, logo }) {
   );
 }
 
-function CategoryHeader({ ledger }) {
+function CategoryHeader({ ledgerId }) {
   const [percentSpent, setPercentSpent] = useState(0);
 
-  const spent = useTracker(() => {
-    if (!Meteor.userId()) return {};
-    const transactionList = TransactionCollection.find({
-      ledgerId: ledger._id,
-    }).fetch();
-    // income and expense for this ledger
-    const { income, expense } = reduceTransactions({
-      transactions: transactionList,
-    });
-    const spent = Math.round((expense - income) * 100) / 100;
-    return spent;
+  const { moneySpent, leftToSpend, allocatedAmount, name } = useCategoryLedger({
+    ledgerId,
   });
 
   useEffect(() => {
     // After component mounts, update the percentSpent so it animates from zero
     // to percentSpent.
 
-    // If ledger.allocatedAmount is zero then percentage spent should always be
+    // If allocatedAmount is zero then percentage spent should always be
     // 100%. This is to avoid dividing by zero error because if user has spent
     // money but not set a allocatedAmount then spent / allocatedAmount is a
     // divide by zero error.
     const percentSpent =
-      ledger.allocatedAmount == 0
-        ? 100
-        : (spent / ledger.allocatedAmount) * 100;
+      allocatedAmount == 0 ? 100 : (moneySpent / allocatedAmount) * 100;
     setPercentSpent(percentSpent);
-  }, [ledger]);
+  }, [allocatedAmount, moneySpent]);
 
-  const remaining = Math.round((ledger.allocatedAmount - spent) * 100) / 100;
   const logo =
-    remaining == 0 ? (
+    leftToSpend == 0 ? (
       <BiCheck className="text-4xl text-emerald-400" />
-    ) : remaining < 0 ? (
+    ) : leftToSpend < 0 ? (
       <BiX className="text-5xl text-rose-400" />
     ) : (
       <BiDollar
         className={`text-3xl ${
-          spent > ledger.allocatedAmount ? "text-rose-400" : "text-emerald-400"
+          moneySpent > allocatedAmount ? "text-rose-400" : "text-emerald-400"
         }`}
       />
     );
-  const pathColor = spent > ledger.allocatedAmount ? "#fb7185" : "#34d399";
+  const pathColor = moneySpent > allocatedAmount ? "#fb7185" : "#34d399";
+
   return (
     <ProgressHeader percent={percentSpent} pathColor={pathColor} logo={logo}>
       <div className="max-w-full flex flex-col justify-start items-stretch px-2 bg-app py-2 h-full">
         <div className="w-full flex flex-row justify-start items-center flex-nowrap">
-          <h2 className="text-3xl font-bold">{cap(ledger.name)}</h2>
+          <h2 className="text-3xl font-bold">{cap(name)}</h2>
         </div>
         <div className="w-full flex flex-row flex-start justify-between items-center">
           <p className="font-semibold text-gray-500">
-            Spent {toDollars(spent)} out of {toDollars(ledger.allocatedAmount)}
+            Spent {toDollars(moneySpent)} out of {toDollars(allocatedAmount)}
           </p>
         </div>
         <div className="w-full flex flex-col flex-nowrap justify-start items-end">
-          {spent <= ledger.allocatedAmount ? (
+          {moneySpent <= allocatedAmount ? (
             <>
               <p className="font-bold">Left to spend</p>
-              <p className="text-4xl p-0">{toDollars(remaining)}</p>
+              <p className="text-4xl p-0">{toDollars(leftToSpend)}</p>
             </>
           ) : (
             <>
               <p className="font-bold">Overspent by</p>
               <p className="text-4xl text-rose-500/90 p-0">
-                {toDollars(remaining)}
+                {toDollars(leftToSpend)}
               </p>
             </>
           )}
@@ -169,18 +156,11 @@ function CategoryHeader({ ledger }) {
   );
 }
 
-function IncomeHeader({ ledger }) {
-  const transactionList = useTracker(() => {
-    if (!Meteor.userId()) return {};
-    return TransactionCollection.find({
-      ledgerId: ledger._id,
-    }).fetch();
-  });
+function IncomeHeader({ ledgerId }) {
+  const { received: incomeReceived, ledger } = useCategoryLedger({ ledgerId });
+
   const [percentReceived, setPercentReceived] = useState(0);
 
-  const incomeReceived = transactionList.reduce((total, transaction) => {
-    return Math.round((total + transaction.amount) * 100) / 100;
-  }, 0);
   const expectedIncome = ledger.allocatedAmount;
 
   useEffect(() => {
@@ -197,7 +177,9 @@ function IncomeHeader({ ledger }) {
     setPercentReceived(percentReceived);
   }, [ledger]);
 
-  const remainingToReceive = expectedIncome - incomeReceived;
+  const remainingToReceive =
+    Math.round((expectedIncome - incomeReceived) * 100) / 100;
+
   const logo =
     remainingToReceive == 0 ? (
       <BiCheck className="text-4xl text-emerald-400" />
@@ -210,7 +192,9 @@ function IncomeHeader({ ledger }) {
         }`}
       />
     );
+
   const pathColor = incomeReceived > expectedIncome ? "#fb7185" : "#34d399";
+
   return (
     <ProgressHeader percent={percentReceived} pathColor={pathColor} logo={logo}>
       <div className="max-w-full flex flex-col justify-start items-stretch px-2 bg-app py-2 h-full">
@@ -232,21 +216,21 @@ function IncomeHeader({ ledger }) {
   );
 }
 
-function SavingsHeader({ ledger }) {
-  const transactionList = useTracker(() => {
-    if (!Meteor.userId()) return {};
-    return TransactionCollection.find({
-      ledgerId: ledger._id,
-    }).fetch();
-  });
+function SavingsHeader({ ledgerId }) {
+  const {
+    income: { total: income },
+    expense: { total: expense },
+    ledger,
+  } = useCategoryLedger({ ledgerId });
+
   const [percentSaved, setPercentSaved] = useState(0);
-  const { income, expense } = reduceTransactions({
-    transactions: transactionList,
-  });
+
   const totalSavedThisMonth = income;
+
   const plannedToSaveThisMonth = ledger.allocatedAmount;
+
   const balance =
-    Math.round((ledger.startingBalance - expense + income) * 100) / 100;
+    Math.round((ledger.startingBalance + income - expense) * 100) / 100;
 
   useEffect(() => {
     // After component mounts, update the percentSaved so it animates from zero
@@ -266,6 +250,7 @@ function SavingsHeader({ ledger }) {
     plannedToSaveThisMonth - totalSavedThisMonth < 0
       ? 0
       : plannedToSaveThisMonth - totalSavedThisMonth;
+
   const logo =
     leftToSave <= 0 ? (
       <BiCheck className="text-4xl text-emerald-400" />
@@ -287,76 +272,6 @@ function SavingsHeader({ ledger }) {
         <div className="w-full flex flex-col flex-nowrap justify-start items-end">
           <p className="font-bold">Available</p>
           <p className="text-4xl p-0">{toDollars(balance)}</p>
-        </div>
-      </div>
-    </ProgressHeader>
-  );
-}
-
-function AllocationHeader({ ledger }) {
-  const transactionList = useTracker(() => {
-    if (!Meteor.userId()) return {};
-    return TransactionCollection.find({
-      ledgerId: ledger._id,
-    }).fetch();
-  });
-  const [percentSaved, setPercentSaved] = useState(0);
-  const { income, expense } = reduceTransactions({
-    transactions: transactionList,
-  });
-  const totalSavedThisMonth = income;
-  const totalSavedSinceStart = ledger.allocation.runningTotal + income;
-  const plannedToSaveThisMonth = ledger.allocatedAmount;
-  const availableToSpend = ledger.startingBalance - expense + income;
-
-  useEffect(() => {
-    // After component mounts, update the percentSaved so it animates from zero
-    // to percentSaved.
-
-    // If plannedToSaveThisMonth is zero then percentSaved should always be 100%.
-    // This is to avoid dividing by zero, because if user has received money but
-    // not set an expected amount then received / expected is dividing by zero.
-    const percentSaved =
-      ledger.allocatedAmount == 0
-        ? 100
-        : (totalSavedThisMonth / plannedToSaveThisMonth) * 100;
-    setPercentSaved(percentSaved);
-  }, [ledger]);
-
-  const leftToSave =
-    plannedToSaveThisMonth - totalSavedThisMonth < 0
-      ? 0
-      : plannedToSaveThisMonth - totalSavedThisMonth;
-  const logo =
-    leftToSave <= 0 ? (
-      <BiCheck className="text-4xl text-emerald-400" />
-    ) : (
-      <BiDollar className="text-3xl text-emerald-400" />
-    );
-
-  return (
-    <ProgressHeader percent={percentSaved} pathColor={"#34d399"} logo={logo}>
-      <div className="max-w-full flex flex-col justify-start items-stretch px-2 bg-app py-2 h-full">
-        <div className="w-full flex flex-row justify-start items-center flex-nowrap">
-          <h2 className="text-3xl font-bold">{cap(ledger.name)}</h2>
-        </div>
-        <div className="w-full flex flex-col flex-start justify-start items-start text-xs">
-          <p className="font-extrabold text-gray-500">
-            Saved {toDollars(totalSavedSinceStart)} out of{" "}
-            {toDollars(ledger.allocation.goalAmount)} this year
-          </p>
-          <p className="font-extrabold text-gray-500">
-            Saved {toDollars(totalSavedThisMonth)} out of{" "}
-            {toDollars(plannedToSaveThisMonth)} this month
-          </p>
-          <p className="font-extrabold text-gray-500">
-            This allocation will end on{" "}
-            {dates.format(ledger.allocation.endDate, { forAllocation: true })}
-          </p>
-        </div>
-        <div className="w-full flex flex-col flex-nowrap justify-start items-end">
-          <p className="font-bold">Available to spend</p>
-          <p className="text-4xl p-0">{toDollars(availableToSpend)}</p>
         </div>
       </div>
     </ProgressHeader>
@@ -457,33 +372,26 @@ function LedgerNotes({ ledgerId }) {
 }
 
 function ListTransactions({ ledgerId }) {
-  const ledger = useTracker(() => LedgerCollection.findOne({ _id: ledgerId }));
+  const { transactionList, kind } = useCategoryLedger({
+    ledgerId,
+  });
+
+  const [filteredTransactions, setFilteredTransactions] =
+    useState(transactionList);
+
   const [activeTags, setActiveTags] = useState([]);
 
-  const { transactionList, filteredTransactions } = useTracker(() => {
-    if (!Meteor.userId()) return {};
-    const transactionList = TransactionCollection.find(
-      {
-        ledgerId: ledger._id,
-      },
-      { sort: { createdAt: -1 } }
-    ).fetch();
-    const filteredTransactions = transactionList.filter((transaction) => {
-      if (activeTags.length === 0) return true;
-      return (
-        transaction.tags &&
-        transaction.tags.some((tag) => activeTags.includes(tag))
-      );
-    });
-    return { transactionList, filteredTransactions };
-  });
-
-  const {
-    income: filteredTransactionsIncome,
-    expense: filteredTransactionsExpense,
-  } = reduceTransactions({
-    transactions: filteredTransactions,
-  });
+  useEffect(() => {
+    setFilteredTransactions(
+      transactionList.filter((transaction) => {
+        if (activeTags.length === 0) return true;
+        return (
+          transaction.tags &&
+          transaction.tags.some((tagId) => activeTags.includes(tagId))
+        );
+      })
+    );
+  }, [activeTags]);
 
   const tagIdList = useTracker(() => {
     // Return only the tags that have been used in this ledger's transactionList
@@ -514,11 +422,17 @@ function ListTransactions({ ledgerId }) {
   };
 
   const transactionInfo =
-    ledger.kind === "income"
+    kind === "income"
       ? "Income this month"
       : `${filteredTransactions.length} ${
           filteredTransactions.length == 1 ? "transaction" : "transactions"
         }`;
+
+  const filteredTransactionsTotal = filteredTransactions.reduce(
+    (total, transaction) =>
+      Math.round((total + transaction.amount) * 100) / 100,
+    0
+  );
 
   return (
     <>
@@ -537,17 +451,14 @@ function ListTransactions({ ledgerId }) {
           <div>
             {activeTags.length > 0 ? (
               <p className="font-bold text-color-light-gray text-md">
-                Spent{" "}
-                {toDollars(
-                  filteredTransactionsExpense - filteredTransactionsIncome
-                )}
+                Total {toDollars(filteredTransactionsTotal)}
               </p>
             ) : (
               <Link
-                to={`/ledger/${ledger._id}/transactions/new`}
+                to={`/ledger/${ledgerId}/transactions/new`}
                 className="text-color-light-blue font-bold"
               >
-                {ledger.kind === "income" ? "Add income" : "Add transaction"}
+                {kind === "income" ? "Add income" : "Add transaction"}
               </Link>
             )}
           </div>
@@ -562,8 +473,6 @@ function ListTransactions({ ledgerId }) {
           return (
             <LedgerTransaction
               key={transaction._id}
-              ledgerId={ledger._id}
-              transactionId={transaction._id}
               transaction={transaction}
               options={{ border, month, day }}
             />

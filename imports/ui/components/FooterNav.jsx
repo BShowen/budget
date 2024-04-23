@@ -33,9 +33,14 @@ export const FooterNav = () => {
   // Determine if the footer nav should be visible.
   // FooterNave should never be visible when a form is rendered.
   // const visible = location.pathname != "/new-transaction";
-  const regex = /^\/ledger\/\w+\/transactions\/new$/gm;
-  const isNewTransactionFormVisible = location.pathname == "/new-transaction";
-  const isEditTransactionFormVisible = regex.test(location.pathname);
+  const newTransactionRegex = /^\/ledger\/\w+\/transactions\/new$/;
+  const isNewTransactionFormVisible =
+    location.pathname == "/new-transaction" ||
+    newTransactionRegex.test(location.pathname);
+  const editTransactionRegex = /^\/transaction\/\w+\/edit$/;
+  const isEditTransactionFormVisible = editTransactionRegex.test(
+    location.pathname
+  );
   // If isNewTransactionFormVisible is true then return false
   // If isEditTransactionFormVisible is true then return false
   const footerNavVisible =

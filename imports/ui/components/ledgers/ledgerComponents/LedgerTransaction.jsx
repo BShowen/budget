@@ -8,17 +8,12 @@ import { toDollars } from "../../../util/toDollars";
 // Icons
 import { HiMinus, HiPlus } from "react-icons/hi";
 import { LuChevronRight } from "react-icons/lu";
-export function LedgerTransaction({
-  transaction,
-  ledgerId,
-  transactionId,
-  options,
-}) {
+export function LedgerTransaction({ transaction, options }) {
   const defaultOptions = { border: "", month: "", day: "" };
   const { border, month, day } = { ...defaultOptions, ...options };
   return (
     <Link
-      to={`/ledger/${ledgerId}/transaction/${transactionId}/edit`}
+      to={`/transaction/${transaction._id}/edit`}
       className={`${border} border-slate-300 p-1 flex flex-row flex-nowrap items-center gap-2 lg:hover:cursor-pointer`}
     >
       <div className="basis-0 ">

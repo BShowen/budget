@@ -64,11 +64,13 @@ export function TransactionForm() {
   });
 
   const [transactionType, setTransactionType] = useState(
-    ledger?.kind === "income" ||
-      ledger?.kind === "savings" ||
-      ledger?.kind == "allocation"
-      ? "income"
-      : "expense"
+    ledger
+      ? ledger.kind === "income" ||
+        ledger.kind === "savings" ||
+        ledger.kind == "allocation"
+        ? "income"
+        : "expense"
+      : transaction?.type || "expense"
   );
 
   const { amountInputProps, ledgerSelectionInputProps } = useFormAmounts({

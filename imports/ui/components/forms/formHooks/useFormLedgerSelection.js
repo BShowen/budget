@@ -9,9 +9,10 @@ export function useFormLedgerSelection({
   initialFormTotal,
 }) {
   if (initialLedgerSelection && !Array.isArray(initialLedgerSelection)) {
-    initialLedgerSelection = [initialLedgerSelection];
+    initialLedgerSelection = [
+      { ...initialLedgerSelection, ledgerId: initialLedgerSelection._id },
+    ];
   }
-
   const [formTotal, setFormTotal] = useState(initialFormTotal || 0);
 
   const [ledgerList, setLedgerList] = useState(

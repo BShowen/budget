@@ -137,7 +137,7 @@ function EnvelopeFooter({ envelopeId }) {
                   Create savings
                 </p>
               </div>
-              <div className="flex flex-row justify-start items-center gap-1">
+              {/* <div className="flex flex-row justify-start items-center gap-1">
                 <LuPlusCircle className="text-lg" />
                 <p
                   onClick={() => {
@@ -147,7 +147,7 @@ function EnvelopeFooter({ envelopeId }) {
                 >
                   Create allocation
                 </p>
-              </div>
+              </div> */}
             </div>
           </div>
         )}
