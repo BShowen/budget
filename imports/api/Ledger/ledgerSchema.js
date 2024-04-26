@@ -34,7 +34,7 @@ export const ledgerSchema = new SimpleSchema(
     },
     kind: {
       type: String,
-      allowedValues: ["income", "expense", "savings", "allocation"],
+      allowedValues: ["income", "expense", "savings"],
     },
     notes: {
       type: String,
@@ -45,13 +45,11 @@ export const ledgerSchema = new SimpleSchema(
       autoValue: function () {
         if (this.isInsert) {
           // If this ledger is an income ledger then it is not a recurring ledger.
-          // If this ledger is a savings or allocation then it is recurring.
+          // If this ledger is a savings then it is recurring.
           switch (this.field("kind").value) {
             case "income":
               return false;
             case "savings":
-              return true;
-            case "allocation":
               return true;
             default:
               // If ledger kind is not set, then default to false. This should
@@ -77,65 +75,6 @@ export const ledgerSchema = new SimpleSchema(
             this.unset();
             return undefined;
           }
-        }
-      },
-    },
-    allocation: {
-      type: Object,
-      optional: function () {
-        if (this.isInsert) {
-          if (this.field("kind").value === "allocation") {
-            return false;
-          } else {
-            return true;
-          }
-        } else {
-          return true;
-        }
-      },
-    },
-    "allocation.runningTotal": {
-      // This total is carried over and calculated each month when a new budget
-      // is created. This field is updated by the Budget publication.
-      type: Number,
-      defaultValue: 0,
-      optional: function () {
-        if (this.isInsert) {
-          if (this.field("kind").value === "allocation") {
-            return false;
-          } else {
-            return true;
-          }
-        } else {
-          return true;
-        }
-      },
-    },
-    "allocation.goalAmount": {
-      type: Number,
-      optional: function () {
-        if (this.isInsert) {
-          if (this.field("kind").value === "allocation") {
-            return false;
-          } else {
-            return true;
-          }
-        } else {
-          return true;
-        }
-      },
-    },
-    "allocation.endDate": {
-      type: Date,
-      optional: function () {
-        if (this.isInsert) {
-          if (this.field("kind").value === "allocation") {
-            return false;
-          } else {
-            return true;
-          }
-        } else {
-          return true;
         }
       },
     },
