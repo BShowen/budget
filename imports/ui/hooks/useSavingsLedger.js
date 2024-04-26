@@ -4,7 +4,7 @@ import { useTracker } from "meteor/react-meteor-data";
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 
-export function useCategoryLedger({ ledgerId }) {
+export function useSavingsLedger({ ledgerId }) {
   // This is the ledger that is returned from this hook.
   const ledger = useTracker(() => LedgerCollection.findOne({ _id: ledgerId }));
 
@@ -33,8 +33,7 @@ export function useCategoryLedger({ ledgerId }) {
     );
   });
 
-  // This is all the money that this ledger has received. Think refunds or
-  // leftover balance from the previous month etc.
+  // This is all the money that this ledger has received.
   const moneyIn = transactionList
     .filter((doc) => doc.type == "income")
     .reduce(
@@ -52,44 +51,26 @@ export function useCategoryLedger({ ledgerId }) {
       0
     );
 
-  // This is how much money is left in this ledger.
-  // This is calculated by taking the allocated amount + money in - money out
-  const leftToSpend =
-    Math.round((ledger.allocatedAmount + moneyIn - moneyOut) * 100) / 100;
+  const leftToSave = Math.round((ledger.allocatedAmount - moneyIn) * 100) / 100;
 
-  // This is how much money has been spent out of this ledger.
-  // This is calculated by taking the money out + money in.
-  // This way any refunds or leftover balances are taken into this calculation.
-  const moneySpent = Math.round((moneyOut - moneyIn) * 100) / 100;
-
-  // progressSpent is bound between 0 and 101, inclusive.
-  const percentSpent = Math.min(
-    Math.max((moneySpent / (ledger.allocatedAmount + moneyIn)) * 100, 0),
-    101
-  );
-
-  // If leftToSpend is greater than allocated amount then progress should
-  // always be 100. Otherwise progress will be red when it should be
-  // green. This can happen when a ledger balance is carried over from
-  // a previous month or when a refund is received in a ledger that
-  // causes the remaining balance for that ledger to be greater than the
-  // allocated amount for that ledger for the month.
-  // percentRemaining is bound between 0 and 101, inclusive.
-  const percentRemaining =
-    leftToSpend > ledger.allocatedAmount
+  // If moneyIn is >= allocated amount then progress should always be 100.
+  // If moneyIn is >= allocated amount then all that means is that the user
+  // has saved more money than they expected.
+  const percentRemainingToSave =
+    moneyIn >= ledger.allocatedAmount
       ? 100
-      : Math.min(
-          Math.max((leftToSpend / ledger.allocatedAmount) * 100, 0),
-          101
-        );
+      : Math.min(Math.max((leftToSave / ledger.allocatedAmount) * 100, 0), 101);
+
+  const savingsBalance =
+    Math.round((ledger.startingBalance + moneyIn - moneyOut) * 100) / 100;
 
   return {
     ...ledger,
-    moneySpent,
+    moneySpent: moneyOut,
     moneyReceived: moneyIn,
-    leftToSpend,
+    leftToSave,
     transactionList,
-    percentSpent,
-    percentRemaining,
+    percentRemainingToSave,
+    savingsBalance,
   };
 }

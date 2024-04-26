@@ -1,59 +1,48 @@
 import React, { useState } from "react";
-import { Meteor } from "meteor/meteor";
-import { useTracker } from "meteor/react-meteor-data";
 import { Link } from "react-router-dom";
 
 // Utils
 import { cap } from "../../util/cap";
 import { toDollars } from "../../util/toDollars";
-import { reduceTransactions } from "../../util/reduceTransactions";
 
 // Components
 import { LedgerProgress } from "./ledgerComponents/LedgerProgress";
 import { UpdateLedgerForm } from "../forms/LedgerFormUpdate";
 
-// Collections
-import { TransactionCollection } from "../../../api/Transaction/TransactionCollection";
+// Hooks
+import { useSavingsLedger } from "../../hooks/useSavingsLedger";
 
 export const SavingsLedger = ({ ledger, activeTab }) => {
   const [isFormActive, setFormActive] = useState(false);
-  const { expense, income: savedThisMonth } = useTracker(() => {
-    if (!Meteor.userId()) return {};
-    // Get the transactions in the ledger.
-    const transactions = TransactionCollection.find({
-      ledgerId: ledger._id,
-    }).fetch();
-    // Calculate this ledgers expense and income from it's transactions
-    return reduceTransactions({ transactions });
-  });
+  const {
+    _id: ledgerId,
+    name,
+    allocatedAmount,
+    moneySpent,
+    leftToSave,
+    percentRemainingToSave,
+  } = useSavingsLedger({ ledgerId: ledger._id });
 
-  const remainingToReceive =
-    Math.round((ledger.allocatedAmount - savedThisMonth) * 100) / 100 < 0
-      ? 0
-      : Math.round((ledger.allocatedAmount - savedThisMonth) * 100) / 100;
-
-  const calculateDisplayBalance = () => {
+  const displayBalance = (() => {
     switch (activeTab) {
       case "planned":
-        return Math.round(ledger.allocatedAmount * 100) / 100;
+        return allocatedAmount;
       case "spent":
-        return expense;
+        return moneySpent;
       case "remaining":
-        return remainingToReceive;
+        return leftToSave;
     }
-  };
+  })();
 
-  const calculateProgress = () => {
-    let progress = undefined;
-    if (activeTab === "planned" || activeTab === "spent") {
-      progress = 0;
-    } else if (activeTab === "remaining") {
-      progress = remainingToReceive
-        ? ((remainingToReceive / ledger.allocatedAmount) * 100).toFixed(2)
-        : 0;
+  const progress = (() => {
+    switch (activeTab) {
+      case "planned":
+      case "spent":
+        return 0;
+      case "remaining":
+        return percentRemainingToSave;
     }
-    return progress;
-  };
+  })();
 
   const activateForm = (e) => {
     e.preventDefault();
@@ -61,23 +50,22 @@ export const SavingsLedger = ({ ledger, activeTab }) => {
     setFormActive(true);
   };
 
-  const displayBalance = calculateDisplayBalance();
   return (
-    <div className="w-full h-8 relative z-0 px-2 py-1 bg-slate-100 rounded-lg lg:hover:cursor-pointer flex flex-row justify-between items-center">
+    <div className="w-full h-8 relative px-2 py-1 bg-slate-100 rounded-lg lg:hover:cursor-pointer flex flex-row justify-between items-center">
+      <LedgerProgress percent={progress} />
       {isFormActive ? (
         <>
           <UpdateLedgerForm
             toggleForm={() => setFormActive(false)}
             ledger={ledger}
           />
-          <LedgerProgress percent={calculateProgress()} />
         </>
       ) : (
         <Link
-          to={`/ledger/${ledger._id}/transactions`}
-          className="w-full h-full p-0 m-0 flex flex-row justify-between items-center"
+          to={`/ledger/${ledgerId}/transactions`}
+          className="w-full h-full p-0 m-0 flex flex-row justify-between items-center z-10"
         >
-          <h2 className="font-semibold z-20">{cap(ledger.name)}</h2>
+          <h2 className="font-semibold z-20">{cap(name)}</h2>
           <h2
             onClick={activateForm}
             className={`font-bold z-20 ${
@@ -86,7 +74,6 @@ export const SavingsLedger = ({ ledger, activeTab }) => {
           >
             {toDollars(displayBalance)}
           </h2>
-          <LedgerProgress percent={calculateProgress()} />
         </Link>
       )}
     </div>
