@@ -1,16 +1,11 @@
-import { Meteor } from "meteor/meteor";
 import React, { useState } from "react";
-import { useTracker } from "meteor/react-meteor-data";
 
 // Collections
-import { LedgerCollection } from "../../../api/Ledger/LedgerCollection";
-import { TransactionCollection } from "../../../api/Transaction/TransactionCollection";
 import { EditEnvelopeForm } from "../forms/EnvelopeFormUpdate";
 
 // Utils
 import { cap } from "../../util/cap";
 import { toDollars } from "../../util/toDollars";
-import { reduceTransactions } from "../../util/reduceTransactions";
 
 // Components
 import { ExpenseLedger } from "../ledgers/ExpenseLedger";
@@ -19,38 +14,20 @@ import { NewLedgerForm } from "../forms/LedgerFormCreate";
 // Icons
 import { LuPlusCircle } from "react-icons/lu";
 
+// Hooks
+import { useExpenseCategory } from "../../hooks/useExpenseCategory";
+
 export const ExpenseCategory = ({ _id, name, activeTab }) => {
-  const { ledgers } = useTracker(() => {
-    if (!Meteor.userId()) return {};
-    // Return the ledgers that belong to this envelope
-    const ledgers = LedgerCollection.find({
-      envelopeId: _id,
-    }).fetch();
-    return { ledgers };
+  const { spent, balance, leftToSpend, ledgerList } = useExpenseCategory({
+    envelopeId: _id,
   });
 
-  const { transactions } = useTracker(() => {
-    if (!Meteor.userId()) return {};
-    // Return the transactions that are in this envelope
-    const transactions = TransactionCollection.find({
-      envelopeId: _id,
-    }).fetch();
-    return { transactions };
-  });
-  const calculatedEnvelopeBalance = ledgers.reduce((total, ledger) => {
-    return total + ledger.allocatedAmount;
-  }, 0);
-
-  const { expense, income } = reduceTransactions({ transactions });
-  const spent = expense - income;
-
-  const remaining = calculatedEnvelopeBalance - spent;
   const displayBalance =
     activeTab === "spent"
       ? spent
       : activeTab === "remaining"
-      ? remaining
-      : calculatedEnvelopeBalance;
+      ? leftToSpend
+      : balance;
 
   return (
     // Envelope container
@@ -61,7 +38,7 @@ export const ExpenseCategory = ({ _id, name, activeTab }) => {
         envelopeId={_id}
         displayBalance={displayBalance}
       />
-      <EnvelopeBody ledgers={ledgers} activeTab={activeTab} />
+      <EnvelopeBody ledgers={ledgerList} activeTab={activeTab} />
       <EnvelopeFooter envelopeId={_id} />
     </div>
   );
