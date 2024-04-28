@@ -8,6 +8,7 @@ import { formatDollarAmount } from "../../../util/formatDollarAmount";
 export function useFormAmounts({
   initialLedgerSelection,
   initialDollarAmount,
+  transactionType,
 }) {
   const { amount, setFormAmount } = useFormAmountInput({
     initialValue: initialDollarAmount,
@@ -16,6 +17,7 @@ export function useFormAmounts({
   const { setSplitAmount, ...ledgerSelectionProps } = useFormLedgerSelection({
     initialLedgerSelection,
     initialFormTotal: amount,
+    transactionType,
   });
 
   function handleTransactionAmountChange(e) {

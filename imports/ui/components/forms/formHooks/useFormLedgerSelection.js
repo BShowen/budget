@@ -7,11 +7,23 @@ import { splitDollars } from "../../../util/splitDollars";
 export function useFormLedgerSelection({
   initialLedgerSelection,
   initialFormTotal,
+  transactionType,
 }) {
-  if (initialLedgerSelection && !Array.isArray(initialLedgerSelection)) {
-    initialLedgerSelection = [
-      { ...initialLedgerSelection, ledgerId: initialLedgerSelection._id },
-    ];
+  if (initialLedgerSelection) {
+    if (Array.isArray(initialLedgerSelection)) {
+      initialLedgerSelection = initialLedgerSelection.map((allocation) => ({
+        ...allocation,
+        kind: transactionType,
+      }));
+    } else {
+      initialLedgerSelection = [
+        {
+          ...initialLedgerSelection,
+          ledgerId: initialLedgerSelection._id,
+          kind: transactionType,
+        },
+      ];
+    }
   }
   const [formTotal, setFormTotal] = useState(initialFormTotal || 0);
 
@@ -20,7 +32,7 @@ export function useFormLedgerSelection({
   );
 
   function selectLedger({ ledger }) {
-    const { name, envelopeId, _id: ledgerId } = ledger;
+    const { name, envelopeId, _id: ledgerId, kind } = ledger;
     setLedgerList((prev) => {
       const newLedgerList = [
         ...prev,
@@ -30,6 +42,7 @@ export function useFormLedgerSelection({
           name,
           amount: 0,
           isLocked: false,
+          kind,
         },
       ];
       return splitBetweenLedgers({
