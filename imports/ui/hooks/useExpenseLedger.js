@@ -4,7 +4,7 @@ import { useTracker } from "meteor/react-meteor-data";
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 
-export function useCategoryLedger({ ledgerId }) {
+export function useExpenseLedger({ ledgerId }) {
   // This is the ledger that is returned from this hook.
   const ledger = useTracker(() => LedgerCollection.findOne({ _id: ledgerId }));
 

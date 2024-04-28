@@ -9,9 +9,9 @@ import { BudgetCollection } from "../../api/Budget/BudgetCollection";
 import { EnvelopeCollection } from "../../api/Envelope/EnvelopeCollection";
 
 // Components
-import { CategoryEnvelope } from "../components/envelopes/CategoryEnvelope";
-import { IncomeEnvelope } from "../components/envelopes/IncomeEnvelope";
-import { SavingsEnvelope } from "../components/envelopes/SavingsEnvelope";
+import { ExpenseCategory } from "../components/categories/ExpenseCategory";
+import { IncomeCategory } from "../components/categories/IncomeCategory";
+import { SavingsCategory } from "../components/categories/SavingsCategory";
 import { DashboardHeader } from "../components/dashboardComponents/DashboardHeader";
 import { NewEnvelopeButton } from "../components/dashboardComponents/DashboardNewEnvelopeButton";
 import { WelcomeComponent } from "../components/dashboardComponents/WelcomeComponent";
@@ -77,13 +77,13 @@ export const Dashboard = () => {
       <div className="mt-[105px] pb-16 px-2 flex flex-col items-stretch gap-4 z-0">
         <WelcomeComponent budgetDate={budget.createdAt} budgetId={budget._id} />
         {/* Categories container */}
-        <IncomeEnvelope
+        <IncomeCategory
           key={incomeEnvelope._id}
           {...incomeEnvelope}
           activeTab={activeTab}
         />
 
-        <SavingsEnvelope
+        <SavingsCategory
           key={savingsEnvelope._id}
           {...savingsEnvelope}
           activeTab={activeTab}
@@ -92,7 +92,7 @@ export const Dashboard = () => {
         {/* Allocation envelope will go here.  */}
 
         {expenseEnvelopes.map((envelope) => (
-          <CategoryEnvelope
+          <ExpenseCategory
             key={envelope._id}
             {...envelope}
             activeTab={activeTab}

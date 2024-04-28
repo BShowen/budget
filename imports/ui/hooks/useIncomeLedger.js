@@ -4,7 +4,7 @@ import { useTracker } from "meteor/react-meteor-data";
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 
-export function useSavingsLedger({ ledgerId }) {
+export function useIncomeLedger({ ledgerId }) {
   // This is the ledger that is returned from this hook.
   const ledger = useTracker(() => LedgerCollection.findOne({ _id: ledgerId }));
 
@@ -42,44 +42,26 @@ export function useSavingsLedger({ ledgerId }) {
       0
     );
 
-  // This is all the money that has left this ledger.
-  const moneyOut = transactionList
-    .filter((doc) => doc.type == "expense")
-    .reduce(
-      (total, transaction) =>
-        Math.round((transaction.amount + total) * 100) / 100,
-      0
-    );
+  // The income left to receive. A dollar amount.
+  const leftToReceive =
+    Math.round((ledger.allocatedAmount - moneyIn) * 100) / 100;
 
-  const leftToSave = Math.round((ledger.allocatedAmount - moneyIn) * 100) / 100;
+  // The income left to receive represented as a percentage.
+  const percentRemainingToReceive = Math.round(
+    (leftToReceive / ledger.allocatedAmount) * 100
+  );
 
-  // If moneyIn is >= allocated amount then progress should always be 100.
-  // If moneyIn is >= allocated amount then all that means is that the user
-  // has saved more money than they expected.
-  const percentRemainingToSave =
-    moneyIn >= ledger.allocatedAmount
-      ? 100
-      : Math.min(Math.max((leftToSave / ledger.allocatedAmount) * 100, 0), 101);
-
-  // Total money saved this month, represented as a percentage
-  // If ledger.allocatedAmount is zero then percentSaved cannot be calculated
-  // so return 0. This is to avoid dividing by zero.
-  const percentSaved =
-    ledger.allocatedAmount > 0
-      ? Math.round((moneyIn / ledger.allocatedAmount) * 100)
-      : 0;
-
-  const savingsBalance =
-    Math.round((ledger.startingBalance + moneyIn - moneyOut) * 100) / 100;
+  // The income that has been received, represented as a percentage.
+  const percentIncomeReceived = Math.round(
+    (moneyIn / ledger.allocatedAmount) * 100
+  );
 
   return {
     ...ledger,
-    moneySpent: moneyOut,
-    moneyReceived: moneyIn,
-    leftToSave,
+    incomeReceived: moneyIn,
+    leftToReceive,
     transactionList,
-    percentRemainingToSave,
-    savingsBalance,
-    percentSaved,
+    percentRemainingToReceive,
+    percentIncomeReceived,
   };
 }

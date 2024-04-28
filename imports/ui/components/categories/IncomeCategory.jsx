@@ -1,7 +1,6 @@
 import { Meteor } from "meteor/meteor";
 import React, { useState } from "react";
 import { useTracker } from "meteor/react-meteor-data";
-import { useNavigate } from "react-router-dom";
 
 // Collections
 import { LedgerCollection } from "../../../api/Ledger/LedgerCollection";
@@ -13,13 +12,13 @@ import { toDollars } from "../../util/toDollars";
 import { reduceTransactions } from "../../util/reduceTransactions";
 
 // Components
-import { SavingsLedger } from "../ledgers/SavingsLedger";
+import { IncomeLedger } from "../ledgers/IncomeLedger";
 import { NewLedgerForm } from "../forms/LedgerFormCreate";
 
 // Icons
 import { LuPlusCircle } from "react-icons/lu";
 
-export const SavingsEnvelope = ({ _id, name, activeTab }) => {
+export const IncomeCategory = ({ _id, name, activeTab }) => {
   const { ledgers } = useTracker(() => {
     if (!Meteor.userId()) return {};
     // Return the ledgers that belong to this envelope
@@ -37,25 +36,19 @@ export const SavingsEnvelope = ({ _id, name, activeTab }) => {
     }).fetch();
     return { transactions };
   });
-  const plannedToSave = ledgers.reduce((total, ledger) => {
+  const totalIncomeExpected = ledgers.reduce((total, ledger) => {
     return total + ledger.allocatedAmount;
   }, 0);
 
-  const { expense, income: savedThisMonth } = reduceTransactions({
-    transactions,
-  });
+  const { income: totalIncomeReceived } = reduceTransactions({ transactions });
 
-  const leftToReceive =
-    Math.round((plannedToSave - savedThisMonth) * 100) / 100 <= 0
-      ? 0
-      : Math.round((plannedToSave - savedThisMonth) * 100) / 100;
-
+  const remainingToReceive = totalIncomeExpected - totalIncomeReceived;
   const displayBalance =
     activeTab === "spent"
-      ? savedThisMonth
+      ? totalIncomeReceived
       : activeTab === "remaining"
-      ? leftToReceive
-      : plannedToSave;
+      ? remainingToReceive
+      : totalIncomeExpected;
 
   return (
     // Envelope container
@@ -63,6 +56,7 @@ export const SavingsEnvelope = ({ _id, name, activeTab }) => {
       <EnvelopeHeader
         name={name}
         activeTab={activeTab}
+        envelopeId={_id}
         displayBalance={displayBalance}
       />
       <EnvelopeBody ledgers={ledgers} activeTab={activeTab} />
@@ -75,15 +69,21 @@ function EnvelopeHeader({ name, activeTab, displayBalance }) {
   let categoryName = "";
   switch (activeTab) {
     case "planned":
-      categoryName = "planned to save";
+      categoryName = "planned";
       break;
     case "spent":
-      categoryName = "saved so far";
+      categoryName = "income received";
       break;
     case "remaining":
-      categoryName = "left to save";
+      categoryName = "left to receive";
       break;
   }
+  // const categoryName =
+  //   activeTab === "planned"
+  //     ? activeTab
+  //     : activeTab == "spent"
+  //     ? "income received"
+  //     : "left to receive";
   return (
     <div className="envelope-header">
       <h1 className="relative z-50">{cap(name)}</h1>
@@ -101,14 +101,13 @@ function EnvelopeBody({ ledgers, activeTab }) {
   return (
     <div className="envelope-body">
       {ledgers.map((ledger) => (
-        <SavingsLedger key={ledger._id} ledger={ledger} activeTab={activeTab} />
+        <IncomeLedger key={ledger._id} ledger={ledger} activeTab={activeTab} />
       ))}
     </div>
   );
 }
 
 function EnvelopeFooter({ envelopeId }) {
-  const navigate = useNavigate();
   const [isFormActive, setFormActive] = useState(false);
   const toggleForm = () => {
     setFormActive((prev) => !prev);
@@ -119,60 +118,24 @@ function EnvelopeFooter({ envelopeId }) {
       <NewLedgerForm
         toggleForm={toggleForm}
         envelopeId={envelopeId}
-        placeholderText={"Savings name"}
+        placeholderText={"Income name"}
       >
         {!isFormActive && (
-          <div className="w-full flex flex-row justify-between items-center">
-            <div className="w-full flex flex-row justify-between items-center gap-3">
-              <div className="flex flex-row justify-start items-center gap-1">
-                <LuPlusCircle className="text-lg" />
-                <p
-                  onClick={() => {
-                    if (!isFormActive) {
-                      toggleForm();
-                    }
-                  }}
-                  className="font-semibold text-sm lg:hover:cursor-pointer"
-                >
-                  Create savings
-                </p>
-              </div>
-              {/* <div className="flex flex-row justify-start items-center gap-1">
-                <LuPlusCircle className="text-lg" />
-                <p
-                  onClick={() => {
-                    navigate("/new-allocation");
-                  }}
-                  className="font-semibold text-sm lg:hover:cursor-pointer"
-                >
-                  Create allocation
-                </p>
-              </div> */}
-            </div>
+          <div className="w-full flex flex-row justify-start items-center gap-1">
+            <LuPlusCircle className="text-lg" />
+            <p
+              onClick={() => {
+                if (!isFormActive) {
+                  toggleForm();
+                }
+              }}
+              className="font-semibold text-sm lg:hover:cursor-pointer"
+            >
+              Add income source
+            </p>
           </div>
         )}
       </NewLedgerForm>
     </div>
   );
 }
-
-// function divideAndRoundToNearestTens(balance, n) {
-//   const baseProduct = (balance / n).toFixed(2);
-//   const balances = [];
-//   if ((baseProduct * n).toFixed(2) == balance) {
-//     for (let i = 0; i < n; i++) {
-//       balances.push(baseProduct);
-//     }
-//     return balances;
-//   } else {
-//     for (let i = 0; i < n; i++) {
-//       if (i === 0) {
-//         const product = ((baseProduct * 100 + 1) / 100).toFixed(2);
-//         balances.push(product);
-//       } else {
-//         balances.push(baseProduct);
-//       }
-//     }
-//     return balances;
-//   }
-// }

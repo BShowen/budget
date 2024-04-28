@@ -13,13 +13,13 @@ import { toDollars } from "../../util/toDollars";
 import { reduceTransactions } from "../../util/reduceTransactions";
 
 // Components
-import { CategoryLedger } from "../ledgers/CategoryLedger";
+import { ExpenseLedger } from "../ledgers/ExpenseLedger";
 import { NewLedgerForm } from "../forms/LedgerFormCreate";
 
 // Icons
 import { LuPlusCircle } from "react-icons/lu";
 
-export const CategoryEnvelope = ({ _id, name, activeTab }) => {
+export const ExpenseCategory = ({ _id, name, activeTab }) => {
   const { ledgers } = useTracker(() => {
     if (!Meteor.userId()) return {};
     // Return the ledgers that belong to this envelope
@@ -106,11 +106,7 @@ function EnvelopeBody({ ledgers, activeTab }) {
   return (
     <div className="envelope-body">
       {ledgers.map((ledger) => (
-        <CategoryLedger
-          key={ledger._id}
-          ledger={ledger}
-          activeTab={activeTab}
-        />
+        <ExpenseLedger key={ledger._id} ledger={ledger} activeTab={activeTab} />
       ))}
     </div>
   );

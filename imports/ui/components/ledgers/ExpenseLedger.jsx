@@ -12,9 +12,9 @@ import { UpdateLedgerForm } from "../forms/LedgerFormUpdate";
 // Collections
 
 // Hooks
-import { useCategoryLedger } from "../../hooks/useCategoryLedger";
+import { useExpenseLedger } from "../../hooks/useExpenseLedger";
 
-export const CategoryLedger = ({ ledger, activeTab }) => {
+export const ExpenseLedger = ({ ledger, activeTab }) => {
   const [isFormActive, setFormActive] = useState(false);
   const {
     moneySpent,
@@ -24,7 +24,7 @@ export const CategoryLedger = ({ ledger, activeTab }) => {
     allocatedAmount,
     name,
     _id: ledgerId,
-  } = useCategoryLedger({ ledgerId: ledger._id });
+  } = useExpenseLedger({ ledgerId: ledger._id });
 
   const tabBalance = (() => {
     switch (activeTab) {

@@ -25,7 +25,9 @@ import { IoIosArrowBack } from "react-icons/io";
 import { BiDollar, BiCheck, BiX } from "react-icons/bi";
 
 // Hooks
-import { useCategoryLedger } from "../hooks/useCategoryLedger";
+import { useExpenseLedger } from "../hooks/useExpenseLedger";
+import { useIncomeLedger } from "../hooks/useIncomeLedger";
+import { useSavingsLedger } from "../hooks/useSavingsLedger";
 
 export const LedgerTransactionsPage = () => {
   const { ledgerId } = useParams();
@@ -43,12 +45,12 @@ export const LedgerTransactionsPage = () => {
 };
 
 function PageHeader({ ledgerId }) {
-  const { kind } = useCategoryLedger({ ledgerId });
+  const { kind } = useExpenseLedger({ ledgerId });
   switch (kind) {
     case "income":
       return <IncomeHeader ledgerId={ledgerId} />;
     case "expense":
-      return <CategoryHeader ledgerId={ledgerId} />;
+      return <ExpenseHeader ledgerId={ledgerId} />;
     case "savings":
       return <SavingsHeader ledgerId={ledgerId} />;
   }
@@ -91,10 +93,10 @@ function ProgressHeader({ children, percent, pathColor, logo }) {
   );
 }
 
-function CategoryHeader({ ledgerId }) {
+function ExpenseHeader({ ledgerId }) {
   const [percentSpent, setPercentSpent] = useState(0);
 
-  const { moneySpent, leftToSpend, allocatedAmount, name } = useCategoryLedger({
+  const { moneySpent, leftToSpend, allocatedAmount, name } = useExpenseLedger({
     ledgerId,
   });
 
@@ -157,59 +159,56 @@ function CategoryHeader({ ledgerId }) {
 }
 
 function IncomeHeader({ ledgerId }) {
-  const { received: incomeReceived, ledger } = useCategoryLedger({ ledgerId });
+  const {
+    incomeReceived,
+    allocatedAmount,
+    name,
+    leftToReceive,
+    percentIncomeReceived,
+  } = useIncomeLedger({
+    ledgerId,
+  });
 
   const [percentReceived, setPercentReceived] = useState(0);
 
-  const expectedIncome = ledger.allocatedAmount;
-
   useEffect(() => {
-    // After component mounts, update the percentReceived so it animates from zero
-    // to percentReceived.
-
-    // If expectedIncome is zero then percentReceived should always be 100%.
-    // This is to avoid dividing by zero, because if user has received money but
-    // not set an expected amount then received / expected is dividing by zero.
-    const percentReceived =
-      ledger.allocatedAmount == 0
-        ? 100
-        : (incomeReceived / expectedIncome) * 100;
-    setPercentReceived(percentReceived);
-  }, [ledger]);
-
-  const remainingToReceive =
-    Math.round((expectedIncome - incomeReceived) * 100) / 100;
+    // After component mounts, update the percentReceived so it animates from
+    // zero to percentReceived.
+    setPercentReceived(percentIncomeReceived);
+  }, [ledgerId, percentIncomeReceived]);
 
   const logo =
-    remainingToReceive == 0 ? (
+    leftToReceive == 0 ? (
       <BiCheck className="text-4xl text-emerald-400" />
-    ) : remainingToReceive < 0 ? (
+    ) : leftToReceive < 0 ? (
       <BiX className="text-5xl text-rose-400" />
     ) : (
       <BiDollar
         className={`text-3xl ${
-          incomeReceived > expectedIncome ? "text-rose-400" : "text-emerald-400"
+          incomeReceived > allocatedAmount
+            ? "text-rose-400"
+            : "text-emerald-400"
         }`}
       />
     );
 
-  const pathColor = incomeReceived > expectedIncome ? "#fb7185" : "#34d399";
+  const pathColor = incomeReceived > allocatedAmount ? "#fb7185" : "#34d399";
 
   return (
     <ProgressHeader percent={percentReceived} pathColor={pathColor} logo={logo}>
       <div className="max-w-full flex flex-col justify-start items-stretch px-2 bg-app py-2 h-full">
         <div className="w-full flex flex-row justify-start items-center flex-nowrap">
-          <h2 className="text-3xl font-bold">{cap(ledger.name)}</h2>
+          <h2 className="text-3xl font-bold">{cap(name)}</h2>
         </div>
         <div className="w-full flex flex-row flex-start justify-between items-center">
           <p className="font-semibold text-gray-500">
             Received {toDollars(incomeReceived)} out of{" "}
-            {toDollars(expectedIncome)}
+            {toDollars(allocatedAmount)}
           </p>
         </div>
         <div className="w-full flex flex-col flex-nowrap justify-start items-end">
           <p className="font-bold">Left to receive</p>
-          <p className="text-4xl p-0">{toDollars(remainingToReceive)}</p>
+          <p className="text-4xl p-0">{toDollars(leftToReceive)}</p>
         </div>
       </div>
     </ProgressHeader>
@@ -218,38 +217,21 @@ function IncomeHeader({ ledgerId }) {
 
 function SavingsHeader({ ledgerId }) {
   const {
-    income: { total: income },
-    expense: { total: expense },
-    ledger,
-  } = useCategoryLedger({ ledgerId });
+    allocatedAmount,
+    moneyReceived,
+    leftToSave,
+    savingsBalance,
+    name,
+    percentSaved,
+  } = useSavingsLedger({ ledgerId });
 
-  const [percentSaved, setPercentSaved] = useState(0);
-
-  const totalSavedThisMonth = income;
-
-  const plannedToSaveThisMonth = ledger.allocatedAmount;
-
-  const balance =
-    Math.round((ledger.startingBalance + income - expense) * 100) / 100;
+  const [savedPercent, setPercentSaved] = useState(0);
 
   useEffect(() => {
     // After component mounts, update the percentSaved so it animates from zero
     // to percentSaved.
-
-    // If plannedToSaveThisMonth is zero then percentSaved should always be 100%.
-    // This is to avoid dividing by zero, because if user has received money but
-    // not set an expected amount then received / expected is dividing by zero.
-    const percentSaved =
-      ledger.allocatedAmount == 0
-        ? 100
-        : (totalSavedThisMonth / plannedToSaveThisMonth) * 100;
     setPercentSaved(percentSaved);
-  }, [ledger]);
-
-  const leftToSave =
-    plannedToSaveThisMonth - totalSavedThisMonth < 0
-      ? 0
-      : plannedToSaveThisMonth - totalSavedThisMonth;
+  }, [ledgerId]);
 
   const logo =
     leftToSave <= 0 ? (
@@ -258,20 +240,19 @@ function SavingsHeader({ ledgerId }) {
       <BiDollar className="text-3xl text-emerald-400" />
     );
   return (
-    <ProgressHeader percent={percentSaved} pathColor={"#34d399"} logo={logo}>
+    <ProgressHeader percent={savedPercent} pathColor={"#34d399"} logo={logo}>
       <div className="max-w-full flex flex-col justify-start items-stretch px-2 bg-app py-2 h-full">
         <div className="w-full flex flex-row justify-start items-center flex-nowrap">
-          <h2 className="text-3xl font-bold">{cap(ledger.name)}</h2>
+          <h2 className="text-3xl font-bold">{cap(name)}</h2>
         </div>
         <div className="w-full flex flex-row flex-start justify-between items-center">
           <p className="font-semibold text-gray-500">
-            Saved {toDollars(totalSavedThisMonth)} out of{" "}
-            {toDollars(plannedToSaveThisMonth)}
+            Saved {toDollars(moneyReceived)} out of {toDollars(allocatedAmount)}
           </p>
         </div>
         <div className="w-full flex flex-col flex-nowrap justify-start items-end">
           <p className="font-bold">Available</p>
-          <p className="text-4xl p-0">{toDollars(balance)}</p>
+          <p className="text-4xl p-0">{toDollars(savingsBalance)}</p>
         </div>
       </div>
     </ProgressHeader>
@@ -372,7 +353,7 @@ function LedgerNotes({ ledgerId }) {
 }
 
 function ListTransactions({ ledgerId }) {
-  const { transactionList, kind } = useCategoryLedger({
+  const { transactionList, kind } = useExpenseLedger({
     ledgerId,
   });
 
