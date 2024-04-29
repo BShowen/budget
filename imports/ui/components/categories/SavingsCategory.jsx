@@ -1,16 +1,8 @@
-import { Meteor } from "meteor/meteor";
 import React, { useState } from "react";
-import { useTracker } from "meteor/react-meteor-data";
-import { useNavigate } from "react-router-dom";
-
-// Collections
-import { LedgerCollection } from "../../../api/Ledger/LedgerCollection";
-import { TransactionCollection } from "../../../api/Transaction/TransactionCollection";
 
 // Utils
 import { cap } from "../../util/cap";
 import { toDollars } from "../../util/toDollars";
-import { reduceTransactions } from "../../util/reduceTransactions";
 
 // Components
 import { SavingsLedger } from "../ledgers/SavingsLedger";
@@ -19,43 +11,18 @@ import { NewLedgerForm } from "../forms/LedgerFormCreate";
 // Icons
 import { LuPlusCircle } from "react-icons/lu";
 
+// Hooks
+import { useSavingsCategory } from "../../hooks/useSavingsCategory";
 export const SavingsCategory = ({ _id, name, activeTab }) => {
-  const { ledgers } = useTracker(() => {
-    if (!Meteor.userId()) return {};
-    // Return the ledgers that belong to this envelope
-    const ledgers = LedgerCollection.find({
-      envelopeId: _id,
-    }).fetch();
-    return { ledgers };
-  });
-
-  const { transactions } = useTracker(() => {
-    if (!Meteor.userId()) return {};
-    // Return the transactions that are in this envelope
-    const transactions = TransactionCollection.find({
-      envelopeId: _id,
-    }).fetch();
-    return { transactions };
-  });
-  const plannedToSave = ledgers.reduce((total, ledger) => {
-    return total + ledger.allocatedAmount;
-  }, 0);
-
-  const { expense, income: savedThisMonth } = reduceTransactions({
-    transactions,
-  });
-
-  const leftToReceive =
-    Math.round((plannedToSave - savedThisMonth) * 100) / 100 <= 0
-      ? 0
-      : Math.round((plannedToSave - savedThisMonth) * 100) / 100;
+  const { moneyLeftToSave, moneyExpectedToSave, ledgerList, moneySaved } =
+    useSavingsCategory({ envelopeId: _id });
 
   const displayBalance =
     activeTab === "spent"
-      ? savedThisMonth
+      ? moneySaved
       : activeTab === "remaining"
-      ? leftToReceive
-      : plannedToSave;
+      ? moneyLeftToSave
+      : moneyExpectedToSave;
 
   return (
     // Envelope container
@@ -65,7 +32,7 @@ export const SavingsCategory = ({ _id, name, activeTab }) => {
         activeTab={activeTab}
         displayBalance={displayBalance}
       />
-      <EnvelopeBody ledgers={ledgers} activeTab={activeTab} />
+      <EnvelopeBody ledgers={ledgerList} activeTab={activeTab} />
       <EnvelopeFooter envelopeId={_id} />
     </div>
   );
@@ -108,7 +75,6 @@ function EnvelopeBody({ ledgers, activeTab }) {
 }
 
 function EnvelopeFooter({ envelopeId }) {
-  const navigate = useNavigate();
   const [isFormActive, setFormActive] = useState(false);
   const toggleForm = () => {
     setFormActive((prev) => !prev);
@@ -137,17 +103,6 @@ function EnvelopeFooter({ envelopeId }) {
                   Create savings
                 </p>
               </div>
-              {/* <div className="flex flex-row justify-start items-center gap-1">
-                <LuPlusCircle className="text-lg" />
-                <p
-                  onClick={() => {
-                    navigate("/new-allocation");
-                  }}
-                  className="font-semibold text-sm lg:hover:cursor-pointer"
-                >
-                  Create allocation
-                </p>
-              </div> */}
             </div>
           </div>
         )}
