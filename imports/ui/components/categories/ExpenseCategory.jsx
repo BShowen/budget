@@ -18,16 +18,10 @@ import { LuPlusCircle } from "react-icons/lu";
 import { useExpenseCategory } from "../../hooks/useExpenseCategory";
 
 export const ExpenseCategory = ({ _id, name, activeTab }) => {
-  const { spent, balance, leftToSpend, ledgerList } = useExpenseCategory({
+  const { ledgerList, displayBalance } = useExpenseCategory({
     envelopeId: _id,
+    activeTab,
   });
-
-  const displayBalance =
-    activeTab === "spent"
-      ? spent
-      : activeTab === "remaining"
-      ? leftToSpend
-      : balance;
 
   return (
     // Envelope container

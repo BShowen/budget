@@ -4,7 +4,7 @@ import { useTracker } from "meteor/react-meteor-data";
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 
-export function useExpenseLedger({ ledgerId }) {
+export function useExpenseLedger({ ledgerId, activeTab }) {
   // This is the ledger that is returned from this hook.
   const ledger = useTracker(() => LedgerCollection.findOne({ _id: ledgerId }));
 
@@ -85,6 +85,27 @@ export function useExpenseLedger({ ledgerId }) {
           )
       : 0;
 
+  // The balance to display depending on the activeTab
+  const displayBalance = activeTab
+    ? activeTab === "planned"
+      ? ledger.allocatedAmount
+      : activeTab === "spent"
+      ? moneySpent
+      : leftToSpend //Remaining
+    : 0;
+
+  // The percentage of money spent depending on the activeTab
+  const progressPercent = activeTab
+    ? activeTab === "planned"
+      ? 0
+      : activeTab === "spent"
+      ? percentSpent
+      : percentRemaining //remaining
+    : 0;
+
+  // Boolean indicating whether or not this ledger is over draft.
+  const isOverSpent = leftToSpend < 0;
+
   return {
     ...ledger,
     moneySpent,
@@ -93,5 +114,8 @@ export function useExpenseLedger({ ledgerId }) {
     transactionList,
     percentSpent,
     percentRemaining,
+    displayBalance,
+    progressPercent,
+    isOverSpent,
   };
 }

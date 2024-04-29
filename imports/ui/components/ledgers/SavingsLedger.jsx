@@ -17,32 +17,9 @@ export const SavingsLedger = ({ ledger, activeTab }) => {
   const {
     _id: ledgerId,
     name,
-    allocatedAmount,
-    moneySpent,
-    leftToSave,
-    percentSaved,
-  } = useSavingsLedger({ ledgerId: ledger._id });
-
-  const displayBalance = (() => {
-    switch (activeTab) {
-      case "planned":
-        return allocatedAmount;
-      case "spent":
-        return moneySpent;
-      case "remaining":
-        return leftToSave;
-    }
-  })();
-
-  const progress = (() => {
-    switch (activeTab) {
-      case "planned":
-      case "spent":
-        return 0;
-      case "remaining":
-        return percentSaved;
-    }
-  })();
+    displayBalance,
+    progressPercentage,
+  } = useSavingsLedger({ ledgerId: ledger._id, activeTab });
 
   const activateForm = (e) => {
     e.preventDefault();
@@ -52,7 +29,7 @@ export const SavingsLedger = ({ ledger, activeTab }) => {
 
   return (
     <div className="w-full h-8 relative px-2 py-1 bg-slate-100 rounded-lg lg:hover:cursor-pointer flex flex-row justify-between items-center">
-      <LedgerProgress percent={progress} />
+      <LedgerProgress percent={progressPercentage} />
       {isFormActive ? (
         <>
           <UpdateLedgerForm

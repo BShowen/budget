@@ -4,7 +4,7 @@ import { useTracker } from "meteor/react-meteor-data";
 import { EnvelopeCollection } from "../../api/Envelope/EnvelopeCollection";
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
-export function useIncomeCategory({ envelopeId }) {
+export function useIncomeCategory({ envelopeId, activeTab }) {
   const envelope = useTracker(() => {
     return EnvelopeCollection.findOne({ _id: envelopeId });
   });
@@ -52,6 +52,14 @@ export function useIncomeCategory({ envelopeId }) {
     (incomeLeftToReceive / incomeExpected) * 100
   );
 
+  const displayBalance = activeTab
+    ? activeTab === "spent"
+      ? incomeReceived
+      : activeTab === "remaining"
+      ? incomeLeftToReceive
+      : incomeExpected
+    : 0;
+
   return {
     ...envelope,
     transactionList,
@@ -60,5 +68,6 @@ export function useIncomeCategory({ envelopeId }) {
     incomeExpected,
     incomeLeftToReceive,
     percentLeftToReceive,
+    displayBalance,
   };
 }

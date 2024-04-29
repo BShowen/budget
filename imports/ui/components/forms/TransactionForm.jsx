@@ -76,7 +76,7 @@ export function TransactionForm() {
   const { amountInputProps, ledgerSelectionInputProps } = useFormAmounts({
     initialLedgerSelection: transaction?.allocations || ledger,
     initialDollarAmount: transaction?.amount || 0,
-    transactionType: transaction?.type || ledger.kind,
+    transactionType: transaction?.type || ledger?.kind || "expense",
   });
 
   function handleTransactionTypeChange(newTransactionType) {

@@ -17,36 +17,12 @@ import { useExpenseLedger } from "../../hooks/useExpenseLedger";
 export const ExpenseLedger = ({ ledger, activeTab }) => {
   const [isFormActive, setFormActive] = useState(false);
   const {
-    moneySpent,
-    percentSpent,
-    percentRemaining,
-    leftToSpend,
-    allocatedAmount,
+    progressPercent,
     name,
+    displayBalance,
+    isOverSpent,
     _id: ledgerId,
-  } = useExpenseLedger({ ledgerId: ledger._id });
-
-  const tabBalance = (() => {
-    switch (activeTab) {
-      case "planned":
-        return allocatedAmount;
-      case "spent":
-        return moneySpent;
-      case "remaining":
-        return leftToSpend;
-    }
-  })();
-
-  const progress = (() => {
-    switch (activeTab) {
-      case "planned":
-        return 0;
-      case "spent":
-        return percentSpent;
-      case "remaining":
-        return percentRemaining;
-    }
-  })();
+  } = useExpenseLedger({ ledgerId: ledger._id, activeTab });
 
   const activateForm = (e) => {
     e.preventDefault();
@@ -56,7 +32,7 @@ export const ExpenseLedger = ({ ledger, activeTab }) => {
 
   return (
     <div className="w-full h-8 relative z-0 px-2 py-1 bg-slate-100 rounded-lg lg:hover:cursor-pointer flex flex-row justify-between items-center">
-      <LedgerProgress percent={progress} />
+      <LedgerProgress percent={progressPercent} />
       {isFormActive ? (
         <UpdateLedgerForm
           toggleForm={() => setFormActive(false)}
@@ -71,10 +47,10 @@ export const ExpenseLedger = ({ ledger, activeTab }) => {
           <h2
             onClick={activateForm}
             className={`font-bold z-20 ${
-              activeTab == "planned" ? "" : leftToSpend < 0 && "text-rose-500"
+              activeTab == "planned" ? "" : isOverSpent && "text-rose-500"
             }`}
           >
-            {toDollars(tabBalance)}
+            {toDollars(displayBalance)}
           </h2>
         </Link>
       )}

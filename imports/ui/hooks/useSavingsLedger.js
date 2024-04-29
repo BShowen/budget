@@ -4,7 +4,7 @@ import { useTracker } from "meteor/react-meteor-data";
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 
-export function useSavingsLedger({ ledgerId }) {
+export function useSavingsLedger({ ledgerId, activeTab }) {
   // This is the ledger that is returned from this hook.
   const ledger = useTracker(() => LedgerCollection.findOne({ _id: ledgerId }));
 
@@ -72,6 +72,22 @@ export function useSavingsLedger({ ledgerId }) {
   const savingsBalance =
     Math.round((ledger.startingBalance + moneyIn - moneyOut) * 100) / 100;
 
+  const displayBalance = activeTab
+    ? activeTab === "planned"
+      ? ledger.allocatedAmount
+      : activeTab === "spent"
+      ? moneyIn
+      : leftToSave
+    : 0;
+
+  const progressPercentage = activeTab
+    ? activeTab === "planned"
+      ? 0
+      : activeTab === "spent"
+      ? percentSaved
+      : percentRemainingToSave //activeTab === "remaining"
+    : 0;
+
   return {
     ...ledger,
     moneySpent: moneyOut,
@@ -81,5 +97,7 @@ export function useSavingsLedger({ ledgerId }) {
     percentRemainingToSave,
     savingsBalance,
     percentSaved,
+    displayBalance,
+    progressPercentage,
   };
 }

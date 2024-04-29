@@ -14,15 +14,10 @@ import { LuPlusCircle } from "react-icons/lu";
 // Hooks
 import { useSavingsCategory } from "../../hooks/useSavingsCategory";
 export const SavingsCategory = ({ _id, name, activeTab }) => {
-  const { moneyLeftToSave, moneyExpectedToSave, ledgerList, moneySaved } =
-    useSavingsCategory({ envelopeId: _id });
-
-  const displayBalance =
-    activeTab === "spent"
-      ? moneySaved
-      : activeTab === "remaining"
-      ? moneyLeftToSave
-      : moneyExpectedToSave;
+  const { ledgerList, displayBalance } = useSavingsCategory({
+    envelopeId: _id,
+    activeTab,
+  });
 
   return (
     // Envelope container
@@ -110,24 +105,3 @@ function EnvelopeFooter({ envelopeId }) {
     </div>
   );
 }
-
-// function divideAndRoundToNearestTens(balance, n) {
-//   const baseProduct = (balance / n).toFixed(2);
-//   const balances = [];
-//   if ((baseProduct * n).toFixed(2) == balance) {
-//     for (let i = 0; i < n; i++) {
-//       balances.push(baseProduct);
-//     }
-//     return balances;
-//   } else {
-//     for (let i = 0; i < n; i++) {
-//       if (i === 0) {
-//         const product = ((baseProduct * 100 + 1) / 100).toFixed(2);
-//         balances.push(product);
-//       } else {
-//         balances.push(baseProduct);
-//       }
-//     }
-//     return balances;
-//   }
-// }

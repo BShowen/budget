@@ -15,15 +15,10 @@ import { LuPlusCircle } from "react-icons/lu";
 import { useIncomeCategory } from "../../hooks/useIncomeCategory";
 
 export const IncomeCategory = ({ _id, name, activeTab }) => {
-  const { incomeReceived, incomeExpected, incomeLeftToReceive, ledgerList } =
-    useIncomeCategory({ envelopeId: _id });
-
-  const displayBalance =
-    activeTab === "spent"
-      ? incomeReceived
-      : activeTab === "remaining"
-      ? incomeLeftToReceive
-      : incomeExpected;
+  const { displayBalance, ledgerList } = useIncomeCategory({
+    envelopeId: _id,
+    activeTab,
+  });
 
   return (
     // Envelope container

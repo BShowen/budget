@@ -4,7 +4,7 @@ import { useTracker } from "meteor/react-meteor-data";
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 
-export function useIncomeLedger({ ledgerId }) {
+export function useIncomeLedger({ ledgerId, activeTab }) {
   // This is the ledger that is returned from this hook.
   const ledger = useTracker(() => LedgerCollection.findOne({ _id: ledgerId }));
 
@@ -44,7 +44,9 @@ export function useIncomeLedger({ ledgerId }) {
 
   // The income left to receive. A dollar amount.
   const leftToReceive =
-    Math.round((ledger.allocatedAmount - moneyIn) * 100) / 100;
+    ledger.allocatedAmount > 0
+      ? Math.round((ledger.allocatedAmount - moneyIn) * 100) / 100
+      : 0;
 
   // The income left to receive represented as a percentage.
   const percentRemainingToReceive = Math.round(
@@ -56,6 +58,22 @@ export function useIncomeLedger({ ledgerId }) {
     (moneyIn / ledger.allocatedAmount) * 100
   );
 
+  const displayBalance = activeTab
+    ? activeTab === "planned"
+      ? ledger.allocatedAmount
+      : activeTab === "spent"
+      ? moneyIn
+      : leftToReceive
+    : 0;
+
+  const progressPercentage = activeTab
+    ? activeTab === "planned"
+      ? 0
+      : activeTab === "spent"
+      ? percentIncomeReceived
+      : percentRemainingToReceive //activeTab === "remaining"
+    : 0;
+
   return {
     ...ledger,
     incomeReceived: moneyIn,
@@ -63,5 +81,7 @@ export function useIncomeLedger({ ledgerId }) {
     transactionList,
     percentRemainingToReceive,
     percentIncomeReceived,
+    displayBalance,
+    progressPercentage,
   };
 }
