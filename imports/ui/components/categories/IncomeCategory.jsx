@@ -1,15 +1,8 @@
-import { Meteor } from "meteor/meteor";
 import React, { useState } from "react";
-import { useTracker } from "meteor/react-meteor-data";
-
-// Collections
-import { LedgerCollection } from "../../../api/Ledger/LedgerCollection";
-import { TransactionCollection } from "../../../api/Transaction/TransactionCollection";
 
 // Utils
 import { cap } from "../../util/cap";
 import { toDollars } from "../../util/toDollars";
-import { reduceTransactions } from "../../util/reduceTransactions";
 
 // Components
 import { IncomeLedger } from "../ledgers/IncomeLedger";
@@ -18,37 +11,19 @@ import { NewLedgerForm } from "../forms/LedgerFormCreate";
 // Icons
 import { LuPlusCircle } from "react-icons/lu";
 
+// Hooks
+import { useIncomeCategory } from "../../hooks/useIncomeCategory";
+
 export const IncomeCategory = ({ _id, name, activeTab }) => {
-  const { ledgers } = useTracker(() => {
-    if (!Meteor.userId()) return {};
-    // Return the ledgers that belong to this envelope
-    const ledgers = LedgerCollection.find({
-      envelopeId: _id,
-    }).fetch();
-    return { ledgers };
-  });
+  const { incomeReceived, incomeExpected, incomeLeftToReceive, ledgerList } =
+    useIncomeCategory({ envelopeId: _id });
 
-  const { transactions } = useTracker(() => {
-    if (!Meteor.userId()) return {};
-    // Return the transactions that are in this envelope
-    const transactions = TransactionCollection.find({
-      envelopeId: _id,
-    }).fetch();
-    return { transactions };
-  });
-  const totalIncomeExpected = ledgers.reduce((total, ledger) => {
-    return total + ledger.allocatedAmount;
-  }, 0);
-
-  const { income: totalIncomeReceived } = reduceTransactions({ transactions });
-
-  const remainingToReceive = totalIncomeExpected - totalIncomeReceived;
   const displayBalance =
     activeTab === "spent"
-      ? totalIncomeReceived
+      ? incomeReceived
       : activeTab === "remaining"
-      ? remainingToReceive
-      : totalIncomeExpected;
+      ? incomeLeftToReceive
+      : incomeExpected;
 
   return (
     // Envelope container
@@ -59,7 +34,7 @@ export const IncomeCategory = ({ _id, name, activeTab }) => {
         envelopeId={_id}
         displayBalance={displayBalance}
       />
-      <EnvelopeBody ledgers={ledgers} activeTab={activeTab} />
+      <EnvelopeBody ledgers={ledgerList} activeTab={activeTab} />
       <EnvelopeFooter envelopeId={_id} />
     </div>
   );
