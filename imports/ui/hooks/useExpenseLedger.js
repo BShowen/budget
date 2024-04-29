@@ -76,12 +76,14 @@ export function useExpenseLedger({ ledgerId }) {
   // allocated amount for that ledger for the month.
   // percentRemaining is bound between 0 and 101, inclusive.
   const percentRemaining =
-    leftToSpend > ledger.allocatedAmount
-      ? 100
-      : Math.min(
-          Math.max((leftToSpend / ledger.allocatedAmount) * 100, 0),
-          101
-        );
+    ledger.allocatedAmount > 0
+      ? leftToSpend > ledger.allocatedAmount
+        ? 100
+        : Math.min(
+            Math.max((leftToSpend / ledger.allocatedAmount) * 100, 0),
+            101
+          )
+      : 0;
 
   return {
     ...ledger,

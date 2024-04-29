@@ -14,7 +14,7 @@ import { useIncomeLedger } from "../../hooks/useIncomeLedger";
 
 export const IncomeLedger = ({ ledger, activeTab }) => {
   const [isFormActive, setFormActive] = useState(false);
-  const { incomeReceived, leftToReceive, percentRemainingToReceive } =
+  const { incomeReceived, leftToReceive, percentIncomeReceived } =
     useIncomeLedger({ ledgerId: ledger._id });
 
   const displayBalance = (() => {
@@ -36,7 +36,7 @@ export const IncomeLedger = ({ ledger, activeTab }) => {
         ? Math.round((incomeReceived / ledger.allocatedAmount) * 100)
         : 0;
     } else if (activeTab === "remaining") {
-      return percentRemainingToReceive;
+      return percentIncomeReceived;
     }
   })();
 

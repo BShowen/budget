@@ -20,7 +20,7 @@ export const SavingsLedger = ({ ledger, activeTab }) => {
     allocatedAmount,
     moneySpent,
     leftToSave,
-    percentRemainingToSave,
+    percentSaved,
   } = useSavingsLedger({ ledgerId: ledger._id });
 
   const displayBalance = (() => {
@@ -40,7 +40,7 @@ export const SavingsLedger = ({ ledger, activeTab }) => {
       case "spent":
         return 0;
       case "remaining":
-        return percentRemainingToSave;
+        return percentSaved;
     }
   })();
 
