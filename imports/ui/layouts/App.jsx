@@ -1,20 +1,16 @@
-import { Meteor } from "meteor/meteor";
-import { useTracker } from "meteor/react-meteor-data";
 import React, { useState, createContext, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Outlet } from "react-router-dom";
 
 // Components
-import { AppLayout } from "./AppLayout";
 import { FooterNav } from "../components/FooterNav";
+import { squircle } from "ldrs";
 
-// Collections
-import { BudgetCollection } from "../../api/Budget/BudgetCollection";
+// hooks
+import { useAppData } from "../hooks/useAppData";
 
 // Context
 export const RootContext = createContext(null);
-
-import { squircle } from "ldrs";
 
 // This is the container that wraps my entire application. It is responsible for
 // subscribing to all of the Meteor subscriptions used throughout the app.
@@ -24,75 +20,36 @@ import { squircle } from "ldrs";
 // This app is also simple enough to easily allow me to implement this type of
 // architecture.
 export const App = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [budget, setBudget] = useState(undefined);
   const [date, setDate] = useState(getDateFromLocalStorage());
-
-  // Fetch the budget
-  const isLoadingAllBudgets = useTracker(() => {
-    const budgetHandle = Meteor.subscribe("allBudgets");
-    return !budgetHandle.ready();
-  }, []);
-
-  // Fetch the collections for this budget.
-  const isLoadingAllCollections = useTracker(() => {
-    if (isLoadingAllBudgets) return true;
-    const envelopeHandler = Meteor.subscribe("envelopes", budget._id);
-    const ledgerHandler = Meteor.subscribe("ledgers", budget._id);
-    const transactionHandler = Meteor.subscribe("transactions", budget._id);
-    const userDataHandler = Meteor.subscribe("userData", budget._id);
-    const tagHandler = Meteor.subscribe("tags");
-    const allUsers = Meteor.subscribe("allUsers");
-    return !(
-      envelopeHandler.ready() &&
-      ledgerHandler.ready() &&
-      transactionHandler.ready() &&
-      userDataHandler.ready() &&
-      tagHandler.ready() &&
-      allUsers.ready()
-    );
-  }, [budget]);
+  const { isLoading: isLoadingAppData, currentBudget } = useAppData({ date });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (isLoadingAllBudgets) return;
-    const budget = BudgetCollection.findOne({
-      createdAt: {
-        $gte: date,
-        $lte: new Date(
-          date.getFullYear(),
-          date.getMonth() + 1,
-          date.getDate() - 1
-        ),
-      },
-    });
-    setBudget(budget);
-  }, [date, isLoadingAllBudgets]);
-
-  useEffect(() => {
-    if (isLoadingAllBudgets || isLoadingAllCollections) return;
+    if (isLoadingAppData) return;
     setTimeout(() => {
       setIsLoading(false);
     }, 900);
-  }, [isLoadingAllBudgets, isLoadingAllCollections]);
+  }, [isLoadingAppData]);
+
+  function handleDateChange(date) {
+    setIsLoading(true);
+    setTimeout(() => {
+      setDate(date);
+    }, 900);
+  }
 
   return (
-    <RootContext.Provider
-      value={{
-        goToBudget: ({ date }) => {
-          window.localStorage.setItem("currentBudgetDate", date);
-          setIsLoading(true);
-          // Allow the <App/> to complete it's unmount animation before changing the date.
-          setTimeout(() => {
-            setDate(date);
-          }, 900);
-        },
-        currentBudgetId: budget?._id,
-      }}
-    >
-      <AnimatePresence>
-        {isLoading ? <Loading key={0} /> : <Content key={1} />}
-      </AnimatePresence>
-    </RootContext.Provider>
+    <AnimatePresence>
+      {isLoading ? (
+        <Loading key={0} />
+      ) : (
+        <Content
+          key={1}
+          setDate={handleDateChange}
+          currentBudget={currentBudget}
+        />
+      )}
+    </AnimatePresence>
   );
 };
 
@@ -123,7 +80,7 @@ function Loading() {
   );
 }
 
-function Content() {
+function Content({ setDate, currentBudget }) {
   return (
     <motion.div
       key={2}
@@ -131,10 +88,20 @@ function Content() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      <div className="lg:w-3/5 mx-auto bg-app select-none padding-safe-area-top text-color-primary">
-        <Outlet />
-        <FooterNav />
-      </div>
+      <RootContext.Provider
+        value={{
+          goToBudget: ({ date }) => {
+            window.localStorage.setItem("currentBudgetDate", date);
+            setDate(date);
+          },
+          currentBudgetId: currentBudget?._id,
+        }}
+      >
+        <div className="lg:w-3/5 mx-auto bg-app select-none padding-safe-area-top text-color-primary">
+          <Outlet />
+          <FooterNav />
+        </div>
+      </RootContext.Provider>
     </motion.div>
   );
 }

@@ -4,15 +4,13 @@ import { BudgetCollection } from "../../api/Budget/BudgetCollection";
 
 // A hook that subscribes to the budget publication.
 // You pass in a date and it fetches and returns the budget for that date.
-export function useBudget({ date }) {
+export function useCurrentBudgetSubscription({ date }) {
   const isFetchingBudget = useTracker(() => {
     const budget = Meteor.subscribe("budget", date);
     return !budget.ready();
   });
 
-  const isLoading = isFetchingBudget;
-
-  const budget = isLoading
+  const budget = isFetchingBudget
     ? undefined
     : BudgetCollection.findOne({
         createdAt: {
@@ -25,5 +23,5 @@ export function useBudget({ date }) {
         },
       });
 
-  return { budget, isLoading };
+  return { budget, isLoading: isFetchingBudget };
 }
