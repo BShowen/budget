@@ -23,5 +23,9 @@ module.exports = {
   rules: {
     "react/prop-types": 0,
     "no-unused-vars": "warn",
+    // "react-hooks/exhaustive-deps": [
+    //   "warn",
+    //   { additionalHooks: "useTracker|useSomeOtherHook|..." },
+    // ],
   },
 };

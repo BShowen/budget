@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useTracker } from "meteor/react-meteor-data";
 
 // Context
-import { RootContext } from "../layouts/AppData";
+import { RootContext } from "../layouts/App";
 
 // Collections
 import { BudgetCollection } from "../../api/Budget/BudgetCollection";

@@ -10,7 +10,7 @@ import { formatDollarAmount } from "../util/formatDollarAmount";
 import { IoIosArrowBack } from "react-icons/io";
 
 // Context
-import { RootContext } from "../layouts/AppData";
+import { RootContext } from "../layouts/App";
 export function NewAllocationPage() {
   const navigate = useNavigate();
   const { currentBudgetId } = useContext(RootContext);

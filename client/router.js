@@ -25,7 +25,7 @@ import { NewAllocationPage } from "../imports/ui/pages/NewAllocationPage";
 import { InsightsPage } from "../imports/ui/pages/InsightsPage";
 
 // Loaders
-import { AppData } from "../imports/ui/layouts/AppData";
+import { App } from "../imports/ui/layouts/App";
 import { logoutLoader } from "../imports/ui/components/Logout";
 import { editTransactionLoader } from "../imports/ui/components/forms/TransactionForm";
 
@@ -43,7 +43,7 @@ export const router = createBrowserRouter([
   {
     path: "/",
     loader: checkLoginStatus,
-    element: <AppData />,
+    element: <App />,
     errorElement: <ErrorPage />,
     children: [
       {

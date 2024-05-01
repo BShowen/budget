@@ -32,7 +32,7 @@ import { TransactionCollection } from "../../../api/Transaction/TransactionColle
 import { dates } from "../../util/dates";
 
 // App context
-import { RootContext } from "../../layouts/AppData";
+import { RootContext } from "../../layouts/App";
 import { CategorySelectionInput } from "./formComponents/CategorySelectionInput";
 
 export const editTransactionLoader = ({ params: { transactionId } }) =>

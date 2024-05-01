@@ -20,6 +20,7 @@ Meteor.publish("budget", function (date) {
 
   const user = Meteor.user();
 
+  // Get the budget that matches the provided date.
   const currentBudget = BudgetCollection.findOne({
     accountId: user.accountId,
     createdAt: {
@@ -32,6 +33,7 @@ Meteor.publish("budget", function (date) {
     },
   });
 
+  // If currentBudget is truthy then return this document.
   if (currentBudget) {
     return BudgetCollection.find({
       accountId: user.accountId,
@@ -39,7 +41,9 @@ Meteor.publish("budget", function (date) {
     });
   }
 
-  // Get the most recent document that was created on/before the provided date.
+  // A budget with the provided date was not found.
+  // Now, get the most recent budget if it exists.
+  // This will be used as the blueprint to create a new budget.
   const prevBudget = BudgetCollection.findOne(
     {
       accountId: user.accountId,
