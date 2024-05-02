@@ -4,7 +4,7 @@ import { useTracker } from "meteor/react-meteor-data";
 import { IoIosArrowDropdown } from "react-icons/io";
 
 // Context
-import { RootContext } from "../../layouts/App";
+import { RootContext } from "../../layouts/AppContent";
 
 // Collections
 import { BudgetCollection } from "../../../api/Budget/BudgetCollection";
@@ -13,6 +13,9 @@ import { BudgetCollection } from "../../../api/Budget/BudgetCollection";
 import { dates } from "../../util/dates";
 
 export function MonthSelector({ currentDate }) {
+  const year = currentDate.toLocaleString("en-US", { year: "numeric" });
+  const currentMonth = currentDate.toLocaleString("en-US", { month: "long" });
+
   const budgetDateList = useTracker(() => {
     const budgetDates = BudgetCollection.find({}, { sort: { createdAt: 1 } })
       .fetch()
@@ -54,37 +57,44 @@ export function MonthSelector({ currentDate }) {
   }, [isDropdownOpen]);
 
   return (
-    <div>
-      <IoIosArrowDropdown
-        className={`text-2xl transition-all duration-300 ease-in-out ${
-          isDropdownOpen ? "rotate-180" : ""
-        }`}
-        onClick={toggleDropdown}
-      />
+    <div
+      className="flex flex-row justify-start items-center px-2 gap-2 lg:hover:cursor-pointer"
+      onClick={toggleDropdown}
+    >
+      <h1 className="text-3xl font-bold w-max">
+        {currentMonth} <span className="font-thin">{year}</span>
+      </h1>
+      <div>
+        <IoIosArrowDropdown
+          className={`text-2xl transition-all duration-300 ease-in-out ${
+            isDropdownOpen ? "rotate-180" : ""
+          }`}
+        />
 
-      <div
-        className={`z-50 text-color-primary flex flex-row items-center absolute left-0 right-0 bg-white mt-2 rounded-b-lg shadow-inner ${
-          isDropdownOpen
-            ? "month-selector-slide-in"
-            : canAnimate
-            ? "month-selector-slide-out"
-            : "h-0"
-        }`}
-      >
-        <ul className="list-none w-full flex flex-row justify-start items-center gap-2 overflow-y-hidden overflow-x-scroll scrollbar-hide px-2 h-full overscroll-x-contain">
-          {budgetDateList.map((date, i) => {
-            const isLastElement = budgetDateList.length - 1 == i;
-            return (
-              <MonthSelectorButton
-                key={date.getTime()}
-                clickHandler={goToBudget}
-                activeBudgetDate={currentDate}
-                budgetDate={date}
-                isFutureDate={isLastElement}
-              />
-            );
-          })}
-        </ul>
+        <div
+          className={`z-50 text-color-primary flex flex-row items-center absolute left-0 right-0 bg-white mt-2 rounded-b-lg shadow-inner ${
+            isDropdownOpen
+              ? "month-selector-slide-in"
+              : canAnimate
+              ? "month-selector-slide-out"
+              : "h-0"
+          }`}
+        >
+          <ul className="list-none w-full flex flex-row justify-start items-center gap-2 overflow-y-hidden overflow-x-scroll scrollbar-hide px-2 h-full overscroll-x-contain">
+            {budgetDateList.map((date, i) => {
+              const isLastElement = budgetDateList.length - 1 == i;
+              return (
+                <MonthSelectorButton
+                  key={date.getTime()}
+                  clickHandler={goToBudget}
+                  activeBudgetDate={currentDate}
+                  budgetDate={date}
+                  isFutureDate={isLastElement}
+                />
+              );
+            })}
+          </ul>
+        </div>
       </div>
     </div>
   );

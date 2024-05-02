@@ -1,16 +1,12 @@
-import React, { useState, createContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Outlet } from "react-router-dom";
 
-// Components
-import { FooterNav } from "../components/FooterNav";
-import { squircle } from "ldrs";
-
-// hooks
+// Hooks
 import { useAppData } from "../hooks/useAppData";
 
-// Context
-export const RootContext = createContext(null);
+// Components
+import { AppContent } from "./AppContent";
+import { squircle } from "ldrs";
 
 // This is the container that wraps my entire application. It is responsible for
 // subscribing to all of the Meteor subscriptions used throughout the app.
@@ -46,7 +42,7 @@ export const App = () => {
       {isLoading ? (
         <Loading key={0} />
       ) : (
-        <Content
+        <AppContent
           key={1}
           setDate={handleDateChange}
           currentBudget={currentBudget}
@@ -79,32 +75,6 @@ function Loading() {
         stroke-length="0.20"
         bg-opacity="0.1"
       ></l-squircle>
-    </motion.div>
-  );
-}
-
-function Content({ setDate, currentBudget }) {
-  return (
-    <motion.div
-      key={2}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <RootContext.Provider
-        value={{
-          goToBudget: ({ date }) => {
-            window.localStorage.setItem("currentBudgetDate", date);
-            setDate(date);
-          },
-          currentBudgetId: currentBudget?._id,
-        }}
-      >
-        <div className="lg:w-3/5 mx-auto bg-app select-none padding-safe-area-top text-color-primary">
-          <Outlet />
-          <FooterNav />
-        </div>
-      </RootContext.Provider>
     </motion.div>
   );
 }
