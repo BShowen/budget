@@ -15,6 +15,7 @@ import { DateInput } from "./formComponents/DateInput";
 import { AmountInput } from "./formComponents/AmountInput";
 import { MerchantInput } from "./formComponents/MerchantInput";
 import { NotesInput } from "./formComponents/NotesInput";
+import { CategorySelectionInput } from "./formComponents/CategorySelectionInput";
 
 // Hooks
 import { useFormAmounts } from "./formHooks/useFormAmounts";
@@ -32,8 +33,7 @@ import { TransactionCollection } from "../../../api/Transaction/TransactionColle
 import { dates } from "../../util/dates";
 
 // App context
-import { RootContext } from "../../layouts/App";
-import { CategorySelectionInput } from "./formComponents/CategorySelectionInput";
+import { RootContext } from "../../layouts/AppContent";
 
 export const editTransactionLoader = ({ params: { transactionId } }) =>
   TransactionCollection.findOne({ _id: transactionId }) || redirect("/");
