@@ -9,14 +9,12 @@ import { ListTransaction } from "../components/ListTransaction";
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 
 // Utils
-import { dates } from "../util/dates";
 import { toDollars } from "../util/toDollars";
 import { reduceTransactions } from "../util/reduceTransactions";
 
 // Icons
 import { LuSearch, LuXCircle } from "react-icons/lu";
 import { IoIosArrowBack } from "react-icons/io";
-import { LuMoveDown, LuMoveUp } from "react-icons/lu";
 
 export function TransactionListPage() {
   const navigate = useNavigate();
@@ -89,7 +87,7 @@ export function TransactionListPage() {
           </h1>
         </div>
       </div>
-      <div className="mt-11 h-16 fixed position-top-safe w-full lg:w-3/5 z-50 px-2 flex flex-row justify-start items-center bg-app">
+      <div className="mt-11 h-16 fixed position-top-safe w-full lg:w-3/5 z-50 px-2 flex flex-row justify-start items-center bg-slate-100">
         <SearchBar onInput={filterTransactions} />
         <SearchBarTotal transactions={filteredTransactionList} />
       </div>
@@ -156,32 +154,26 @@ function SearchBarTotal({ transactions }) {
 }
 
 function TransactionGroup({ date, transactions }) {
-  const { income, expense } = reduceTransactions({ transactions });
   return (
     <div key={date}>
-      <div className="list-transaction-date font-extrabold">
-        <div className="min-w-fit">
-          <h2 className="font-extrabold">
-            {new Date(date).toLocaleString("en-us", {
-              month: "long",
-              day: "numeric",
-            })}
-          </h2>
-        </div>
-        <div className="flex flex-row justify-end gap-4 items-center grow">
-          <div className="text-green-500 flex flex-row items-center">
-            <LuMoveDown />
-            <p>{toDollars(income)}</p>
-          </div>
-          <div className="text-red-500 flex flex-row items-center">
-            <LuMoveUp />
-            <p>{toDollars(expense)}</p>
-          </div>
-        </div>
+      <div className="list-transaction-date">
+        <h2>
+          {new Date(date).toLocaleString("en-us", {
+            month: "long",
+            day: "numeric",
+          })}
+        </h2>
       </div>
-      {transactions.map((transaction) => (
-        <ListTransaction key={transaction._id} transaction={transaction} />
-      ))}
+      {transactions.map((transaction, i) => {
+        const isBordered = i != transactions.length - 1;
+        return (
+          <ListTransaction
+            transactionId={transaction._id}
+            isBordered={isBordered}
+            key={i}
+          />
+        );
+      })}
     </div>
   );
 }

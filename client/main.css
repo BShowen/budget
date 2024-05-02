@@ -52,7 +52,8 @@
   }
   .bg-app {
     /* main background color of the app */
-    background-color: #f1f1f2;
+    /* background-color: #f1f1f2; */
+    @apply bg-slate-100;
   }
   .bg-color-light-blue {
     @apply bg-blue-600;
@@ -116,7 +117,7 @@
     @apply w-2/4 flex flex-row justify-start items-center px-1;
   }
   .list-transaction-date {
-    @apply bg-slate-200/50 min-h-7 flex flex-row gap-2 justify-between items-center backdrop-blur-md p-2 font-semibold border-b sticky z-50 shadow-sm;
+    @apply bg-slate-100 flex flex-row justify-start items-center px-2 py-1 sticky z-50 shadow-sm h-8 font-medium;
     top: calc(env(safe-area-inset-top, 0) + 108px);
   }
   .tag {

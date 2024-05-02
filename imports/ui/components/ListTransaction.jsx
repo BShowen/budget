@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { useTracker } from "meteor/react-meteor-data";
 import { Meteor } from "meteor/meteor";
@@ -14,77 +14,69 @@ import { toDollars } from "../util/toDollars";
 import { dates } from "../util/dates";
 
 // Icons
-import { HiMinus, HiPlus } from "react-icons/hi";
-import { LuCheckCircle2, LuCircle } from "react-icons/lu";
-export function ListTransaction({ transaction }) {
-  const isCategorized = transaction.allocations.every(
-    ({ ledgerId, envelopeId }) =>
-      ledgerId != "uncategorized" && envelopeId != "uncategorized"
-  );
+import { HiPlus } from "react-icons/hi";
+import { LuChevronRight } from "react-icons/lu";
+import { LuAlertCircle } from "react-icons/lu";
 
-  const [expanded, setExpanded] = useState(
-    window.localStorage.getItem(transaction._id) == "true" || false
-  );
-
-  const toggleExpandedContent = () => {
-    setExpanded((prev) => {
-      window.localStorage.setItem(transaction._id, !prev);
-      return !prev;
+// Hooks
+import { useTransaction } from "../hooks/useTransaction";
+export function ListTransaction({ transactionId, isBordered }) {
+  const { merchant, type, amount, ledgerNameList, isCategorized } =
+    useTransaction({
+      transactionId,
     });
+  return (
+    <div
+      className={`w-full flex flex-row justify-between items-stretch min-h-12 ps-2 pe-3 lg:hover:cursor-pointer bg-white py-2 ${
+        isBordered && "border-b"
+      }`}
+    >
+      <div className="flex flex-row flex-nowrap justify-start items-center gap-1">
+        <div className=" w-full flex flex-col justify-center items-start">
+          <div className="flex flex-row justify-center items-center gap-1">
+            <p className="truncate w-full text-lg">{cap(merchant)}</p>
+            {!isCategorized && (
+              <LuAlertCircle className="text-color-danger text-xl" />
+            )}
+          </div>
+          <div className="flex flex-row justify-start flex-nowrap gap-1">
+            <LedgerNames ledgerNameList={ledgerNameList} />
+          </div>
+        </div>
+      </div>
+      <div
+        className={`flex flex-row items-center shrink-0 ${
+          type == "income" && "text-green-700 gap-[2px]"
+        }`}
+        onClick={() => {
+          // Implement on click handler
+        }}
+      >
+        <span>{type === "income" && <HiPlus className="text-xs" />}</span>
+        <p>{toDollars(amount)}</p>
+        <LuChevronRight className="text-xl text-color-primary" />
+      </div>
+    </div>
+  );
+}
+
+function LedgerNames({ ledgerNameList }) {
+  // Function to format the array into the desired string format
+  const formatNames = (names) => {
+    if (names.length < 2) return cap(names[0]);
+
+    let result = names
+      .slice(0, -1)
+      .map((name) => cap(name))
+      .join(", ");
+    result += ` & ${cap(names[names.length - 1])}`;
+    return result;
   };
 
   return (
-    <div
-      className={`flex flex-col justify-start items-stretch px-1 transition-all duration-300 ease-in-out relative ${
-        expanded ? (transaction.note ? "h-60 bg-app" : "h-52 bg-app") : "h-10"
-      } `}
-    >
-      <div
-        onClick={toggleExpandedContent}
-        className={`w-full flex flex-row justify-between items-center h-10 absolute top-0 left-0 ps-1 pe-3 transition-all lg:hover:cursor-pointer ${
-          expanded ? "bg-app" : "bg-white"
-        }`}
-      >
-        <div
-          className={`transition-all duration-200 flex flex-row flex-nowrap justify-start items-center gap-1 overflow-hidden ${
-            expanded ? "w-full" : "w-3/5"
-          }`}
-        >
-          <div className="w-5 h-5 shrink-0">
-            {isCategorized ? (
-              <LuCheckCircle2 className="w-full h-full text-color-light-blue" />
-            ) : (
-              <LuCircle className="w-full h-full text-color-danger" />
-            )}
-          </div>
-          <p
-            className={`${
-              expanded ? "font-bold text-lg" : "font-medium text-md"
-            } truncate w-full`}
-          >
-            {cap(transaction.merchant)}
-          </p>
-        </div>
-        <div className="text-md font-semibold flex flex-row items-center gap-1">
-          <span>
-            {transaction.type === "expense" ? (
-              <HiMinus className="text-color-danger text-xl" />
-            ) : (
-              <HiPlus className="text-green-600 text-xl" />
-            )}
-          </span>
-          <p
-            className={`${
-              expanded ? "font-bold text-lg" : "font-medium text-md"
-            }`}
-          >
-            {toDollars(transaction.amount)}
-          </p>
-        </div>
-      </div>
-
-      <ExpandedContent transaction={transaction} expanded={expanded} />
-    </div>
+    <p className="text-xs font-medium text-color-light-gray">
+      {formatNames(ledgerNameList)}
+    </p>
   );
 }
 
