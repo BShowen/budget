@@ -84,7 +84,7 @@ export const transactionSchema = new SimpleSchema(
     },
     tags: {
       type: Array,
-      optional: true,
+      defaultValue: [],
     },
     "tags.$": {
       type: String,

@@ -23,6 +23,7 @@ import { AccountPageLayout } from "../imports/ui/layouts/AccountPageLayout";
 import { TransactionListPage } from "../imports/ui/pages/TransactionListPage";
 import { NewAllocationPage } from "../imports/ui/pages/NewAllocationPage";
 import { InsightsPage } from "../imports/ui/pages/InsightsPage";
+import { TransactionDetailsPage } from "../imports/ui/pages/TransactionDetailsPage";
 
 // Loaders
 import { App } from "../imports/ui/layouts/App";
@@ -88,6 +89,10 @@ export const router = createBrowserRouter([
         path: "/transaction/:transactionId/edit",
         element: <TransactionForm />,
         loader: editTransactionLoader,
+      },
+      {
+        path: "/transaction/:transactionId/details",
+        element: <TransactionDetailsPage />,
       },
       {
         path: "/transactions",

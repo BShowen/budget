@@ -1,14 +1,21 @@
 import { useTracker } from "meteor/react-meteor-data";
+import { useNavigate } from "react-router-dom";
 
 // Collections
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
 import { EnvelopeCollection } from "../../api/Envelope/EnvelopeCollection";
+import { TagCollection } from "../../api/Tag/TagCollection";
 
 export function useTransaction({ transactionId }) {
+  const navigate = useNavigate();
   const transaction = useTracker(() => {
     return TransactionCollection.findOne({ _id: transactionId });
   });
+
+  // This will trigger if a user is viewing this transaction's details and
+  // the transaction gets deleted by another user.
+  if (!transaction) navigate(-1);
 
   // This is an array of category documents
   const _envelopeList = useTracker(() => {
@@ -54,10 +61,16 @@ export function useTransaction({ transactionId }) {
     ? _ledgerNameList
     : [..._ledgerNameList, "uncategorized"];
 
+  const tagNameList = useTracker(() => {
+    return TagCollection.find({ _id: { $in: transaction.tags } })
+      .fetch()
+      .map(({ name }) => name);
+  });
   return {
     ...transaction,
     categoryAndLedgerNameList,
     categoryNameList,
     ledgerNameList,
+    tagNameList,
   };
 }
