@@ -80,12 +80,12 @@ export const createTransaction = new ValidatedMethod({
       ({ envelopeId, ledgerId }) =>
         envelopeId != "uncategorized" && ledgerId != "uncategorized"
     );
-
     TransactionCollection.insert(
       {
         amount: amount,
         accountId: user.accountId,
-        createdAt: new Date(createdAt.replace(/-/g, "/")),
+        createdAt: new Date(createdAt),
+        // createdAt: new Date(createdAt.replace(/-/g, "/")),
         // The date string is received as 'YYYY-MM-DD' from the client.
         // I convert it to 'YYYY/MM/DD'. If you create a date like:
         // new Date('2024-04-01') and call toLocaleString() it will

@@ -179,7 +179,7 @@ function DeleteTransactionButton({ transactionId }) {
               `This is a split transaction and will delete ${transactionCount} transactions.`
             );
             if (confirm) {
-              // deleteTransaction();
+              deleteTransaction();
             }
           } else {
             const confirm = window.confirm(

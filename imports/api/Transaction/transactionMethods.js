@@ -48,11 +48,13 @@ Meteor.methods({
         envelopeId != "uncategorized" && ledgerId != "uncategorized"
     );
 
+    const isSplitTransaction = allocations.length > 1;
+
     return TransactionCollection.update(
       { _id: transactionId },
       {
         $set: {
-          createdAt: new Date(createdAt.replace(/-/g, "/")),
+          createdAt: new Date(createdAt),
           type,
           merchant,
           note,
@@ -60,6 +62,7 @@ Meteor.methods({
           tags,
           amount,
           isCategorized,
+          isSplitTransaction,
         },
       }
     );

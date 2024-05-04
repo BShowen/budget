@@ -13,6 +13,7 @@ export function useFormDateInput({ initialValue }) {
 
   const inputProps = {
     value,
+    submitValue: value + "T00:00:00",
     onChange: handleChange,
     isValid,
   };

@@ -23,7 +23,7 @@ import { useFormDateInput } from "./formHooks/useFormDateInput";
 import { useFormMerchantInput } from "./formHooks/useFormMerchantInput";
 import { useFormNotesInput } from "./formHooks/useFormNotesInput";
 import { useFormTags } from "./formHooks/useFormTags";
-import { useKeyboard } from "./useKeyboard";
+import { useKeyboard } from "../../hooks/useKeyboard";
 
 // Collections
 import { LedgerCollection } from "../../../api/Ledger/LedgerCollection";
@@ -135,7 +135,7 @@ export function TransactionForm() {
       createOrUpdate,
       {
         ...(transaction ? { transactionId: transaction._id } : {}),
-        createdAt: dateInputProps.value,
+        createdAt: dateInputProps.submitValue,
         budgetId,
         type: transactionType,
         amount: amountInputProps.value,
