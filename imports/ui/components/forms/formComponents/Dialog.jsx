@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 // Components
-import { LedgerSelectionSectionList } from "./LedgerSelectionList";
+import { CategorySelection } from "./CategorySelection";
 
 export function Dialog({
   closeDialog,
@@ -37,7 +37,7 @@ export function Dialog({
         >
           {ledgerSelectionList.map(
             ({ envelopeName, envelopeType, envelopeLedgers }) => (
-              <LedgerSelectionSectionList
+              <CategorySelection
                 key={envelopeName}
                 section={envelopeName}
                 envelopeType={envelopeType}

@@ -5,7 +5,10 @@ import { ExpenseLedgerSelection } from "./ExpenseLedgerSelection";
 import { IncomeLedgerSelection } from "./IncomeLedgerSelection";
 import { SavingsLedgerSelection } from "./SavingsLedgerSelection";
 
-export function LedgerSelectionSectionList({
+// Utils
+import { cap } from "../../../util/cap";
+
+export function CategorySelection({
   section,
   envelopeType,
   ledgerList,
@@ -17,7 +20,7 @@ export function LedgerSelectionSectionList({
     ledgerList.length > 0 && (
       <div className="w-full flex flex-col justify-start">
         <div className="max-w-full h-7 sticky top-0 bg-blue-900 text-center px-2">
-          <p className="font-semibold text-white text-xl">{section}</p>
+          <p className="font-semibold text-white text-xl">{cap(section)}</p>
         </div>
         <div className="w-full h-full pt-2 px-2">
           {ledgerList.map((ledger) => {
