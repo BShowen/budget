@@ -1,25 +1,18 @@
 import React from "react";
 
 // Components
-import { LedgerSelection } from "./LedgerSelection";
+import { ExpenseLedgerSelection } from "./ExpenseLedgerSelection";
+import { IncomeLedgerSelection } from "./IncomeLedgerSelection";
+import { SavingsLedgerSelection } from "./SavingsLedgerSelection";
 
 export function LedgerSelectionSectionList({
   section,
+  envelopeType,
   ledgerList,
   selectedLedgerIdList,
   selectLedger,
   deselectLedger,
-  transactionType,
 }) {
-  // If the user is creating an expense, don't show any income ledgers in the
-  // ledger selection. Income ledgers cannot have expense transactions.
-  if (
-    ledgerList.length > 0 &&
-    ledgerList[0].kind == "income" &&
-    transactionType == "expense"
-  ) {
-    return "";
-  }
   return (
     ledgerList.length > 0 && (
       <div className="w-full flex flex-col justify-start">
@@ -28,16 +21,38 @@ export function LedgerSelectionSectionList({
         </div>
         <div className="w-full h-full pt-2 px-2">
           {ledgerList.map((ledger) => {
-            return (
-              <LedgerSelection
-                ledger={ledger}
-                key={ledger._id}
-                selected={selectedLedgerIdList.includes(ledger._id)}
-                selectLedger={selectLedger}
-                deselectLedger={deselectLedger}
-                transactionType={transactionType}
-              />
-            );
+            switch (envelopeType) {
+              case "income":
+                return (
+                  <IncomeLedgerSelection
+                    ledger={ledger}
+                    key={ledger._id}
+                    selected={selectedLedgerIdList.includes(ledger._id)}
+                    selectLedger={selectLedger}
+                    deselectLedger={deselectLedger}
+                  />
+                );
+              case "expense":
+                return (
+                  <ExpenseLedgerSelection
+                    ledger={ledger}
+                    key={ledger._id}
+                    selected={selectedLedgerIdList.includes(ledger._id)}
+                    selectLedger={selectLedger}
+                    deselectLedger={deselectLedger}
+                  />
+                );
+              case "savings":
+                return (
+                  <SavingsLedgerSelection
+                    ledger={ledger}
+                    key={ledger._id}
+                    selected={selectedLedgerIdList.includes(ledger._id)}
+                    selectLedger={selectLedger}
+                    deselectLedger={deselectLedger}
+                  />
+                );
+            }
           })}
         </div>
       </div>

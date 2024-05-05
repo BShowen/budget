@@ -9,6 +9,7 @@ import { IoIosAdd } from "react-icons/io";
 
 export function CategorySelectionInput({
   selectedLedgerList,
+  ledgerSelectionList,
   selectLedger,
   deselectLedger,
   setLedgerAmount,
@@ -52,6 +53,7 @@ export function CategorySelectionInput({
             ({ ledgerId }) => ledgerId
           )}
           transactionType={transactionType}
+          ledgerSelectionList={ledgerSelectionList}
         />
       )}
     </div>

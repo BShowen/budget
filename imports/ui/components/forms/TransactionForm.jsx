@@ -196,7 +196,6 @@ export function TransactionForm() {
           <TagSelection {...tagInputProps} />
           <CategorySelectionInput
             {...ledgerSelectionInputProps}
-            transactionType={transactionType}
             isDialogOpen={isDialogOpen}
             setIsDialogOpen={setIsDialogOpen}
           />

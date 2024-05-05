@@ -1,8 +1,13 @@
 import { useState } from "react";
+import { useTracker } from "meteor/react-meteor-data";
 
 // Utils
 import { formatDollarAmount } from "../../../util/formatDollarAmount";
 import { splitDollars } from "../../../util/splitDollars";
+
+// Collections
+import { LedgerCollection } from "../../../../api/Ledger/LedgerCollection";
+import { EnvelopeCollection } from "../../../../api/Envelope/EnvelopeCollection";
 
 export function useFormLedgerSelection({
   initialLedgerSelection,
@@ -27,13 +32,53 @@ export function useFormLedgerSelection({
   }
   const [formTotal, setFormTotal] = useState(initialFormTotal || 0);
 
-  const [ledgerList, setLedgerList] = useState(
+  const [selectedLedgerList, setSelectedLedgerList] = useState(
     initialLedgerSelection ? initialLedgerSelection : []
   );
 
+  const [transType, setTransType] = useState(transactionType);
+
+  const ledgerSelectionList = useTracker(() => {
+    // if its expense we can show "savings" & "expense"
+    // if its income was can show "income", "savings", & "expense"
+    const querySelector =
+      transType == "expense"
+        ? { $or: [{ kind: "savings" }, { kind: "expense" }] }
+        : {};
+
+    const envelopeList = EnvelopeCollection.find({})
+      .fetch()
+      .sort(
+        (a, b) =>
+          a.name.toLowerCase().charCodeAt(0) -
+          b.name.toLowerCase().charCodeAt(0)
+      );
+    const ledgersGroupedByEnvelope = envelopeList.map((envelope) => {
+      const {
+        _id: envelopeId,
+        name: envelopeName,
+        kind: envelopeType,
+      } = envelope;
+      const envelopeLedgers = LedgerCollection.find({
+        envelopeId,
+        ...querySelector,
+      })
+        .fetch()
+        .sort(
+          (a, b) =>
+            a.name.toLowerCase().charCodeAt(0) -
+            b.name.toLowerCase().charCodeAt(0)
+        );
+
+      return { envelopeName, envelopeType, envelopeLedgers };
+    });
+
+    return ledgersGroupedByEnvelope;
+  }, [transType]);
+
   function selectLedger({ ledger }) {
     const { name, envelopeId, _id: ledgerId, kind } = ledger;
-    setLedgerList((prev) => {
+    setSelectedLedgerList((prev) => {
       const newLedgerList = [
         ...prev,
         {
@@ -53,7 +98,7 @@ export function useFormLedgerSelection({
   }
 
   function deselectLedger({ ledger }) {
-    setLedgerList((prev) => {
+    setSelectedLedgerList((prev) => {
       const newLedgerList = [...prev].filter(
         ({ ledgerId }) => ledgerId != ledger._id
       );
@@ -65,7 +110,7 @@ export function useFormLedgerSelection({
   }
 
   function setLedgerAmount({ ledgerId, amount }) {
-    setLedgerList((prev) => {
+    setSelectedLedgerList((prev) => {
       const newLedgerList = [...prev];
       const ledger = newLedgerList.find(({ ledgerId: id }) => id == ledgerId);
       ledger.amount = formatDollarAmount(amount);
@@ -127,7 +172,7 @@ export function useFormLedgerSelection({
   }
 
   function setSplitAmount(newTotal) {
-    setLedgerList((prev) => {
+    setSelectedLedgerList((prev) => {
       const newLedgerList = [...prev];
       return splitBetweenLedgers({
         amount: parseFloat(newTotal),
@@ -138,7 +183,7 @@ export function useFormLedgerSelection({
   }
 
   function removeIncomeLedgers() {
-    setLedgerList((prev) => {
+    setSelectedLedgerList((prev) => {
       const newLedgerList = [...prev].filter((doc) => doc.kind !== "income");
       return splitBetweenLedgers({
         amount: formTotal,
@@ -148,12 +193,17 @@ export function useFormLedgerSelection({
   }
 
   return {
-    setTransactionType: (transactionType) =>
-      transactionType === "expense" && removeIncomeLedgers(),
-    selectedLedgerList: ledgerList,
+    setTransactionType: (transactionType) => {
+      transactionType === "expense" && removeIncomeLedgers();
+      setTransType(transactionType);
+    },
+    // This is a list of ledgers that the user has selected.
+    selectedLedgerList,
     selectLedger,
     deselectLedger,
     setLedgerAmount,
     setSplitAmount,
+    // This is a list of the ledgers that the user can select from.
+    ledgerSelectionList,
   };
 }
