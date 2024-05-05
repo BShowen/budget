@@ -9,6 +9,7 @@ export const dates = (() => {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
+      timeZone: "UTC",
     })
       .format(date)
       .split("/");
@@ -23,6 +24,7 @@ export const dates = (() => {
     return date.toLocaleString("en-us", {
       month: "long",
       year: "numeric",
+      timeZone: "UTC",
     });
   }
 
@@ -31,7 +33,11 @@ export const dates = (() => {
       throw new Error(`${date} must be instance of Date.`);
     }
 
-    return date.toLocaleString("en-us", { month: "short", day: "numeric" });
+    return date.toLocaleString("en-us", {
+      month: "short",
+      day: "numeric",
+      timeZone: "UTC",
+    });
   }
 
   function forTransactionDetails(date) {
@@ -44,6 +50,7 @@ export const dates = (() => {
       day: "numeric",
       weekday: "short",
       year: "numeric",
+      timeZone: "UTC",
     });
   }
 
@@ -56,6 +63,7 @@ export const dates = (() => {
       month: "short",
       day: "numeric",
       year: "numeric",
+      timeZone: "UTC",
     });
   }
 

@@ -154,15 +154,15 @@ function SearchBarTotal({ transactions }) {
 }
 
 function TransactionGroup({ date, transactions }) {
+  const displayDate = new Date(date).toLocaleString("en-us", {
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  });
   return (
     <div key={date}>
       <div className="list-transaction-date">
-        <h2>
-          {new Date(date).toLocaleString("en-us", {
-            month: "long",
-            day: "numeric",
-          })}
-        </h2>
+        <h2>{displayDate}</h2>
       </div>
       {transactions.map((transaction, i) => {
         const isBordered = i != transactions.length - 1;
