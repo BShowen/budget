@@ -9,10 +9,9 @@ import { TransactionCollection } from "../../Transaction/TransactionCollection";
 // Utils
 import { reduceTransactions } from "../../../ui/util/reduceTransactions";
 
+// This resolver returns a budget document.
+// The budget doc is either an existing document or one is created and returned.
 Meteor.publish("budget", function (date) {
-  // Return the budget that has a createdAt date that is GTE to provided date.
-  // If none, create a new budget and return it.
-
   // User must be logged in and provide a date.
   if (!this.userId || !date) {
     return this.ready();
@@ -20,7 +19,7 @@ Meteor.publish("budget", function (date) {
 
   const user = Meteor.user();
 
-  // Get the budget that matches the provided date.
+  // Try to find the document that matches the provided date.
   const currentBudget = BudgetCollection.findOne({
     accountId: user.accountId,
     createdAt: {
@@ -33,17 +32,24 @@ Meteor.publish("budget", function (date) {
     },
   });
 
-  // If currentBudget is truthy then return this document.
+  // If currentBudget is truthy then return that document.
+  // Done.
   if (currentBudget) {
+    // This resolver must return a cursor, which is why I don't return the
+    // document stored in the variable "currentBudget", because currentBudget
+    // is referencing a document, not a mongo cursor.
     return BudgetCollection.find({
       accountId: user.accountId,
       _id: currentBudget._id,
     });
   }
 
-  // A budget with the provided date was not found.
-  // Now, get the most recent budget if it exists.
-  // This will be used as the blueprint to create a new budget.
+  // If this portion of the resolver is reached then a budget with the provided
+  // date could not be found. One needs to be created and returned.
+
+  // Try to find the most recent budget that exists for this account.
+  // This will be used as a blueprint to create the new budget that will be
+  // returned.
   const prevBudget = BudgetCollection.findOne(
     {
       accountId: user.accountId,
@@ -58,6 +64,8 @@ Meteor.publish("budget", function (date) {
     { sort: { createdAt: -1 } }
   );
 
+  // if prevBudget is truthy, then this account has a budget that can be used
+  // as a blueprint to create a new budget.
   if (prevBudget) {
     // Get previous envelopes
     const prevEnvelopes = EnvelopeCollection.find({
@@ -102,28 +110,30 @@ Meteor.publish("budget", function (date) {
         // Remove the old _id from the ledger
         delete newLedger._id;
 
+        // If this is a recurring ledger then that means this ledgers starting
+        // balance must be calculated and set.
+        // the ledger's starting balance is going to be the previous ledger's
+        // starting balance plus any income transactions, minus any expense
+        // transactions
         if (prevLedger.isRecurring) {
-          // Calculate ledger balance.
+          // Get a list of the previous ledger's transactions
           const transactions = TransactionCollection.find({
             accountId: user.accountId,
-            ledgerId: prevLedger._id,
+            allocations: { $elemMatch: { ledgerId: prevLedger._id } },
           }).fetch();
+
+          // Group the transactions by type - "expense" or "income"
           const { income: prevIncome, expense: prevExpense } =
             reduceTransactions({ transactions });
+
+          // Calculate and set the new ledger's starting balance
           newLedger.startingBalance =
             Math.round(
               (prevLedger.startingBalance + prevIncome - prevExpense) * 100
             ) / 100;
-
-          // Update ledger running total if it is an allocationLedger
-          if (prevLedger.kind == "allocation") {
-            newLedger.allocation.runningTotal =
-              Math.round(
-                (prevLedger.allocation.runningTotal + prevIncome) * 100
-              ) / 100;
-          }
         }
-        // Insert the new ledger
+
+        // Insert the new ledger into the DB.
         LedgerCollection.insert(newLedger);
       });
     });
