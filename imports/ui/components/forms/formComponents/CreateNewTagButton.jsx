@@ -5,11 +5,13 @@ import { IoIosAdd } from "react-icons/io";
 
 export function CreateNewTagButton({ createNewTag }) {
   return (
-    <button type="button" className="flex flex-row flex-no-wrap items-center">
-      <IoIosAdd
-        className="rounded-full w-6 h-6 text-white bg-green-600"
-        onClick={createNewTag}
-      />
+    <button
+      type="button"
+      className="w-full h-10 flex flex-row justify-start items-center gap-1 px-1"
+      onClick={createNewTag}
+    >
+      <IoIosAdd className="rounded-full w-5 h-5 text-white bg-green-600/80" />
+      <p>Add tag</p>
     </button>
   );
 }

@@ -15,6 +15,7 @@ export function NewTag({ _id, name, setName, removeTag }) {
   }
 
   function handleBlur(e) {
+    window.scrollTo({ top: 0, behavior: "instant" });
     if (e.target.value.trim().length == 0) {
       setName({ id: _id, newName: "New tag" });
     }
@@ -27,7 +28,7 @@ export function NewTag({ _id, name, setName, removeTag }) {
 
   return (
     <div
-      className="text-md font-semibold border-2 border-color-dark-blue ps-1 pe-2 rounded-md bg-color-dark-blue text-white hover:cursor-text flex flex-row justify-start items-center gap-1"
+      className="border border-color-dark-blue ps-1 pe-2 rounded-md bg-color-dark-blue text-white hover:cursor-text flex flex-row justify-start items-center gap-1"
       onClick={() => inputRef.current.focus()}
     >
       <button

@@ -16,6 +16,8 @@ import { AmountInput } from "./formComponents/AmountInput";
 import { MerchantInput } from "./formComponents/MerchantInput";
 import { NotesInput } from "./formComponents/NotesInput";
 import { CategorySelectionInput } from "./formComponents/CategorySelectionInput";
+import { SubmitButton } from "./formComponents/SubmitButton";
+import { CancelButton } from "./formComponents/CancelButton";
 
 // Hooks
 import { useFormAmounts } from "./formHooks/useFormAmounts";
@@ -160,26 +162,9 @@ export function TransactionForm() {
     <>
       <div className="page-header w-full lg:w-3/5 bg-header p-2 flex flex-col justify-start z-50">
         <div className="w-full px-1 py-2 grid grid-cols-12 font-bold text-center items-center">
-          <h2
-            className="col-start-1 col-end-3 text-white lg:hover:cursor-pointer"
-            onClick={() => navigate(-1)}
-          >
-            Cancel
-          </h2>
           <h2 className="col-start-3 col-end-11 text-white text-xl">
             New transaction
           </h2>
-          <button
-            className={`col-start-11 col-end-13 ${
-              isFormValid
-                ? "text-white lg:hover:cursor-pointer"
-                : "text-gray-700 lg:hover:cursor-not-allowed"
-            }`}
-            onClick={isFormValid ? submit : undefined}
-            type="submit"
-          >
-            Done
-          </button>
         </div>
 
         <ButtonGroup
@@ -190,15 +175,20 @@ export function TransactionForm() {
       <div className="h-full w-full pt-24 p-2 mb-24">
         <form className="flex flex-col justify-start gap-2">
           <AmountInput {...amountInputProps} />
-          <DateInput {...dateInputProps} />
           <MerchantInput {...{ ...merchantInputProps, transactionType }} />
-          <NotesInput {...notesInputProps} />
-          <TagSelection {...tagInputProps} />
+          <DateInput {...dateInputProps} />
           <CategorySelectionInput
             {...ledgerSelectionInputProps}
             isDialogOpen={isDialogOpen}
             setIsDialogOpen={setIsDialogOpen}
           />
+          <TagSelection {...tagInputProps} />
+          <NotesInput {...notesInputProps} />
+          <div className="flex flex-row items-center gap-2">
+            <CancelButton />
+
+            <SubmitButton isFormValid={isFormValid} onClick={submit} />
+          </div>
         </form>
       </div>
     </>

@@ -7,14 +7,11 @@ import { NewTag } from "./NewTag";
 
 export function TagSelection({ tagList, createNewTag }) {
   return (
-    <div className="w-full flex flex-col gap-2 items-stretch justify-start bg-white rounded-xl overflow-hidden shadow-sm px-2 py-1">
-      <div className="w-full flex flex-row justify-between items-center h-full">
-        <div className="flex items-center">
-          <p className="font-semibold">Tags</p>
-        </div>
+    <div className="w-full rounded-lg overflow-hidden px-1 py-1 bg-white flex flex-col justify-start items-stretch min-h-10 shadow-sm">
+      <div className="w-full text-start px-1 pb-1">
+        <p className="font-medium text-gray-500">Tags</p>
       </div>
-      <div className="w-full flex flex-row flex-nowrap overflow-scroll gap-1 flex-start mb-2 overscroll-contain scrollbar-hide">
-        <CreateNewTagButton createNewTag={createNewTag} />
+      <div className="w-full flex flex-row flex-wrap gap-1 flex-start px-1 items-center justify-start min-h-8">
         {tagList.map((tagProps) =>
           tagProps.isNew ? (
             <NewTag key={tagProps._id} {...tagProps} />
@@ -23,6 +20,7 @@ export function TagSelection({ tagList, createNewTag }) {
           )
         )}
       </div>
+      <CreateNewTagButton createNewTag={createNewTag} />
     </div>
   );
 }

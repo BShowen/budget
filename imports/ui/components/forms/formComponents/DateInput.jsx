@@ -2,14 +2,14 @@ import React from "react";
 
 export function DateInput({ value, onChange }) {
   return (
-    <div className="w-full flex flex-row items-center justify-end h-9 relative bg-white rounded-xl  overflow-hidden shadow-sm">
+    <div className="w-full flex flex-row items-center justify-end h-9 relative bg-white rounded-lg overflow-hidden shadow-sm">
       <label
-        className="bg-color-light-blue text-white rounded-xl w-4/12 flex flex-row justify-center items-center text-lg absolute left-0 h-full"
+        className="border-r bg-gray-200 rounded-sm w-fit px-5 flex flex-row justify-center items-center absolute right-0 h-full"
         htmlFor="date"
       >
-        <p className="font-semibold">Date</p>
+        <p>Date</p>
       </label>
-      <div className="w-9/12 bg-white flex flex-row justify-center items-center">
+      <div className="w-full bg-white flex flex-row justify-center items-center">
         <input
           type="date"
           name="createdAt"
@@ -17,7 +17,7 @@ export function DateInput({ value, onChange }) {
           onChange={onChange}
           required
           id="date"
-          className="px-0 focus:ring-0 border-0 form-input h-full text-lg placeholder:font-semibold font-semibold"
+          className="px-0 focus:ring-0 border-0 form-input h-full"
         />
       </div>
     </div>

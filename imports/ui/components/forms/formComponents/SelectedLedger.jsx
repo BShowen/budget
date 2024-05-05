@@ -39,12 +39,12 @@ export function SelectedLedger({
           <IoIosRemove
             role="button"
             tabIndex={0}
-            className="rounded-full w-6 h-6 text-white bg-rose-500 shrink-0"
+            className="rounded-full w-5 h-5 text-white bg-rose-500 shrink-0"
             onClick={() => {
               deselectLedger({ ledger });
             }}
           />
-          <p className="font-semibold text-lg shrink-0">{cap(ledger.name)}</p>
+          <p className="shrink-0">{cap(ledger.name)}</p>
           {isSplitTransaction && (
             <div className="h-full grow flex flex-row justify-end items-center">
               <input
@@ -66,7 +66,7 @@ export function SelectedLedger({
                   });
                 }}
                 min={0}
-                className="font-semibold form-input border-none focus:ring-0 h-full text-right w-full"
+                className="form-input border-none focus:ring-0 h-full text-right w-full"
               />
               <button
                 type="button"
@@ -74,7 +74,11 @@ export function SelectedLedger({
                   amount > 0 ? "text-green-600" : "text-color-primary"
                 }`}
               >
-                {amount > 0 ? <LuCheckCircle /> : <LuCircle />}
+                {amount > 0 ? (
+                  <LuCheckCircle className="w-5 h-5" />
+                ) : (
+                  <LuCircle className="w-5 h-5" />
+                )}
               </button>
             </div>
           )}
