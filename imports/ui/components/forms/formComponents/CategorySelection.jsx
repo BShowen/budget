@@ -19,45 +19,48 @@ export function CategorySelection({
   return (
     ledgerList.length > 0 && (
       <div className="w-full flex flex-col justify-start">
-        <div className="max-w-full h-7 sticky top-0 bg-blue-900 text-center px-2">
-          <p className="font-semibold text-white text-xl">{cap(section)}</p>
+        <div className="top-0 bg-slate-100 flex flex-row justify-start items-center px-2 py-1 sticky z-50 shadow-sm h-8">
+          <p className="font-semibold">{cap(section)}</p>
         </div>
-        <div className="w-full h-full pt-2 px-2">
-          {ledgerList.map((ledger) => {
-            switch (envelopeType) {
-              case "income":
-                return (
-                  <IncomeLedgerSelection
-                    ledger={ledger}
-                    key={ledger._id}
-                    selected={selectedLedgerIdList.includes(ledger._id)}
-                    selectLedger={selectLedger}
-                    deselectLedger={deselectLedger}
-                  />
-                );
-              case "expense":
-                return (
-                  <ExpenseLedgerSelection
-                    ledger={ledger}
-                    key={ledger._id}
-                    selected={selectedLedgerIdList.includes(ledger._id)}
-                    selectLedger={selectLedger}
-                    deselectLedger={deselectLedger}
-                  />
-                );
-              case "savings":
-                return (
-                  <SavingsLedgerSelection
-                    ledger={ledger}
-                    key={ledger._id}
-                    selected={selectedLedgerIdList.includes(ledger._id)}
-                    selectLedger={selectLedger}
-                    deselectLedger={deselectLedger}
-                  />
-                );
-            }
-          })}
-        </div>
+
+        {ledgerList.map((ledger, i) => {
+          const isBordered = i < ledgerList.length - 1;
+          switch (envelopeType) {
+            case "income":
+              return (
+                <IncomeLedgerSelection
+                  ledger={ledger}
+                  key={ledger._id}
+                  selected={selectedLedgerIdList.includes(ledger._id)}
+                  selectLedger={selectLedger}
+                  deselectLedger={deselectLedger}
+                  isBordered={isBordered}
+                />
+              );
+            case "expense":
+              return (
+                <ExpenseLedgerSelection
+                  ledger={ledger}
+                  key={ledger._id}
+                  selected={selectedLedgerIdList.includes(ledger._id)}
+                  selectLedger={selectLedger}
+                  deselectLedger={deselectLedger}
+                  isBordered={isBordered}
+                />
+              );
+            case "savings":
+              return (
+                <SavingsLedgerSelection
+                  ledger={ledger}
+                  key={ledger._id}
+                  selected={selectedLedgerIdList.includes(ledger._id)}
+                  selectLedger={selectLedger}
+                  deselectLedger={deselectLedger}
+                  isBordered={isBordered}
+                />
+              );
+          }
+        })}
       </div>
     )
   );
