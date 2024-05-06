@@ -5,7 +5,7 @@ import { toDollars } from "../../../util/toDollars";
 export function AmountInput({ value, onChange }) {
   const displayValue = toDollars(value);
   return (
-    <div className="w-full h-16">
+    <div className="w-full h-20">
       <input
         onFocus={(e) => e.target.setSelectionRange(0, 999)}
         type="text"
@@ -19,7 +19,7 @@ export function AmountInput({ value, onChange }) {
         onInput={onChange}
         min={0}
         autoFocus
-        className="w-full h-full focus:ring-0 border-0 form-input text-center p-0 m-0 text-4xl bg-transparent font-bold"
+        className="w-full h-full focus:ring-0 border-0 form-input text-center p-0 m-0 text-6xl bg-transparent font-bold"
       />
     </div>
   );

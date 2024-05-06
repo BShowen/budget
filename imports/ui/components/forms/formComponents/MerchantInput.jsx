@@ -2,9 +2,9 @@ import React from "react";
 
 export function MerchantInput({ transactionType, value, onChange }) {
   return (
-    <div className="w-full flex flex-row items-stretch justify-end h-9 relative bg-white rounded-lg overflow-hidden shadow-sm">
+    <div className="w-full flex flex-row items-stretch justify-end h-8 relative bg-white rounded-lg overflow-hidden shadow-sm">
       <label
-        className="bg-gray-200 border-r rounded-sm w-fit px-5 flex flex-row justify-center items-center absolute right-0 h-full"
+        className="bg-color-light-blue rounded-sm w-fit px-5 flex flex-row justify-center items-center absolute left-0 h-full text-white"
         htmlFor="merchant"
       >
         <p>{transactionType === "expense" ? "Merchant" : "Source"}</p>

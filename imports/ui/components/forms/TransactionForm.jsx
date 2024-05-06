@@ -161,10 +161,8 @@ export function TransactionForm() {
   return (
     <>
       <div className="page-header w-full lg:w-3/5 bg-header p-2 flex flex-col justify-start z-50">
-        <div className="w-full px-1 py-2 grid grid-cols-12 font-bold text-center items-center">
-          <h2 className="col-start-3 col-end-11 text-white text-xl">
-            New transaction
-          </h2>
+        <div className="w-full px-1 py-1 flex flex-row justify-center items-center">
+          <h2 className="text-white text-xl font-semibold">New transaction</h2>
         </div>
 
         <ButtonGroup
