@@ -7,7 +7,7 @@ import { CategoryCard } from "./categoryComponents/CategoryCard";
 import { useExpenseCategory } from "../../hooks/useExpenseCategory";
 
 export const ExpenseCategory = ({ _id, name, activeTab }) => {
-  const { ledgerList, displayBalance } = useExpenseCategory({
+  const { ledgerList, displayBalance, kind } = useExpenseCategory({
     envelopeId: _id,
     activeTab,
   });
@@ -16,9 +16,10 @@ export const ExpenseCategory = ({ _id, name, activeTab }) => {
     <CategoryCard
       name={name}
       activeTab={activeTab}
-      displayBalance={displayBalance}
+      displayBalance={{ value: displayBalance, text: activeTab }}
       ledgerList={ledgerList}
       envelopeId={_id}
+      kind={kind}
     />
   );
 };

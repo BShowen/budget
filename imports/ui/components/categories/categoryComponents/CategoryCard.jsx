@@ -11,17 +11,20 @@ export function CategoryCard({
   displayBalance,
   ledgerList,
   envelopeId,
+  kind,
 }) {
   return (
-    // Envelope container
     <div className="envelope">
       <CategoryCardHeader
         name={name}
-        activeTab={activeTab}
         displayBalance={displayBalance}
         envelopeId={envelopeId}
       />
-      <CategoryCardBody ledgers={ledgerList} activeTab={activeTab} />
+      <CategoryCardBody
+        ledgers={ledgerList}
+        activeTab={activeTab}
+        kind={kind}
+      />
       <CategoryCardFooter envelopeId={envelopeId} />
     </div>
   );

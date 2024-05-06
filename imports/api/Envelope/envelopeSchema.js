@@ -18,8 +18,7 @@ export const envelopeSchema = new SimpleSchema(
       // income envelope - to track income throughout the month.
       // expense envelopes - to track expenses throughout the month.
       // savings envelope - to track money saved throughout the month.
-      // allocation - to track allocated money throughout the month.
-      allowedValues: ["income", "savings", "allocation", "expense"],
+      allowedValues: ["income", "savings", "expense"],
       // If this value is not provided, then default to expense envelope.
       defaultValue: "expense",
     },

@@ -7,17 +7,26 @@ import { CategoryCard } from "./categoryComponents/CategoryCard";
 import { useIncomeCategory } from "../../hooks/useIncomeCategory";
 
 export const IncomeCategory = ({ _id, name, activeTab }) => {
-  const { displayBalance, ledgerList } = useIncomeCategory({
+  const { displayBalance, ledgerList, kind } = useIncomeCategory({
     envelopeId: _id,
     activeTab,
   });
+
+  const activeTabText =
+    activeTab == "planned"
+      ? "planned"
+      : activeTab == "spent"
+      ? "income received"
+      : "left to receive";
+
   return (
     <CategoryCard
       name={name}
       activeTab={activeTab}
-      displayBalance={displayBalance}
+      displayBalance={{ value: displayBalance, text: activeTabText }}
       ledgerList={ledgerList}
       envelopeId={_id}
+      kind={kind}
     />
   );
 };

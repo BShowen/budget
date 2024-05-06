@@ -6,12 +6,7 @@ import { EnvelopeFormUpdate } from "../../forms/EnvelopeFormUpdate";
 import { cap } from "../../../util/cap";
 import { toDollars } from "../../../util/toDollars";
 
-export function CategoryCardHeader({
-  name,
-  activeTab,
-  displayBalance,
-  envelopeId,
-}) {
+export function CategoryCardHeader({ name, displayBalance, envelopeId }) {
   const canEdit = name !== "income" && name !== "savings";
 
   const [isEditing, setEditing] = useState(false);
@@ -22,19 +17,6 @@ export function CategoryCardHeader({
     if (!canEdit) return;
     toggleEditing();
   };
-
-  let categoryName = "";
-  switch (activeTab) {
-    case "planned":
-      categoryName = "planned";
-      break;
-    case "spent":
-      categoryName = "income received";
-      break;
-    case "remaining":
-      categoryName = "left to receive";
-      break;
-  }
   return (
     <div className="envelope-header">
       {isEditing ? (
@@ -57,9 +39,9 @@ export function CategoryCardHeader({
           </div>
           <div className="flex flex-row justify-center items-center gap-1">
             <h2 className="text-sm font-medium relative z-50 text-color-dark-blue">
-              {cap(categoryName)}
+              {cap(displayBalance.text)}
             </h2>
-            <h2 className="text-sm">{toDollars(displayBalance)}</h2>
+            <h2 className="text-sm">{toDollars(displayBalance.value)}</h2>
           </div>
         </>
       )}
