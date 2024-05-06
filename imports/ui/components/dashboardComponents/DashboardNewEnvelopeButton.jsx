@@ -9,7 +9,7 @@ export const NewEnvelopeButton = ({ budgetId }) => {
   return (
     <button>
       <h2
-        className="text-xl font-bold text-green-500 lg:hover:cursor-pointer lg:hover:text-green-600 lg:hover:underline transition-text duration-150"
+        className="w-full h-8 transition-all px-3 border-none bg-green-600/80 rounded-md lg:hover:cursor-pointer text-white active:bg-green-700 font-semibold flex flex-row justify-center items-center"
         onClick={handleClick}
       >
         New category
