@@ -58,21 +58,22 @@ export function MonthSelector({ currentDate }) {
 
   return (
     <div
-      className="flex flex-row justify-start items-center px-2 gap-2 lg:hover:cursor-pointer"
+      className="flex flex-row justify-start items-center px-2 gap-2 lg:hover:cursor-pointer h-full"
       onClick={toggleDropdown}
     >
-      <h1 className="text-3xl font-bold w-max">
-        {currentMonth} <span className="font-thin">{year}</span>
-      </h1>
-      <div>
+      <div className="flex flex-row justify-center items-center gap-3 h-full">
+        <h1 className="text-2xl font-semibold">
+          {currentMonth} <span className="font-thin">{year}</span>
+        </h1>
         <IoIosArrowDropdown
-          className={`text-2xl transition-all duration-300 ease-in-out ${
+          className={`transition-all duration-700 ease-in-out w-5 h-5 ${
             isDropdownOpen ? "rotate-180" : ""
           }`}
         />
-
+      </div>
+      <div>
         <div
-          className={`z-50 text-color-primary flex flex-row items-center absolute left-0 right-0 bg-white mt-2 rounded-b-lg shadow-inner ${
+          className={`z-50 text-color-primary flex flex-row items-center absolute left-0 right-0 bg-white mt-4 shadow-inner ${
             isDropdownOpen
               ? "month-selector-slide-in"
               : canAnimate
@@ -108,7 +109,7 @@ function MonthSelectorButton({
 }) {
   const active = activeBudgetDate.getTime() == budgetDate.getTime();
   const activeStyling = isFutureDate
-    ? "bg-app border-2 border-color-light-blue border-dashed text-primary"
+    ? "bg-app border border-color-light-blue border-dashed text-primary"
     : active
     ? "bg-color-light-blue text-white"
     : "bg-app text-color-primary";
@@ -122,9 +123,7 @@ function MonthSelectorButton({
         type="button"
         onClick={() => clickHandler({ date: budgetDate })}
       >
-        <p className="font-semibold">
-          {dates.format(budgetDate, { forPageHeader: true })}
-        </p>
+        <p>{dates.format(budgetDate, { forPageHeader: true })}</p>
       </button>
     </li>
   );

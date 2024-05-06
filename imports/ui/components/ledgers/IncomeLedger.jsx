@@ -38,12 +38,10 @@ export const IncomeLedger = ({ ledger, activeTab }) => {
           to={`/ledger/${ledger._id}/transactions`}
           className="w-full h-full p-0 m-0 flex flex-row justify-between items-center z-10"
         >
-          <h2 className="font-semibold z-20">{cap(name)}</h2>
+          <h2 className="z-20">{cap(name)}</h2>
           <h2
             onClick={activateForm}
-            className={`font-bold z-20 ${
-              displayBalance < 0 ? "text-rose-500" : ""
-            }`}
+            className={`z-20 ${displayBalance < 0 ? "text-rose-500" : ""}`}
           >
             {toDollars(displayBalance)}
           </h2>

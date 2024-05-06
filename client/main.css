@@ -96,16 +96,16 @@
     @apply w-full h-10 bg-color-light-blue font-semibold text-white rounded-lg shadow-sm active:text-gray-400 active:bg-color-dark-blue lg:hover:cursor-pointer flex flex-row justify-center items-center;
   }
   .envelope {
-    @apply rounded-xl flex flex-col items-stretch gap-2 relative z-0 overflow-hidden bg-white shadow-sm;
+    @apply rounded-xl flex flex-col items-stretch relative z-0 overflow-hidden bg-white shadow-sm;
   }
   .envelope-header {
-    @apply flex flex-col justify-start items-start p-1 px-2 overflow-hidden relative z-0 w-full font-extrabold text-xl h-14;
+    @apply flex flex-col justify-start items-start py-1 px-2 overflow-hidden relative z-0 w-full text-xl h-14;
   }
   .envelope-body {
     @apply flex flex-col gap-2 z-20 px-1;
   }
   .envelope-footer {
-    @apply flex flex-row items-center px-1 pb-2 h-8;
+    @apply flex flex-col gap-2 px-1 pt-2 pb-1;
   }
   .list-transaction-details-container {
     @apply flex flex-row justify-start;

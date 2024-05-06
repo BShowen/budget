@@ -85,7 +85,7 @@ export function UpdateLedgerForm({ toggleForm, ledger }) {
         <input
           type="text"
           inputMode="decimal"
-          className="form-input focus:ring-0 border-0 w-4/12 h-full p-0 m-0 bg-inherit text-right"
+          className="form-input focus:ring-0 border-0 w-4/12 h-full p-0 m-0 bg-inherit text-right font-semibold"
           name="allocatedAmount"
           autoFocus={true}
           placeholder="$0.00"

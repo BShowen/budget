@@ -77,12 +77,12 @@ export function NewLedgerForm({
 
   return (
     children || (
-      <div className="w-full h-8 relative z-0 px-2 py-1 bg-slate-100 rounded-lg lg:hover:cursor-pointer flex flex-row justify-between items-center">
+      <div className="w-full h-8 relative z-0 px-1 py-1 bg-slate-100 rounded-lg lg:hover:cursor-pointer flex flex-row justify-between items-center">
         <form className="w-full flex flex-row justify-between h-full">
           <input
             className="form-input focus:ring-0 border-0 w-8/12 h-full p-0 m-0 bg-inherit font-semibold"
             name="name"
-            placeholder={placeholderText || "Ledger name"}
+            placeholder={placeholderText || "Category name"}
             autoFocus={true}
             value={state.name}
             onInput={handleInput}
@@ -96,7 +96,7 @@ export function NewLedgerForm({
             onBlur={() => setTimeoutId(setTimeout(handleSubmit, 10))}
           />
           <input
-            className="form-input focus:ring-0 border-0 w-4/12 h-full p-0 m-0 bg-inherit text-right"
+            className="form-input focus:ring-0 border-0 w-4/12 h-full p-0 m-0 bg-inherit text-right font-semibold"
             name="allocatedAmount"
             placeholder="$0.00"
             pattern="[0-9]*"
