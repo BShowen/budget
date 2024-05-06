@@ -3,7 +3,10 @@ import { Meteor } from "meteor/meteor";
 
 export const NewEnvelopeButton = ({ budgetId }) => {
   const handleClick = () => {
-    Meteor.call("envelope.createEnvelope", { budgetId });
+    Meteor.call("envelope.createEnvelope", { budgetId }, () => {
+      console.log("scrolling");
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    });
   };
 
   return (
