@@ -7,7 +7,11 @@ import { FaRegTrashAlt } from "react-icons/fa";
 // Utils
 import { cap } from "../../util/cap";
 
-export const EditEnvelopeForm = ({ envelopeId, envelopeName, toggleForm }) => {
+export const EnvelopeFormUpdate = ({
+  envelopeId,
+  envelopeName,
+  toggleForm,
+}) => {
   const [submitFormTimeoutId, setFormTimeoutId] = useState(null);
   const [trashCanBlurTimeoutId, setTrashCanTimeoutId] = useState(null);
   const [focused, setFocused] = useState(null);

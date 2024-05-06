@@ -19,6 +19,7 @@ export function CategoryCard({
         name={name}
         activeTab={activeTab}
         displayBalance={displayBalance}
+        envelopeId={envelopeId}
       />
       <CategoryCardBody ledgers={ledgerList} activeTab={activeTab} />
       <CategoryCardFooter envelopeId={envelopeId} />
