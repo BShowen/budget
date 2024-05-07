@@ -76,7 +76,7 @@ export function useSavingsLedger({ ledgerId, activeTab }) {
     ? activeTab === "planned"
       ? ledger.allocatedAmount
       : activeTab === "spent"
-      ? moneyIn
+      ? moneyOut
       : leftToSave
     : 0;
 
@@ -84,7 +84,7 @@ export function useSavingsLedger({ ledgerId, activeTab }) {
     ? activeTab === "planned"
       ? 0
       : activeTab === "spent"
-      ? percentSaved
+      ? 0
       : percentRemainingToSave //activeTab === "remaining"
     : 0;
 
