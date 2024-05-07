@@ -6,21 +6,21 @@ import { NewLedgerForm } from "../../forms/LedgerFormCreate";
 // Icons
 import { LuPlusCircle } from "react-icons/lu";
 
-export function CategoryCardFooter({ envelopeId }) {
+export function CategoryCardForm({ envelopeId }) {
   const [isFormActive, setFormActive] = useState(false);
   const toggleForm = () => {
     setFormActive((prev) => !prev);
   };
 
   return (
-    <div className="envelope-footer">
+    <div>
       <NewLedgerForm
         toggleForm={toggleForm}
         envelopeId={envelopeId}
         placeholderText={"Category name"}
       >
         {!isFormActive && (
-          <div className="w-full h-8 flex flex-row justify-start items-center">
+          <div className="w-full h-7 flex flex-row justify-start items-center">
             <button
               className="flex flex-row justify-start items-center gap-1"
               onClick={() => {

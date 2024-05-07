@@ -18,7 +18,7 @@ export function CategoryCardHeader({ name, displayBalance, envelopeId }) {
     toggleEditing();
   };
   return (
-    <div className="envelope-header">
+    <div className="category-card-header">
       {isEditing ? (
         <EnvelopeFormUpdate
           envelopeId={envelopeId}

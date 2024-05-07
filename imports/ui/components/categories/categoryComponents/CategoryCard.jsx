@@ -3,7 +3,6 @@ import React from "react";
 // Components
 import { CategoryCardHeader } from "./CategoryCardHeader";
 import { CategoryCardBody } from "./CategoryCardBody";
-import { CategoryCardFooter } from "./CategoryCardFooter";
 
 export function CategoryCard({
   name,
@@ -14,7 +13,7 @@ export function CategoryCard({
   kind,
 }) {
   return (
-    <div className="envelope">
+    <div className="category-card">
       <CategoryCardHeader
         name={name}
         displayBalance={displayBalance}
@@ -24,8 +23,8 @@ export function CategoryCard({
         ledgers={ledgerList}
         activeTab={activeTab}
         kind={kind}
+        envelopeId={envelopeId}
       />
-      <CategoryCardFooter envelopeId={envelopeId} />
     </div>
   );
 }
