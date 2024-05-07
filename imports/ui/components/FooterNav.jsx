@@ -88,13 +88,13 @@ function FooterLink({ children, to, text, notifications }) {
         to={to}
         className={({ isActive }) =>
           `${
-            isActive ? "text-color-light-blue text-sm" : "text-xs "
-          } flex flex-col items-center px-3`
+            isActive && "text-color-light-blue"
+          } flex flex-col items-center px-3 text-xs`
         }
       >
-        <div className="w-6 h-6 relative">
+        <div className="w-5 h-5 relative">
           {notifications > 0 && (
-            <div className="absolute -top-2 -right-2 w-4 h-4 flex flex-row justify-center items-center rounded-full bg-pink-600 text-xs font-extrabold text-white">
+            <div className="absolute -top-3 -right-3 w-5 h-5 flex flex-row justify-center items-center rounded-full bg-pink-600 text-xs font-semibold text-white">
               <p>{notifications}</p>
             </div>
           )}
