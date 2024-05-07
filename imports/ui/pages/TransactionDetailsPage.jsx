@@ -131,7 +131,7 @@ function EditTransactionButton({ transactionId }) {
     <div className="w-full flex flex-row justify-center items-center">
       <Link
         to={`/transaction/${transactionId}/edit`}
-        className="text-xl text-green-700 lg:hover:cursor-pointer transition-all  px-3 border-2 border-green-700 rounded-md active:text-white active:bg-green-700"
+        className="text-xl text-green-700 lg:hover:cursor-pointer transition-all px-3 border border-green-700 rounded-md active:text-white active:bg-green-700"
       >
         Edit Transaction
       </Link>
@@ -171,7 +171,7 @@ function DeleteTransactionButton({ transactionId }) {
   return (
     <div className="w-full flex flex-row justify-center items-center">
       <button
-        className="text-xl text-red-600 lg:hover:cursor-pointer transition-all  px-3 border-2 border-red-600 rounded-md active:text-white active:bg-red-600"
+        className="text-xl text-red-600 lg:hover:cursor-pointer transition-all px-3 border border-red-600 rounded-md active:text-white active:bg-red-600"
         onClick={() => {
           if (isSplitTransaction) {
             const transactionCount = allocations.length;
