@@ -162,7 +162,9 @@ export function TransactionForm() {
     <>
       <div className="page-header w-full lg:w-3/5 bg-header p-2 flex flex-col justify-start z-50">
         <div className="w-full px-1 py-1 flex flex-row justify-center items-center">
-          <h2 className="text-white text-xl font-semibold">New transaction</h2>
+          <h2 className="text-white text-xl font-semibold">
+            {transaction ? "Edit transaction" : "Add transaction"}
+          </h2>
         </div>
 
         <ButtonGroup
