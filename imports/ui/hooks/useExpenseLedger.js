@@ -15,7 +15,7 @@ export function useExpenseLedger({ ledgerId, activeTab }) {
         {
           allocations: { $elemMatch: { ledgerId } },
         },
-        { sort: { createdAt: 1 } }
+        { sort: { createdAt: -1 } }
       )
         .fetch()
         // Map over the list of transactions and set the total of the transaction.
