@@ -11,9 +11,12 @@ export function useExpenseLedger({ ledgerId, activeTab }) {
   // This is the list of transactions associated with this ledger.
   const transactionList = useTracker(() => {
     return (
-      TransactionCollection.find({
-        allocations: { $elemMatch: { ledgerId } },
-      })
+      TransactionCollection.find(
+        {
+          allocations: { $elemMatch: { ledgerId } },
+        },
+        { sort: { createdAt: 1 } }
+      )
         .fetch()
         // Map over the list of transactions and set the total of the transaction.
         // Transactions are stored in the database with the "total" set to the
