@@ -43,7 +43,7 @@ export const ExpenseLedger = ({ ledger, activeTab }) => {
           to={`/ledger/${ledgerId}/transactions`}
           className="w-full h-full p-0 m-0 flex flex-row justify-between items-center z-10"
         >
-          <h2 className="z-20">{cap(name)}</h2>
+          <h2 className="z-20 font-medium">{cap(name)}</h2>
           <h2
             onClick={activateForm}
             className={`z-20 ${

@@ -30,7 +30,7 @@ export function CategoryCardHeader({ name, displayBalance, envelopeId }) {
           <div className="relative">
             <h1
               onClick={handleClick}
-              className={`z-50 text-lg font-medium ${
+              className={`z-50 text-lg font-bold ${
                 canEdit && "lg:hover:cursor-pointer"
               }`}
             >
