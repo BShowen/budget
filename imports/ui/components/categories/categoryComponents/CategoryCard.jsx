@@ -13,7 +13,7 @@ export function CategoryCard({
   kind,
 }) {
   return (
-    <div className="category-card">
+    <div className="rounded-xl flex flex-col items-stretch relative z-0 overflow-hidden bg-white shadow-sm py-1 px-2">
       <CategoryCardHeader
         name={name}
         displayBalance={displayBalance}

@@ -95,15 +95,6 @@
   .btn-primary {
     @apply w-full h-10 bg-color-light-blue font-semibold text-white rounded-lg shadow-sm active:text-gray-400 active:bg-color-dark-blue lg:hover:cursor-pointer flex flex-row justify-center items-center;
   }
-  .category-card {
-    @apply rounded-xl flex flex-col items-stretch relative z-0 overflow-hidden bg-white shadow-sm py-1 px-2;
-  }
-  .category-card-header {
-    @apply flex flex-col justify-start items-start overflow-hidden relative z-0 w-full h-14;
-  }
-  .category-card-body {
-    @apply flex flex-col gap-[5px] z-20;
-  }
   .list-transaction-details-container {
     @apply flex flex-row justify-start;
   }

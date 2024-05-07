@@ -18,7 +18,7 @@ export function CategoryCardHeader({ name, displayBalance, envelopeId }) {
     toggleEditing();
   };
   return (
-    <div className="category-card-header">
+    <div className="flex flex-col justify-start items-start overflow-hidden relative z-0 w-full h-14">
       {isEditing ? (
         <EnvelopeFormUpdate
           envelopeId={envelopeId}
