@@ -48,25 +48,25 @@ export const FooterNav = () => {
 
   return (
     footerNavVisible && (
-      <div className="fixed bottom-0 w-full h-20 lg:w-3/5 mx-auto bg-white">
-        <div className="w-full flex flex-row flex-nowrap justify-evenly items-end h-full gooey bg-inherit">
+      <div className="fixed bottom-0 w-full h-20 lg:w-3/5 mx-auto bg-white dark:bg-dark-mode-bg-1">
+        <div className="w-full flex flex-row flex-nowrap justify-evenly items-end h-full gooey bg-white dark:bg-inherit">
           <FooterLink to="/" text="Budget">
-            <LuCircleDollarSign className="text-inherit w-full h-full" />
+            <LuCircleDollarSign className="w-full h-full" />
           </FooterLink>
           <FooterLink
             to="/transactions"
             text="Transactions"
             notifications={uncategorizedTransactions}
           >
-            <LuListMinus className="text-inherit w-full h-full" />
+            <LuListMinus className="w-full h-full" />
           </FooterLink>
           <div className="w-[70px] bg-inherit rounded-full h-full relative -top-4" />
 
           <FooterLink to="/insights" text="Insights">
-            <LuLineChart className="text-inherit w-full h-full" />
+            <LuLineChart className="w-full h-full" />
           </FooterLink>
           <FooterLink to="/account" text="Account">
-            <LuUserCircle2 className="text-inherit w-full h-full" />
+            <LuUserCircle2 className="w-full h-full" />
           </FooterLink>
         </div>
         <Link
@@ -100,7 +100,7 @@ function FooterLink({ children, to, text, notifications }) {
           )}
           {children}
         </div>
-        <p className="font-semibold text-inherit">{text}</p>
+        <p className="font-semibold">{text}</p>
       </NavLink>
     </div>
   );

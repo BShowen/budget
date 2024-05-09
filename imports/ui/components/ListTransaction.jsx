@@ -22,8 +22,8 @@ export function ListTransaction({ transactionId, isBordered }) {
   return (
     <div
       onClick={() => navigate(`/transaction/${transactionId}/details`)}
-      className={`w-full flex flex-row justify-between items-stretch min-h-12 ps-2 pe-3 lg:hover:cursor-pointer bg-white py-2 ${
-        isBordered && "border-b"
+      className={`w-full flex flex-row justify-between items-stretch min-h-12 ps-2 pe-3 lg:hover:cursor-pointer bg-white dark:bg-dark-mode-bg-1 py-2 dark:text-dark-mode-text-1 ${
+        isBordered && "border-b dark:border-dark-mode-bg-2"
       }`}
     >
       <div className="flex flex-row flex-nowrap justify-start items-center gap-1">
@@ -46,7 +46,7 @@ export function ListTransaction({ transactionId, isBordered }) {
       >
         <span>{type === "income" && <HiPlus className="text-xs" />}</span>
         <p>{toDollars(amount)}</p>
-        <LuChevronRight className="text-xl text-color-primary" />
+        <LuChevronRight className="text-xl text-color-primary dark:text-dark-mode-text-2" />
       </div>
     </div>
   );

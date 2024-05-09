@@ -11,7 +11,7 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/icon.png",
+      "src": "/light-mode-icon.png",
       "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "any"

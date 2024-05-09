@@ -160,7 +160,7 @@ export function TransactionForm() {
 
   return (
     <>
-      <div className="page-header w-full lg:w-3/5 bg-header p-2 flex flex-col justify-start z-50">
+      <div className="page-header w-full lg:w-3/5 bg-primary-blue p-2 flex flex-col justify-start z-50">
         <div className="w-full px-1 py-1 flex flex-row justify-center items-center">
           <h2 className="text-white text-xl font-semibold">
             {transaction ? "Edit transaction" : "Add transaction"}
@@ -175,8 +175,8 @@ export function TransactionForm() {
       <div className="h-full w-full pt-24 p-2 mb-24">
         <form className="flex flex-col justify-start gap-2">
           <AmountInput {...amountInputProps} />
-          <MerchantInput {...{ ...merchantInputProps, transactionType }} />
           <DateInput {...dateInputProps} />
+          <MerchantInput {...{ ...merchantInputProps, transactionType }} />
           <CategorySelectionInput
             {...ledgerSelectionInputProps}
             isDialogOpen={isDialogOpen}

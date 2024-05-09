@@ -13,7 +13,8 @@ import {
   buildStyles,
 } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { LedgerTransaction } from "../components/ledgers/ledgerComponents/LedgerTransaction";
+// import { LedgerTransaction } from "../components/ledgers/ledgerComponents/LedgerTransaction";
+import { ListTransaction } from "../components/ListTransaction";
 
 // Utils
 import { cap } from "../util/cap";
@@ -59,8 +60,8 @@ function PageHeader({ ledgerId }) {
 function ProgressHeader({ children, percent, pathColor, logo }) {
   const navigate = useNavigate();
   return (
-    <div className="page-header w-full lg:w-3/5 h-48 bg-header flex flex-col justify-start z-50">
-      <div className="relative z-0 flex flex-row items-center text-white p-1 h-11">
+    <div className="page-header w-full lg:w-3/5 h-48 dark:bg-dark-mode-bg-0 flex flex-col justify-start z-50">
+      <div className="relative z-0 flex flex-row items-center text-white p-1 h-11 bg-primary-blue">
         {/* Back button */}
         <div className="w-full flex flex-row justify-start items-center">
           <Link
@@ -131,24 +132,26 @@ function ExpenseHeader({ ledgerId }) {
     <ProgressHeader percent={percentSpent} pathColor={pathColor} logo={logo}>
       <div className="max-w-full flex flex-col justify-start items-stretch px-2 bg-app py-2 h-full">
         <div className="w-full flex flex-row justify-start items-center flex-nowrap">
-          <h2 className="text-3xl font-bold">{cap(name)}</h2>
+          <h2 className="text-2xl font-bold">{cap(name)}</h2>
         </div>
         <div className="w-full flex flex-row flex-start justify-between items-center">
-          <p className="font-semibold text-gray-500">
+          <p className="font-semibold text-gray-500 dark:text-dark-mode-text-1 text-sm">
             Spent {toDollars(moneySpent)} out of {toDollars(allocatedAmount)}
           </p>
         </div>
         <div className="w-full flex flex-col flex-nowrap justify-start items-end">
           {moneySpent <= allocatedAmount ? (
             <>
-              <p className="font-bold">Left to spend</p>
-              <p className="text-4xl p-0">{toDollars(leftToSpend)}</p>
+              <p className="font-bold text-sm">Left to spend</p>
+              <p className="text-2xl p-0 dark:text-dark-mode-text-1">
+                {toDollars(leftToSpend)}
+              </p>
             </>
           ) : (
             <>
               <p className="font-bold">Overspent by</p>
-              <p className="text-4xl text-rose-500/90 p-0">
-                {toDollars(leftToSpend)}
+              <p className="text-2xl text-rose-500/90 p-0">
+                {toDollars(Math.abs(leftToSpend))}
               </p>
             </>
           )}
@@ -198,17 +201,19 @@ function IncomeHeader({ ledgerId }) {
     <ProgressHeader percent={percentReceived} pathColor={pathColor} logo={logo}>
       <div className="max-w-full flex flex-col justify-start items-stretch px-2 bg-app py-2 h-full">
         <div className="w-full flex flex-row justify-start items-center flex-nowrap">
-          <h2 className="text-3xl font-bold">{cap(name)}</h2>
+          <h2 className="text-2xl font-bold">{cap(name)}</h2>
         </div>
         <div className="w-full flex flex-row flex-start justify-between items-center">
-          <p className="font-semibold text-gray-500">
+          <p className="font-semibold text-gray-500 dark:text-dark-mode-text-1 text-sm">
             Received {toDollars(incomeReceived)} out of{" "}
             {toDollars(allocatedAmount)}
           </p>
         </div>
         <div className="w-full flex flex-col flex-nowrap justify-start items-end">
-          <p className="font-bold">Left to receive</p>
-          <p className="text-4xl p-0">{toDollars(leftToReceive)}</p>
+          <p className="font-bold text-sm">Left to receive</p>
+          <p className="text-2xl p-0 dark:text-dark-mode-text-1">
+            {toDollars(leftToReceive)}
+          </p>
         </div>
       </div>
     </ProgressHeader>
@@ -243,16 +248,18 @@ function SavingsHeader({ ledgerId }) {
     <ProgressHeader percent={savedPercent} pathColor={"#34d399"} logo={logo}>
       <div className="max-w-full flex flex-col justify-start items-stretch px-2 bg-app py-2 h-full">
         <div className="w-full flex flex-row justify-start items-center flex-nowrap">
-          <h2 className="text-3xl font-bold">{cap(name)}</h2>
+          <h2 className="text-2xl font-bold">{cap(name)}</h2>
         </div>
         <div className="w-full flex flex-row flex-start justify-between items-center">
-          <p className="font-semibold text-gray-500">
+          <p className="font-semibold text-gray-500 dark:text-dark-mode-text-1 text-sm">
             Saved {toDollars(moneyReceived)} out of {toDollars(allocatedAmount)}
           </p>
         </div>
         <div className="w-full flex flex-col flex-nowrap justify-start items-end">
-          <p className="font-bold">Available</p>
-          <p className="text-4xl p-0">{toDollars(savingsBalance)}</p>
+          <p className="font-bold text-sm">Available</p>
+          <p className="text-2xl p-0 dark:text-dark-mode-text-1">
+            {toDollars(savingsBalance)}
+          </p>
         </div>
       </div>
     </ProgressHeader>
@@ -271,8 +278,10 @@ function TagSelector({ tagIdList, toggleTag, activeFilterTags }) {
   const tagList = tags.map((tag) => (
     <button
       key={tag._id}
-      className={`transition-all duration-250 no-tap-button text-md font-semibold border-2 border-blue-600 px-2 rounded-lg min-w-max ${
-        activeFilterTags.includes(tag._id) ? "bg-blue-600 text-white" : ""
+      className={`transition-all duration-250 no-tap-button text-sm font-medium border border-color-dark-blue px-2 rounded-md min-w-fit ${
+        activeFilterTags.includes(tag._id)
+          ? "bg-blue-700 text-white dark:text-dark-mode-text-0"
+          : "text-dark-mode-text-1"
       }`}
       onClick={() => toggleTag(tag._id)}
     >
@@ -281,11 +290,11 @@ function TagSelector({ tagIdList, toggleTag, activeFilterTags }) {
   ));
 
   return tagList.length > 0 ? (
-    <div className="bg-white shadow-sm rounded-xl p-1 flex flex-col gap-[2px] justify-start items-stretch relative">
+    <div className="bg-white dark:bg-dark-mode-bg-1 shadow-sm rounded-xl p-1 flex flex-col gap-[2px] justify-start items-stretch relative">
       <div className="absolute top-0 bottom-0 left-0 rounded-s-xl flex flex-row justify-center items-center w-12 px-1 bg-color-light-blue">
-        <p className="font-bold text-white text-md">Tags</p>
+        <p className="text-white text-md">Tags</p>
       </div>
-      <div className="w-full flex flex-row flex-wrap gap-2 items-center justify-start overflow-scroll scrollbar-hide ps-12 min-h-9 max-h-36">
+      <div className="w-full flex flex-row flex-wrap gap-2 items-center justify-start overflow-hidden ps-12 min-h-9 max-h-36">
         {tagList}
       </div>
     </div>
@@ -309,10 +318,10 @@ function LedgerNotes({ ledgerId }) {
   }, [updatedNotes]);
 
   return (
-    <div className="bg-white shadow-sm py-1 px-3 rounded-xl flex flex-col justify-center items-stretch">
+    <div className="bg-white dark:bg-dark-mode-bg-1 shadow-sm py-1 px-3 rounded-xl flex flex-col justify-center items-stretch">
       <textarea
         ref={textareaRef}
-        className="font-medium w-full form-textarea focus:ring-0 border-0 placeholder:text-color-light-gray text-color-primary resize-none h-full p-0"
+        className="font-medium w-full form-textarea focus:ring-0 border-0 placeholder:text-color-light-gray dark:text-dark-mode-text-1 resize-none h-full p-0 dark:bg-dark-mode-bg-1"
         rows={textareaRows <= 1 ? 2 : textareaRows}
         placeholder="Tap to add a note"
         value={updatedNotes}
@@ -422,7 +431,7 @@ function ListTransactions({ ledgerId }) {
         toggleTag={toggleTag}
         activeFilterTags={activeTags}
       />
-      <div className="bg-white shadow-sm py-0 pb-2 rounded-xl px-3">
+      <div className="bg-white dark:bg-dark-mode-bg-1 shadow-sm py-0 pb-2 rounded-xl px-3">
         <div className="w-full flex flex-row justify-between items-center py-2 px-1 h-12">
           <div>
             <h2 className="font-bold text-color-light-gray text-md">
@@ -444,21 +453,24 @@ function ListTransactions({ ledgerId }) {
             )}
           </div>
         </div>
-        {filteredTransactions.map((transaction, i) => {
-          const border = i === 0 ? "" : "border-t";
-          const [month, day] = dates
-            .format(transaction.createdAt, {
-              forTransaction: true,
-            })
-            .split(" ");
-          return (
-            <LedgerTransaction
-              key={transaction._id}
-              transaction={transaction}
-              options={{ border, month, day }}
-            />
-          );
-        })}
+        {filteredTransactions.length > 0 ? (
+          filteredTransactions.map((transaction, i) => {
+            return (
+              <ListTransaction
+                key={transaction._id}
+                transactionId={transaction._id}
+                isBordered={
+                  filteredTransactions.length > 1 &&
+                  i != filteredTransactions.length - 1
+                }
+              />
+            );
+          })
+        ) : (
+          <div className="flex flex-row justify-center items-center">
+            <h2 className="dark:text-dark-mode-text-1">No transactions</h2>
+          </div>
+        )}
       </div>
     </>
   );
@@ -476,9 +488,9 @@ function DeleteLedger({ ledgerId }) {
     }
   };
   return (
-    <div className="w-full flex flex-row justify-center items-center h-20">
+    <div className="w-full flex flex-row justify-center items-center mb-16">
       <button
-        className="text-xl font-bold text-rose-500 lg:hover:cursor-pointer lg:hover:text-rose-600 lg:hover:underline transition-text duration-150"
+        className="text-xl text-red-600 lg:hover:cursor-pointer transition-all px-3 border border-red-600 rounded-md active:text-white active:bg-red-600"
         onClick={deleteLedger}
       >
         Delete ledger

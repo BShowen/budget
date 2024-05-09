@@ -9,7 +9,7 @@ export function DateInput({ value, onChange }) {
       >
         <p>Date</p>
       </label>
-      <div className="w-full bg-white flex flex-row justify-center items-center">
+      <div className="w-full flex flex-row justify-center items-center dark:bg-dark-mode-bg-1">
         <input
           type="date"
           name="createdAt"
@@ -17,7 +17,7 @@ export function DateInput({ value, onChange }) {
           onChange={onChange}
           required
           id="date"
-          className="px-0 focus:ring-0 border-0 form-input h-full"
+          className="px-0 focus:ring-0 border-0 form-input h-full dark:bg-dark-mode-bg-1"
         />
       </div>
     </div>

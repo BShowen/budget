@@ -63,7 +63,7 @@ export function InvitationPage() {
           <p className="font-medium font-gray-700">
             Share this link with someone to grant them access to your budget.
           </p>
-          <div className="border rounded-md bg-white h-10 w-full overflow-x-scroll select-text grid grid-cols-12 overflow-clip">
+          <div className="border dark:border-none rounded-md bg-white dark:bg-dark-mode-bg-1 h-10 w-full overflow-x-scroll select-text grid grid-cols-12 overflow-clip">
             <div
               className={`col-start-1 overflow-x-scroll flex flex-row justify-start items-center px-1 ${
                 navigator.clipboard ? "col-span-10" : "col-span-12"
@@ -86,7 +86,7 @@ export function InvitationPage() {
               </p>
             </div>
             {navigator.clipboard && (
-              <div className="col-start-11 col-span-2 bg-white flex flex-row justify-center items-center border-s">
+              <div className="col-start-11 col-span-2 bg-white dark:bg-dark-mode-bg-1 flex flex-row justify-center items-center border-s">
                 <button
                   className="font-semibold"
                   onClick={() => {

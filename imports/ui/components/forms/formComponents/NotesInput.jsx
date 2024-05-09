@@ -14,7 +14,7 @@ export function NotesInput({ value, onChange }) {
         onBlur={handleBlur}
         onInput={onChange}
         name="note"
-        className="text-left w-full focus:ring-0 border-0 form-input h-full placeholder:font-medium flex flex-row justify-start items-center px-2 py-1"
+        className="text-left w-full focus:ring-0 border-0 form-input h-full placeholder:font-medium flex flex-row justify-start items-center px-2 py-1 dark:bg-dark-mode-bg-1"
       />
     </div>
   );

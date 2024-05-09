@@ -77,10 +77,10 @@ export function NewLedgerForm({
 
   return (
     children || (
-      <div className="w-full h-7 relative z-0 px-1 py-1 bg-slate-100 rounded-lg lg:hover:cursor-pointer flex flex-row justify-between items-center">
+      <div className="w-full h-7 relative z-0 px-1 py-1 bg-slate-100 dark:bg-dark-mode-bg-2 rounded-lg lg:hover:cursor-pointer flex flex-row justify-between items-center">
         <form className="w-full flex flex-row justify-between h-full">
           <input
-            className="form-input focus:ring-0 border-0 w-8/12 h-full p-0 m-0 bg-inherit font-semibold"
+            className="form-input focus:ring-0 border-0 w-8/12 h-full p-0 ps-1 m-0 bg-inherit font-semibold"
             name="name"
             placeholder={placeholderText || "Category name"}
             autoFocus={true}

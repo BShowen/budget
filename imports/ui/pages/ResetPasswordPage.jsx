@@ -37,7 +37,7 @@ export function ResetPassword() {
   return (
     <>
       <div className="h-10 flex flex-col justify-center items-center">
-        <h1 className="font-bold text-3xl">Reset your password</h1>
+        <h1 className="font-bold text-2xl">Reset your password</h1>
       </div>
       <form
         className="text-color-primary font-semibold"

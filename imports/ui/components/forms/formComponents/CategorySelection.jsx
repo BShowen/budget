@@ -19,7 +19,7 @@ export function CategorySelection({
   return (
     ledgerList.length > 0 && (
       <div className="w-full flex flex-col justify-start">
-        <div className="top-0 bg-slate-100 flex flex-row justify-start items-center px-2 py-1 sticky z-50 shadow-sm h-8">
+        <div className="top-0 bg-slate-100 dark:bg-dark-mode-bg-0 flex flex-row justify-start items-center px-2 py-1 sticky z-50 shadow-sm h-8">
           <p className="font-semibold">{cap(section)}</p>
         </div>
 

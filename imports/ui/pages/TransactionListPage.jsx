@@ -70,7 +70,7 @@ export function TransactionListPage() {
 
   return (
     <>
-      <div className="page-header z-50 w-full lg:w-3/5 flex flex-row justify-start items-center relative bg-header shadow-sm text-white">
+      <div className="page-header z-50 w-full lg:w-3/5 flex flex-row justify-start items-center relative bg-primary-blue shadow-sm text-white">
         <div className="flex flex-row items-center p-1 h-11 z-50">
           <Link
             className="text-xl font-bold flex flex-row justify-start items-center w-24 lg:hover:cursor-pointer"
@@ -87,12 +87,12 @@ export function TransactionListPage() {
           </h1>
         </div>
       </div>
-      <div className="mt-11 h-16 fixed position-top-safe w-full lg:w-3/5 z-50 px-2 flex flex-row justify-start items-center bg-slate-100">
+      <div className="mt-11 h-16 fixed position-top-safe w-full lg:w-3/5 z-50 px-2 flex flex-row justify-start items-center bg-slate-100 dark:bg-dark-mode-bg-0">
         <SearchBar onInput={filterTransactions} />
         <SearchBarTotal transactions={filteredTransactionList} />
       </div>
       <div className="flex flex-col justify-start items-stretch pb-28 mt-28">
-        <div className="z-0 shadow-sm bg-white">{transactionGroups}</div>
+        <div className="z-0 shadow-sm">{transactionGroups}</div>
       </div>
     </>
   );
@@ -117,7 +117,7 @@ function SearchBar({ onInput }) {
     <div
       className={`${
         searchString ? "w-4/6" : "w-full"
-      } z-50 px-3 bg-search-bar rounded-full min-h-10 flex flex-row justify-start items-center overflow-hidden gap-1 shadow-sm transition-all duration-300 ease-in-out`}
+      } z-50 px-3 bg-search-bar dark:bg-dark-mode-bg-1 rounded-full min-h-10 flex flex-row justify-start items-center overflow-hidden gap-1 shadow-sm transition-all duration-300 ease-in-out`}
     >
       <input
         ref={searchBarRef}

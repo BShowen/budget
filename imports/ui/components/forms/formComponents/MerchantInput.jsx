@@ -9,7 +9,7 @@ export function MerchantInput({ transactionType, value, onChange }) {
       >
         <p>{transactionType === "expense" ? "Merchant" : "Source"}</p>
       </label>
-      <div className="w-full bg-white flex flex-row justify-center items-center">
+      <div className="w-full flex flex-row justify-center items-center">
         <input
           type="text"
           onFocus={(e) => e.target.setSelectionRange(0, 999)}
@@ -18,7 +18,7 @@ export function MerchantInput({ transactionType, value, onChange }) {
           name="merchant"
           value={value}
           onInput={onChange}
-          className="px-2 focus:ring-0 border-0 form-input h-full w-full text-center"
+          className="px-2 focus:ring-0 border-0 form-input h-full w-full text-center dark:bg-dark-mode-bg-1"
         />
       </div>
     </div>

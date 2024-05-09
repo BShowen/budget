@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useParams, useNavigate } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
+
+// Components
+import { Loader } from "../Loader";
 
 export function SignupForm() {
   const navigate = useNavigate();
@@ -14,7 +18,9 @@ export function SignupForm() {
       if (err) {
         setError(err.details);
       }
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 900);
     });
   }, []);
 
@@ -40,21 +46,25 @@ export function SignupForm() {
   };
 
   if (loading) {
-    return <p>Loading</p>;
+    return (
+      <AnimatePresence>
+        <Loader key={0} />
+      </AnimatePresence>
+    );
   }
 
   return (
     <div className="w-full h-full flex flex-col justify-start px-2">
       {error ? (
-        <div className="w-full h-full flex flex-col justify-center">
+        <div className="w-full h-screen flex flex-col justify-center">
           <div className="text-center">
             <p className="text-xl">{error}</p>
           </div>
         </div>
       ) : (
         <>
-          <div className="text-center py-8 text-color-primary">
-            <p className="text-3xl font-semibold">
+          <div className="text-center py-8">
+            <p className="text-2xl font-semibold">
               You have been invited to create an account
             </p>
           </div>
@@ -64,10 +74,9 @@ export function SignupForm() {
           >
             <div className="flex flex-row justify-evenly items-center gap-2">
               <input
-                className={`form-input w-2/4 ${
-                  validationErrors.firstName
-                    ? "border-rose-400"
-                    : "border-gray-300"
+                className={`form-input w-2/4 app-form-input ${
+                  validationErrors.firstName &&
+                  "text-rose-400 placeholder:text-rose-400"
                 }`}
                 type="text"
                 required
@@ -75,10 +84,9 @@ export function SignupForm() {
                 name="firstName"
               />
               <input
-                className={`form-input w-2/4 ${
-                  validationErrors.lastName
-                    ? "border-rose-400"
-                    : "border-gray-300"
+                className={`form-input w-2/4 app-form-input ${
+                  validationErrors.lastName &&
+                  "text-rose-400 placeholder:text-rose-400"
                 }`}
                 type="text"
                 required
@@ -88,8 +96,9 @@ export function SignupForm() {
             </div>
             <div>
               <input
-                className={`form-input ${
-                  validationErrors.email ? "border-rose-400" : "border-gray-300"
+                className={`form-input app-form-input ${
+                  validationErrors.email &&
+                  "text-rose-400 placeholder:text-rose-400"
                 }`}
                 type="email"
                 required
@@ -99,10 +108,9 @@ export function SignupForm() {
             </div>
             <div>
               <input
-                className={`form-input ${
-                  validationErrors.password
-                    ? "border-rose-400"
-                    : "border-gray-300"
+                className={`form-input app-form-input ${
+                  validationErrors.password &&
+                  "text-rose-400 placeholder:text-rose-400"
                 }`}
                 type="password"
                 required
@@ -112,10 +120,9 @@ export function SignupForm() {
             </div>
             <div>
               <input
-                className={`form-input ${
-                  validationErrors.confirmPassword
-                    ? "border-rose-400"
-                    : "border-gray-300"
+                className={`form-input app-form-input ${
+                  validationErrors.confirmPassword &&
+                  "text-rose-400 placeholder:text-rose-400"
                 }`}
                 type="password"
                 required

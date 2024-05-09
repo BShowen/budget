@@ -33,7 +33,7 @@ export function TransactionDetailsPage() {
 
   return (
     <>
-      <div className="page-header w-full lg:w-3/5 flex flex-row justify-start items-center relative bg-header shadow-sm text-white">
+      <div className="page-header w-full lg:w-3/5 flex flex-row justify-start items-center relative bg-primary-blue shadow-sm text-white">
         <div className="flex flex-row items-center p-1 h-11 z-50">
           <Link
             className="text-xl font-bold flex flex-row justify-start items-center w-24 lg:hover:cursor-pointer"
@@ -46,8 +46,8 @@ export function TransactionDetailsPage() {
           <h1 className="font-bold text-lg">Transaction Details</h1>
         </div>
       </div>
-      <div className="mt-11">
-        <div className="border-b bg-white w-full min-h-20 flex flex-col justify-center p-2">
+      <div className="mt-11 bg-white dark:bg-dark-mode-bg-0">
+        <div className="border-b dark:border-b-dark-mode-bg-2 bg-inherit w-full min-h-20 flex flex-col justify-center p-2">
           <h2 className="text-xl">{cap(merchant)}</h2>
           <h1
             className={`text-2xl flex flex-row items-center gap-1 ${
@@ -65,20 +65,15 @@ export function TransactionDetailsPage() {
             {`${cap(loggedBy.firstName)} ${cap(loggedBy.lastName[0])}.`}
           </p>
         </div>
-        <div className="border-b bg-white w-full min-h-14 flex flex-col justify-center p-2 pb-3">
+        <div className="border-b dark:border-b-dark-mode-bg-2 bg-inherit w-full min-h-14 flex flex-col justify-center p-2 pb-3">
           <p className="text-lg py-1">
             {allocations.length > 1 ? "Categories" : "Category"}
           </p>
-          {/* <p className="text-color-light-gray text-sm">
-            {`This transaction belongs to the following ${
-              allocations.length > 1 ? "categories" : "category"
-            }`}
-          </p> */}
           <div className="w-full ps-5">
             {categoryAndLedgerNameList.map((meta, i) => {
               const [categoryName, ledgerName] = meta;
               return (
-                <p key={i}>
+                <p className="dark:text-dark-mode-text-1" key={i}>
                   {`${cap(categoryName)} ${
                     ledgerName ? `- ${cap(ledgerName)}` : ""
                   }`}
@@ -87,15 +82,15 @@ export function TransactionDetailsPage() {
             })}
           </div>
         </div>
-        <div className="border-b bg-white w-full min-h-14 flex flex-col justify-center p-2 pb-3">
+        <div className="border-b dark:border-b-dark-mode-bg-2 bg-inherit w-full min-h-14 flex flex-col justify-center p-2 pb-3">
           <p className="text-lg py-1">Tags</p>
-          <div className="flex flex-row justify-start items-center gap-1 ps-5">
+          <div className="flex flex-row flex-wrap justify-start items-center gap-1 ps-5">
             {tagNameList.length > 0 ? (
               tagNameList.map((tagName, i) => {
                 return (
                   <div
                     key={i}
-                    className="text-sm font-medium border border-color-dark-blue px-2 rounded-md min-w-fit"
+                    className="text-sm font-medium border border-color-dark-blue px-2 rounded-md min-w-fit dark:text-dark-mode-text-1"
                   >
                     <p>{cap(tagName)}</p>
                   </div>
@@ -106,11 +101,11 @@ export function TransactionDetailsPage() {
             )}
           </div>
         </div>
-        <div className="bg-white w-full min-h-14 flex flex-col justify-center p-2 pb-3">
+        <div className="bg-inherit w-full min-h-14 flex flex-col justify-center p-2 pb-3">
           <p className="text-lg py-1">Notes</p>
           <div className="w-full ps-5 pe-5">
             {note ? (
-              <p>{note}</p>
+              <p className="dark:text-dark-mode-text-1">{note}</p>
             ) : (
               <p className="text-sm text-color-light-gray">No notes.</p>
             )}

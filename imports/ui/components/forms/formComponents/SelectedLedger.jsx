@@ -66,7 +66,7 @@ export function SelectedLedger({
                   });
                 }}
                 min={0}
-                className="form-input border-none focus:ring-0 h-full text-right w-full"
+                className="form-input border-none focus:ring-0 h-full text-right w-full dark:bg-dark-mode-bg-1"
               />
               <button
                 type="button"

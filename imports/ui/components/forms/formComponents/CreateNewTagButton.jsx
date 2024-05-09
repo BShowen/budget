@@ -10,7 +10,7 @@ export function CreateNewTagButton({ createNewTag }) {
       className="w-full h-10 flex flex-row justify-start items-center gap-1 px-1"
       onClick={createNewTag}
     >
-      <IoIosAdd className="rounded-full w-5 h-5 text-white bg-green-600/80" />
+      <IoIosAdd className="rounded-full w-5 h-5 text-white bg-green-600" />
       <p>Add tag</p>
     </button>
   );

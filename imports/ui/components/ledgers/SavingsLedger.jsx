@@ -28,7 +28,7 @@ export const SavingsLedger = ({ ledger, activeTab }) => {
   };
 
   return (
-    <div className="w-full h-7 relative px-2 py-1 bg-slate-100 rounded-lg lg:hover:cursor-pointer flex flex-row justify-between items-center">
+    <div className="w-full h-7 relative px-2 py-1 bg-slate-100 dark:bg-dark-mode-bg-2 rounded-lg lg:hover:cursor-pointer flex flex-row justify-between items-center">
       <LedgerProgress percent={progressPercentage} />
       {isFormActive ? (
         <>

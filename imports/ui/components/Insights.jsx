@@ -108,7 +108,7 @@ export function Insights() {
 
   return (
     <div className="w-full flex flex-col justify-start items-stretch font-semibold gap-3">
-      <div className="bg-white rounded-xl p-2 flex flex-col shadow-sm">
+      <div className="bg-white dark:bg-dark-mode-bg-1 dark:text-dark-mode-text-1 rounded-xl p-2 flex flex-col shadow-sm">
         <h1 className="text-lg font-bold">Income this month</h1>
 
         <div className="w-full flex flex-row gap-1 items-center px-2 justify-between">
@@ -124,7 +124,7 @@ export function Insights() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl p-2 flex flex-col shadow-sm">
+      <div className="bg-white dark:bg-dark-mode-bg-1 dark:text-dark-mode-text-1 rounded-xl p-2 flex flex-col shadow-sm">
         <h1 className="text-lg font-bold ">Saved this month</h1>
 
         <div className="w-full flex flex-row gap-1 items-center px-2 justify-between">
@@ -142,7 +142,7 @@ export function Insights() {
         )}
       </div>
 
-      <div className="bg-white rounded-xl p-2 flex flex-col shadow-sm">
+      <div className="bg-white dark:bg-dark-mode-bg-1 dark:text-dark-mode-text-1 rounded-xl p-2 flex flex-col shadow-sm">
         <h1 className="text-xl font-bold ">Spent this month</h1>
         <div className="w-full flex flex-row gap-1 items-center px-2 justify-between">
           <div>Spent</div>
@@ -151,7 +151,7 @@ export function Insights() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl p-2 flex flex-col shadow-sm">
+      <div className="bg-white dark:bg-dark-mode-bg-1 dark:text-dark-mode-text-1 rounded-xl p-2 flex flex-col shadow-sm">
         <h1 className="text-xl font-bold ">Remaining</h1>
         <div className="w-full flex flex-row gap-1 items-center px-2 justify-between">
           <div className="min-w-content">Left to spend</div>

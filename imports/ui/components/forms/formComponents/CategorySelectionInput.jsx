@@ -18,7 +18,7 @@ export function CategorySelectionInput({
   setIsDialogOpen,
 }) {
   return (
-    <div className="w-full rounded-lg overflow-hidden px-1 py-1 bg-white flex flex-col justify-start items-stretch min-h-10 shadow-sm">
+    <div className="w-full rounded-lg overflow-hidden px-1 py-1 bg-white dark:bg-dark-mode-bg-1 flex flex-col justify-start items-stretch min-h-10 shadow-sm">
       <div className="w-full text-start px-1">
         <p className="font-medium text-gray-500">Category</p>
       </div>
@@ -39,7 +39,7 @@ export function CategorySelectionInput({
         onClick={() => setIsDialogOpen(true)}
         className="w-full h-10 flex flex-row justify-start items-center gap-2 px-1"
       >
-        <IoIosAdd className="rounded-full w-5 h-5 text-white bg-green-600/80" />
+        <IoIosAdd className="rounded-full w-5 h-5 text-white bg-green-600" />
         <p>Select category</p>
       </button>
 

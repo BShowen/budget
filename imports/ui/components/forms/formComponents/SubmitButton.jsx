@@ -18,7 +18,7 @@ export function SubmitButton({ isFormValid, onClick }) {
         onClick={handleClick}
         type="button"
       >
-        Submit
+        Add
       </button>
     </div>
   );

@@ -1,3 +1,4 @@
+import { Meteor } from "meteor/meteor";
 import React, { useEffect, useState } from "react";
 import { useTracker } from "meteor/react-meteor-data";
 import { Switch } from "@headlessui/react";
@@ -30,15 +31,15 @@ export function ManageUsersPage() {
       {userList.length > 1 ? (
         <>
           <div className="h-10 flex flex-col justify-center items-center">
-            <h1 className="font-bold text-3xl">Manage users</h1>
+            <h1 className="font-bold text-2xl">Manage users</h1>
           </div>
-          <div className="bg-white rounded-md overflow-hidden drop-shadow-sm">
-            <table className="table-auto border-collapse w-full font-medium text-lg">
-              <thead className="bg-slate-200 drop-shadow-sm">
+          <div className="bg-white dark:bg-dark-mode-bg-1 rounded-md overflow-hidden drop-shadow-sm">
+            <table className="table-auto border-collapse w-full text-lg">
+              <thead className="bg-slate-200 dark:bg-dark-mode-bg-1 dark:border-b dark:border-b-dark-mode-bg-2">
                 <tr className="h-10 text-sm">
-                  <th>Name</th>
-                  <th>Admin</th>
-                  <th className="pe-2">Delete</th>
+                  <th className="font-semibold">Name</th>
+                  <th className="font-semibold">Admin</th>
+                  <th className="font-semibold">Delete</th>
                 </tr>
               </thead>
               <tbody>
@@ -50,14 +51,14 @@ export function ManageUsersPage() {
                   return (
                     <tr
                       key={user._id}
-                      className={`h-14 border-slate-300 ${
+                      className={`h-14 border-slate-300 dark:border-dark-mode-bg-2 ${
                         i + 1 == userList.length ? "border-0" : "border-b"
                       }`}
                     >
                       <td>
                         <div className="flex flex-row items-center gap-2 ps-2">
-                          <LuUserCircle2 className="text-3xl h-full" />
-                          <p className="font-semibold h-full">
+                          <LuUserCircle2 className="text-3xl h-full stroke-1" />
+                          <p className="h-full">
                             {user.profile.firstName} {user.profile.lastName}
                           </p>
                         </div>
@@ -138,7 +139,9 @@ function Toggle({ onToggle, checked, disabled }) {
         onChange={() => {
           onToggle();
         }}
-        className={`${checked ? "bg-sky-500" : "bg-gray-200"} 
+        className={`${
+          checked ? "bg-primary-blue" : "bg-gray-200 dark:bg-dark-mode-bg-3"
+        } 
           ${disabled ? "md:hover:cursor-not-allowed" : ""}
           relative inline-flex h-6 w-11 items-center rounded-full`}
       >

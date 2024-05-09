@@ -7,7 +7,7 @@ import { NewTag } from "./NewTag";
 
 export function TagSelection({ tagList, createNewTag }) {
   return (
-    <div className="w-full rounded-lg overflow-hidden px-1 py-1 bg-white flex flex-col justify-start items-stretch min-h-10 shadow-sm">
+    <div className="w-full rounded-lg overflow-hidden px-1 py-1 bg-white flex flex-col justify-start items-stretch min-h-10 shadow-sm dark:bg-dark-mode-bg-1">
       <div className="w-full text-start px-1 pb-1">
         <p className="font-medium text-gray-500">Tags</p>
       </div>

@@ -72,10 +72,10 @@ export const EnvelopeFormUpdate = ({
   }, [focused]);
 
   return (
-    <div className="w-full h-full flex flex-row items-center">
+    <div className="w-full h-7 flex flex-row items-center">
       <form className="w-full h-full flex flex-row justify-between items-center ">
         <input
-          className="h-full p-0 font-bold text-xl font-extra-bold form-input outline-none border-0 focus:ring-0 w-8/12"
+          className="h-full p-0 font-bold text-lg form-input outline-none border-0 focus:ring-0 w-full dark:bg-dark-mode-bg-1"
           autoFocus
           type="text"
           name="name"
@@ -102,7 +102,7 @@ export const EnvelopeFormUpdate = ({
             );
           }}
           type="button"
-          className="focus:ring-0 outline-none text-rose-500 focus:text-rose-700 border-0 active:border-0 hover:border-0 "
+          className="focus:ring-0 outline-none text-rose-500 focus:text-rose-700 border-0 active:border-0 hover:border-0 ps-4 pe-0"
         >
           <FaRegTrashAlt className="text-inherit lg:hover:cursor-pointer lg:hover:text-rose-700 text-lg" />
         </button>
