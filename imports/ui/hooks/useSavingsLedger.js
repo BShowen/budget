@@ -51,14 +51,19 @@ export function useSavingsLedger({ ledgerId, activeTab }) {
       0
     );
 
-  const leftToSave = Math.round((ledger.allocatedAmount - moneyIn) * 100) / 100;
+  // If moneyIn >= allocatedAmount then leftToSave is zero. Otherwise if
+  // moneyIn > allocatedAmount then leftToSave will be a negative number.
+  const leftToSave =
+    moneyIn >= ledger.allocatedAmount
+      ? 0
+      : Math.round((ledger.allocatedAmount - moneyIn) * 100) / 100;
 
-  // If moneyIn is >= allocated amount then progress should always be 100.
+  // If moneyIn is >= allocated amount then progress should always be 0.
   // If moneyIn is >= allocated amount then all that means is that the user
-  // has saved more money than they expected.
+  // has saved more money than they expected, so theres nothing left to save.
   const percentRemainingToSave =
     moneyIn >= ledger.allocatedAmount
-      ? 100
+      ? 0
       : Math.min(Math.max((leftToSave / ledger.allocatedAmount) * 100, 0), 101);
 
   // Total money saved this month, represented as a percentage
