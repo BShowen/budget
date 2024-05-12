@@ -66,10 +66,13 @@ export function useExpenseLedger({ ledgerId, activeTab }) {
   const moneySpent = Math.round((moneyOut - moneyIn) * 100) / 100;
 
   // progressSpent is bound between 0 and 101, inclusive.
-  const percentSpent = Math.min(
-    Math.max((moneySpent / (ledger.allocatedAmount + moneyIn)) * 100, 0),
-    101
-  );
+  const percentSpent =
+    ledger.allocatedAmount + moneyIn > 0
+      ? Math.min(
+          Math.max((moneySpent / (ledger.allocatedAmount + moneyIn)) * 100, 0),
+          101
+        )
+      : 0;
 
   // If leftToSpend is greater than allocated amount then progress should
   // always be 100. Otherwise progress will be red when it should be
@@ -88,23 +91,25 @@ export function useExpenseLedger({ ledgerId, activeTab }) {
           )
       : 0;
 
-  // The balance to display depending on the activeTab
+  // If active tab is true, then calculate the display balance for that tab.
+  // If active tab is not true then return the current balance of this ledger.
   const displayBalance = activeTab
     ? activeTab === "planned"
       ? ledger.allocatedAmount
       : activeTab === "spent"
       ? moneySpent
       : leftToSpend //Remaining
-    : 0;
+    : leftToSpend;
 
-  // The percentage of money spent depending on the activeTab
-  const progressPercent = activeTab
+  // If active tab is true then calculate the progress percent for that tab.
+  // If active tab is not true then return percent spent.
+  const progressPercentage = activeTab
     ? activeTab === "planned"
       ? 0
       : activeTab === "spent"
       ? percentSpent
       : percentRemaining //remaining
-    : 0;
+    : percentRemaining;
 
   // Boolean indicating whether or not this ledger is over draft.
   const isOverSpent = leftToSpend < 0;
@@ -118,7 +123,7 @@ export function useExpenseLedger({ ledgerId, activeTab }) {
     percentSpent,
     percentRemaining,
     displayBalance,
-    progressPercent,
+    progressPercentage,
     isOverSpent,
   };
 }

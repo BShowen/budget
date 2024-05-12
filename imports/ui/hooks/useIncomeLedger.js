@@ -58,21 +58,25 @@ export function useIncomeLedger({ ledgerId, activeTab }) {
     (moneyIn / ledger.allocatedAmount) * 100
   );
 
+  // If active tab is true, then calculate the display balance for that tab.
+  // If active tab is not true then return the current balance of this ledger.
   const displayBalance = activeTab
     ? activeTab === "planned"
       ? ledger.allocatedAmount
       : activeTab === "spent"
       ? moneyIn
       : leftToReceive
-    : 0;
+    : moneyIn;
 
+  // If active tab is true then calculate the progress percent for that tab.
+  // If active tab is not true then return percent received.
   const progressPercentage = activeTab
     ? activeTab === "planned"
       ? 0
       : activeTab === "spent"
       ? percentIncomeReceived
       : percentRemainingToReceive //activeTab === "remaining"
-    : 0;
+    : percentIncomeReceived;
 
   return {
     ...ledger,

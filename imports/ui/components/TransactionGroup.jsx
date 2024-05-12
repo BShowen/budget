@@ -18,15 +18,15 @@ export function TransactionGroup({ date, transactions }) {
 
   const style =
     location.pathname === "/transactions"
-      ? `top-108px dark:bg-dark-mode-bg-0 `
+      ? `top-108px`
       : regex.test(location.pathname)
-      ? `top-192px dark:bg-dark-mode-bg-1`
+      ? `top-56px`
       : "";
 
   return (
     <div key={date}>
       <div
-        className={`${style} dark:text-dark-mode-text-0 flex flex-row bg-slate-100 justify-start items-center px-2 py-1 sticky h-8 font-medium`}
+        className={`${style} dark:bg-dark-mode-bg-0 dark:text-dark-mode-text-0 flex flex-row bg-slate-100 justify-start items-center px-2 py-1 sticky z-0 h-8 font-medium`}
       >
         <h2>{displayDate}</h2>
       </div>

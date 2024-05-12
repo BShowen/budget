@@ -71,27 +71,34 @@ export function useSavingsLedger({ ledgerId, activeTab }) {
   // so return 0. This is to avoid dividing by zero.
   const percentSaved =
     ledger.allocatedAmount > 0
-      ? Math.round((moneyIn / ledger.allocatedAmount) * 100)
+      ? Math.min(
+          Math.max(Math.round((moneyIn / ledger.allocatedAmount) * 100), 0),
+          100
+        )
       : 0;
 
   const savingsBalance =
     Math.round((ledger.startingBalance + moneyIn - moneyOut) * 100) / 100;
 
+  // If active tab is true, then calculate the display balance for that tab.
+  // If active tab is not true then return the current balance of this ledger.
   const displayBalance = activeTab
     ? activeTab === "planned"
       ? ledger.allocatedAmount
       : activeTab === "spent"
       ? moneyOut
       : leftToSave
-    : 0;
+    : savingsBalance;
 
+  // If active tab is true then calculate the progress percent for that tab.
+  // If active tab is not true then return percent saved.
   const progressPercentage = activeTab
     ? activeTab === "planned"
       ? 0
       : activeTab === "spent"
       ? 0
       : percentRemainingToSave //activeTab === "remaining"
-    : 0;
+    : percentSaved;
 
   return {
     ...ledger,

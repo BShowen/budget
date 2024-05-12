@@ -26,7 +26,7 @@ export function AppContent({ setDate, currentBudget }) {
           currentBudgetId: currentBudget?._id,
         }}
       >
-        <div className="lg:w-3/5 mx-auto bg-app select-none padding-safe-area-top">
+        <div className="lg:w-3/5 mx-auto select-none padding-safe-area-top">
           <Outlet />
           <FooterNav />
           <ScrollRestoration

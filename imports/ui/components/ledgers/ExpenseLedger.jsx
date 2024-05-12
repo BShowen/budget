@@ -17,7 +17,7 @@ import { useExpenseLedger } from "../../hooks/useExpenseLedger";
 export const ExpenseLedger = ({ ledger, activeTab }) => {
   const [isFormActive, setFormActive] = useState(false);
   const {
-    progressPercent,
+    progressPercentage,
     name,
     displayBalance,
     isOverSpent,
@@ -32,7 +32,7 @@ export const ExpenseLedger = ({ ledger, activeTab }) => {
 
   return (
     <div className="w-full h-7 relative z-0 px-2 py-1 bg-slate-100 dark:bg-dark-mode-bg-2 rounded-lg lg:hover:cursor-pointer flex flex-row justify-between items-center">
-      <LedgerProgress percent={progressPercent} />
+      <LedgerProgress percent={progressPercentage} />
       {isFormActive ? (
         <UpdateLedgerForm
           toggleForm={() => setFormActive(false)}

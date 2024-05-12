@@ -62,8 +62,8 @@
   .top-108px {
     top: calc(env(safe-area-inset-top, 0) + 108px);
   }
-  .top-192px {
-    top: calc(env(safe-area-inset-top, 0) + 192px);
+  .top-56px {
+    top: calc(env(safe-area-inset-top, 0) + 56px);
   }
 }
 
