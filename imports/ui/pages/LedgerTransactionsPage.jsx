@@ -29,6 +29,8 @@ import { BiDollar, BiCheck, BiX } from "react-icons/bi";
 import { useExpenseLedger } from "../hooks/useExpenseLedger";
 import { useIncomeLedger } from "../hooks/useIncomeLedger";
 import { useSavingsLedger } from "../hooks/useSavingsLedger";
+import { groupTransactionsByDate } from "../util/groupTransactionsByDate";
+import { TransactionGroup } from "../components/TransactionGroup";
 
 export const LedgerTransactionsPage = () => {
   const { ledgerId } = useParams();
@@ -36,7 +38,7 @@ export const LedgerTransactionsPage = () => {
   return (
     <div className="w-full">
       <PageHeader ledgerId={ledgerId} />
-      <div className="flex flex-col gap-3 p-2 pt-52 pb-16">
+      <div className="flex flex-col gap-3 pt-52 pb-16">
         <LedgerNotes ledgerId={ledgerId} />
         <ListTransactions ledgerId={ledgerId} />
         <DeleteLedger ledgerId={ledgerId} />
@@ -60,37 +62,40 @@ function PageHeader({ ledgerId }) {
 function ProgressHeader({ children, percent, pathColor, logo }) {
   const navigate = useNavigate();
   return (
-    <div className="page-header w-full lg:w-3/5 h-48 dark:bg-dark-mode-bg-0 flex flex-col justify-start z-50">
-      <div className="relative z-0 flex flex-row items-center text-white p-1 h-11 bg-primary-blue">
-        {/* Back button */}
-        <div className="w-full flex flex-row justify-start items-center">
-          <Link
-            className="text-left text-xl font-bold flex flex-row items-center justify-start w-24 lg:hover:cursor-pointer"
-            onClick={() => navigate(-1)}
-          >
-            <IoIosArrowBack className="text-2xl" /> Back
-          </Link>
-        </div>
-        {/* Progress circle */}
-        <div className="absolute z-10 right-2 top-2">
-          <div className="w-[80px] h-[80px] rounded-full ">
-            <CircularProgressbarWithChildren
-              value={percent}
-              background
-              backgroundPadding={6}
-              styles={buildStyles({
-                backgroundColor: "#f1f1f2",
-                pathColor,
-                trailColor: "#e2e8f0",
-              })}
+    <>
+      <div className="empty-page-header bg-primary-blue dark:bg-blue-800"></div>
+      <div className="page-header w-full lg:w-3/5 h-48 bg-slate-100 dark:bg-dark-mode-bg-0 flex flex-col justify-start z-50">
+        <div className="relative z-0 flex flex-row items-center text-white p-1 h-11 bg-primary-blue dark:bg-blue-800">
+          {/* Back button */}
+          <div className="w-full flex flex-row justify-start items-center">
+            <Link
+              className="text-left text-xl font-bold flex flex-row items-center justify-start w-24 lg:hover:cursor-pointer"
+              onClick={() => navigate(-1)}
             >
-              {logo}
-            </CircularProgressbarWithChildren>
+              <IoIosArrowBack className="text-2xl" /> Back
+            </Link>
+          </div>
+          {/* Progress circle */}
+          <div className="absolute z-10 right-2 top-2">
+            <div className="w-[80px] h-[80px] rounded-full ">
+              <CircularProgressbarWithChildren
+                value={percent}
+                background
+                backgroundPadding={6}
+                styles={buildStyles({
+                  backgroundColor: "#f1f1f2",
+                  pathColor,
+                  trailColor: "#e2e8f0",
+                })}
+              >
+                {logo}
+              </CircularProgressbarWithChildren>
+            </div>
           </div>
         </div>
+        <div className="grow">{children}</div>
       </div>
-      <div className="grow">{children}</div>
-    </div>
+    </>
   );
 }
 
@@ -426,12 +431,12 @@ function ListTransactions({ ledgerId }) {
 
   return (
     <>
-      <TagSelector
+      {/* <TagSelector
         tagIdList={tagIdList}
         toggleTag={toggleTag}
         activeFilterTags={activeTags}
-      />
-      <div className="bg-white dark:bg-dark-mode-bg-1 shadow-sm py-0 pb-2 rounded-xl px-3">
+      /> */}
+      <div className="bg-white dark:bg-dark-mode-bg-1 shadow-sm py-0 pb-2 rounded-b-xl rounded-t-3xl">
         <div className="w-full flex flex-row justify-between items-center py-2 px-1 h-12">
           <div>
             <h2 className="font-bold text-color-light-gray text-md">
@@ -454,18 +459,15 @@ function ListTransactions({ ledgerId }) {
           </div>
         </div>
         {filteredTransactions.length > 0 ? (
-          filteredTransactions.map((transaction, i) => {
-            return (
-              <ListTransaction
-                key={transaction._id}
-                transactionId={transaction._id}
-                isBordered={
-                  filteredTransactions.length > 1 &&
-                  i != filteredTransactions.length - 1
-                }
+          groupTransactionsByDate({ transactions: filteredTransactions }).map(
+            ({ date, transactions }) => (
+              <TransactionGroup
+                key={date}
+                date={date}
+                transactions={transactions}
               />
-            );
-          })
+            )
+          )
         ) : (
           <div className="flex flex-row justify-center items-center">
             <h2 className="dark:text-dark-mode-text-1">No transactions</h2>

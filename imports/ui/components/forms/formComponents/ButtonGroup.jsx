@@ -10,7 +10,7 @@ export function ButtonGroup({ active, setActiveTab }) {
     const position = index === 0 ? "left-0" : "left-2/4";
     return (
       <div
-        className={`${position} w-2/4 relative z-2 h-[29px] rounded-lg bg-primary-blue transition-all duration-250`}
+        className={`${position} w-2/4 relative z-2 h-[29px] rounded-lg bg-primary-blue dark:bg-blue-800 transition-all duration-250`}
       />
     );
   }, []);

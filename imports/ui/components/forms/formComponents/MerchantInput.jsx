@@ -4,7 +4,7 @@ export function MerchantInput({ transactionType, value, onChange }) {
   return (
     <div className="w-full flex flex-row items-stretch justify-end h-8 relative bg-white rounded-lg overflow-hidden shadow-sm">
       <label
-        className="bg-color-light-blue rounded-sm w-fit px-5 flex flex-row justify-center items-center absolute left-0 h-full text-white"
+        className="bg-color-light-blue dark:bg-blue-700 rounded-sm w-fit px-5 flex flex-row justify-center items-center absolute left-0 h-full text-white"
         htmlFor="merchant"
       >
         <p>{transactionType === "expense" ? "Merchant" : "Source"}</p>

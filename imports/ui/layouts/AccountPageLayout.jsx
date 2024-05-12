@@ -8,7 +8,7 @@ export function AccountPageLayout({ children }) {
   const navigate = useNavigate();
   return (
     <>
-      <div className="page-header w-full lg:w-3/5 flex flex-row justify-start items-center relative bg-primary-blue shadow-sm text-white">
+      <div className="page-header w-full lg:w-3/5 flex flex-row justify-start items-center relative bg-primary-blue dark:bg-blue-800 shadow-sm text-white">
         <div className="flex flex-row items-center p-1 h-11">
           <Link
             className="text-xl font-bold flex flex-row justify-start items-center w-24 lg:hover:cursor-pointer"
