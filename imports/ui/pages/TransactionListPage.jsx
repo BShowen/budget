@@ -1,13 +1,9 @@
 import React, { useState } from "react";
-import { useTracker } from "meteor/react-meteor-data";
 import { Link, useNavigate } from "react-router-dom";
 
 // Components
 import { TransactionGroup } from "../components/TransactionGroup";
 import { SearchBar } from "../components/SearchBar";
-
-// Collections
-import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
 
 // Utils
 import { filterTransactions } from "../util/filterTransactions";
@@ -16,12 +12,14 @@ import { groupTransactionsByDate } from "../util/groupTransactionsByDate";
 // Icons
 import { IoIosArrowBack } from "react-icons/io";
 
+// Hooks
+import { useTransactions } from "../hooks/useTransactions";
+
 export function TransactionListPage() {
   const navigate = useNavigate();
   const [filter, setFilter] = useState("");
-  const transactionList = useTracker(() =>
-    TransactionCollection.find({}, { sort: { createdAt: -1 } }).fetch()
-  );
+  const transactionList = useTransactions();
+  console.log({ transactionList });
 
   // Filter transactions and then group them by date.
   const filteredTransactionList = filterTransactions().bySearchString({

@@ -11,14 +11,19 @@ import { LuChevronRight } from "react-icons/lu";
 import { LuAlertCircle } from "react-icons/lu";
 
 // Hooks
-import { useTransaction } from "../hooks/useTransaction";
-export function ListTransaction({ transactionId, isBordered }) {
+
+export function ListTransaction({ transaction, isBordered }) {
   const navigate = useNavigate();
 
-  const { merchant, type, amount, ledgerNameList, isCategorized } =
-    useTransaction({
-      transactionId,
-    });
+  const {
+    merchant,
+    type,
+    amount,
+    ledgerNameList,
+    isCategorized,
+    _id: transactionId,
+  } = transaction;
+
   return (
     <div
       onClick={() => navigate(`/transaction/${transactionId}/details`)}

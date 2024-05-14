@@ -34,7 +34,7 @@ export function TransactionGroup({ date, transactions }) {
         const isBordered = i != transactions.length - 1;
         return (
           <ListTransaction
-            transactionId={transaction._id}
+            transaction={transaction}
             isBordered={isBordered}
             key={i}
           />

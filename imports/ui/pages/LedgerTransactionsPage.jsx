@@ -18,7 +18,6 @@ import { LuListFilter } from "react-icons/lu";
 
 // Hooks
 import { useLedger } from "../hooks/useLedger";
-import { useExpenseLedger } from "../hooks/useExpenseLedger";
 
 import { groupTransactionsByDate } from "../util/groupTransactionsByDate";
 import { TransactionGroup } from "../components/TransactionGroup";
@@ -36,6 +35,8 @@ export const LedgerTransactionsPage = () => {
     displayBalance: currentBalance,
     progressPercentage,
     allocatedAmount,
+    transactionList,
+    kind,
   } = useLedger({
     ledgerId,
   });
@@ -63,7 +64,7 @@ export const LedgerTransactionsPage = () => {
         </div>
       </div>
 
-      <ListTransactions ledgerId={ledgerId} />
+      <ListTransactions transactionList={transactionList} kind={kind} />
     </>
   );
 };
@@ -214,11 +215,7 @@ function Notes({ ledgerId }) {
   }
 }
 
-function ListTransactions({ ledgerId }) {
-  const { transactionList, kind } = useExpenseLedger({
-    ledgerId,
-  });
-
+function ListTransactions({ transactionList, kind }) {
   const transactionInfo =
     kind === "income"
       ? "Income this month"
