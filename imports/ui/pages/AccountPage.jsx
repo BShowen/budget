@@ -5,7 +5,6 @@ import { useTracker } from "meteor/react-meteor-data";
 
 // Icons
 import { LuChevronRight } from "react-icons/lu";
-import { LuListChecks } from "react-icons/lu";
 import { LuSettings } from "react-icons/lu";
 import { LuAlertCircle } from "react-icons/lu";
 import { LuUserPlus } from "react-icons/lu";
@@ -27,7 +26,6 @@ export function AccountPage() {
 
   return (
     <>
-      <div className="empty-page-header"></div>
       <div className="w-full h-full p-2 pb-24 text-color-primary">
         <div className="h-20 flex flex-col justify-start items-start">
           <h1 className="font-bold text-3xl text-gray-700 dark:text-dark-mode-text-0">

@@ -14,9 +14,8 @@ import { cap } from "../util/cap";
 import { dates } from "../util/dates";
 
 // Components
-import { BackButton } from "../components/BackButton";
-import { HeaderText } from "../components/HeaderText";
-import { MenuButton } from "../components/MenuButton";
+import { NavHeader } from "../components/NavHeader";
+
 export function TransactionDetailsPage() {
   const [isActionMenuOpen, setActionMenu] = useState(false);
   const { transactionId } = useParams();
@@ -42,19 +41,16 @@ export function TransactionDetailsPage() {
 
   return (
     <>
-      <div className="empty-page-header bg-white dark:bg-dark-mode-bg-0" />
-      <div className="w-full flex flex-row justify-between items-center px-2 py-3 position-top-safe fixed position-top-safe bg-white dark:bg-dark-mode-bg-0 z-50">
-        <BackButton />
-        <HeaderText text={"Transaction Details"} />
-        <MenuButton
-          onClick={() => {
-            setActionMenu((prev) => !prev);
-          }}
-        />
-      </div>
+      <NavHeader
+        text="Transaction Details"
+        page="transaction-details-page"
+        onClickMenuButton={() => {
+          setActionMenu((prev) => !prev);
+        }}
+      />
       <div className="pt-14 bg-white dark:bg-dark-mode-bg-0">
         {isActionMenuOpen && (
-          <div className="flex flex-row justify-center items-center gap-3">
+          <div className="flex flex-row justify-center items-center gap-3 p-3">
             <DeleteTransactionButton transactionId={transactionId} />
             <EditTransactionButton transactionId={transactionId} />
           </div>

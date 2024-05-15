@@ -18,7 +18,7 @@ export function TransactionGroup({ date, transactions }) {
 
   const style =
     location.pathname === "/transactions"
-      ? `top-108px`
+      ? `top-110px`
       : regex.test(location.pathname)
       ? `top-56px`
       : "";

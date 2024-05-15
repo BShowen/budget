@@ -48,7 +48,7 @@ export const FooterNav = () => {
 
   return (
     footerNavVisible && (
-      <div className="fixed bottom-0 w-full h-20 lg:w-3/5 mx-auto bg-white dark:bg-dark-mode-bg-1">
+      <div className="fixed bottom-0 w-full h-20 bg-white dark:bg-dark-mode-bg-1">
         <div className="w-full flex flex-row flex-nowrap justify-evenly items-end h-full gooey bg-white dark:bg-inherit">
           <FooterLink to="/" text="Budget">
             <LuCircleDollarSign className="w-full h-full" />

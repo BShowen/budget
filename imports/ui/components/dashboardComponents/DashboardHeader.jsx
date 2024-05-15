@@ -20,8 +20,8 @@ export function DashboardHeader({ setActiveTab, activeTab, date }) {
   });
 
   return (
-    <div className="page-header lg:w-3/5 mx-auto z-50 w-full flex flex-col justify-start items-stretch bg-primary-blue dark:bg-blue-800 rounded-b-xl shadow-sm">
-      <div className="pb-2 z-50 shadow-sm">
+    <div className="w-full z-50 fixed top-0 padding-top-safe-area bg-primary-blue dark:bg-blue-800 rounded-b-xl shadow-sm">
+      <div className="flex flex-col justify-start items-stretch pb-2">
         <div className="w-full flex flex-row justify-between items-stretch h-12 text-white">
           <div className="ms-2 flex flex-row justify-center items-center">
             <img src={src} width="40px" />

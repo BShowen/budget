@@ -59,8 +59,8 @@
     @apply border-gray-400;
   }
   /*                                     **********POSITIONS********** */
-  .top-108px {
-    top: calc(env(safe-area-inset-top, 0) + 108px);
+  .top-110px {
+    top: calc(env(safe-area-inset-top, 0) + 110px);
   }
   .top-56px {
     top: calc(env(safe-area-inset-top, 0) + 56px);
@@ -120,12 +120,8 @@ body {
   top: 0;
 }
 
-.empty-page-header {
+.padding-top-safe-area {
   padding-top: calc(env(safe-area-inset-top));
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 99999;
 }
 
 .position-top-safe {

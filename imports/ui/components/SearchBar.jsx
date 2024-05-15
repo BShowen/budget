@@ -23,7 +23,7 @@ export function SearchBar({ onInput, transactions }) {
     );
 
   return (
-    <div className="relative w-full">
+    <div className="w-full relative">
       <div
         className={`${
           searchString ? "w-8/12" : "w-full"
@@ -59,9 +59,11 @@ export function SearchBar({ onInput, transactions }) {
 function SearchBarTotal({ transactions }) {
   const { income, expense } = reduceTransactions({ transactions });
   return (
-    <div className="absolute top-0 bottom-0 right-0 w-5/12 flex flex-col justify-center">
-      <div className="w-full flex flex-row justify-center items-center rounded-e-full min-h-[35px] max-h-[35px] font-semibold z-40 dark:bg-dark-mode-bg-3">
-        <p>{toDollars(Math.round((expense - income) * 100) / 100)}</p>
+    <div className="absolute top-0 bottom-0 w-full flex flex-col justify-center">
+      <div className="max-w-full mx-[2px] flex flex-row justify-end items-center rounded-full min-h-[35px] max-h-[35px] font-semibold z-40 dark:bg-dark-mode-bg-3">
+        <div className="w-5/12 flex flew-row justify-center items-center">
+          <p>{toDollars(Math.round((expense - income) * 100) / 100)}</p>
+        </div>
       </div>
     </div>
   );

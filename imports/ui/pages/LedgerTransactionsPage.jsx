@@ -23,6 +23,7 @@ import { TransactionGroup } from "../components/TransactionGroup";
 import { BackButton } from "../components/BackButton";
 import { HeaderText } from "../components/HeaderText";
 import { MenuButton } from "../components/MenuButton";
+import { NavHeader } from "../components/NavHeader";
 
 export const LedgerTransactionsPage = () => {
   const { ledgerId } = useParams();
@@ -46,12 +47,7 @@ export const LedgerTransactionsPage = () => {
 
   return (
     <>
-      <div className="empty-page-header bg-slate-200 dark:bg-dark-mode-bg-1" />
-      <div className="w-full flex flex-row justify-between items-center px-2 py-3 position-top-safe fixed position-top-safe bg-slate-200 dark:bg-dark-mode-bg-1 z-50">
-        <BackButton />
-        <HeaderText text={ledgerName} />
-        <MenuButton onClick={() => {}} />
-      </div>
+      <NavHeader text={ledgerName} page="ledger-transactions-page" />
       <div className="dark:bg-dark-mode-bg-1 bg-slate-200 pb-5">
         <div className="w-full pt-[76px] p-2 flex flex-col gap-1 justify-center">
           <div className="flex flex-row justify-start items-center">
