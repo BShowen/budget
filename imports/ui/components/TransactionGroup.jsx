@@ -30,16 +30,18 @@ export function TransactionGroup({ date, transactions }) {
       >
         <h2>{displayDate}</h2>
       </div>
-      {transactions.map((transaction, i) => {
-        const isBordered = i != transactions.length - 1;
-        return (
-          <ListTransaction
-            transaction={transaction}
-            isBordered={isBordered}
-            key={i}
-          />
-        );
-      })}
+      <div className="border-b dark:border-dark-mode-bg-1">
+        {transactions.map((transaction, i) => {
+          const isBordered = i != transactions.length - 1;
+          return (
+            <ListTransaction
+              transaction={transaction}
+              isBordered={isBordered}
+              key={i}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useParams, Link, useNavigate } from "react-router-dom";
 
@@ -6,14 +6,19 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useTransaction } from "../hooks/useTransaction";
 
 // Icons
-import { IoIosArrowBack } from "react-icons/io";
 import { HiPlus } from "react-icons/hi";
 
 // Utils
 import { toDollars } from "../util/toDollars";
 import { cap } from "../util/cap";
 import { dates } from "../util/dates";
+
+// Components
+import { BackButton } from "../components/BackButton";
+import { HeaderText } from "../components/HeaderText";
+import { MenuButton } from "../components/MenuButton";
 export function TransactionDetailsPage() {
+  const [isActionMenuOpen, setActionMenu] = useState(false);
   const { transactionId } = useParams();
   const {
     amount,
@@ -29,24 +34,31 @@ export function TransactionDetailsPage() {
     transactionId,
   });
 
-  const navigate = useNavigate();
+  useLayoutEffect(() => {
+    document.body.classList.add("bg-white", "dark:bg-dark-mode-bg-0");
+    return () =>
+      document.body.classList.remove("bg-white", "dark:bg-dark-mode-bg-0");
+  }, []);
 
   return (
     <>
-      <div className="page-header w-full lg:w-3/5 flex flex-row justify-start items-center relative bg-primary-blue dark:bg-blue-800 shadow-sm text-white">
-        <div className="flex flex-row items-center p-1 h-11 z-50">
-          <Link
-            className="text-xl font-bold flex flex-row justify-start items-center w-24 lg:hover:cursor-pointer"
-            onClick={() => navigate(-1)}
-          >
-            <IoIosArrowBack className="text-2xl" /> Back
-          </Link>
-        </div>
-        <div className="fixed text-center w-full lg:w-3/5 z-40">
-          <h1 className="font-bold text-lg">Transaction Details</h1>
-        </div>
+      <div className="empty-page-header bg-white dark:bg-dark-mode-bg-0" />
+      <div className="w-full flex flex-row justify-between items-center px-2 py-3 position-top-safe fixed position-top-safe bg-white dark:bg-dark-mode-bg-0 z-50">
+        <BackButton />
+        <HeaderText text={"Transaction Details"} />
+        <MenuButton
+          onClick={() => {
+            setActionMenu((prev) => !prev);
+          }}
+        />
       </div>
-      <div className="mt-11 bg-white dark:bg-dark-mode-bg-0">
+      <div className="pt-14 bg-white dark:bg-dark-mode-bg-0">
+        {isActionMenuOpen && (
+          <div className="flex flex-row justify-center items-center gap-3">
+            <DeleteTransactionButton transactionId={transactionId} />
+            <EditTransactionButton transactionId={transactionId} />
+          </div>
+        )}
         <div className="border-b dark:border-b-dark-mode-bg-2 bg-inherit w-full min-h-20 flex flex-col justify-center p-2">
           <h2 className="text-xl">{cap(merchant)}</h2>
           <h1
@@ -111,11 +123,6 @@ export function TransactionDetailsPage() {
             )}
           </div>
         </div>
-
-        <div className="min-h-28 flex flex-col justify-evenly items-center mb-20">
-          <EditTransactionButton transactionId={transactionId} />
-          <DeleteTransactionButton transactionId={transactionId} />
-        </div>
       </div>
     </>
   );
@@ -123,14 +130,12 @@ export function TransactionDetailsPage() {
 
 function EditTransactionButton({ transactionId }) {
   return (
-    <div className="w-full flex flex-row justify-center items-center">
-      <Link
-        to={`/transaction/${transactionId}/edit`}
-        className="text-xl text-green-700 lg:hover:cursor-pointer transition-all px-3 border border-green-700 rounded-md active:text-white active:bg-green-700"
-      >
-        Edit Transaction
-      </Link>
-    </div>
+    <Link
+      to={`/transaction/${transactionId}/edit`}
+      className="text-xl text-green-700 lg:hover:cursor-pointer transition-all px-3 border border-green-700 rounded-md active:text-white active:bg-green-700"
+    >
+      Edit
+    </Link>
   );
 }
 
@@ -164,30 +169,28 @@ function DeleteTransactionButton({ transactionId }) {
     }
   };
   return (
-    <div className="w-full flex flex-row justify-center items-center">
-      <button
-        className="text-xl text-red-600 lg:hover:cursor-pointer transition-all px-3 border border-red-600 rounded-md active:text-white active:bg-red-600"
-        onClick={() => {
-          if (isSplitTransaction) {
-            const transactionCount = allocations.length;
-            const confirm = window.confirm(
-              `This is a split transaction and will delete ${transactionCount} transactions.`
-            );
-            if (confirm) {
-              deleteTransaction();
-            }
-          } else {
-            const confirm = window.confirm(
-              "Are you sure you want to delete this transaction?"
-            );
-            if (confirm) {
-              deleteTransaction();
-            }
+    <button
+      className="text-xl text-red-600 lg:hover:cursor-pointer transition-all px-3 border border-red-600 rounded-md active:text-white active:bg-red-600"
+      onClick={() => {
+        if (isSplitTransaction) {
+          const transactionCount = allocations.length;
+          const confirm = window.confirm(
+            `This is a split transaction and will delete ${transactionCount} transactions.`
+          );
+          if (confirm) {
+            deleteTransaction();
           }
-        }}
-      >
-        Delete Transaction
-      </button>
-    </div>
+        } else {
+          const confirm = window.confirm(
+            "Are you sure you want to delete this transaction?"
+          );
+          if (confirm) {
+            deleteTransaction();
+          }
+        }
+      }}
+    >
+      Delete
+    </button>
   );
 }

@@ -10,25 +10,28 @@ import { TagCollection } from "../../api/Tag/TagCollection";
 // Utils
 import { cap } from "../util/cap";
 import { toDollars } from "../util/toDollars";
+import { groupTransactionsByDate } from "../util/groupTransactionsByDate";
 
 // Icons
-import { TbMenuDeep } from "react-icons/tb";
-import { IoIosArrowBack } from "react-icons/io";
 import { LuListFilter } from "react-icons/lu";
 
 // Hooks
 import { useLedger } from "../hooks/useLedger";
 
-import { groupTransactionsByDate } from "../util/groupTransactionsByDate";
+// Components
 import { TransactionGroup } from "../components/TransactionGroup";
+import { BackButton } from "../components/BackButton";
+import { HeaderText } from "../components/HeaderText";
+import { MenuButton } from "../components/MenuButton";
 
 export const LedgerTransactionsPage = () => {
   const { ledgerId } = useParams();
 
-  // useLayoutEffect(() => {
-  //   document.body.classList.add("dark:bg-dark-mode-bg-1");
-  //   return () => document.body.classList.remove("dark:bg-dark-mode-bg-1");
-  // }, []);
+  useLayoutEffect(() => {
+    document.body.classList.add("bg-white", "dark:bg-dark-mode-bg-0");
+    return () =>
+      document.body.classList.remove("bg-white", "dark:bg-dark-mode-bg-0");
+  }, []);
 
   const {
     name: ledgerName,
@@ -44,12 +47,12 @@ export const LedgerTransactionsPage = () => {
   return (
     <>
       <div className="empty-page-header bg-slate-200 dark:bg-dark-mode-bg-1" />
+      <div className="w-full flex flex-row justify-between items-center px-2 py-3 position-top-safe fixed position-top-safe bg-slate-200 dark:bg-dark-mode-bg-1 z-50">
+        <BackButton />
+        <HeaderText text={ledgerName} />
+        <MenuButton onClick={() => {}} />
+      </div>
       <div className="dark:bg-dark-mode-bg-1 bg-slate-200 pb-5">
-        <div className="w-full flex flex-row justify-between items-center px-2 py-3 position-top-safe fixed position-top-safe bg-slate-200 dark:bg-dark-mode-bg-1 z-50">
-          <BackButton />
-          <LedgerName ledgerName={ledgerName} />
-          <MenuButton onClick={() => {}} />
-        </div>
         <div className="w-full pt-[76px] p-2 flex flex-col gap-1 justify-center">
           <div className="flex flex-row justify-start items-center">
             <CurrentBalance currentBalance={currentBalance} />
@@ -68,42 +71,6 @@ export const LedgerTransactionsPage = () => {
     </>
   );
 };
-
-function BackButton() {
-  const navigate = useNavigate();
-
-  const handleClick = () => {
-    setTimeout(() => {
-      navigate(-1);
-    }, 100);
-  };
-  return (
-    <button
-      className="border border-slate-300 dark:border-dark-mode-bg-3 rounded-md w-8 h-8 flex flex-row justify-center items-center transition-all active:bg-dark-mode-bg-3"
-      type="button"
-      onClick={handleClick}
-    >
-      <IoIosArrowBack className="dark:text-dark-mode-text-1 text-xl" />
-    </button>
-  );
-}
-
-function LedgerName({ ledgerName }) {
-  return (
-    <h1 className="text-2xl font-semibold dark:text-dark-mode-text-0">
-      {cap(ledgerName)}
-    </h1>
-  );
-}
-
-function MenuButton({ onClick }) {
-  const clickHandler = onClick;
-  return (
-    <button className="w-8 h-8" type="button" onClick={clickHandler}>
-      <TbMenuDeep className="dark:text-dark-mode-text-1 w-full h-full stroke-1" />
-    </button>
-  );
-}
 
 function OptionsButton({ onClick }) {
   const clickHandler = onClick;
