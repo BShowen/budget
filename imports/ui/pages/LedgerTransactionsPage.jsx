@@ -20,9 +20,6 @@ import { useLedger } from "../hooks/useLedger";
 
 // Components
 import { TransactionGroup } from "../components/TransactionGroup";
-import { BackButton } from "../components/BackButton";
-import { HeaderText } from "../components/HeaderText";
-import { MenuButton } from "../components/MenuButton";
 import { NavHeader } from "../components/NavHeader";
 
 export const LedgerTransactionsPage = () => {
@@ -48,8 +45,8 @@ export const LedgerTransactionsPage = () => {
   return (
     <>
       <NavHeader text={ledgerName} page="ledger-transactions-page" />
-      <div className="dark:bg-dark-mode-bg-1 bg-slate-200 pb-5">
-        <div className="w-full pt-[76px] p-2 flex flex-col gap-1 justify-center">
+      <div className="dark:bg-dark-mode-bg-1 bg-slate-200 pb-5 pt-14">
+        <div className="w-full p-2 flex flex-col gap-1 justify-center">
           <div className="flex flex-row justify-start items-center">
             <CurrentBalance currentBalance={currentBalance} />
           </div>
