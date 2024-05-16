@@ -54,7 +54,7 @@ Meteor.methods({
       { _id: transactionId },
       {
         $set: {
-          createdAt: new Date(createdAt),
+          createdAt,
           type,
           merchant,
           note,

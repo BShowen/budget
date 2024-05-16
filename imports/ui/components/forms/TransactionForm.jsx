@@ -160,7 +160,7 @@ export function TransactionForm() {
 
   return (
     <>
-      <div className="page-header w-full lg:w-3/5 bg-primary-blue dark:bg-blue-800 p-2 flex flex-col justify-start z-50">
+      <div className="page-header w-full bg-primary-blue dark:bg-blue-800 p-2 flex flex-col justify-start z-50">
         <div className="w-full px-1 py-1 flex flex-row justify-center items-center">
           <h2 className="text-white text-xl font-semibold">
             {transaction ? "Edit transaction" : "Add transaction"}

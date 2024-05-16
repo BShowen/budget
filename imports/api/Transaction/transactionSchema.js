@@ -51,7 +51,7 @@ export const transactionSchema = new SimpleSchema(
     },
     "loggedBy.firstName": String,
     "loggedBy.lastName": String,
-    createdAt: Date,
+    createdAt: SimpleSchema.Integer,
     merchant: {
       type: String,
       autoValue: function () {

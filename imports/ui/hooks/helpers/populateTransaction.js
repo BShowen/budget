@@ -75,6 +75,7 @@ export function populateTransaction({ transaction, ledgerId, envelopeId }) {
 
   return {
     ...transaction,
+    createdAt: new Date(transaction.createdAt),
     amount: transactionAmount,
     categoryAndLedgerNameList,
     categoryNameList,
