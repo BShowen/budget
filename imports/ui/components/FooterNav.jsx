@@ -48,8 +48,8 @@ export const FooterNav = () => {
 
   return (
     footerNavVisible && (
-      <div className="fixed bottom-0 w-full h-[71px] bg-white dark:bg-dark-mode-bg-1">
-        <div className="w-full flex flex-row flex-nowrap justify-evenly items-end h-full gooey bg-white dark:bg-inherit">
+      <div className="fixed bottom-0 w-full h-[71px] bg-none">
+        <div className="w-full flex flex-row flex-nowrap justify-evenly items-end h-full gooey bg-blue-200 dark:bg-dark-mode-bg-2">
           <FooterLink to="/" text="Budget">
             <LuCircleDollarSign className="text-xl" />
           </FooterLink>
@@ -95,7 +95,7 @@ function FooterLink({ children, to, text, notifications, replace }) {
       >
         {notifications > 0 && (
           <div className="relative">
-            <div className="absolute -top-1 -left-4 w-3 h-3 flex flex-row justify-center items-center rounded-full bg-white dark:bg-dark-mode-bg-1 text-xs font-semibold text-white">
+            <div className="absolute -top-1 -left-4 w-3 h-3 flex flex-row justify-center items-center rounded-full bg-blue-200 dark:bg-dark-mode-bg-1 text-xs font-semibold text-white">
               <div className="w-2 h-2 flex flex-row justify-center items-center rounded-full bg-pink-600 text-xs text-white"></div>
             </div>
           </div>
