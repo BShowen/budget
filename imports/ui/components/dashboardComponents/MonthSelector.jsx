@@ -12,26 +12,33 @@ import { BudgetCollection } from "../../../api/Budget/BudgetCollection";
 // Util
 import { dates } from "../../util/dates";
 
-export function MonthSelector({ currentDate }) {
-  const year = currentDate.toLocaleString("en-US", { year: "numeric" });
-  const currentMonth = currentDate.toLocaleString("en-US", { month: "long" });
+export function MonthSelector({ currentTimestamp }) {
+  const year = new Date(currentTimestamp).toLocaleString("en-US", {
+    year: "numeric",
+  });
+  const currentMonth = new Date(currentTimestamp).toLocaleString("en-US", {
+    month: "long",
+  });
 
-  const budgetDateList = useTracker(() => {
+  const budgetTimestamps = useTracker(() => {
     const budgetDates = BudgetCollection.find({}, { sort: { createdAt: 1 } })
       .fetch()
       .reduce((acc, budget) => [...acc, budget.createdAt], []);
 
-    // If the latestBudgetDate is greater than todays date, then don't add a new date to the list.
-    // If the latestBudgetDate is less than todays date, then add a new date to the list.
-    const today = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-    const latestBudgetDate = budgetDates[budgetDates.length - 1];
-    if (latestBudgetDate.getTime() <= today.getTime()) {
+    // Add a new date to the list only if the latest date is not next month.
+    const thisMonthTimestamp = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth(),
+      1
+    ).getTime();
+    const latestBudgetTimestamp = budgetDates[budgetDates.length - 1];
+    if (latestBudgetTimestamp <= thisMonthTimestamp) {
       budgetDates.push(
         new Date(
-          latestBudgetDate.getFullYear(),
-          latestBudgetDate.getMonth() + 1,
+          new Date().getFullYear(),
+          new Date().getMonth() + 1,
           1
-        )
+        ).getTime()
       );
     }
     return budgetDates;
@@ -82,14 +89,14 @@ export function MonthSelector({ currentDate }) {
           }`}
         >
           <ul className="list-none w-full flex flex-row justify-start items-center gap-2 overflow-y-hidden overflow-x-scroll scrollbar-hide px-2 h-full overscroll-x-contain">
-            {budgetDateList.map((date, i) => {
-              const isLastElement = budgetDateList.length - 1 == i;
+            {budgetTimestamps.map((timestamp, i) => {
+              const isLastElement = budgetTimestamps.length - 1 == i;
               return (
                 <MonthSelectorButton
-                  key={date.getTime()}
+                  key={timestamp}
                   clickHandler={goToBudget}
-                  activeBudgetDate={currentDate}
-                  budgetDate={date}
+                  activeBudgetTimestamp={currentTimestamp}
+                  budgetTimestamp={timestamp}
                   isFutureDate={isLastElement}
                 />
               );
@@ -103,11 +110,11 @@ export function MonthSelector({ currentDate }) {
 
 function MonthSelectorButton({
   clickHandler,
-  activeBudgetDate,
-  budgetDate,
+  activeBudgetTimestamp,
+  budgetTimestamp,
   isFutureDate,
 }) {
-  const active = activeBudgetDate.getTime() == budgetDate.getTime();
+  const active = activeBudgetTimestamp == budgetTimestamp;
   const activeStyling = active
     ? "bg-color-light-blue text-white"
     : isFutureDate
@@ -122,9 +129,11 @@ function MonthSelectorButton({
       <button
         className={`w-full h-full rounded-lg p-1 flex flex-row justify-center items-center ${activeStyling}`}
         type="button"
-        onClick={() => clickHandler({ date: budgetDate })}
+        onClick={() => clickHandler({ timestamp: budgetTimestamp })}
       >
-        <p>{dates.format(budgetDate, { forPageHeader: true })}</p>
+        <p>
+          {dates.format(new Date(budgetTimestamp), { forPageHeader: true })}
+        </p>
       </button>
     </li>
   );

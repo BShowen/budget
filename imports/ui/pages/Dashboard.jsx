@@ -28,7 +28,6 @@ export const Dashboard = () => {
         expenseEnvelopes: [],
         incomeEnvelope: {},
         savingsEnvelope: {},
-        allocationEnvelope: {},
       };
       // If no budget is loaded, return blank envelopes.
       if (!budget) return envelopes;
@@ -70,12 +69,15 @@ export const Dashboard = () => {
       <DashboardHeader
         setActiveTab={setActiveTab}
         activeTab={activeTab}
-        date={budget.createdAt}
+        timestamp={budget.createdAt}
         incomeEnvelope={incomeEnvelope}
       />
 
       <div className="mt-[100px] pb-16 px-2 flex flex-col items-stretch gap-4 z-0">
-        <WelcomeComponent budgetDate={budget.createdAt} budgetId={budget._id} />
+        <WelcomeComponent
+          budgetTimestamp={budget.createdAt}
+          budgetId={budget._id}
+        />
         {/* Categories container */}
         <IncomeCategory
           key={incomeEnvelope._id}

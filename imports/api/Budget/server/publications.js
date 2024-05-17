@@ -11,9 +11,9 @@ import { reduceTransactions } from "../../../ui/util/reduceTransactions";
 
 // This resolver returns a budget document.
 // The budget doc is either an existing document or one is created and returned.
-Meteor.publish("budget", function (date) {
+Meteor.publish("budget", function (timestamp) {
   // User must be logged in and provide a date.
-  if (!this.userId || !date) {
+  if (!this.userId || !timestamp) {
     return this.ready();
   }
 
@@ -23,12 +23,8 @@ Meteor.publish("budget", function (date) {
   const currentBudget = BudgetCollection.findOne({
     accountId: user.accountId,
     createdAt: {
-      $gte: date,
-      $lte: new Date(
-        date.getFullYear(),
-        date.getMonth() + 1,
-        date.getDate() - 1
-      ),
+      $gte: timestamp,
+      $lte: timestamp + 86400000, //One day
     },
   });
 
@@ -54,11 +50,7 @@ Meteor.publish("budget", function (date) {
     {
       accountId: user.accountId,
       createdAt: {
-        $lte: new Date(
-          date.getFullYear(),
-          date.getMonth() + 1,
-          date.getDate() - 1
-        ),
+        $lte: timestamp + 86400000, //One day
       },
     },
     { sort: { createdAt: -1 } }
@@ -80,7 +72,12 @@ Meteor.publish("budget", function (date) {
     // Create new budget.
     const newBudgetId = BudgetCollection.insert({
       accountId: user.accountId,
-      createdAt: date,
+      // createdAt: timestamp,
+      createdAt: new Date(
+        new Date(prevBudget.createdAt).getFullYear(),
+        new Date(prevBudget.createdAt).getMonth() + 1,
+        1
+      ).getTime(),
     });
 
     // Iterate through each previous envelope...
@@ -141,7 +138,7 @@ Meteor.publish("budget", function (date) {
     // Create a budget without any blueprint.
     const budgetId = BudgetCollection.insert({
       accountId: user.accountId,
-      createdAt: date,
+      createdAt: timestamp,
     });
     // Create income Envelope
     EnvelopeCollection.insert({
@@ -165,12 +162,8 @@ Meteor.publish("budget", function (date) {
     {
       accountId: user.accountId,
       createdAt: {
-        $gte: date,
-        $lte: new Date(
-          date.getFullYear(),
-          date.getMonth() + 1,
-          date.getDate() - 1
-        ),
+        $gte: timestamp,
+        $lte: timestamp + 86400000, //One day
       },
     },
     { sort: { createdAt: -1 }, limit: 1 }

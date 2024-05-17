@@ -9,7 +9,7 @@ import { FooterNav } from "../components/FooterNav";
 // Context
 export const RootContext = createContext(null);
 
-export function AppContent({ setDate, currentBudget }) {
+export function AppContent({ setTimestamp, currentBudget }) {
   return (
     <motion.div
       key={2}
@@ -19,9 +19,9 @@ export function AppContent({ setDate, currentBudget }) {
     >
       <RootContext.Provider
         value={{
-          goToBudget: ({ date }) => {
-            window.localStorage.setItem("currentBudgetDate", date);
-            setDate(date);
+          goToBudget: ({ timestamp }) => {
+            window.localStorage.setItem("currentBudgetTimestamp", timestamp);
+            setTimestamp(timestamp);
           },
           currentBudgetId: currentBudget?._id,
         }}

@@ -7,7 +7,7 @@ export const budgetSchema = new SimpleSchema(
       type: String,
       regEx: SimpleSchema.RegEx.Id,
     },
-    createdAt: Date,
+    createdAt: SimpleSchema.Integer,
   },
   { clean: { mutate: true } }
 );

@@ -8,6 +8,20 @@ import { TransactionCollection } from "../imports/api/Transaction/TransactionCol
 import { AccountCollection } from "../imports/api/Account/AccountCollection";
 import { TagCollection } from "../imports/api/Tag/TagCollection";
 
+function getRandomIntInclusive(min, max) {
+  const minCeiled = Math.ceil(min);
+  const maxFloored = Math.floor(max);
+  return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled); // The maximum is inclusive and the minimum is inclusive
+}
+
+function getRandomTimestamp() {
+  return new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    getRandomIntInclusive(1, new Date().getDate())
+  ).getTime();
+}
+
 Meteor.startup(() => {
   if (Meteor.isProduction) return;
   const SEED_1_EMAIL = Meteor.settings.public.demoAccount.email;
@@ -52,7 +66,7 @@ Meteor.startup(() => {
       new Date().getFullYear(),
       new Date().getMonth(),
       1
-    );
+    ).getTime();
 
     const budgetId = BudgetCollection.insert({
       accountId,
@@ -77,14 +91,20 @@ Meteor.startup(() => {
 
     // Add a paycheck
     TransactionCollection.insert({
+      isCategorized: "true",
       accountId,
       budgetId: budgetId,
-      envelopeId: incomeEnvelope,
-      ledgerId: firstPaycheckLedger,
-      createdAt: new Date(2023, 11, 3),
+      createdAt: getRandomTimestamp(),
       type: "income",
       merchant: "Paycheck",
       amount: 1500.0,
+      allocations: [
+        {
+          amount: 1500.0,
+          envelopeId: incomeEnvelope,
+          ledgerId: firstPaycheckLedger,
+        },
+      ],
       loggedBy: {
         userId: user._id,
         firstName: user.profile.firstName,
@@ -120,13 +140,19 @@ Meteor.startup(() => {
 
     // Add some savings
     TransactionCollection.insert({
+      isCategorized: "true",
       accountId,
       budgetId: budgetId,
-      envelopeId: savingsEnvelope,
-      ledgerId: savingLedger,
-      createdAt: new Date(2023, 11, 3),
+      createdAt: getRandomTimestamp(),
       type: "income",
       merchant: "Saving",
+      allocations: [
+        {
+          envelopeId: savingsEnvelope,
+          ledgerId: savingLedger,
+          amount: 220.0,
+        },
+      ],
       amount: 220.0,
       loggedBy: {
         userId: user._id,
@@ -180,13 +206,19 @@ Meteor.startup(() => {
     //  Transactions for Groceries ledger in Food envelope
     const env1_ledger1_transactions = [
       TransactionCollection.insert({
+        isCategorized: "true",
         accountId,
         budgetId: budgetId,
-        envelopeId: env1,
-        ledgerId: env1_ledger1,
-        createdAt: new Date(2023, 10, 3),
+        createdAt: getRandomTimestamp(),
         type: "expense",
         merchant: "publix",
+        allocations: [
+          {
+            envelopeId: env1,
+            ledgerId: env1_ledger1,
+            amount: 50.0,
+          },
+        ],
         amount: 50.0,
         loggedBy: {
           userId: user._id,
@@ -195,13 +227,19 @@ Meteor.startup(() => {
         },
       }),
       TransactionCollection.insert({
+        isCategorized: "true",
         accountId,
         budgetId: budgetId,
-        envelopeId: env1,
-        ledgerId: env1_ledger1,
-        createdAt: new Date(2023, 10, 8),
+        createdAt: getRandomTimestamp(),
         type: "expense",
         merchant: "walmart",
+        allocations: [
+          {
+            envelopeId: env1,
+            ledgerId: env1_ledger1,
+            amount: 35.0,
+          },
+        ],
         amount: 35.0,
         loggedBy: {
           userId: user._id,
@@ -210,13 +248,19 @@ Meteor.startup(() => {
         },
       }),
       TransactionCollection.insert({
+        isCategorized: "true",
         accountId,
         budgetId: budgetId,
-        envelopeId: env1,
-        ledgerId: env1_ledger1,
-        createdAt: new Date(2023, 10, 9),
+        createdAt: getRandomTimestamp(),
         type: "income",
         merchant: "walmart",
+        allocations: [
+          {
+            envelopeId: env1,
+            ledgerId: env1_ledger1,
+            amount: 35.0,
+          },
+        ],
         amount: 35.0,
         notes: "Refund for purchase",
         loggedBy: {
@@ -226,13 +270,19 @@ Meteor.startup(() => {
         },
       }),
       TransactionCollection.insert({
+        isCategorized: "true",
         accountId,
         budgetId: budgetId,
-        envelopeId: env1,
-        ledgerId: env1_ledger1,
-        createdAt: new Date(2023, 10, 11),
+        createdAt: getRandomTimestamp(),
         type: "expense",
         merchant: "Steak n Shake",
+        allocations: [
+          {
+            envelopeId: env1,
+            ledgerId: env1_ledger1,
+            amount: 4.85,
+          },
+        ],
         amount: 4.85,
         tags: [fastFoodTag],
         loggedBy: {
@@ -265,13 +315,19 @@ Meteor.startup(() => {
     // Transactions for ledgers in the Vehicle envelope
     const env2_ledger1_transactions = [
       TransactionCollection.insert({
+        isCategorized: "true",
         accountId,
         budgetId: budgetId,
-        envelopeId: env2,
-        ledgerId: env2_ledger1,
-        createdAt: new Date(2023, 10, 1),
+        createdAt: getRandomTimestamp(),
         type: "expense",
         merchant: "circle-k",
+        allocations: [
+          {
+            envelopeId: env2,
+            ledgerId: env2_ledger1,
+            amount: 50.0,
+          },
+        ],
         amount: 50.0,
         loggedBy: {
           userId: user._id,
@@ -280,14 +336,20 @@ Meteor.startup(() => {
         },
       }),
       TransactionCollection.insert({
+        isCategorized: "true",
         accountId,
         budgetId: budgetId,
-        envelopeId: env2,
-        ledgerId: env2_ledger1,
-        createdAt: new Date(2023, 10, 9),
+        createdAt: getRandomTimestamp(),
         type: "expense",
         merchant: "wawa",
         amount: 35.0,
+        allocations: [
+          {
+            envelopeId: env2,
+            ledgerId: env2_ledger1,
+            amount: 35.0,
+          },
+        ],
         loggedBy: {
           userId: user._id,
           firstName: user.profile.firstName,
@@ -297,13 +359,19 @@ Meteor.startup(() => {
     ];
     const env2_ledger2_transactions = [
       TransactionCollection.insert({
+        isCategorized: "true",
         accountId,
         budgetId: budgetId,
-        envelopeId: env2,
-        ledgerId: env2_ledger2,
-        createdAt: new Date(2023, 10, 6),
+        createdAt: getRandomTimestamp(),
         type: "expense",
         merchant: "state farm",
+        allocations: [
+          {
+            envelopeId: env2,
+            ledgerId: env2_ledger2,
+            amount: 70.0,
+          },
+        ],
         amount: 70.0,
         loggedBy: {
           userId: user._id,
@@ -343,13 +411,19 @@ Meteor.startup(() => {
     // Transactions for ledgers in the Utilities envelope
     const env3_ledger2_transactions = [
       TransactionCollection.insert({
+        isCategorized: "true",
         accountId,
         budgetId: budgetId,
-        envelopeId: env3,
-        ledgerId: env3_ledger2,
-        createdAt: new Date(2023, 10, 1),
+        createdAt: getRandomTimestamp(),
         type: "expense",
         merchant: "duke energy",
+        allocations: [
+          {
+            envelopeId: env3,
+            ledgerId: env3_ledger2,
+            amount: 180.0,
+          },
+        ],
         amount: 180.0,
         loggedBy: {
           userId: user._id,
@@ -360,13 +434,19 @@ Meteor.startup(() => {
     ];
     const env3_ledger_3_transactions = [
       TransactionCollection.insert({
+        isCategorized: "true",
         accountId,
         budgetId: budgetId,
-        envelopeId: env3,
-        ledgerId: env3_ledger3,
-        createdAt: new Date(2023, 10, 2),
+        createdAt: getRandomTimestamp(),
         type: "expense",
         merchant: "orange county",
+        allocations: [
+          {
+            envelopeId: env3,
+            ledgerId: env3_ledger3,
+            amount: 11.5,
+          },
+        ],
         amount: 11.5,
         loggedBy: {
           userId: user._id,
@@ -396,13 +476,19 @@ Meteor.startup(() => {
     // Transactions for ledgers in the Personal envelope
     const env4_ledger1_transactions = [
       TransactionCollection.insert({
+        isCategorized: "true",
         accountId,
         budgetId: budgetId,
-        ledgerId: env4_ledger1,
-        envelopeId: env4,
-        createdAt: new Date(2023, 10, 10),
+        createdAt: getRandomTimestamp(),
         type: "expense",
         merchant: "youtube",
+        allocations: [
+          {
+            ledgerId: env4_ledger1,
+            envelopeId: env4,
+            amount: 15.8,
+          },
+        ],
         amount: 15.8,
         loggedBy: {
           userId: user._id,
@@ -411,13 +497,19 @@ Meteor.startup(() => {
         },
       }),
       TransactionCollection.insert({
+        isCategorized: "true",
         accountId,
         budgetId: budgetId,
-        ledgerId: env4_ledger1,
-        envelopeId: env4,
-        createdAt: new Date(2023, 10, 3),
+        createdAt: getRandomTimestamp(),
         type: "expense",
         merchant: "stumptown coffee roasters",
+        allocations: [
+          {
+            ledgerId: env4_ledger1,
+            envelopeId: env4,
+            amount: 17.0,
+          },
+        ],
         amount: 17.0,
         loggedBy: {
           userId: user._id,
@@ -428,13 +520,19 @@ Meteor.startup(() => {
     ];
     const env4_ledger2_transactions = [
       TransactionCollection.insert({
+        isCategorized: "true",
         accountId,
         budgetId: budgetId,
-        ledgerId: env4_ledger2,
-        envelopeId: env4,
-        createdAt: new Date(2023, 10, 9),
+        createdAt: getRandomTimestamp(),
         type: "expense",
         merchant: "amazon",
+        allocations: [
+          {
+            ledgerId: env4_ledger2,
+            envelopeId: env4,
+            amount: 13.58,
+          },
+        ],
         amount: 13.58,
         loggedBy: {
           userId: user._id,

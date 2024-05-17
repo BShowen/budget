@@ -7,7 +7,7 @@ import { MonthSelector } from "./MonthSelector";
 // Hooks
 import { useIsDarkMode } from "../../hooks/useIsDarkMode";
 
-export function DashboardHeader({ setActiveTab, activeTab, date }) {
+export function DashboardHeader({ setActiveTab, activeTab, timestamp }) {
   const [src, setSrc] = useState(
     window.matchMedia("(prefers-color-scheme: dark)").matches
       ? "/dark-mode-icon.png"
@@ -34,7 +34,7 @@ export function DashboardHeader({ setActiveTab, activeTab, date }) {
             </div>
           </div>
 
-          <MonthSelector currentDate={date} />
+          <MonthSelector currentTimestamp={timestamp} />
         </div>
         <div className="w-full px-1">
           <DashboardButtonGroup

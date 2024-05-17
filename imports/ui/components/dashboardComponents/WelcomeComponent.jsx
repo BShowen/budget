@@ -13,10 +13,10 @@ import { toDollars } from "../../util/toDollars";
 // Icons
 import { LuAlertCircle } from "react-icons/lu";
 
-export function WelcomeComponent({ budgetDate, budgetId }) {
+export function WelcomeComponent({ budgetTimestamp, budgetId }) {
   const isFutureBudget =
     new Date(new Date().getFullYear(), new Date().getMonth(), 1).getTime() <
-    budgetDate.getTime();
+    budgetTimestamp;
 
   const firstName = cap(Meteor.user().profile.firstName);
 

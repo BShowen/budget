@@ -5,10 +5,10 @@ import { useAllCollectionsSubscription } from "./useAllCollectionsSubscription";
 
 // This hook is responsible for determining if the app should be loading or not.
 // It returns an object containing an isLoading field and a currentBudget field.
-export function useAppData({ date }) {
+export function useAppData({ timestamp }) {
   // Get the current budget for the provided date.
   const { isLoading: isLoadingCurrentBudget, budget } =
-    useCurrentBudgetSubscription({ date });
+    useCurrentBudgetSubscription({ timestamp });
 
   // Subscribe to all the budgets. This data is used by the MonthSelector component.
   const { isLoading: isLoadingAllBudgets } = useAllBudgetsSubscription();

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 
 // Hooks
 import { useAppData } from "../hooks/useAppData";
@@ -16,8 +16,10 @@ import { Loader } from "../components/Loader";
 // This app is also simple enough to easily allow me to implement this type of
 // architecture.
 export const App = () => {
-  const [date, setDate] = useState(getDateFromLocalStorage());
-  const { isLoading: isLoadingAppData, currentBudget } = useAppData({ date });
+  const [timestamp, setTimestamp] = useState(getTimestampFromLocalStorage());
+  const { isLoading: isLoadingAppData, currentBudget } = useAppData({
+    timestamp,
+  });
   const [isLoading, setIsLoading] = useState(true);
 
   // When isLoadingAppData is false then set isLoading to false.
@@ -31,10 +33,10 @@ export const App = () => {
   // out and also prevents the "currentBudget" from being set to undefined
   // before the app unmounts. If that happens then an error occurs because
   // currentBudget is expected to never be falsy.
-  function handleDateChange(newDate) {
-    if (newDate.getTime() == date.getTime()) return;
+  function handleTimestampChange(newTimestamp) {
+    if (newTimestamp == timestamp) return;
     setIsLoading(true);
-    setTimeout(() => setDate(newDate), 900);
+    setTimeout(() => setTimestamp(newTimestamp), 900);
   }
 
   return (
@@ -44,7 +46,7 @@ export const App = () => {
       ) : (
         <AppContent
           key={1}
-          setDate={handleDateChange}
+          setTimestamp={handleTimestampChange}
           currentBudget={currentBudget}
         />
       )}
@@ -52,16 +54,19 @@ export const App = () => {
   );
 };
 
-function getDateFromLocalStorage() {
-  const date = new Date(window.localStorage.getItem("currentBudgetDate") || "");
-  if (date == "Invalid Date") {
-    const newDate = new Date(
+function getTimestampFromLocalStorage() {
+  const timestamp = new Date(
+    window.localStorage.getItem("currentBudgetTimestamp") || ""
+  );
+  if (new Date(timestamp) == "Invalid Date") {
+    const newTimestamp = new Date(
       new Date().getFullYear(),
       new Date().getMonth(),
       1
-    );
-    window.localStorage.setItem("currentBudgetDate", newDate);
+    ).getTime();
+    window.localStorage.setItem("currentBudgetTimestamp", newTimestamp);
+    return newTimestamp;
   } else {
-    return date;
+    return timestamp;
   }
 }
