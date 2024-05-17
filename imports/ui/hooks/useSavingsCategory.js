@@ -42,7 +42,7 @@ export function useSavingsCategory({ envelopeId, activeTab }) {
 
   const displayBalance = activeTab
     ? activeTab === "spent"
-      ? moneySaved
+      ? moneySpent
       : activeTab === "remaining"
       ? moneyLeftToSave
       : moneyExpectedToSave

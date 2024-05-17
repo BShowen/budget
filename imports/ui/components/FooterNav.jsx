@@ -74,7 +74,7 @@ export const FooterNav = () => {
           replace={replace}
           className="fixed bottom-6 w-min left-[50%] translate-x-[-50%] translate-y-1"
         >
-          <CiCirclePlus className="text-color-light-blue text-7xl active:text-color-dark-blue" />
+          <CiCirclePlus className="text-color-light-blue text-7xl dark:active:text-blue-800 active:text-blue-300" />
         </Link>
       </div>
     )

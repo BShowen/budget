@@ -19,7 +19,7 @@ export function NavHeader({ text, onClickMenuButton, page }) {
       : page == "transaction-details-page"
       ? "bg-white dark:bg-dark-mode-bg-0"
       : page == "ledger-transactions-page"
-      ? "bg-slate-200 dark:bg-dark-mode-bg-1"
+      ? "bg-white dark:bg-dark-mode-bg-1"
       : "bg-red-500";
 
   return (

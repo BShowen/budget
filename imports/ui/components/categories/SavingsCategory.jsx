@@ -13,10 +13,10 @@ export const SavingsCategory = ({ _id, name, activeTab, kind }) => {
 
   const activeTabText =
     activeTab == "planned"
-      ? "planned"
+      ? "planned to save"
       : activeTab == "spent"
       ? "spent"
-      : "left to receive";
+      : "left to save";
 
   return (
     <CategoryCard

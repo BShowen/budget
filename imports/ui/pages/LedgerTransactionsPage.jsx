@@ -26,9 +26,9 @@ export const LedgerTransactionsPage = () => {
   const { ledgerId } = useParams();
 
   useLayoutEffect(() => {
-    document.body.classList.add("bg-white", "dark:bg-dark-mode-bg-0");
+    document.body.classList.add("bg-slate-100", "dark:bg-dark-mode-bg-0");
     return () =>
-      document.body.classList.remove("bg-white", "dark:bg-dark-mode-bg-0");
+      document.body.classList.remove("bg-slate-100", "dark:bg-dark-mode-bg-0");
   }, []);
 
   const {
@@ -45,7 +45,7 @@ export const LedgerTransactionsPage = () => {
   return (
     <>
       <NavHeader text={ledgerName} page="ledger-transactions-page" />
-      <div className="dark:bg-dark-mode-bg-1 bg-slate-200 pb-5 pt-14">
+      <div className="dark:bg-dark-mode-bg-1 bg-white pb-5 pt-14">
         <div className="w-full p-2 flex flex-col gap-1 justify-center">
           <div className="flex flex-row justify-start items-center">
             <CurrentBalance currentBalance={currentBalance} />
@@ -98,7 +98,7 @@ function ProgressPercentage({ percent, allocatedAmount }) {
 
   return (
     <div className="flex flex-col justify-center">
-      <div className="bg-rose-300 dark:bg-dark-mode-bg-2 h-2 rounded-lg overflow-hidden">
+      <div className="bg-slate-200 dark:bg-dark-mode-bg-2 h-2 rounded-lg overflow-hidden">
         <div
           className="transition-width duration-500 ease-in-out h-full rounded-lg bg-blue-500 dark:bg-[#2f9217]"
           style={{ width: `${width}%` }}
@@ -129,13 +129,13 @@ function Notes({ ledgerId }) {
   }, [updatedNotes]);
 
   return (
-    <div className="bg-white dark:bg-dark-mode-bg-2 rounded-xl flex flex-col justify-center items-stretch px-3 py-1">
+    <div className="bg-slate-100 dark:bg-dark-mode-bg-2 rounded-xl flex flex-col justify-center items-stretch px-3 py-1">
       <p className="text-xs border-b dark:border-dark-mode-bg-3 dark:text-dark-mode-text-1 font-semibold">
         Notes
       </p>
       <textarea
         ref={textareaRef}
-        className="w-full form-textarea focus:ring-0 border-0 placeholder:text-color-light-gray dark:text-dark-mode-text-1 resize-none h-full p-0 dark:bg-dark-mode-bg-2"
+        className="bg-slate-100 w-full form-textarea focus:ring-0 border-0 placeholder:text-color-light-gray dark:text-dark-mode-text-1 resize-none h-full p-0 dark:bg-dark-mode-bg-2"
         rows={textareaRows <= 1 ? 2 : textareaRows}
         placeholder="Tap to add a note"
         value={updatedNotes}
@@ -184,7 +184,7 @@ function ListTransactions({ transactionList, kind }) {
         }`;
 
   return (
-    <div className="bg-white dark:bg-dark-mode-bg-0 pb-32">
+    <div className="bg-slate-100 dark:bg-dark-mode-bg-0 pb-32">
       <div className="w-full flex flex-row justify-between items-center p-2 h-12">
         <div>
           <h2 className="font-semibold text-color-light-gray text-md">

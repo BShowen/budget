@@ -14,7 +14,7 @@ export const IncomeCategory = ({ _id, name, activeTab }) => {
 
   const activeTabText =
     activeTab == "planned"
-      ? "planned"
+      ? "expected income"
       : activeTab == "spent"
       ? "income received"
       : "left to receive";
