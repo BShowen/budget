@@ -12,7 +12,7 @@ import {
   LuUserCircle2,
   LuLineChart,
 } from "react-icons/lu";
-import { IoIosAddCircle } from "react-icons/io";
+import { CiCirclePlus } from "react-icons/ci";
 
 export const FooterNav = () => {
   const uncategorizedTransactions = useTracker(() => {
@@ -48,59 +48,60 @@ export const FooterNav = () => {
 
   return (
     footerNavVisible && (
-      <div className="fixed bottom-0 w-full h-20 bg-white dark:bg-dark-mode-bg-1">
+      <div className="fixed bottom-0 w-full h-[71px] bg-white dark:bg-dark-mode-bg-1">
         <div className="w-full flex flex-row flex-nowrap justify-evenly items-end h-full gooey bg-white dark:bg-inherit">
           <FooterLink to="/" text="Budget">
-            <LuCircleDollarSign className="w-full h-full" />
+            <LuCircleDollarSign className="text-xl" />
           </FooterLink>
           <FooterLink
             to="/transactions"
             text="Transactions"
             notifications={uncategorizedTransactions}
           >
-            <LuListMinus className="w-full h-full" />
+            <LuListMinus className="text-xl" />
           </FooterLink>
-          <div className="w-[70px] bg-inherit rounded-full h-full relative -top-4" />
+          <div className="w-[80px] bg-inherit rounded-full h-full relative -top-5" />
 
           <FooterLink to="/insights" text="Insights">
-            <LuLineChart className="w-full h-full" />
+            <LuLineChart className="text-xl" />
           </FooterLink>
           <FooterLink to="/account" text="Account">
-            <LuUserCircle2 className="w-full h-full" />
+            <LuUserCircle2 className="text-xl" />
           </FooterLink>
         </div>
         <Link
           to="/new-transaction"
           replace={replace}
-          className="fixed bottom-6 w-min left-[50%] translate-x-[-50%]"
+          className="fixed bottom-6 w-min left-[50%] translate-x-[-50%] translate-y-1"
         >
-          <IoIosAddCircle className="text-color-light-blue text-7xl" />
+          <CiCirclePlus className="text-color-light-blue text-7xl active:text-color-dark-blue" />
         </Link>
       </div>
     )
   );
 };
 
-function FooterLink({ children, to, text, notifications }) {
+function FooterLink({ children, to, text, notifications, replace }) {
   return (
-    <div className="w-1/6 flex flex-row justify-center items-stretch h-full pt-3">
+    <div className="w-1/5 flex flex-row justify-center items-stretch h-full pt-2">
       <NavLink
         to={to}
+        replace={replace}
         className={({ isActive }) =>
           `${
             isActive && "text-color-light-blue"
-          } flex flex-col items-center px-3 text-xs`
+          } h-full w-full flex flex-col items-center justify-start`
         }
       >
-        <div className="w-5 h-5 relative">
-          {notifications > 0 && (
-            <div className="absolute -top-3 -right-3 w-5 h-5 flex flex-row justify-center items-center rounded-full bg-pink-600 text-xs font-semibold text-white">
-              <p>{notifications}</p>
+        {notifications > 0 && (
+          <div className="relative">
+            <div className="absolute -top-1 -left-4 w-3 h-3 flex flex-row justify-center items-center rounded-full bg-white dark:bg-dark-mode-bg-1 text-xs font-semibold text-white">
+              <div className="w-2 h-2 flex flex-row justify-center items-center rounded-full bg-pink-600 text-xs text-white"></div>
             </div>
-          )}
-          {children}
-        </div>
-        <p className="font-semibold">{text}</p>
+          </div>
+        )}
+        {children}
+        {text && <p className="font-medium text-[11px]">{text}</p>}
       </NavLink>
     </div>
   );
