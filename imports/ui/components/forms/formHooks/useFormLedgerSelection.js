@@ -73,7 +73,21 @@ export function useFormLedgerSelection({
       return { envelopeName, envelopeType, envelopeLedgers };
     });
 
-    return ledgersGroupedByEnvelope;
+    return [
+      ...ledgersGroupedByEnvelope,
+      {
+        envelopeName: "uncategorized",
+        envelopeType: "uncategorized",
+        envelopeLedgers: [
+          {
+            _id: "uncategorized",
+            envelopeId: "uncategorized",
+            name: "uncategorized",
+            kind: "uncategorized",
+          },
+        ],
+      },
+    ];
   }, [transType]);
 
   function selectLedger({ ledger }) {

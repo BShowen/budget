@@ -7,6 +7,7 @@ import { SavingsLedgerSelection } from "./SavingsLedgerSelection";
 
 // Utils
 import { cap } from "../../../util/cap";
+import { UncategorizedLedgerSelection } from "./UncategorizedLedgerSelection";
 
 export function CategorySelection({
   section,
@@ -51,6 +52,17 @@ export function CategorySelection({
             case "savings":
               return (
                 <SavingsLedgerSelection
+                  ledger={ledger}
+                  key={ledger._id}
+                  selected={selectedLedgerIdList.includes(ledger._id)}
+                  selectLedger={selectLedger}
+                  deselectLedger={deselectLedger}
+                  isBordered={isBordered}
+                />
+              );
+            case "uncategorized":
+              return (
+                <UncategorizedLedgerSelection
                   ledger={ledger}
                   key={ledger._id}
                   selected={selectedLedgerIdList.includes(ledger._id)}

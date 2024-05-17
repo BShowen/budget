@@ -44,7 +44,7 @@ export function populateTransaction({ transaction, ledgerId, envelopeId }) {
 
   const ledgerNameList = [
     ...ledgerList.map(({ name }) => name),
-    ...(transaction.isCategorized ? [] : "uncategorized"),
+    ...(transaction.isCategorized ? [] : ["uncategorized"]),
   ];
 
   const tagNameList = TagCollection.find({ _id: { $in: transaction.tags } })
