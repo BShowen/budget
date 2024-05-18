@@ -10,6 +10,7 @@ import { SignupForm } from "../components/forms/SignupForm";
 export function SignupPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [isCreatingAccount, setIsCreatingAccount] = useState(false);
   const [isValidInvite, setIsValidInvite] = useState(true);
   const [validationErrors, setValidationErrors] = useState({});
   const { inviteCode } = useParams();
@@ -49,31 +50,35 @@ export function SignupPage() {
     handleSignup(formData);
   };
 
-  const handleSignup = (formData) =>
+  const handleSignup = (formData) => {
+    setIsCreatingAccount(true);
     Meteor.call("account.signup", { ...formData }, (err) => {
       if (!err) navigate("/login");
-      console.log("error", err);
-      if (err?.reason === "invalidInviteCode") {
-        // Alert the user that something went wrong please check the link and try again.
-        console.log("Invalid invite code.");
-      } else if (err?.reason === "invalidAccessCode") {
-        console.log("Invalid access code.");
-      } else if (err?.reason === "undefinedCode") {
-        console.log("No access.");
-        // Do nothing.
-        // An access code or invite code will be sent if the user is using the
-        // UI. The only way a code isn't sent is if the user is using a tool
-        // like curl or they're tampering with the form.
-        return;
-      } else if (err?.details) {
-        setValidationErrors(
-          err.details.split("\n").reduce((acc, isValidInvite) => {
-            const [field, message] = isValidInvite.split(":");
-            return { ...acc, [field]: message };
-          }, {})
-        );
-      }
+      setTimeout(() => {
+        if (err?.reason === "invalidInviteCode") {
+          // Alert the user that something went wrong please check the link and try again.
+          console.log("Invalid invite code.");
+        } else if (err?.reason === "invalidAccessCode") {
+          console.log("Invalid access code.");
+        } else if (err?.reason === "undefinedCode") {
+          console.log("No access.");
+          // Do nothing.
+          // An access code or invite code will be sent if the user is using the
+          // UI. The only way a code isn't sent is if the user is using a tool
+          // like curl or they're tampering with the form.
+          return;
+        } else if (err?.details) {
+          setValidationErrors(
+            err.details.split("\n").reduce((acc, isValidInvite) => {
+              const [field, message] = isValidInvite.split(":");
+              return { ...acc, [field]: message };
+            }, {})
+          );
+        }
+        setIsCreatingAccount(false);
+      }, 1000);
     });
+  };
 
   if (loading) {
     return (
@@ -103,6 +108,7 @@ export function SignupPage() {
 
       <div>
         <SignupForm
+          isLoading={isCreatingAccount}
           onSubmit={handleSubmit}
           validationErrors={validationErrors}
           // When invite code is false, an access code is required to sign up.

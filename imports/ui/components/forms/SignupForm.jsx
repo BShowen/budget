@@ -3,7 +3,11 @@ import React, { useState } from "react";
 // Icons
 import { LuInfo } from "react-icons/lu";
 
+// Components
+import { LineWobble } from "../LineWobble";
+
 export function SignupForm({
+  isLoading,
   onSubmit,
   validationErrors,
   requiresAccessCode = false,
@@ -72,7 +76,14 @@ export function SignupForm({
         {requiresAccessCode && <AccessCodeInput />}
         <div className="flex flex-row justify-center items-center">
           <button className="btn-primary" type="submit">
-            Create account
+            {isLoading ? (
+              <div className="flex flex-col justify-center items-center h-full">
+                <p>Creating account...</p>
+                <LineWobble width={150} />
+              </div>
+            ) : (
+              "Create account"
+            )}
           </button>
         </div>
       </form>
