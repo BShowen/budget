@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Meteor } from "meteor/meteor";
-import { redirect, useNavigate } from "react-router-dom";
+import { redirect, useNavigate, Link } from "react-router-dom";
 
-export const loginFormLoader = () => {
+// Components
+import { LineWobble } from "../components/LineWobble";
+
+export const loginPageLoader = () => {
   // If user is logged in, redirect to budget.
   if (Meteor.loggingOut()) {
     // If user is logging out
@@ -14,8 +17,9 @@ export const loginFormLoader = () => {
     return null;
   }
 };
-export function LoginForm() {
+export function LoginPage() {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState({});
   const [formValues, setFormValues] = useState({
     email: "",
@@ -35,20 +39,26 @@ export function LoginForm() {
       setError({});
       return;
     }
-
+    setIsLoading(true);
     Meteor.loginWithPassword(
       { email: formValues.email },
       formValues.password,
       (error) => {
-        if (error) {
-          if (error.reason.toLowerCase() == "user not found") {
-            setError({ field: "email", reason: "Invalid email" });
-          } else if (error.reason.toLowerCase() == "incorrect password") {
-            setError({ field: "password", reason: "Invalid password" });
+        // setTimeout is used to prevent the loader from flickering when loading
+        // times are fast.
+        setTimeout(() => {
+          if (error) {
+            if (error.reason.toLowerCase() == "user not found") {
+              setError({ field: "email", reason: "Invalid email" });
+            } else if (error.reason.toLowerCase() == "incorrect password") {
+              setError({ field: "password", reason: "Invalid password" });
+            }
+            setIsLoading(false);
+          } else {
+            setIsLoading(false);
+            navigate("/");
           }
-        } else {
-          navigate("/");
-        }
+        }, 1000);
       }
     );
   }
@@ -71,24 +81,24 @@ export function LoginForm() {
 
   useEffect(() => {
     document.body.classList.add("prevent-scroll");
+    document.documentElement.classList.add("prevent-scroll");
     return () => {
       document.body.classList.remove("prevent-scroll");
+      document.documentElement.classList.remove("prevent-scroll");
     };
   });
 
   return (
-    <>
-      <div className="empty-page-header"></div>
-      <div className="w-full bg-inherit p-2 flex flex-col justify-start items-stretch gap-7 padding-safe-area-top bg-app">
-        <div className="w-full h-14 flex flex-col justify-end items-center">
-          <h1 className="text-3xl font-semibold text-color-primary">
-            Login to Dough Tracker
-          </h1>
-        </div>
-
+    <div className="w-full bg-inherit flex flex-col justify-center items-stretch gap-7 padding-top-safe-area height-full lg:w-2/5 lg:mx-auto">
+      <div className="w-full h-14 flex flex-col justify-end items-center">
+        <h1 className="text-3xl font-semibold dark:text-dark-mode-text-1">
+          Login to Dough Tracker
+        </h1>
+      </div>
+      <div>
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col justify-start gap-3 lg:w-2/5 lg:mx-auto"
+          className="flex flex-col justify-start gap-3 w-full px-2"
         >
           <div>
             <input
@@ -120,39 +130,29 @@ export function LoginForm() {
           </div>
           <div className="flex flex-row justify-center items-center">
             <button className="btn-primary py-2 px-4" type="submit">
-              Log In
+              {isLoading ? (
+                <div className="flex flex-col justify-center items-center h-full">
+                  <p>Logging in...</p>
+                  <LineWobble width={100} />
+                </div>
+              ) : (
+                <p>Login</p>
+              )}
             </button>
           </div>
-          {/* <div className="flex flex-row justify-start items-center px-2">
-            <p>
-              Don't have an account?{" "}
-              <span>
-                <Link className="underline text-sky-500">Sign up</Link>
-              </span>
-            </p>
-          </div>
-          <div className="flex flex-row justify-start items-center px-2">
-            <a
-              className="underline text-sky-500 hover:cursor-pointer"
-              onClick={() => {
-                Meteor.loginWithPassword(
-                  { email: Meteor.settings.public.demoAccount.email },
-                  Meteor.settings.public.demoAccount.password,
-                  (error) => {
-                    if (error) {
-                      alert("Sorry, demo isn't available right now.");
-                    } else {
-                      navigate("/");
-                    }
-                  }
-                );
-              }}
-            >
-              Try a demo
-            </a>
-          </div> */}
         </form>
+
+        <div className="flex flex-row justify-start items-center px-2 py-3">
+          <p>
+            Don't have an account?{" "}
+            <span>
+              <Link to="/signup" className="text-sky-600">
+                Sign up
+              </Link>
+            </span>
+          </p>
+        </div>
       </div>
-    </>
+    </div>
   );
 }

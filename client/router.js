@@ -3,16 +3,13 @@ import React from "react";
 import { createBrowserRouter, redirect } from "react-router-dom";
 
 // Components
-import {
-  LoginForm,
-  loginFormLoader,
-} from "../imports/ui/components/forms/LoginForm";
 import { TransactionForm } from "../imports/ui/components/forms/TransactionForm";
 
 // Pages
+import { LoginPage, loginPageLoader } from "../imports/ui/pages/LoginPage";
 import { Dashboard } from "../imports/ui/pages/Dashboard";
 import { LedgerTransactionsPage } from "../imports/ui/pages/LedgerTransactionsPage";
-import { SignupForm } from "../imports/ui/components/forms/SignupForm";
+import { SignupPage } from "../imports/ui/pages/SignupPage";
 import { AccountPage } from "../imports/ui/pages/AccountPage";
 import { ErrorPage } from "../imports/ui/pages/ErrorPage";
 import { InvitationPage } from "../imports/ui/pages/InvitationPage";
@@ -114,8 +111,8 @@ export const router = createBrowserRouter([
   },
   {
     path: "/login",
-    loader: loginFormLoader,
-    element: <LoginForm />,
+    loader: loginPageLoader,
+    element: <LoginPage />,
   },
   {
     path: "/logout",
@@ -123,6 +120,10 @@ export const router = createBrowserRouter([
   },
   {
     path: "/:inviteCode/signup",
-    element: <SignupForm />,
+    element: <SignupPage />,
+  },
+  {
+    path: "/signup",
+    element: <SignupPage />,
   },
 ]);

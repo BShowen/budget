@@ -10,7 +10,7 @@ import { LuUserCircle2 } from "react-icons/lu";
 
 export function ManageUsersPage() {
   const navigate = useNavigate();
-  const isAdmin = useTracker(() => Meteor.user()?.isAdmin);
+  const isAdmin = useTracker(() => Meteor.user()?.profile?.isAdmin);
   const userList = useTracker(() => {
     return Meteor.users.find({}).fetch();
   });
@@ -21,7 +21,7 @@ export function ManageUsersPage() {
     // If the user is not an admin, navigate to the root url.
     // isAdmin is a reactive source. So even if the user is already on this page
     // they will be redirected immediately when there isAdmin status is changed.
-    if (isAdmin == false) {
+    if (!isAdmin) {
       navigate("/account");
     }
   }, [isAdmin]);
@@ -101,7 +101,7 @@ export function ManageUsersPage() {
 
 function ToggleAdmin({ user }) {
   const currentUserId = Meteor.userId();
-  const [toggleState, setToggleState] = useState(user.isAdmin || false);
+  const [toggleState, setToggleState] = useState(user.profile.isAdmin || false);
 
   const toggleAdminRole = () => {
     if (currentUserId == user._id) {

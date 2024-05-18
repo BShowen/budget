@@ -36,14 +36,12 @@ Meteor.startup(() => {
       profile: {
         firstName: SEED_1_FIRST_NAME,
         lastName: SEED_1_LAST_NAME,
+        isAdmin: true,
       },
     });
   }
 
   const user = Accounts.findUserByEmail(SEED_1_EMAIL);
-
-  // Set the user to be an admin.
-  Meteor.users.update({ _id: user._id }, { $set: { isAdmin: true } });
 
   if (!AccountCollection.find().count()) {
     // Create a new account

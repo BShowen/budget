@@ -8,12 +8,17 @@ import { LedgerCollection } from "../Ledger/LedgerCollection";
 import { TagCollection } from "../Tag/TagCollection";
 import { TransactionCollection } from "../Transaction/TransactionCollection";
 
+// Helpers
+import { validateInviteCode } from "./helpers/validateInviteCode";
+import { createNewProfile } from "./helpers/createNewProfile";
+import { createInvitedProfile } from "./helpers/createInvitedProfile";
+
 Meteor.methods({
   "account.generateSignupUrl"() {
     // User needs to be logged in to create a signup url.
     // Don't run this code on the client.
     // Don'r run this code if user is not admin
-    if (!Meteor.userId() || Meteor.isClient || !Meteor.user().isAdmin) {
+    if (!Meteor.userId() || Meteor.isClient || !Meteor.user().profile.isAdmin) {
       return;
     }
 
@@ -39,117 +44,21 @@ Meteor.methods({
   },
   "account.validateInviteCode"({ inviteCode }) {
     if (Meteor.isServer) {
-      return AccountCollection.countDocuments({ inviteCode }).then((result) => {
-        if (result > 0) {
-          return { isValidInviteCode: true };
-        } else {
-          throw new Meteor.Error(
-            "account.validateInviteCode",
-            "Invalid invite code.",
-            "Your invitation has expired."
-          );
-        }
-      });
+      validateInviteCode({ inviteCode });
+      return true;
     }
   },
-  "account.signup"(signupParams) {
+  "account.signup"(formData) {
     if (Meteor.isClient) return;
 
-    // Init an empty array to hold error message strings.
-    // Each error string should have the syntax "field:message" for example
-    // "firstName:First name is required."
-    // "confirmPassword:Passwords do not match."
-    const validationErrors = [];
-    // Iterate through signupParams and push an error message into the array
-    // for each param that is invalid.
-    for (let [name, value] of Object.entries(signupParams)) {
-      // Check passwords.
-      if (name == "password" || name == "confirmPassword") {
-        if (name == "password" && value.trim().length == 0) {
-          // Password was not entered.
-          validationErrors.push(`password:Password is required.`);
-        } else if (name == "password" && value.trim().length == 0) {
-          // Confirm password was not entered.
-          validationErrors.push(
-            `confirmPassword:Confirm password is required.`
-          );
-        } else if (
-          name == "password" &&
-          value !== signupParams.confirmPassword
-        ) {
-          // Passwords don't match.
-          validationErrors.push("confirmPassword:Passwords don't match");
-        }
-        continue;
-      }
-
-      // Check all other form values.
-      // Trim whitespace off all values (Except passwords).
-      value = value.trim();
-      if (value.length == 0) {
-        switch (name) {
-          case "firstName":
-            validationErrors.push("firstName:First name is required.");
-            break;
-          case "lastName":
-            validationErrors.push("lastName:Last name is required.");
-            break;
-          case "email":
-            validationErrors.push("email:Email is required.");
-            break;
-        }
-      }
+    if (formData.inviteCode) {
+      createInvitedProfile({ formData });
+    } else if (formData.accessCode) {
+      createNewProfile({ formData });
+    } else {
+      // No code provided.
+      throw new Meteor.Error("account.signup", "undefinedCode");
     }
-    // If any params are invalid, throw an error with the error message(s).
-    // Throw new Meteor.Error with the details being errorArray.join("\n");
-    if (validationErrors.length > 0) {
-      throw new Meteor.Error(
-        "account.signup",
-        "Validation error",
-        validationErrors.join("\n")
-      );
-    }
-
-    // Id all params are valid, create the user.
-
-    // Create the user
-    /* prettier-ignore */
-    const {
-      firstName,
-      lastName,
-      email,
-      password,
-      inviteCode
-    } = signupParams;
-    Accounts.createUser({
-      email,
-      password,
-      profile: {
-        firstName,
-        lastName,
-      },
-    });
-
-    // Associate the user with the account that is linked to the secret.
-    const account = AccountCollection.findOne({ inviteCode }, { _id: 1 });
-    const newUser = Accounts.findUserByEmail(email);
-    Meteor.users.update(
-      { _id: newUser._id },
-      { $set: { accountId: account._id } }
-    );
-
-    try {
-      // Remove the inviteCode from the account so the link is invalidated.
-      AccountCollection.update(
-        { _id: account._id },
-        { $unset: { inviteCode: true } }
-      );
-    } catch (error) {
-      console.log("error", error);
-    }
-
-    // Send a success response.
-    return true;
   },
   "account.resetPassword"({ oldPassword, newPassword, confirmPassword }) {
     // Don't run this method if isClient or user is not logged in.
@@ -221,7 +130,8 @@ Meteor.methods({
     // Don't run on server.
     // Don't run if logged out.
     // Don't allow non-admins to run this method.
-    if (Meteor.isClient || !this.userId || !Meteor.user().isAdmin) return;
+    if (Meteor.isClient || !this.userId || !Meteor.user().profile.isAdmin)
+      return;
 
     if (
       currentUserHasPrecedence({ targetUserId: userId }) &&
@@ -234,10 +144,10 @@ Meteor.methods({
         // Update the admin status of the user.
         Meteor.users.update(
           { _id: userId },
-          { $set: { isAdmin: adminStatus } }
+          { $set: { "profile.isAdmin": adminStatus } }
         );
         // Return the updated admin status of the user.
-        return Meteor.users.findOne({ _id: userId }).isAdmin;
+        return Meteor.users.findOne({ _id: userId }).profile.isAdmin;
       } catch (error) {
         console.log("account.updateRole");
         throw new Meteor.Error("account.updateRole", "Internal server error");
@@ -250,7 +160,8 @@ Meteor.methods({
     // Don't run on server.
     // Don't run if logged out.
     // Don't allow non-admins to run this method.
-    if (Meteor.isClient || !this.userId || !Meteor.user().isAdmin) return;
+    if (Meteor.isClient || !this.userId || !Meteor.user().profile.isAdmin)
+      return;
 
     if (
       currentUserHasPrecedence({ targetUserId }) &&

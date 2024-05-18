@@ -19,7 +19,7 @@ export function AccountPage() {
     return {
       firstName: user?.profile?.firstName,
       lastName: user?.profile?.lastName,
-      isAdmin: user?.isAdmin,
+      isAdmin: user?.profile?.isAdmin,
       email: user?.emails[0]?.address,
     };
   });
