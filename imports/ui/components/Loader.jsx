@@ -8,8 +8,12 @@ export function Loader() {
   squircle.register();
 
   useEffect(() => {
+    document.documentElement.classList.add("prevent-scroll");
     document.body.classList.add("prevent-scroll");
-    return () => document.body.classList.remove("prevent-scroll");
+    return () => {
+      document.documentElement.classList.remove("prevent-scroll");
+      document.body.classList.remove("prevent-scroll");
+    };
   }, []);
 
   return (
