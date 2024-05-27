@@ -80,7 +80,7 @@ export function MonthSelector({ currentTimestamp }) {
       </div>
       <div>
         <div
-          className={`z-50 flex flex-row items-center absolute left-0 right-0 bg-white dark:bg-blue-950 mt-4 dark:rounded-b-xl ${
+          className={`z-50 flex flex-row items-center absolute left-0 right-0 bg-month-selector-bg-color mt-4 rounded-b-xl ${
             isDropdownOpen
               ? "month-selector-slide-in"
               : canAnimate
@@ -117,9 +117,9 @@ function MonthSelectorButton({
   const active = activeBudgetTimestamp == budgetTimestamp;
   const activeStyling = active
     ? "bg-color-light-blue text-white"
-    : isFutureDate
-    ? "bg-white dark:bg-blue-950 dark:text-dark-mode-text-0 border border-color-light-blue border-dashed text-light-mode-text-0"
-    : "border border-color-light-blue bg-white dark:bg-blue-950 dark:text-dark-mode-text-0 text-slate-700";
+    : `border border-color-light-blue text-month-selector-btn-text-color ${
+        isFutureDate ? "border-dashed text-light-mode-text-0" : ""
+      }`;
 
   return (
     <li

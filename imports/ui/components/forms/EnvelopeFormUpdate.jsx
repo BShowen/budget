@@ -75,7 +75,7 @@ export const EnvelopeFormUpdate = ({
     <div className="w-full h-7 flex flex-row items-center">
       <form className="w-full h-full flex flex-row justify-between items-center ">
         <input
-          className="h-full p-0 font-bold text-lg form-input outline-none border-0 focus:ring-0 w-full dark:bg-dark-mode-bg-1"
+          className="h-full p-0 font-bold text-lg form-input outline-none border-0 focus:ring-0 w-full bg-gray-accent-1"
           autoFocus
           type="text"
           name="name"

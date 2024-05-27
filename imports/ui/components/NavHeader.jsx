@@ -15,16 +15,16 @@ export function NavHeader({ text, onClickMenuButton, page }) {
     page == "account-page" ||
     page == "insights-page" ||
     page == "transactions-page"
-      ? "bg-slate-100 dark:bg-dark-mode-bg-0"
+      ? "bg-nav-header-1-bg"
       : page == "transaction-details-page"
-      ? "bg-white dark:bg-dark-mode-bg-0"
+      ? "bg-nav-header-2-bg"
       : page == "ledger-transactions-page"
-      ? "bg-white dark:bg-dark-mode-bg-1"
+      ? "bg-nav-header-3-bg"
       : "bg-red-500";
 
   return (
     <div
-      className={`w-full fixed top-0 z-50 padding-top-safe-area ${color} border-b dark:border-dark-mode-bg-1`}
+      className={`w-full fixed top-0 z-50 padding-top-safe-area ${color} border-b border-nav-header-border-color`}
     >
       <div className="w-full flex flex-row justify-between items-center px-2 py-3">
         <BackButton />

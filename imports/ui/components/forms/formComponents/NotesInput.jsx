@@ -6,7 +6,7 @@ export function NotesInput({ value, onChange }) {
   };
 
   return (
-    <div className="w-full flex flex-row items-stretch justify-end min-h-9 bg-white rounded-lg overflow-hidden shadow-sm">
+    <div className="w-full flex flex-row items-stretch justify-end min-h-9 rounded-lg overflow-hidden shadow-sm bg-transaction-form-input-bg-color">
       <textarea
         rows={2}
         placeholder="Add a note"
@@ -14,7 +14,7 @@ export function NotesInput({ value, onChange }) {
         onBlur={handleBlur}
         onInput={onChange}
         name="note"
-        className="text-left w-full focus:ring-0 border-0 form-input h-full placeholder:font-medium flex flex-row justify-start items-center px-2 py-1 dark:bg-dark-mode-bg-1"
+        className="text-left w-full focus:ring-0 border-0 form-input h-full placeholder:font-medium flex flex-row justify-start items-center px-2 py-1 bg-inherit"
       />
     </div>
   );

@@ -108,54 +108,46 @@ export function Insights() {
 
   return (
     <div className="w-full flex flex-col justify-start items-stretch font-semibold gap-3">
-      <div className="bg-white dark:bg-dark-mode-bg-1 dark:text-dark-mode-text-1 rounded-xl p-2 flex flex-col shadow-sm">
+      <div className="bg-insights-container-bg-color rounded-xl p-2 flex flex-col shadow-sm">
         <h1 className="text-lg font-bold">Income this month</h1>
 
-        <div className="w-full flex flex-row gap-1 items-center px-2 justify-between">
-          <div>Expected</div>
-          <hr className="border-t-2 border-dashed border-slate-400 grow mx-1" />
+        <div className="w-full flex flex-row gap-1 items-center px-2 justify-between text-insights-text-color">
+          <p>Expected</p>
+          <hr className="border-t border-dashed border-slate-400 grow mx-1" />
           <div>{toDollars(anticipatedIncome)}</div>
         </div>
 
-        <div className="w-full flex flex-row gap-1 items-center px-2">
-          <div>Received</div>
-          <hr className="border-t-2 border-dashed border-slate-400 grow mx-1" />
+        <div className="w-full flex flex-row gap-1 items-center px-2 text-insights-text-color">
+          <p>Received</p>
+          <hr className="border-t border-dashed border-slate-400 grow mx-1" />
           <div>{toDollars(incomeReceived)}</div>
         </div>
       </div>
 
-      <div className="bg-white dark:bg-dark-mode-bg-1 dark:text-dark-mode-text-1 rounded-xl p-2 flex flex-col shadow-sm">
-        <h1 className="text-lg font-bold ">Saved this month</h1>
+      <div className="bg-insights-container-bg-color rounded-xl p-2 flex flex-col shadow-sm">
+        <h1 className="text-lg font-bold">Saved this month</h1>
 
-        <div className="w-full flex flex-row gap-1 items-center px-2 justify-between">
-          <div>Savings</div>
-          <hr className="border-t-2 border-dashed border-slate-400 grow mx-1" />
+        <div className="w-full flex flex-row gap-1 items-center px-2 justify-between text-insights-text-color">
+          <p>Savings</p>
+          <hr className="border-t border-dashed border-slate-400 grow mx-1" />
           <div>{toDollars(savings)}</div>
         </div>
-
-        {allocations > 0 && (
-          <div className="w-full flex flex-row gap-1 items-center px-2 justify-between">
-            <div>Allocations</div>
-            <hr className="border-t-2 border-dashed border-slate-400 grow mx-1" />
-            <div>{toDollars(allocations)}</div>
-          </div>
-        )}
       </div>
 
-      <div className="bg-white dark:bg-dark-mode-bg-1 dark:text-dark-mode-text-1 rounded-xl p-2 flex flex-col shadow-sm">
-        <h1 className="text-xl font-bold ">Spent this month</h1>
-        <div className="w-full flex flex-row gap-1 items-center px-2 justify-between">
-          <div>Spent</div>
-          <hr className="border-t-2 border-dashed border-slate-400 grow mx-1" />
+      <div className="bg-insights-container-bg-color rounded-xl p-2 flex flex-col shadow-sm">
+        <h1 className="text-lg font-bold">Spent this month</h1>
+        <div className="w-full flex flex-row gap-1 items-center px-2 justify-between text-insights-text-color">
+          <p>Spent</p>
+          <hr className="border-t border-dashed border-slate-400 grow mx-1" />
           <div>{toDollars(spentSoFar)}</div>
         </div>
       </div>
 
-      <div className="bg-white dark:bg-dark-mode-bg-1 dark:text-dark-mode-text-1 rounded-xl p-2 flex flex-col shadow-sm">
-        <h1 className="text-xl font-bold ">Remaining</h1>
-        <div className="w-full flex flex-row gap-1 items-center px-2 justify-between">
-          <div className="min-w-content">Left to spend</div>
-          <hr className="border-t-2 border-dashed border-slate-400 grow mx-1" />
+      <div className="bg-insights-container-bg-color rounded-xl p-2 flex flex-col shadow-sm">
+        <h1 className="text-lg font-bold">Remaining</h1>
+        <div className="w-full flex flex-row gap-1 items-center px-2 justify-between text-insights-text-color">
+          <p>Left to spend</p>
+          <hr className="border-t border-dashed border-slate-400 grow mx-1" />
           <div>
             {toDollars(
               Math.round(

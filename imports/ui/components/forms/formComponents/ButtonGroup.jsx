@@ -10,7 +10,7 @@ export function ButtonGroup({ active, setActiveTab }) {
     const position = index === 0 ? "left-0" : "left-2/4";
     return (
       <div
-        className={`${position} w-2/4 relative z-2 h-[29px] rounded-lg bg-primary-blue dark:bg-blue-800 transition-all duration-250`}
+        className={`${position} w-2/4 relative z-2 h-[29px] rounded-lg bg-slider-pill-bg-color transition-all duration-250`}
       />
     );
   }, []);
@@ -29,7 +29,7 @@ export function ButtonGroup({ active, setActiveTab }) {
   });
 
   return (
-    <div className="w-full flex flex-row justify-start p-1 bg-primary-blue-darker rounded-xl h-9 relative z-0 items-center">
+    <div className="w-full flex flex-row justify-start p-1 bg-slider-bg-color rounded-xl h-9 relative z-0 items-center">
       <Slider index={index} />
       <div className="absolute top-0 bottom-0 left-0 right-0 flex flex-row flex-nowrap z-3">
         {buttonList}

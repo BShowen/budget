@@ -2,9 +2,264 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Fallback incase javascript doesn't set the height of --app-height variable */
-:root {
-  --app-height: 100%;
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+  }
+  html,
+  body {
+    min-height: calc(var(--app-height) + env(safe-area-inset-top));
+    @apply bg-app-bg-color text-primary-text-color;
+  }
+  :root {
+    /* Fallback incase javascript doesn't set the height of --app-height variable */
+    --app-height: 100%;
+  }
+  :root[data-theme="light"] {
+    --app-bg-color: 241, 245, 249;
+    --primary-text-color: 55, 65, 81;
+    --category-blue-text: 29, 78, 216;
+    --category-price-color: 55, 65, 81;
+    --category-card-bg-color: 255, 255, 255;
+    --add-category-text-color: 55, 65, 81;
+    --slider-bg-color: 7, 28, 74;
+    --slider-pill-bg-color: 0, 105, 254;
+    --main-nav-bg-color: 0, 105, 254;
+    --ledger-bg-color: 241, 245, 249;
+    --ledger-progress-bg-color-good: 147, 197, 253;
+    --ledger-progress-bg-color-bad: 251, 113, 133;
+    --month-selector-bg-color: 255, 255, 255;
+    --month-selector-btn-text-color: 55, 65, 81;
+    --footer-nav-bg: 242, 242, 242;
+    --nav-header-1-bg: 241, 245, 249;
+    --nav-header-2-bg: 255, 255, 255;
+    --nav-header-3-bg: 255, 255, 255;
+    --nav-header-border-color: 229, 231, 235;
+    --back-button-border-color: 203, 213, 225;
+    --back-button-icon-color: 55, 65, 81;
+    --nav-header-menu-button-color: 55, 65, 81;
+    --search-bar-container-bg-color: 241, 245, 249;
+    --search-bar-bg: 255, 255, 255;
+    --search-bar-total-bg: 255, 255, 255;
+    --transaction-group-bg-color: 241, 245, 249;
+    --transaction-group-border-color: 229, 231, 235;
+    --transaction-group-text-color: 55, 65, 81;
+    --list-transaction-bg-color: 255, 255, 255;
+    --list-transaction-border-color: 229, 231, 235;
+    --list-transaction-text-color: 55, 65, 81;
+    --transaction-details-bg-color: 255, 255, 255;
+    --transaction-details-border-color: 229, 231, 235;
+    --transaction-details-text-color: 55, 65, 81;
+    --transaction-form-date-label-bg: 37, 99, 235;
+    --transaction-form-merchant-label-bg: 37, 99, 235;
+    --transaction-form-input-bg-color: 255, 255, 255;
+    --dialog-bg-color: 255, 255, 255;
+    --dialog-header-bg-color: 0, 105, 254;
+    --dialog-ledger-selection-bg-color: 255, 255, 255;
+    --dialog-ledger-selection-border-color: 229, 231, 235;
+    --green-accent-0: 21, 128, 61;
+    --insights-container-bg-color: 255, 255, 255;
+    --insights-text-color: 55, 65, 81;
+    --settings-page-email-text-color: 55, 65, 81;
+    --settings-container-bg-color: 255, 255, 255;
+    --settings-container-border-color: 229, 231, 235;
+    --settings-page-text-color: 55, 65, 81;
+    --app-form-input-bg-color: 255, 255, 255;
+    --access-code-text-color: 139, 139, 145;
+    --ledger-transactions-page-bg-color: 255, 255, 255;
+    --ledger-transactions-page-current-balance-color: 55, 65, 81;
+    --progress-percentage-bg-color: 226, 232, 240;
+    --progress-percentage-color: 59, 130, 246;
+    --progress-percentage-text-color: 71, 85, 105;
+    --ledger-transactions-notes-bg-color: 241, 245, 249;
+    --ledger-transactions-notes-border-color: 229, 231, 235;
+    --ledger-transactions-notes-placeholder-color: 55, 65, 81;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --app-bg-color: 241, 245, 249;
+      --primary-text-color: 55, 65, 81;
+      --category-blue-text: 29, 78, 216;
+      --category-price-color: 55, 65, 81;
+      --category-card-bg-color: 255, 255, 255;
+      --add-category-text-color: 55, 65, 81;
+      --slider-bg-color: 7, 28, 74;
+      --slider-pill-bg-color: 0, 105, 254;
+      --main-nav-bg-color: 0, 105, 254;
+      --ledger-bg-color: 241, 245, 249;
+      --ledger-progress-bg-color-good: 147, 197, 253;
+      --ledger-progress-bg-color-bad: 251, 113, 133;
+      --month-selector-bg-color: 255, 255, 255;
+      --month-selector-btn-text-color: 55, 65, 81;
+      --footer-nav-bg: 242, 242, 242;
+      --nav-header-1-bg: 241, 245, 249;
+      --nav-header-2-bg: 255, 255, 255;
+      --nav-header-3-bg: 255, 255, 255;
+      --nav-header-border-color: 229, 231, 235;
+      --back-button-border-color: 203, 213, 225;
+      --back-button-icon-color: 55, 65, 81;
+      --nav-header-menu-button-color: 55, 65, 81;
+      --search-bar-container-bg-color: 241, 245, 249;
+      --search-bar-bg: 255, 255, 255;
+      --search-bar-total-bg: 255, 255, 255;
+      --transaction-group-bg-color: 241, 245, 249;
+      --transaction-group-border-color: 229, 231, 235;
+      --transaction-group-text-color: 55, 65, 81;
+      --list-transaction-bg-color: 255, 255, 255;
+      --list-transaction-border-color: 229, 231, 235;
+      --list-transaction-text-color: 55, 65, 81;
+      --transaction-details-bg-color: 255, 255, 255;
+      --transaction-details-border-color: 229, 231, 235;
+      --transaction-details-text-color: 55, 65, 81;
+      --transaction-form-date-label-bg: 37, 99, 235;
+      --transaction-form-merchant-label-bg: 37, 99, 235;
+      --transaction-form-input-bg-color: 255, 255, 255;
+      --dialog-bg-color: 255, 255, 255;
+      --dialog-header-bg-color: 0, 105, 254;
+      --dialog-ledger-selection-bg-color: 255, 255, 255;
+      --dialog-ledger-selection-border-color: 229, 231, 235;
+      --green-accent-0: 21, 128, 61;
+      --insights-container-bg-color: 255, 255, 255;
+      --insights-text-color: 55, 65, 81;
+      --settings-page-email-text-color: 55, 65, 81;
+      --settings-container-bg-color: 255, 255, 255;
+      --settings-container-border-color: 229, 231, 235;
+      --settings-page-text-color: 55, 65, 81;
+      --app-form-input-bg-color: 255, 255, 255;
+      --access-code-text-color: 139, 139, 145;
+      --ledger-transactions-page-bg-color: 255, 255, 255;
+      --ledger-transactions-page-current-balance-color: 55, 65, 81;
+      --progress-percentage-bg-color: 226, 232, 240;
+      --progress-percentage-color: 59, 130, 246;
+      --progress-percentage-text-color: 71, 85, 105;
+      --ledger-transactions-notes-bg-color: 241, 245, 249;
+      --ledger-transactions-notes-border-color: 229, 231, 235;
+      --ledger-transactions-notes-placeholder-color: 55, 65, 81;
+    }
+  }
+  :root[data-theme="dark"] {
+    --app-bg-color: 22, 23, 24;
+    --primary-text-color: 242, 242, 243;
+    --category-blue-text: 6, 182, 212;
+    --category-price-color: 139, 139, 145;
+    --category-card-bg-color: 33, 34, 35;
+    --add-category-text-color: 139, 139, 145;
+    --slider-bg-color: 23, 37, 84;
+    --slider-pill-bg-color: 30, 64, 175;
+    --main-nav-bg-color: 30, 64, 175;
+    --ledger-bg-color: 51, 51, 51;
+    --ledger-progress-bg-color-good: 23, 109, 146;
+    --ledger-progress-bg-color-bad: 176, 59, 76;
+    --month-selector-bg-color: 23, 37, 84;
+    --month-selector-btn-text-color: 242, 242, 243;
+    --footer-nav-bg: 51, 51, 51;
+    --nav-header-1-bg: 22, 23, 24;
+    --nav-header-2-bg: 22, 23, 24;
+    --nav-header-3-bg: 33, 34, 35;
+    --nav-header-border-color: 33, 34, 35;
+    --back-button-border-color: 82, 84, 87;
+    --back-button-icon-color: 82, 84, 87;
+    --nav-header-menu-button-color: 139, 139, 145;
+    --search-bar-container-bg-color: 22, 23, 24;
+    --search-bar-bg: 33, 34, 35;
+    --search-bar-total-bg: 82, 84, 87;
+    --transaction-group-bg-color: 22, 23, 24;
+    --transaction-group-border-color: 33, 34, 35;
+    --transaction-group-text-color: 242, 242, 243;
+    --list-transaction-bg-color: 33, 34, 35;
+    --list-transaction-border-color: 51, 51, 51;
+    --list-transaction-text-color: 139, 139, 145;
+    --transaction-details-bg-color: 22, 23, 24;
+    --transaction-details-border-color: 51, 51, 51;
+    --transaction-details-text-color: 242, 242, 243;
+    --transaction-form-date-label-bg: 29, 78, 216;
+    --transaction-form-merchant-label-bg: 29, 78, 216;
+    --transaction-form-input-bg-color: 33, 34, 35;
+    --dialog-bg-color: 22, 23, 24;
+    --dialog-header-bg-color: 30, 64, 175;
+    --dialog-ledger-selection-bg-color: 33, 34, 35;
+    --dialog-ledger-selection-border-color: 51, 51, 51;
+    --green-accent-0: 47, 146, 23;
+    --insights-container-bg-color: 33, 34, 35;
+    --insights-text-color: 139, 139, 145;
+    --settings-page-email-text-color: 55, 65, 81;
+    --settings-container-bg-color: 33, 34, 35;
+    --settings-container-border-color: 51, 51, 51;
+    --settings-page-text-color: 139, 139, 145;
+    --app-form-input-bg-color: 33, 34, 35;
+    --access-code-text-color: 139, 139, 145;
+    --ledger-transactions-page-bg-color: 33, 34, 35;
+    --ledger-transactions-page-current-balance-color: 139, 139, 145;
+    --progress-percentage-bg-color: 51, 51, 51;
+    --progress-percentage-color: 47, 146, 23;
+    --progress-percentage-text-color: 139, 139, 145;
+    --ledger-transactions-notes-bg-color: 51, 51, 51;
+    --ledger-transactions-notes-border-color: 82, 84, 87;
+    --ledger-transactions-notes-placeholder-color: 139, 139, 145;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --app-bg-color: 22, 23, 24;
+      --primary-text-color: 242, 242, 243;
+      --category-blue-text: 6, 182, 212;
+      --category-price-color: 139, 139, 145;
+      --category-card-bg-color: 33, 34, 35;
+      --add-category-text-color: 139, 139, 145;
+      --slider-bg-color: 23, 37, 84;
+      --slider-pill-bg-color: 30, 64, 175;
+      --main-nav-bg-color: 30, 64, 175;
+      --ledger-bg-color: 51, 51, 51;
+      --ledger-progress-bg-color-good: 23, 109, 146;
+      --ledger-progress-bg-color-bad: 176, 59, 76;
+      --month-selector-bg-color: 23, 37, 84;
+      --month-selector-btn-text-color: 242, 242, 243;
+      --footer-nav-bg: 51, 51, 51;
+      --nav-header-1-bg: 22, 23, 24;
+      --nav-header-2-bg: 22, 23, 24;
+      --nav-header-3-bg: 33, 34, 35;
+      --nav-header-border-color: 33, 34, 35;
+      --back-button-border-color: 82, 84, 87;
+      --back-button-icon-color: 82, 84, 87;
+      --nav-header-menu-button-color: 139, 139, 145;
+      --search-bar-container-bg-color: 22, 23, 24;
+      --search-bar-bg: 33, 34, 35;
+      --search-bar-total-bg: 82, 84, 87;
+      --transaction-group-bg-color: 22, 23, 24;
+      --transaction-group-border-color: 33, 34, 35;
+      --transaction-group-text-color: 242, 242, 243;
+      --list-transaction-bg-color: 33, 34, 35;
+      --list-transaction-border-color: 51, 51, 51;
+      --list-transaction-text-color: 139, 139, 145;
+      --transaction-details-bg-color: 22, 23, 24;
+      --transaction-details-border-color: 51, 51, 51;
+      --transaction-details-text-color: 242, 242, 243;
+      --transaction-form-date-label-bg: 29, 78, 216;
+      --transaction-form-merchant-label-bg: 29, 78, 216;
+      --transaction-form-input-bg-color: 33, 34, 35;
+      --dialog-bg-color: 22, 23, 24;
+      --dialog-header-bg-color: 30, 64, 175;
+      --dialog-ledger-selection-bg-color: 33, 34, 35;
+      --dialog-ledger-selection-border-color: 51, 51, 51;
+      --green-accent-0: 47, 146, 23;
+      --insights-container-bg-color: 33, 34, 35;
+      --insights-text-color: 139, 139, 145;
+      --settings-page-email-text-color: 55, 65, 81;
+      --settings-container-bg-color: 33, 34, 35;
+      --settings-container-border-color: 51, 51, 51;
+      --settings-page-text-color: 139, 139, 145;
+      --app-form-input-bg-color: 33, 34, 35;
+      --access-code-text-color: 139, 139, 145;
+      --ledger-transactions-page-bg-color: 33, 34, 35;
+      --ledger-transactions-page-current-balance-color: 139, 139, 145;
+      --progress-percentage-bg-color: 51, 51, 51;
+      --progress-percentage-color: 47, 146, 23;
+      --progress-percentage-text-color: 139, 139, 145;
+      --ledger-transactions-notes-bg-color: 51, 51, 51;
+      --ledger-transactions-notes-border-color: 82, 84, 87;
+      --ledger-transactions-notes-placeholder-color: 139, 139, 145;
+    }
+  }
 }
 
 @layer utilities {
@@ -41,10 +296,6 @@
   .bg-color-dark-blue {
     @apply bg-blue-700;
   }
-  .bg-search-bar {
-    /* background-color: #eaeff4; */
-    background-color: white;
-  }
   /*                                     **********BORDER COLORS********** */
   .border-color-light-blue {
     @apply border-blue-600;
@@ -70,11 +321,11 @@
 @layer components {
   /* Default styling for all form inputs in the app. */
   .app-form-input {
-    @apply appearance-none w-full border-none rounded-lg font-medium placeholder:font-medium h-10 outline-none shadow-sm shadow-slate-100 dark:bg-dark-mode-bg-2 dark:shadow-none;
+    @apply appearance-none w-full border-none rounded-lg font-medium placeholder:font-medium h-10 outline-none shadow-sm bg-app-form-input-bg-color;
   }
   /* Default styling for all form buttons in the app. */
   .btn-primary {
-    @apply w-full h-10 bg-color-light-blue font-semibold text-white rounded-lg shadow-sm active:text-gray-400 active:bg-color-dark-blue lg:hover:cursor-pointer flex flex-row justify-center items-center;
+    @apply w-full h-10 bg-blue-600 font-semibold text-white rounded-lg shadow-sm active:text-gray-400 active:bg-blue-700 lg:hover:cursor-pointer flex flex-row justify-center items-center;
   }
   .list-transaction-details-container {
     @apply flex flex-row justify-start;
@@ -86,19 +337,8 @@
     @apply w-2/4 flex flex-row justify-start items-center px-1;
   }
   .tag {
-    @apply font-semibold border-2 border-color-dark-blue px-2 rounded-lg min-w-max bg-color-dark-blue text-white;
+    @apply font-semibold border-2 border-color-dark-blue px-2 rounded-lg min-w-max bg-blue-700 text-white;
   }
-}
-
-* {
-  -webkit-tap-highlight-color: transparent;
-  box-sizing: border-box;
-}
-
-html,
-body {
-  min-height: calc(var(--app-height) + env(safe-area-inset-top));
-  @apply bg-slate-100 dark:bg-dark-mode-bg-0 text-light-mode-text-0 dark:text-dark-mode-text-0;
 }
 
 /* My own full height class */

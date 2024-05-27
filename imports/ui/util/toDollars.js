@@ -15,6 +15,6 @@ function toUSD(number) {
   return number.toLocaleString("en-US", {
     style: "currency",
     currency: "USD",
-    currencySign: "accounting",
+    currencySign: "standard",
   });
 }

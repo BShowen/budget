@@ -34,9 +34,9 @@ export function TransactionDetailsPage() {
   });
 
   useLayoutEffect(() => {
-    document.body.classList.add("bg-white", "dark:bg-dark-mode-bg-0");
+    document.body.classList.add("bg-transaction-details-bg-color");
     return () =>
-      document.body.classList.remove("bg-white", "dark:bg-dark-mode-bg-0");
+      document.body.classList.remove("bg-transaction-details-bg-color");
   }, []);
 
   return (
@@ -48,14 +48,14 @@ export function TransactionDetailsPage() {
           setActionMenu((prev) => !prev);
         }}
       />
-      <div className="pt-14 bg-white dark:bg-dark-mode-bg-0">
+      <div className="pt-14">
         {isActionMenuOpen && (
           <div className="flex flex-row justify-center items-center gap-3 p-3">
             <DeleteTransactionButton transactionId={transactionId} />
             <EditTransactionButton transactionId={transactionId} />
           </div>
         )}
-        <div className="border-b dark:border-b-dark-mode-bg-2 bg-inherit w-full min-h-20 flex flex-col justify-center p-2">
+        <div className="border-b border-transaction-details-border-color w-full min-h-20 flex flex-col justify-center p-2">
           <h2 className="text-xl">{cap(merchant)}</h2>
           <h1
             className={`text-2xl flex flex-row items-center gap-1 ${
@@ -73,7 +73,7 @@ export function TransactionDetailsPage() {
             {`${cap(loggedBy.firstName)} ${cap(loggedBy.lastName[0])}.`}
           </p>
         </div>
-        <div className="border-b dark:border-b-dark-mode-bg-2 bg-inherit w-full min-h-14 flex flex-col justify-center p-2 pb-3">
+        <div className="border-b border-transaction-details-border-color w-full min-h-14 flex flex-col justify-center p-2 pb-3">
           <p className="text-lg py-1">
             {allocations.length > 1 ? "Categories" : "Category"}
           </p>
@@ -81,7 +81,7 @@ export function TransactionDetailsPage() {
             {categoryAndLedgerNameList.map((meta, i) => {
               const [categoryName, ledgerName] = meta;
               return (
-                <p className="dark:text-dark-mode-text-1" key={i}>
+                <p className="text-transaction-details-text-color" key={i}>
                   {`${cap(categoryName)} ${
                     ledgerName ? `- ${cap(ledgerName)}` : ""
                   }`}
@@ -90,33 +90,29 @@ export function TransactionDetailsPage() {
             })}
           </div>
         </div>
-        <div className="border-b dark:border-b-dark-mode-bg-2 bg-inherit w-full min-h-14 flex flex-col justify-center p-2 pb-3">
+        <div className="border-b border-transaction-details-border-color w-full min-h-14 flex flex-col justify-center p-2 pb-3">
           <p className="text-lg py-1">Tags</p>
-          <div className="flex flex-row flex-wrap justify-start items-center gap-1 ps-5">
+          <div className="flex flex-row flex-wrap justify-start items-center gap-1 ps-5 text-transaction-details-text-color">
             {tagNameList.length > 0 ? (
               tagNameList.map((tagName, i) => {
                 return (
                   <div
                     key={i}
-                    className="text-sm font-medium border border-color-dark-blue px-2 rounded-md min-w-fit dark:text-dark-mode-text-1"
+                    className="text-sm font-medium border border-color-dark-blue px-2 rounded-md min-w-fit"
                   >
                     <p>{cap(tagName)}</p>
                   </div>
                 );
               })
             ) : (
-              <p className="text-color-light-gray text-sm">No tags.</p>
+              <p className="text-sm">No tags.</p>
             )}
           </div>
         </div>
-        <div className="bg-inherit w-full min-h-14 flex flex-col justify-center p-2 pb-3">
+        <div className="w-full min-h-14 flex flex-col justify-center p-2 pb-3">
           <p className="text-lg py-1">Notes</p>
-          <div className="w-full ps-5 pe-5">
-            {note ? (
-              <p className="dark:text-dark-mode-text-1">{note}</p>
-            ) : (
-              <p className="text-sm text-color-light-gray">No notes.</p>
-            )}
+          <div className="w-full ps-5 pe-5 text-transaction-details-text-color">
+            {note ? <p>{note}</p> : <p className="text-sm">No notes.</p>}
           </div>
         </div>
       </div>

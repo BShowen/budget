@@ -25,15 +25,13 @@ export function SavingsLedgerSelection({
           ? () => deselectLedger({ ledger })
           : () => selectLedger({ ledger })
       }
-      className={`w-full flex flex-row justify-start items-center min-h-12 ps-5 pe-3 lg:hover:cursor-pointer bg-white dark:bg-dark-mode-bg-1 py-2 gap-1 ${
-        isBordered && "border-b dark:border-dark-mode-bg-2"
+      className={`w-full flex flex-row justify-start items-center min-h-12 ps-5 pe-3 lg:hover:cursor-pointer bg-dialog-ledger-selection-bg-color py-2 gap-1 ${
+        isBordered && "border-b border-dialog-ledger-selection-border-color"
       }`}
     >
       <div
         className={`h-full min-w-fit max-w-fit flex flex-col justify-center items-start transition-all duration-200 ${
-          selected
-            ? "text-green-700 dark:text-dark-mode-green"
-            : "text-color-light-gray"
+          selected ? "text-green-accent-0" : "text-gray-400"
         }`}
       >
         {selected ? (
@@ -46,14 +44,14 @@ export function SavingsLedgerSelection({
         <div className="w-full flex flew-row justify-start items-center">
           <p
             className={`truncate w-full text-lg transition-all duration-200 ${
-              selected && "text-green-700 dark:text-dark-mode-green"
+              selected && "text-green-accent-0"
             }`}
           >
             {cap(ledger.name)}
           </p>
         </div>
         <div className="w-full flex flex-row justify-start items-center gap-1">
-          <p className="text-xs font-medium text-color-light-gray">
+          <p className="text-xs font-medium text-gray-400">
             {toDollars(leftToSave)} left to save
           </p>
         </div>

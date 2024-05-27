@@ -27,7 +27,7 @@ export function SearchBar({ onInput, transactions }) {
       <div
         className={`${
           searchString ? "w-8/12" : "w-full"
-        } z-50 px-3 bg-search-bar dark:bg-dark-mode-bg-1 rounded-full min-h-10 max-h-10 flex flex-row justify-start items-center overflow-hidden gap-1 shadow-sm transition-all duration-300 ease-in-out relative`}
+        } z-50 px-3 bg-search-bar-bg rounded-full min-h-10 max-h-10 flex flex-row justify-start items-center overflow-hidden gap-1 shadow-sm transition-all duration-300 ease-in-out relative`}
       >
         <input
           ref={searchBarRef}
@@ -60,7 +60,7 @@ function SearchBarTotal({ transactions }) {
   const { income, expense } = reduceTransactions({ transactions });
   return (
     <div className="absolute top-0 bottom-0 w-full flex flex-col justify-center">
-      <div className="max-w-full mx-[2px] flex flex-row justify-end items-center rounded-full min-h-[35px] max-h-[35px] font-semibold z-40 dark:bg-dark-mode-bg-3">
+      <div className="max-w-full mx-[2px] flex flex-row justify-end items-center rounded-full min-h-[35px] max-h-[35px] font-semibold z-40 bg-search-bar-total-bg">
         <div className="w-5/12 flex flew-row justify-center items-center">
           <p>{toDollars(Math.round((expense - income) * 100) / 100)}</p>
         </div>

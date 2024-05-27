@@ -9,7 +9,12 @@ import { FooterNav } from "../components/FooterNav";
 // Context
 export const RootContext = createContext(null);
 
+// Helpers
+import { useTheme } from "../hooks/useTheme";
+
 export function AppContent({ setTimestamp, currentBudget }) {
+  const { theme, setTheme } = useTheme();
+
   return (
     <motion.div
       key={2}
@@ -24,6 +29,8 @@ export function AppContent({ setTimestamp, currentBudget }) {
             setTimestamp(timestamp);
           },
           currentBudgetId: currentBudget?._id,
+          theme,
+          setTheme,
         }}
       >
         <div className="select-none padding-safe-area-top">

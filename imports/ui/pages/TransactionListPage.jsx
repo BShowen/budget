@@ -39,7 +39,7 @@ export function TransactionListPage() {
         page="transactions-page"
       />
 
-      <div className="fixed top-0 padding-top-safe-area w-full z-40 bg-slate-100 dark:bg-dark-mode-bg-0">
+      <div className="fixed top-0 padding-top-safe-area w-full z-40 bg-search-bar-container-bg-color">
         <div className="w-full flex flex-row justify-start items-center p-2 pt-16 relative z-0">
           <SearchBar
             onInput={(e) => setFilter(e.target.value)}
@@ -48,8 +48,8 @@ export function TransactionListPage() {
         </div>
       </div>
 
-      <div className="flex flex-col justify-start items-stretch pb-28 mt-[115px]">
-        <div className="z-0 shadow-sm">
+      <div className="flex flex-col justify-start items-stretch pb-28 mt-[112px]">
+        <div className="z-0">
           {groupedTransactions.map(({ date, transactions }) => (
             <TransactionGroup
               key={date}

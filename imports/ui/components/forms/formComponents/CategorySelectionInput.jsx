@@ -18,7 +18,7 @@ export function CategorySelectionInput({
   setIsDialogOpen,
 }) {
   return (
-    <div className="w-full rounded-lg overflow-hidden px-1 py-1 bg-white dark:bg-dark-mode-bg-1 flex flex-col justify-start items-stretch min-h-10 shadow-sm">
+    <div className="w-full rounded-lg overflow-hidden px-1 py-1 bg-transaction-form-input-bg-color flex flex-col justify-start items-stretch min-h-10 shadow-sm">
       <div className="w-full text-start px-1">
         <p className="font-medium text-gray-500">Category</p>
       </div>

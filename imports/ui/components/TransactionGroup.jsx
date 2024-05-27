@@ -26,11 +26,11 @@ export function TransactionGroup({ date, transactions }) {
   return (
     <div key={date}>
       <div
-        className={`${style} dark:bg-dark-mode-bg-0 dark:text-dark-mode-text-0 flex flex-row bg-slate-100 justify-start items-center px-2 py-1 sticky z-0 h-8 font-medium`}
+        className={`${style} bg-transaction-group-bg-color text-transaction-group-text-color flex flex-row justify-start items-center px-2 py-1 sticky z-0 h-8 font-medium`}
       >
         <h2>{displayDate}</h2>
       </div>
-      <div className="border-b dark:border-dark-mode-bg-1">
+      <div className="border-b border-transaction-group-border-color">
         {transactions.map((transaction, i) => {
           const isBordered = i != transactions.length - 1;
           return (

@@ -4,9 +4,5 @@ import React from "react";
 import { cap } from "../util/cap";
 
 export function HeaderText({ text }) {
-  return (
-    <h1 className="text-2xl font-semibold dark:text-dark-mode-text-0">
-      {cap(text)}
-    </h1>
-  );
+  return <h1 className="text-2xl font-semibold">{cap(text)}</h1>;
 }

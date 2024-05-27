@@ -14,11 +14,11 @@ export function BackButton() {
   };
   return (
     <button
-      className="border border-slate-300 dark:border-dark-mode-bg-3 rounded-md w-8 h-8 flex flex-row justify-center items-center transition-all active:bg-dark-mode-bg-3"
+      className="border border-back-button-border-color rounded-md w-8 h-8 flex flex-row justify-center items-center transition-all active:bg-dark-mode-bg-3"
       type="button"
       onClick={handleClick}
     >
-      <IoIosArrowBack className="dark:text-dark-mode-text-1 text-xl" />
+      <IoIosArrowBack className="text-back-button-icon-color text-xl" />
     </button>
   );
 }

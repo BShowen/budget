@@ -26,9 +26,8 @@ export const LedgerTransactionsPage = () => {
   const { ledgerId } = useParams();
 
   useLayoutEffect(() => {
-    document.body.classList.add("bg-slate-100", "dark:bg-dark-mode-bg-0");
-    return () =>
-      document.body.classList.remove("bg-slate-100", "dark:bg-dark-mode-bg-0");
+    document.body.classList.add("bg-app-bg-color");
+    return () => document.body.classList.remove("bg-app-bg-color");
   }, []);
 
   const {
@@ -45,7 +44,7 @@ export const LedgerTransactionsPage = () => {
   return (
     <>
       <NavHeader text={ledgerName} page="ledger-transactions-page" />
-      <div className="dark:bg-dark-mode-bg-1 bg-white pb-5 pt-14">
+      <div className="bg-ledger-transactions-page-bg-color pb-5 pt-14">
         <div className="w-full p-2 flex flex-col gap-1 justify-center">
           <div className="flex flex-row justify-start items-center">
             <CurrentBalance currentBalance={currentBalance} />
@@ -67,22 +66,25 @@ export const LedgerTransactionsPage = () => {
 
 function OptionsButton({ onClick }) {
   const clickHandler = onClick;
-  return (
+  return clickHandler ? (
     <button className="w-8 h-8" type="button" onClick={clickHandler}>
-      <LuListFilter className="dark:text-dark-mode-text-1 text-2xl stroke-1" />
+      <LuListFilter className="text-2xl stroke-1" />
     </button>
+  ) : (
+    ""
   );
 }
 
 function CurrentBalance({ currentBalance }) {
-  const textColor =
-    currentBalance < 0 ? "text-rose-500/80" : "dark:text-dark-mode-text-0";
+  const textColor = currentBalance < 0 ? "text-rose-500/80" : "";
   return (
     <div className="flex flex-col items-stretch">
       <h1 className={`text-xl font-semibold ${textColor}`}>
         {toDollars(currentBalance)}
       </h1>
-      <p className="text dark:text-dark-mode-text-1">Current balance</p>
+      <p className="text-ledger-transactions-page-current-balance-color">
+        Current balance
+      </p>
     </div>
   );
 }
@@ -98,13 +100,13 @@ function ProgressPercentage({ percent, allocatedAmount }) {
 
   return (
     <div className="flex flex-col justify-center">
-      <div className="bg-slate-200 dark:bg-dark-mode-bg-2 h-2 rounded-lg overflow-hidden">
+      <div className="bg-progress-percentage-bg-color h-2 rounded-lg overflow-hidden">
         <div
-          className="transition-width duration-500 ease-in-out h-full rounded-lg bg-blue-500 dark:bg-[#2f9217]"
+          className="transition-width duration-500 ease-in-out h-full rounded-lg bg-progress-percentage-color"
           style={{ width: `${width}%` }}
         />
       </div>
-      <div className="flex flex-row justify-between text-xs font-semibold dark:text-dark-mode-text-1 text-slate-600">
+      <div className="flex flex-row justify-between text-xs font-semibold text-progress-percentage-text-color">
         <p>{toDollars(0)}</p>
         <p>{toDollars(allocatedAmount)}</p>
       </div>
@@ -129,13 +131,13 @@ function Notes({ ledgerId }) {
   }, [updatedNotes]);
 
   return (
-    <div className="bg-slate-100 dark:bg-dark-mode-bg-2 rounded-xl flex flex-col justify-center items-stretch px-3 py-1">
-      <p className="text-xs border-b dark:border-dark-mode-bg-3 dark:text-dark-mode-text-1 font-semibold">
+    <div className="bg-ledger-transactions-notes-bg-color rounded-xl flex flex-col justify-center items-stretch px-3 py-1">
+      <p className="text-xs border-b border-ledger-transactions-notes-border-color text-ledger-transactions-notes-placeholder-color font-semibold">
         Notes
       </p>
       <textarea
         ref={textareaRef}
-        className="bg-slate-100 w-full form-textarea focus:ring-0 border-0 placeholder:text-color-light-gray dark:text-dark-mode-text-1 resize-none h-full p-0 dark:bg-dark-mode-bg-2"
+        className="w-full form-textarea focus:ring-0 border-0 placeholder:text-ledger-transactions-notes-placeholder-color text-ledger-transactions-notes-placeholder-color resize-none h-full p-0 bg-inherit"
         rows={textareaRows <= 1 ? 2 : textareaRows}
         placeholder="Tap to add a note"
         value={updatedNotes}
@@ -184,7 +186,7 @@ function ListTransactions({ transactionList, kind }) {
         }`;
 
   return (
-    <div className="bg-slate-100 dark:bg-dark-mode-bg-0 pb-32">
+    <div className="pb-32">
       <div className="w-full flex flex-row justify-between items-center p-2 h-12">
         <div>
           <h2 className="font-semibold text-color-light-gray text-md">
@@ -213,7 +215,7 @@ function ListTransactions({ transactionList, kind }) {
         )
       ) : (
         <div className="flex flex-row justify-center items-center">
-          <h2 className="dark:text-dark-mode-text-1">No transactions</h2>
+          <h2>No transactions</h2>
         </div>
       )}
     </div>

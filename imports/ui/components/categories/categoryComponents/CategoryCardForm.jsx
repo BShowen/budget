@@ -22,7 +22,7 @@ export function CategoryCardForm({ envelopeId }) {
         {!isFormActive && (
           <div className="w-full h-7 flex flex-row justify-start items-center">
             <button
-              className="flex flex-row justify-start items-center gap-1 dark:text-dark-mode-text-1"
+              className="flex flex-row justify-start items-center gap-1 text-add-category-text-color"
               onClick={() => {
                 if (!isFormActive) {
                   toggleForm();

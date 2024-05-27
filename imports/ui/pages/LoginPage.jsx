@@ -91,7 +91,7 @@ export function LoginPage() {
   return (
     <div className="w-full bg-inherit flex flex-col justify-center items-stretch gap-7 padding-top-safe-area height-full lg:w-2/5 lg:mx-auto">
       <div className="w-full h-14 flex flex-col justify-end items-center">
-        <h1 className="text-3xl font-semibold dark:text-dark-mode-text-1">
+        <h1 className="text-3xl font-semibold text-primary-text-color">
           Login to Dough Tracker
         </h1>
       </div>

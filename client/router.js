@@ -10,13 +10,13 @@ import { LoginPage, loginPageLoader } from "../imports/ui/pages/LoginPage";
 import { Dashboard } from "../imports/ui/pages/Dashboard";
 import { LedgerTransactionsPage } from "../imports/ui/pages/LedgerTransactionsPage";
 import { SignupPage } from "../imports/ui/pages/SignupPage";
-import { AccountPage } from "../imports/ui/pages/AccountPage";
+import { SettingsPage } from "../imports/ui/pages/SettingsPage";
 import { ErrorPage } from "../imports/ui/pages/ErrorPage";
 import { InvitationPage } from "../imports/ui/pages/InvitationPage";
 import { ResetPassword } from "../imports/ui/pages/ResetPasswordPage";
 import { DeleteAccount } from "../imports/ui/pages/DeleteAccountPage";
 import { ManageUsersPage } from "../imports/ui/pages/ManageUsersPage";
-import { AccountPageLayout } from "../imports/ui/layouts/AccountPageLayout";
+import { SettingsPageLayout } from "../imports/ui/layouts/SettingsPageLayout";
 import { TransactionListPage } from "../imports/ui/pages/TransactionListPage";
 import { NewAllocationPage } from "../imports/ui/pages/NewAllocationPage";
 import { InsightsPage } from "../imports/ui/pages/InsightsPage";
@@ -57,12 +57,12 @@ export const router = createBrowserRouter([
         element: <TransactionForm />,
       },
       {
-        path: "/account",
-        element: <AccountPageLayout />,
+        path: "/settings",
+        element: <SettingsPageLayout />,
         children: [
           {
             index: true,
-            element: <AccountPage />,
+            element: <SettingsPage />,
           },
           {
             path: "invite",

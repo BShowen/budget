@@ -38,10 +38,10 @@ export function CategoryCardHeader({ name, displayBalance, envelopeId }) {
             </h1>
           </div>
           <div className="flex flex-row justify-center items-center gap-1">
-            <h2 className="text-sm relative z-50 text-color-dark-blue dark:text-cyan-500 font-semibold">
+            <h2 className="text-sm relative z-50 font-semibold text-category-blue-text">
               {cap(displayBalance.text)}
             </h2>
-            <h2 className="text-sm dark:text-dark-mode-text-1 font-medium">
+            <h2 className="text-sm text-category-price-color font-medium">
               {toDollars(displayBalance.value)}
             </h2>
           </div>

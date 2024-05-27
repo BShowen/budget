@@ -11,6 +11,7 @@ import {
   LuListMinus,
   LuUserCircle2,
   LuLineChart,
+  LuSettings,
 } from "react-icons/lu";
 import { CiCirclePlus } from "react-icons/ci";
 
@@ -49,7 +50,7 @@ export const FooterNav = () => {
   return (
     footerNavVisible && (
       <div className="fixed bottom-0 w-full h-[71px] bg-none">
-        <div className="w-full flex flex-row flex-nowrap justify-evenly items-end h-full gooey bg-blue-200 dark:bg-dark-mode-bg-2">
+        <div className="w-full flex flex-row flex-nowrap justify-evenly items-end h-full gooey bg-footer-nav-bg">
           <FooterLink to="/" text="Budget">
             <LuCircleDollarSign className="text-xl" />
           </FooterLink>
@@ -65,8 +66,8 @@ export const FooterNav = () => {
           <FooterLink to="/insights" text="Insights">
             <LuLineChart className="text-xl" />
           </FooterLink>
-          <FooterLink to="/account" text="Account">
-            <LuUserCircle2 className="text-xl" />
+          <FooterLink to="/settings" text="Settings">
+            <LuSettings className="text-xl" />
           </FooterLink>
         </div>
         <Link

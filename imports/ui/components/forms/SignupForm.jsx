@@ -103,7 +103,7 @@ function AccessCodeInput({ validationErrors }) {
   return (
     <div className="relative">
       <div
-        className="h-full absolute right-0 flex flex-row justify-center items-center w-10 rounded-e-md  dark:text-dark-mode-text-1 dark:active:text-dark-mode-text-0"
+        className="h-full absolute right-0 flex flex-row justify-center items-center w-10 rounded-e-md text-access-code-text-color"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -113,9 +113,7 @@ function AccessCodeInput({ validationErrors }) {
         <LuInfo className="text-xl" />
         {isShowingMessage && (
           <div className="absolute right-8 w-[130px]">
-            <p className="text-xs font-medium dark:text-dark-mode-text-0">
-              This app is invite only.
-            </p>
+            <p className="text-xs font-medium">This app is invite only.</p>
           </div>
         )}
       </div>
