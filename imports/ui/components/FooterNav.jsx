@@ -96,7 +96,7 @@ function FooterLink({ children, to, text, notifications, replace }) {
       >
         {notifications > 0 && (
           <div className="relative">
-            <div className="absolute -top-1 -left-4 w-3 h-3 flex flex-row justify-center items-center rounded-full bg-blue-200 dark:bg-dark-mode-bg-2 text-xs font-semibold text-white">
+            <div className="absolute -top-1 -left-4 w-3 h-3 flex flex-row justify-center items-center rounded-full bg-footer-nav-bg text-xs font-semibold text-white">
               <div className="w-2 h-2 flex flex-row justify-center items-center rounded-full bg-pink-600 text-xs text-white"></div>
             </div>
           </div>
