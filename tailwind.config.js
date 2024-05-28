@@ -110,6 +110,10 @@ module.exports = {
           "rgba(var(--ledger-transactions-notes-border-color), <alpha-value>)",
         "ledger-transactions-notes-placeholder-color":
           "rgba(var(--ledger-transactions-notes-placeholder-color), <alpha-value>)",
+        "theme-toggle-bg-color":
+          "rgba(var(--theme-toggle-bg-color), <alpha-value>)",
+        "theme-toggle-border-color":
+          "rgba(var(--theme-toggle-border-color), <alpha-value>)",
 
         // -------------------
 

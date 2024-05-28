@@ -18,7 +18,7 @@ import { RootContext } from "../layouts/AppContent";
 
 export function SettingsPage() {
   const { theme, setTheme } = useContext(RootContext);
-  console.log(theme);
+
   const { isAdmin, firstName, lastName, email } = useTracker(() => {
     const user = Meteor.user();
     return {
@@ -46,15 +46,15 @@ export function SettingsPage() {
             <button
               onClick={theme == "light" ? undefined : () => setTheme("light")}
               className={`h-full basis-0 grow ${
-                theme == "light" && "bg-blue-500"
+                theme == "light" && "bg-theme-toggle-bg-color text-white"
               }`}
             >
               Light
             </button>
             <button
               onClick={theme == "dark" ? undefined : () => setTheme("dark")}
-              className={`h-full basis-0 grow border-x ${
-                theme == "dark" && "bg-[#333333] border-[#525457]"
+              className={`h-full basis-0 grow border-x border-theme-toggle-border-color ${
+                theme == "dark" && "bg-theme-toggle-bg-color"
               }`}
             >
               Dark
@@ -62,7 +62,7 @@ export function SettingsPage() {
             <button
               onClick={theme == "system" ? undefined : () => setTheme("system")}
               className={`h-full basis-0 grow ${
-                theme == "system" && "bg-blue-500"
+                theme == "system" && "bg-theme-toggle-bg-color text-[#F2F2F3]"
               }`}
             >
               System
