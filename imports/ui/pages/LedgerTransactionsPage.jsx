@@ -23,6 +23,7 @@ import { TransactionGroup } from "../components/TransactionGroup";
 import { NavHeader } from "../components/NavHeader";
 
 export const LedgerTransactionsPage = () => {
+  const [isActionMenuOpen, setActionMenu] = useState(false);
   const { ledgerId } = useParams();
 
   useLayoutEffect(() => {
@@ -43,8 +44,13 @@ export const LedgerTransactionsPage = () => {
 
   return (
     <>
-      <NavHeader text={ledgerName} page="ledger-transactions-page" />
+      <NavHeader
+        text={ledgerName}
+        page="ledger-transactions-page"
+        onClickMenuButton={() => setActionMenu((prev) => !prev)}
+      />
       <div className="bg-ledger-transactions-page-bg-color pb-5 pt-14">
+        <ActionMenu isOpen={isActionMenuOpen} />
         <div className="w-full p-2 flex flex-col gap-1 justify-center">
           <div className="flex flex-row justify-start items-center">
             <CurrentBalance currentBalance={currentBalance} />
@@ -222,26 +228,34 @@ function ListTransactions({ transactionList, kind }) {
   );
 }
 
-function DeleteLedger({ ledgerId }) {
+function ActionMenu({ isOpen }) {
+  return isOpen ? (
+    <div className="flex flex-row justify-center items-center gap-3 p-3">
+      <DeleteLedger />
+    </div>
+  ) : (
+    ""
+  );
+}
+
+function DeleteLedger() {
   const navigate = useNavigate();
+  const { ledgerId } = useParams();
   const deleteLedger = () => {
     const confirmation = confirm(
       "Are you sure you want to delete this ledger?"
     );
     if (confirmation) {
-      Meteor.call("ledger.deleteLedger", { ledgerId });
-      navigate("/");
+      Meteor.call("ledger.deleteLedger", { ledgerId }, () => navigate("/"));
     }
   };
   return (
-    <div className="w-full flex flex-row justify-center items-center mb-16">
-      <button
-        className="text-xl text-red-600 lg:hover:cursor-pointer transition-all px-3 border border-red-600 rounded-md active:text-white active:bg-red-600"
-        onClick={deleteLedger}
-      >
-        Delete ledger
-      </button>
-    </div>
+    <button
+      className="text-xl text-red-600 lg:hover:cursor-pointer transition-all px-3 border border-red-600 rounded-md active:text-white active:bg-red-600"
+      onClick={deleteLedger}
+    >
+      Delete ledger
+    </button>
   );
 }
 
