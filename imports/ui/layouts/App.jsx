@@ -35,6 +35,7 @@ export const App = () => {
   // currentBudget is expected to never be falsy.
   function handleTimestampChange(newTimestamp) {
     if (newTimestamp == timestamp) return;
+    window.localStorage.setItem("currentBudgetTimestamp", newTimestamp);
     setIsLoading(true);
     setTimeout(() => setTimestamp(newTimestamp), 900);
   }
@@ -55,18 +56,14 @@ export const App = () => {
 };
 
 function getTimestampFromLocalStorage() {
-  const timestamp = new Date(
-    window.localStorage.getItem("currentBudgetTimestamp") || ""
-  );
-  if (new Date(timestamp) == "Invalid Date") {
-    const newTimestamp = new Date(
+  let timestamp = window.localStorage.getItem("currentBudgetTimestamp") || "";
+  if (new Date(Number.parseInt(timestamp)) == "Invalid Date") {
+    timestamp = new Date(
       new Date().getFullYear(),
       new Date().getMonth(),
       1
     ).getTime();
-    window.localStorage.setItem("currentBudgetTimestamp", newTimestamp);
-    return newTimestamp;
-  } else {
-    return timestamp;
+    window.localStorage.setItem("currentBudgetTimestamp", timestamp);
   }
+  return Number.parseInt(timestamp);
 }

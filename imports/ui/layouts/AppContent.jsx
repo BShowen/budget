@@ -25,7 +25,6 @@ export function AppContent({ setTimestamp, currentBudget }) {
       <RootContext.Provider
         value={{
           goToBudget: ({ timestamp }) => {
-            window.localStorage.setItem("currentBudgetTimestamp", timestamp);
             setTimestamp(timestamp);
           },
           currentBudgetId: currentBudget?._id,
