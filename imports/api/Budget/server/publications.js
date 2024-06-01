@@ -72,12 +72,7 @@ Meteor.publish("budget", function (timestamp) {
     // Create new budget.
     const newBudgetId = BudgetCollection.insert({
       accountId: user.accountId,
-      // createdAt: timestamp,
-      createdAt: new Date(
-        new Date(prevBudget.createdAt).getFullYear(),
-        new Date(prevBudget.createdAt).getMonth() + 1,
-        1
-      ).getTime(),
+      createdAt: timestamp,
     });
 
     // Iterate through each previous envelope...
