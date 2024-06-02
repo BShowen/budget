@@ -68,33 +68,19 @@ Meteor.methods({
   },
   "ledger.deleteLedger"({ ledgerId }) {
     if (!this.userId) return;
-    TransactionCollection.remove({ ledgerId }, (transactionError) => {
-      if (transactionError) {
-        // Console log the error on the server.
-        Meteor.isServer &&
-          console.log(
-            "ledger.deleteLedger\nError deleting transactions",
-            transactionError
-          );
-        throw new Meteor.Error(
-          "ledger.deleteLedger",
-          "Error deleting transactions associated with ledger. "
-        );
-      } else {
-        LedgerCollection.remove({ _id: ledgerId }, (ledgerError) => {
-          if (ledgerError) {
-            // Console log the error on the server.
-            Meteor.isServer &&
-              console.log(
-                "ledger.deleteLedger\nError deleting ledger",
-                ledgerError
-              );
-            throw new Meteor.Error(
-              "ledger.deleteLedger",
-              "Error deleting ledger."
-            );
-          }
-        });
+    const transactions = TransactionCollection.find({
+      "allocations.ledgerId": ledgerId,
+    }).fetch();
+    if (transactions.length > 0) {
+      throw new Meteor.Error(
+        "ledger.deleteLedger",
+        "Remove all transactions from this ledger first."
+      );
+    }
+
+    LedgerCollection.remove({ _id: ledgerId }, (ledgerError) => {
+      if (ledgerError) {
+        throw new Meteor.Error("ledger.deleteLedger", "Error deleting ledger.");
       }
     });
   },

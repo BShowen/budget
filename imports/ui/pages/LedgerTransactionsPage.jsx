@@ -50,7 +50,6 @@ export const LedgerTransactionsPage = () => {
         onClickMenuButton={() => setActionMenu((prev) => !prev)}
       />
       <div className="bg-ledger-transactions-page-bg-color pb-5 pt-14">
-        <ActionMenu isOpen={isActionMenuOpen} />
         <div className="w-full p-2 flex flex-col gap-1 justify-center">
           <div className="flex flex-row justify-start items-center">
             <CurrentBalance currentBalance={currentBalance} />
@@ -63,6 +62,10 @@ export const LedgerTransactionsPage = () => {
         <div className="w-full p-2 pt-3">
           <Notes ledgerId={ledgerId} />
         </div>
+        <ActionMenu
+          isOpen={isActionMenuOpen}
+          transactionList={transactionList}
+        />
       </div>
 
       <ListTransactions transactionList={transactionList} kind={kind} />
@@ -228,25 +231,32 @@ function ListTransactions({ transactionList, kind }) {
   );
 }
 
-function ActionMenu({ isOpen }) {
+function ActionMenu({ isOpen, transactionList }) {
   return isOpen ? (
-    <div className="flex flex-row justify-center items-center gap-3 p-3">
-      <DeleteLedger />
+    <div className="flex flex-row justify-center items-center gap-3 p-3 bg-inherit">
+      <DeleteLedger transactionList={transactionList} />
     </div>
   ) : (
     ""
   );
 }
 
-function DeleteLedger() {
+function DeleteLedger({ transactionList }) {
   const navigate = useNavigate();
   const { ledgerId } = useParams();
   const deleteLedger = () => {
+    if (transactionList.length > 0) {
+      alert("Remove all transactions from this ledger first.");
+      return;
+    }
     const confirmation = confirm(
       "Are you sure you want to delete this ledger?"
     );
     if (confirmation) {
-      Meteor.call("ledger.deleteLedger", { ledgerId }, () => navigate("/"));
+      Meteor.call("ledger.deleteLedger", { ledgerId }, (err, response) => {
+        console.log({ err, response });
+      });
+      navigate("/");
     }
   };
   return (
