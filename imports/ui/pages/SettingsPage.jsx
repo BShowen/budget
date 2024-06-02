@@ -17,7 +17,7 @@ import { cap } from "../util/cap";
 import { RootContext } from "../layouts/AppContent";
 
 export function SettingsPage() {
-  const { theme, setTheme } = useContext(RootContext);
+  const { setTheme, selectedTheme } = useContext(RootContext);
 
   const { isAdmin, firstName, lastName, email } = useTracker(() => {
     const user = Meteor.user();
@@ -44,25 +44,33 @@ export function SettingsPage() {
         <div className="bg-settings-container-bg-color rounded-xl drop-shadow-sm h-8 overflow-hidden">
           <div className="flex flex-row justify-center items-center h-full font-medium">
             <button
-              onClick={theme == "light" ? undefined : () => setTheme("light")}
+              onClick={
+                selectedTheme == "light" ? undefined : () => setTheme("light")
+              }
               className={`h-full basis-0 grow ${
-                theme == "light" && "bg-theme-toggle-bg-color text-white"
+                selectedTheme == "light" &&
+                "bg-theme-toggle-bg-color text-white"
               }`}
             >
               Light
             </button>
             <button
-              onClick={theme == "dark" ? undefined : () => setTheme("dark")}
+              onClick={
+                selectedTheme == "dark" ? undefined : () => setTheme("dark")
+              }
               className={`h-full basis-0 grow border-x border-theme-toggle-border-color ${
-                theme == "dark" && "bg-theme-toggle-bg-color"
+                selectedTheme == "dark" && "bg-theme-toggle-bg-color"
               }`}
             >
               Dark
             </button>
             <button
-              onClick={theme == "system" ? undefined : () => setTheme("system")}
+              onClick={
+                selectedTheme == "system" ? undefined : () => setTheme("system")
+              }
               className={`h-full basis-0 grow ${
-                theme == "system" && "bg-theme-toggle-bg-color text-[#F2F2F3]"
+                selectedTheme == "system" &&
+                "bg-theme-toggle-bg-color text-[#F2F2F3]"
               }`}
             >
               System
@@ -95,7 +103,7 @@ export function SettingsPage() {
         {isAdmin && (
           <>
             <p className="font-semibold text-lg py-3">Users</p>
-            <div className="bg-settings-container-bg-color rounded-xl drop-shadow-sm flex flex-col items-stretch px-2 py-2 gap-2 z-0 font-medium text-lg text-lg text-settings-page-text-color">
+            <div className="bg-settings-container-bg-color rounded-xl drop-shadow-sm flex flex-col items-stretch px-2 py-2 gap-2 z-0 font-medium text-lg text-settings-page-text-color">
               <Link
                 to="invite"
                 className="w-full flex flex-row justify-start items-center"

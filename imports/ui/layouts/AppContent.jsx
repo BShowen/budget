@@ -13,7 +13,7 @@ export const RootContext = createContext(null);
 import { useTheme } from "../hooks/useTheme";
 
 export function AppContent({ setTimestamp, currentBudget }) {
-  const { theme, setTheme } = useTheme();
+  const { selectedTheme, setTheme, activeTheme } = useTheme();
 
   return (
     <motion.div
@@ -28,7 +28,8 @@ export function AppContent({ setTimestamp, currentBudget }) {
             setTimestamp(timestamp);
           },
           currentBudgetId: currentBudget?._id,
-          theme,
+          activeTheme, // "light", or "dark"
+          selectedTheme, // "light", "dark" or "system"
           setTheme,
         }}
       >

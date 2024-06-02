@@ -7,8 +7,9 @@ import { MonthSelector } from "./MonthSelector";
 import { RootContext } from "../../layouts/AppContent";
 
 export function DashboardHeader({ setActiveTab, activeTab, timestamp }) {
-  const { theme } = useContext(RootContext);
-  const src = theme == "light" ? "/light-mode-icon.png" : "/dark-mode-icon.png";
+  const { activeTheme } = useContext(RootContext);
+  const src =
+    activeTheme == "light" ? "/light-mode-icon.png" : "/dark-mode-icon.png";
 
   return (
     <div className="w-full z-50 fixed top-0 padding-top-safe-area bg-main-nav-bg-color rounded-b-xl shadow-sm">
