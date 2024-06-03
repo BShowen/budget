@@ -203,13 +203,7 @@ function ListTransactions({ transactionList, kind }) {
           </h2>
         </div>
         <div>
-          {/* <Link
-            to={`/ledger/${ledgerId}/transactions/new`}
-            className="text-color-light-blue font-semibold"
-          >
-            {kind === "income" ? "Add income" : "Add transaction"}
-          </Link> */}
-          <OptionsButton onClick={() => {}} />
+          <OptionsButton />
         </div>
       </div>
       {transactionList.length > 0 ? (
