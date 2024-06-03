@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 // Collections
 import { LedgerCollection } from "../../api/Ledger/LedgerCollection";
@@ -21,6 +21,7 @@ import { useLedger } from "../hooks/useLedger";
 // Components
 import { TransactionGroup } from "../components/TransactionGroup";
 import { NavHeader } from "../components/NavHeader";
+import { ActionMenu } from "../components/ActionMenu";
 
 export const LedgerTransactionsPage = () => {
   const [isActionMenuOpen, setActionMenu] = useState(false);
@@ -62,10 +63,10 @@ export const LedgerTransactionsPage = () => {
         <div className="w-full p-2 pt-3">
           <Notes ledgerId={ledgerId} />
         </div>
-        <ActionMenu
-          isOpen={isActionMenuOpen}
-          transactionList={transactionList}
-        />
+
+        <ActionMenu isOpen={isActionMenuOpen}>
+          <DeleteLedger transactionList={transactionList} />
+        </ActionMenu>
       </div>
 
       <ListTransactions transactionList={transactionList} kind={kind} />
@@ -222,16 +223,6 @@ function ListTransactions({ transactionList, kind }) {
         </div>
       )}
     </div>
-  );
-}
-
-function ActionMenu({ isOpen, transactionList }) {
-  return isOpen ? (
-    <div className="flex flex-row justify-center items-center gap-3 p-3 bg-inherit">
-      <DeleteLedger transactionList={transactionList} />
-    </div>
-  ) : (
-    ""
   );
 }
 

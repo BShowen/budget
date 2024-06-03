@@ -15,6 +15,7 @@ import { dates } from "../util/dates";
 
 // Components
 import { NavHeader } from "../components/NavHeader";
+import { ActionMenu } from "../components/ActionMenu";
 
 export function TransactionDetailsPage() {
   const [isActionMenuOpen, setActionMenu] = useState(false);
@@ -49,12 +50,12 @@ export function TransactionDetailsPage() {
         }}
       />
       <div className="pt-14">
-        {isActionMenuOpen && (
+        <ActionMenu isOpen={isActionMenuOpen}>
           <div className="flex flex-row justify-center items-center gap-3 p-3">
             <DeleteTransactionButton transactionId={transactionId} />
             <EditTransactionButton transactionId={transactionId} />
           </div>
-        )}
+        </ActionMenu>
         <div className="border-b border-transaction-details-border-color w-full min-h-20 flex flex-col justify-center p-2">
           <h2 className="text-xl">{cap(merchant)}</h2>
           <h1
