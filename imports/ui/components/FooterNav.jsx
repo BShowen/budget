@@ -1,6 +1,6 @@
 import React from "react";
 import { useTracker } from "meteor/react-meteor-data";
-import { NavLink, Link, useLocation } from "react-router-dom";
+import { NavLink, Link, useLocation, useParams } from "react-router-dom";
 
 // Collections
 import { TransactionCollection } from "../../api/Transaction/TransactionCollection";
@@ -9,7 +9,6 @@ import { TransactionCollection } from "../../api/Transaction/TransactionCollecti
 import {
   LuCircleDollarSign,
   LuListMinus,
-  LuUserCircle2,
   LuLineChart,
   LuSettings,
 } from "react-icons/lu";
@@ -23,17 +22,10 @@ export const FooterNav = () => {
     return transactions.length;
   });
 
-  // replace is set to true if the user is currently on a route where a
-  // transaction form is rendered. This way if the user presses the back button
-  // they don't have to back through multiple forms.
-  const location = useLocation();
-  // const replace = location.pathname.includes("transaction");
-  const pattern = /\btransaction\b/;
-  const replace = pattern.test(location.pathname);
-
   // Determine if the footer nav should be visible.
   // FooterNave should never be visible when a form is rendered.
   // const visible = location.pathname != "/new-transaction";
+  const location = useLocation();
   const newTransactionRegex = /^\/ledger\/\w+\/transactions\/new$/;
   const isNewTransactionFormVisible =
     location.pathname == "/new-transaction" ||
@@ -70,13 +62,7 @@ export const FooterNav = () => {
             <LuSettings className="text-xl" />
           </FooterLink>
         </div>
-        <Link
-          to="/new-transaction"
-          replace={replace}
-          className="fixed bottom-6 w-min left-[50%] translate-x-[-50%] translate-y-1"
-        >
-          <CiCirclePlus className="text-color-light-blue text-7xl dark:active:text-blue-800 active:text-blue-300" />
-        </Link>
+        <NewTransactionButton />
       </div>
     )
   );
@@ -105,5 +91,28 @@ function FooterLink({ children, to, text, notifications, replace }) {
         {text && <p className="font-medium text-[11px]">{text}</p>}
       </NavLink>
     </div>
+  );
+}
+
+function NewTransactionButton() {
+  // replace is set to true if the user is currently on a route where a
+  // transaction form is rendered. This way if the user presses the back button
+  // they don't have to back through multiple forms.
+  const pattern = /\btransaction\b/;
+  const replace = pattern.test(location.pathname);
+
+  // When the user is viewing a ledger and then clicks the new transaction
+  // button, direct the user to the transaction form with the ledger
+  // preselected.
+  const { ledgerId } = useParams();
+  const matches = `/ledger/${ledgerId}/transactions` === location.pathname;
+  return (
+    <Link
+      to={matches ? `ledger/${ledgerId}/transactions/new` : "/new-transaction"}
+      replace={replace}
+      className="fixed bottom-6 w-min left-[50%] translate-x-[-50%] translate-y-1"
+    >
+      <CiCirclePlus className="text-color-light-blue text-7xl dark:active:text-blue-800 active:text-blue-300" />
+    </Link>
   );
 }
