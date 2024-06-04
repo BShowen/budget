@@ -51,6 +51,9 @@ export const LedgerTransactionsPage = () => {
         onClickMenuButton={() => setActionMenu((prev) => !prev)}
       />
       <div className="bg-ledger-transactions-page-bg-color pb-5 pt-14">
+        <ActionMenu isOpen={isActionMenuOpen}>
+          <DeleteLedger transactionList={transactionList} />
+        </ActionMenu>
         <div className="w-full p-2 flex flex-col gap-1 justify-center">
           <div className="flex flex-row justify-start items-center">
             <CurrentBalance currentBalance={currentBalance} />
@@ -63,10 +66,6 @@ export const LedgerTransactionsPage = () => {
         <div className="w-full p-2 pt-3">
           <Notes ledgerId={ledgerId} />
         </div>
-
-        <ActionMenu isOpen={isActionMenuOpen}>
-          <DeleteLedger transactionList={transactionList} />
-        </ActionMenu>
       </div>
 
       <ListTransactions transactionList={transactionList} kind={kind} />
@@ -245,12 +244,14 @@ function DeleteLedger({ transactionList }) {
     }
   };
   return (
-    <button
-      className="text-xl text-red-600 lg:hover:cursor-pointer transition-all px-3 border border-red-600 rounded-md active:text-white active:bg-red-600"
-      onClick={deleteLedger}
-    >
-      Delete ledger
-    </button>
+    <div className="py-2">
+      <button
+        className="text-xl text-red-600 lg:hover:cursor-pointer transition-all px-3 border border-red-600 rounded-md active:text-white active:bg-red-600"
+        onClick={deleteLedger}
+      >
+        Delete ledger
+      </button>
+    </div>
   );
 }
 
