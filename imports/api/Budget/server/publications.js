@@ -29,7 +29,6 @@ Meteor.publish("budget", function (timestamp) {
   });
 
   // If currentBudget is truthy then return that document.
-  // Done.
   if (currentBudget) {
     // This resolver must return a cursor, which is why I don't return the
     // document stored in the variable "currentBudget", because currentBudget
@@ -42,23 +41,58 @@ Meteor.publish("budget", function (timestamp) {
 
   // If this portion of the resolver is reached then a budget with the provided
   // date could not be found. One needs to be created and returned.
+  createNewBudget({ timestamp });
 
+  // If this point is reached, then a new budget has been created.
+  // Return the most recent budget.
+  return BudgetCollection.find(
+    { accountId: user.accountId },
+    { sort: { createdAt: -1 }, limit: 1 }
+  );
+});
+
+Meteor.publish("allBudgets", function () {
+  if (!this.userId) {
+    return this.ready();
+  }
+  const { accountId } = Meteor.user();
+
+  // Get the last budget,
+  // if the month of the budget is before this month
+  // create a new budget
+  const lastBudget = BudgetCollection.find(
+    { accountId },
+    { sort: { createdAt: -1 } }
+  ).fetch()[0];
+  const lastBudgetMonth = new Date(lastBudget.createdAt).getMonth();
+  const currentMonth = new Date().getMonth();
+  if (lastBudgetMonth < currentMonth) {
+    const createdAt = new Date();
+    createdAt.setMonth(new Date(lastBudget.createdAt).getMonth() + 1);
+    createdAt.setDate(1);
+    createNewBudget({ timestamp: createdAt.getTime() });
+  }
+
+  return BudgetCollection.find({ accountId });
+});
+
+function createNewBudget({ timestamp }) {
+  const user = Meteor.user();
   // Try to find the most recent budget that exists for this account.
   // This will be used as a blueprint to create the new budget that will be
   // returned.
   const prevBudget = BudgetCollection.findOne(
-    {
-      accountId: user.accountId,
-      createdAt: {
-        $lte: timestamp + 86400000, //One day
-      },
-    },
-    { sort: { createdAt: -1 } }
+    { accountId: user.accountId },
+    { sort: { createdAt: -1 }, limit: 1 }
   );
 
   // if prevBudget is truthy, then this account has a budget that can be used
   // as a blueprint to create a new budget.
   if (prevBudget) {
+    const createdAt = new Date(prevBudget.createdAt);
+    createdAt.setMonth(createdAt.getMonth() + 1);
+    createdAt.setDate(1);
+
     // Get previous envelopes
     const prevEnvelopes = EnvelopeCollection.find({
       accountId: user.accountId,
@@ -72,7 +106,7 @@ Meteor.publish("budget", function (timestamp) {
     // Create new budget.
     const newBudgetId = BudgetCollection.insert({
       accountId: user.accountId,
-      createdAt: timestamp,
+      createdAt: createdAt.getTime(),
     });
 
     // Iterate through each previous envelope...
@@ -150,25 +184,4 @@ Meteor.publish("budget", function (timestamp) {
       name: "savings",
     });
   }
-
-  // If this point is reached, then a new budget has been created.
-  // Return the most recent budget.
-  return BudgetCollection.find(
-    {
-      accountId: user.accountId,
-      createdAt: {
-        $gte: timestamp,
-        $lte: timestamp + 86400000, //One day
-      },
-    },
-    { sort: { createdAt: -1 }, limit: 1 }
-  );
-});
-
-Meteor.publish("allBudgets", function () {
-  if (!this.userId) {
-    return this.ready();
-  }
-  const { accountId } = Meteor.user();
-  return BudgetCollection.find({ accountId });
-});
+}

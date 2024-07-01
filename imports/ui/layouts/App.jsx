@@ -17,6 +17,7 @@ import { Loader } from "../components/Loader";
 // architecture.
 export const App = () => {
   const [timestamp, setTimestamp] = useState(getTimestampFromLocalStorage());
+  console.log({ timestamp, date: new Date(timestamp) });
   const { isLoading: isLoadingAppData, currentBudget } = useAppData({
     timestamp,
   });
