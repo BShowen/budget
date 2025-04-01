@@ -18,46 +18,40 @@ import { WelcomeComponent } from "../components/dashboardComponents/WelcomeCompo
 
 export const Dashboard = () => {
   const { currentBudgetId } = useContext(RootContext);
-  const budget = useTracker(() =>
-    BudgetCollection.findOne({ _id: currentBudgetId })
-  );
+  const budget = useTracker(() => BudgetCollection.findOne({ _id: currentBudgetId }));
 
-  const { expenseEnvelopes, incomeEnvelope, savingsEnvelope } = useTracker(
-    () => {
-      const envelopes = {
-        expenseEnvelopes: [],
-        incomeEnvelope: {},
-        savingsEnvelope: {},
-      };
-      // If no budget is loaded, return blank envelopes.
-      if (!budget) return envelopes;
+  const { expenseEnvelopes, incomeEnvelope, savingsEnvelope } = useTracker(() => {
+    const envelopes = {
+      expenseEnvelopes: [],
+      incomeEnvelope: {},
+      savingsEnvelope: {},
+    };
+    // If no budget is loaded, return blank envelopes.
+    if (!budget) return envelopes;
 
-      // Get the envelopes for this budget.
-      const allEnvelopes = EnvelopeCollection.find({
-        budgetId: budget._id,
-      }).fetch();
+    // Get the envelopes for this budget.
+    const allEnvelopes = EnvelopeCollection.find({
+      budgetId: budget._id,
+    }).fetch();
 
-      // Categorize and return the envelopes.
-      return allEnvelopes.reduce((acc, envelope) => {
-        switch (envelope.kind) {
-          case "income":
-            return { ...acc, incomeEnvelope: { ...envelope } };
-          case "savings":
-            return { ...acc, savingsEnvelope: { ...envelope } };
-          case "allocation":
-            return { ...acc, allocationEnvelope: { ...envelope } };
-          case "expense":
-            return {
-              ...acc,
-              expenseEnvelopes: [...acc.expenseEnvelopes, envelope],
-            };
-        }
-      }, envelopes);
-    }
-  );
-  const [activeTab, setActiveTab] = useState(
-    window.localStorage.getItem("activeTab") || "planned"
-  ); // "planned", "spent", "remaining"
+    // Categorize and return the envelopes.
+    return allEnvelopes.reduce((acc, envelope) => {
+      switch (envelope.kind) {
+        case "income":
+          return { ...acc, incomeEnvelope: { ...envelope } };
+        case "savings":
+          return { ...acc, savingsEnvelope: { ...envelope } };
+        case "allocation":
+          return { ...acc, allocationEnvelope: { ...envelope } };
+        case "expense":
+          return {
+            ...acc,
+            expenseEnvelopes: [...acc.expenseEnvelopes, envelope],
+          };
+      }
+    }, envelopes);
+  });
+  const [activeTab, setActiveTab] = useState(window.localStorage.getItem("activeTab") || "planned"); // "planned", "spent", "remaining"
 
   useEffect(() => {
     // Persist the users activeTab selection.
@@ -73,32 +67,17 @@ export const Dashboard = () => {
         incomeEnvelope={incomeEnvelope}
       />
 
-      <div className="mt-[100px] pb-16 px-2 flex flex-col items-stretch gap-4 z-0">
-        <WelcomeComponent
-          budgetTimestamp={budget.createdAt}
-          budgetId={budget._id}
-        />
+      <div className="mt-[110px] pb-16 px-2 flex flex-col items-stretch gap-4 z-0">
+        <WelcomeComponent budgetId={budget._id} />
         {/* Categories container */}
-        <IncomeCategory
-          key={incomeEnvelope._id}
-          {...incomeEnvelope}
-          activeTab={activeTab}
-        />
+        <IncomeCategory key={incomeEnvelope._id} {...incomeEnvelope} activeTab={activeTab} />
 
-        <SavingsCategory
-          key={savingsEnvelope._id}
-          {...savingsEnvelope}
-          activeTab={activeTab}
-        />
+        <SavingsCategory key={savingsEnvelope._id} {...savingsEnvelope} activeTab={activeTab} />
 
         {/* Allocation envelope will go here.  */}
 
         {expenseEnvelopes.map((envelope) => (
-          <ExpenseCategory
-            key={envelope._id}
-            {...envelope}
-            activeTab={activeTab}
-          />
+          <ExpenseCategory key={envelope._id} {...envelope} activeTab={activeTab} />
         ))}
         <NewEnvelopeButton budgetId={budget._id} />
       </div>

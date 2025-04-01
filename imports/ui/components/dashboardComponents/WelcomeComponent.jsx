@@ -13,11 +13,7 @@ import { toDollars } from "../../util/toDollars";
 // Icons
 import { LuAlertCircle } from "react-icons/lu";
 
-export function WelcomeComponent({ budgetTimestamp, budgetId }) {
-  const isFutureBudget =
-    new Date(new Date().getFullYear(), new Date().getMonth(), 1).getTime() <
-    budgetTimestamp;
-
+export function WelcomeComponent({ budgetId }) {
   const firstName = cap(Meteor.user().profile.firstName);
 
   const anticipatedIncome = useTracker(() =>
@@ -29,10 +25,7 @@ export function WelcomeComponent({ budgetTimestamp, budgetId }) {
       { fields: { allocatedAmount: true } }
     )
       .fetch()
-      .reduce(
-        (acc, ledger) => Math.round((acc + ledger.allocatedAmount) * 100) / 100,
-        0
-      )
+      .reduce((acc, ledger) => Math.round((acc + ledger.allocatedAmount) * 100) / 100, 0)
   );
 
   const incomeReceived = useTracker(() => {
@@ -74,10 +67,7 @@ export function WelcomeComponent({ budgetTimestamp, budgetId }) {
         budgetId: budgetId,
         allocations: {
           $elemMatch: {
-            $and: [
-              { envelopeId: { $ne: env1._id } },
-              { envelopeId: { $ne: env2._id } },
-            ],
+            $and: [{ envelopeId: { $ne: env1._id } }, { envelopeId: { $ne: env2._id } }],
           },
         },
       },
@@ -132,40 +122,24 @@ export function WelcomeComponent({ budgetTimestamp, budgetId }) {
     }, 0);
   });
 
-  const leftToBudget =
-    Math.round((anticipatedIncome - totalIncomeBudgeted) * 100) / 100;
+  const leftToBudget = Math.round((anticipatedIncome - totalIncomeBudgeted) * 100) / 100;
 
   return (
-    <div className="text-color-light-gray font-semibold">
-      {isFutureBudget && <FutureBudgetWarning />}
-      <p className="text-2xl">Hi {firstName}</p>
-      {leftToBudget > 0 && (
-        <p>You still have {toDollars(leftToBudget)} left to budget 💰</p>
-      )}
+    <div className="text-color-light-gray font-medium">
+      <div className="px-2 flex flex-col gap-1">
+        <p className="text-2xl">{firstName},</p>
+        <p>{`You have ${toDollars(Math.round((incomeReceived - spentSoFar) * 100) / 100)} in your bank.`}</p>
+        {leftToBudget > 0 && <p>You still have {toDollars(leftToBudget)} left to budget.</p>}
 
-      {leftToBudget < 0 && (
-        <div className="text-red-500 border border-red-500 rounded-xl px-2 py-1 bg-red-500/5 shadow-sm flex flex-row justify-start items-center">
-          <LuAlertCircle className="text-lg" />
-          <p>You are over budget by {toDollars(Math.abs(leftToBudget))}</p>
-        </div>
-      )}
+        {leftToBudget < 0 && (
+          <div className="text-red-500 border border-red-500 rounded-xl px-2 py-1 bg-red-500/5 shadow-sm flex flex-row justify-start items-center">
+            <LuAlertCircle className="text-lg" />
+            <p>You are over budget by {toDollars(Math.abs(leftToBudget))}</p>
+          </div>
+        )}
 
-      {leftToBudget == 0 && <p>You've budgeted all your income! 🎉</p>}
-
-      <p>
-        {`You currently have ${toDollars(
-          Math.round((incomeReceived - spentSoFar) * 100) / 100
-        )} available to spend on your budget 💵`}
-      </p>
-    </div>
-  );
-}
-
-function FutureBudgetWarning() {
-  return (
-    <div className="text-red-500 border border-red-500 rounded-full px-2 py-1 bg-red-500/5 shadow-sm flex flex-row justify-start items-center gap-2">
-      <LuAlertCircle className="text-lg" />
-      <p>You're viewing a future budget.</p>
+        {leftToBudget == 0 && <p>You've budgeted all your income.</p>}
+      </div>
     </div>
   );
 }
