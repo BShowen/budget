@@ -18,6 +18,7 @@ export function MonthSelector({ currentTimestamp }) {
   });
   const currentMonth = new Date(currentTimestamp).toLocaleString("en-US", {
     month: "long",
+    timeZone: "UTC",
   });
 
   const budgetTimestamps = useTracker(() => {
@@ -26,20 +27,10 @@ export function MonthSelector({ currentTimestamp }) {
       .reduce((acc, budget) => [...acc, budget.createdAt], []);
 
     // Add a new date to the list only if the latest date is not next month.
-    const thisMonthTimestamp = new Date(
-      new Date().getFullYear(),
-      new Date().getMonth(),
-      1
-    ).getTime();
+    const thisMonthTimestamp = new Date(new Date().getFullYear(), new Date().getMonth(), 1).getTime();
     const latestBudgetTimestamp = budgetDates[budgetDates.length - 1];
     if (latestBudgetTimestamp <= thisMonthTimestamp) {
-      budgetDates.push(
-        new Date(
-          new Date().getFullYear(),
-          new Date().getMonth() + 1,
-          1
-        ).getTime()
-      );
+      budgetDates.push(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).getTime());
     }
     return budgetDates;
   });
@@ -57,9 +48,7 @@ export function MonthSelector({ currentTimestamp }) {
   // Scroll the active month into view
   useEffect(() => {
     if (isDropdownOpen) {
-      document
-        .getElementById("active")
-        .scrollIntoView({ behavior: "instant", inline: "center" });
+      document.getElementById("active").scrollIntoView({ behavior: "instant", inline: "center" });
     }
   }, [isDropdownOpen]);
 
@@ -73,19 +62,13 @@ export function MonthSelector({ currentTimestamp }) {
           {currentMonth} <span className="font-thin">{year}</span>
         </h1>
         <IoIosArrowDropdown
-          className={`transition-all duration-700 ease-in-out w-5 h-5 ${
-            isDropdownOpen ? "rotate-180" : ""
-          }`}
+          className={`transition-all duration-700 ease-in-out w-5 h-5 ${isDropdownOpen ? "rotate-180" : ""}`}
         />
       </div>
       <div>
         <div
           className={`z-50 flex flex-row items-center absolute left-0 right-0 bg-month-selector-bg-color mt-4 rounded-b-xl ${
-            isDropdownOpen
-              ? "month-selector-slide-in"
-              : canAnimate
-              ? "month-selector-slide-out"
-              : "h-0"
+            isDropdownOpen ? "month-selector-slide-in" : canAnimate ? "month-selector-slide-out" : "h-0"
           }`}
         >
           <ul className="list-none w-full flex flex-row justify-start items-center gap-2 overflow-y-hidden overflow-x-scroll scrollbar-hide px-2 h-full overscroll-x-contain">
@@ -108,12 +91,7 @@ export function MonthSelector({ currentTimestamp }) {
   );
 }
 
-function MonthSelectorButton({
-  clickHandler,
-  activeBudgetTimestamp,
-  budgetTimestamp,
-  isFutureDate,
-}) {
+function MonthSelectorButton({ clickHandler, activeBudgetTimestamp, budgetTimestamp, isFutureDate }) {
   const active = activeBudgetTimestamp == budgetTimestamp;
   const activeStyling = active
     ? "bg-color-light-blue text-white"
@@ -122,18 +100,13 @@ function MonthSelectorButton({
       }`;
 
   return (
-    <li
-      className="min-w-max h-8 drop-shadow-sm"
-      id={active ? "active" : undefined}
-    >
+    <li className="min-w-max h-8 drop-shadow-sm" id={active ? "active" : undefined}>
       <button
         className={`w-full h-full rounded-lg p-1 flex flex-row justify-center items-center ${activeStyling}`}
         type="button"
         onClick={() => clickHandler({ timestamp: budgetTimestamp })}
       >
-        <p>
-          {dates.format(new Date(budgetTimestamp), { forPageHeader: true })}
-        </p>
+        <p>{dates.format(new Date(budgetTimestamp), { forPageHeader: true })}</p>
       </button>
     </li>
   );
