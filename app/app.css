@@ -1,0 +1,160 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  prefersdark: false;
+  color-scheme: "light";
+  --color-base-0: oklch(1 0 0); /* Pure white */
+  --color-base-100: oklch(0.99 0.002 247.9);
+  --color-base-200: oklch(0.98 0.003 247.9);
+  --color-base-300: oklch(0.94 0.005 252);
+  --color-base-content: oklch(0.25 0.015 252.5);
+  --color-primary: oklch(0.55 0.18 240);
+  --color-primary-content: oklch(1 0 0);
+  --color-secondary: oklch(0.52 0.013 252.4);
+  --color-secondary-content: oklch(1 0 0);
+  --color-accent: oklch(0.65 0.15 250);
+  --color-accent-content: oklch(1 0 0);
+  --color-neutral: oklch(0.96 0.003 247.9);
+  --color-neutral-content: oklch(0.45 0.01 252.5);
+  --color-info: oklch(0.61 0.16 262.8);
+  --color-info-content: oklch(1 0 0);
+  --color-success: oklch(0.7 0.14 162.4);
+  --color-success-content: oklch(1 0 0);
+  --color-warning: oklch(0.75 0.13 78.7);
+  --color-warning-content: oklch(1 0 0);
+  --color-error: oklch(0.63 0.18 27.3);
+  --color-error-content: oklch(1 0 0);
+  --radius-selector: 0.25rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-selector: 0.21875rem;
+  --size-field: 0.25rem;
+  --border: 0.5px;
+  --depth: 0;
+  --noise: 0;
+}
+
+@plugin "daisyui/theme" {
+  name: "dark";
+  default: false;
+  prefersdark: true;
+  color-scheme: "dark";
+  --color-base-100: oklch(0.05 0.005 252); /* Near-black */
+  --color-base-0: oklch(0.15 0.005 252);
+  --color-base-200: oklch(0.12 0.008 252);
+  --color-base-300: oklch(0.08 0.01 252);
+  --color-base-content: oklch(0.85 0.008 252);
+  --color-primary: oklch(0.65 0.18 240);
+  --color-primary-content: oklch(0.1 0.01 252);
+  --color-secondary: oklch(0.45 0.013 252.4);
+  --color-secondary-content: oklch(0.9 0.005 252);
+  --color-accent: oklch(0.7 0.15 250);
+  --color-accent-content: oklch(0.1 0.01 252);
+  --color-neutral: oklch(0.18 0.005 252);
+  --color-neutral-content: oklch(0.65 0.008 252);
+  --color-info: oklch(0.7 0.16 262.8);
+  --color-info-content: oklch(0.1 0.01 252);
+  --color-success: oklch(0.75 0.14 162.4);
+  --color-success-content: oklch(0.1 0.01 252);
+  --color-warning: oklch(0.8 0.13 78.7);
+  --color-warning-content: oklch(0.1 0.01 252);
+  --color-error: oklch(0.7 0.18 27.3);
+  --color-error-content: oklch(0.1 0.01 252);
+  --radius-selector: 0.25rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-selector: 0.21875rem;
+  --size-field: 0.25rem;
+  --border: 0.5px;
+  --depth: 0;
+  --noise: 0;
+}
+
+/* Variables defined for tailwind auto-complete.  */
+@theme inline {
+  --color-base-0: var(--color-base-0);
+}
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+
+  input,
+  select,
+  textarea {
+    @apply text-base-content;
+  }
+}
+
+@utility no-scrollbar {
+  @apply [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
+}
+
+/* Set the height of the document to cover the entire IOS screen, including the status bar. 
+ Pad to prevent content from sitting under the status bar. I set the height to 99.9% because if i set it to 100% it 
+ causes issues with z-index and scrolling. For example, if height is 100% and you open the bottom nav, this opens a 
+ modal and the user should NOT be able to scroll the background content but theyre able to. Setting the height to 99.9% 
+ fixes this issue. */
+html {
+  min-height: calc(100% + env(safe-area-inset-top));
+  /* padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); */
+  padding-top: env(safe-area-inset-top);
+}
+
+html,
+body {
+  @apply no-scrollbar bg-base-100;
+}
+
+h1 {
+  @apply text-xl font-bold leading-tight;
+}
+
+h2 {
+  @apply text-lg font-semibold leading-snug;
+}
+
+h3 {
+  @apply text-base font-medium leading-snug;
+}
+
+h4 {
+  @apply text-sm font-semibold leading-normal;
+}
+
+/* h1 {
+  @apply text-2xl font-bold;
+}
+
+h2 {
+  @apply text-lg font-semibold;
+}
+
+h3 {
+  @apply font-medium;
+}
+
+h4 {
+  @apply text-sm font-semibold;
+} */
+
+/* Borders for quick testing in Dev. */
+.b-red {
+  @apply border border-red-500;
+}
+
+.b-blue {
+  @apply border border-blue-500;
+}
+
+.b-green {
+  @apply border border-green-500;
+}
