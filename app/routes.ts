@@ -5,4 +5,5 @@ export default [
   layout("./routes/_protected/_layout.tsx", [route("budget", "./routes/_protected/budget/route.tsx")]),
   route("sign-in/*", "./routes/sign-in/route.tsx"),
   route("sign-up/*", "./routes/sign-up/route.tsx"),
+  route("onboarding/*", "./routes/onboarding/route.tsx"),
 ] satisfies RouteConfig;
