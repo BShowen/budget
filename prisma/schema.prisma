@@ -1,0 +1,108 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id String @id @default(uuid())
+
+  // One-to-Many relations
+  //An account can have multiple users. For example, a couple that budgets together.
+  users        User[]
+  // An account has many Transactions
+  transactions Transaction[]
+  // An account ha many Categories
+  categories   Category[]
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id        String  @id @default(uuid())
+  name      String
+  account   Account @relation(fields: [accountId], references: [id])
+  accountId String
+
+  // One-to-Many relations
+  // A Category has many transactions
+  transactions TransactionSplit[]
+
+  // Metadata  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Prevent duplicate names per account
+  @@unique([accountId, name])
+}
+
+model Transaction {
+  id           String   @id @default(uuid())
+  vendor       String
+  purchaseDate DateTime
+  amount       Decimal
+  notes        String
+
+  // Many-to-One relations
+  // A transaction belongs to one Account
+  account   Account @relation(fields: [accountId], references: [id])
+  accountId String
+  // A transaction is created by a User
+  createdBy User    @relation(fields: [userId], references: [id])
+  userId    String
+
+  // Many-to-Many relations
+  // A transaction is related to a Category 
+  splits TransactionSplit[]
+
+  // Metadata  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Index
+  @@index([accountId])
+}
+
+model TransactionSplit {
+  id     String  @id @default(uuid())
+  amount Decimal // How much of the transaction is in this category
+
+  // Many-to-One relations
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  transactionId String
+  category      Category?   @relation(fields: [categoryId], references: [id])
+  categoryId    String?
+
+  // Metadata  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Index
+  @@index([transactionId])
+}
+
+model User {
+  //This is the ClerkAuth user.id
+  id String @id
+
+  // Many-to-One relations
+  budget   Account @relation(fields: [budgetId], references: [id])
+  budgetId String
+
+  // One-to-many transactions
+  // A user can log many transactions
+  transactions Transaction[]
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Index
+  @@index([budgetId])
+}
