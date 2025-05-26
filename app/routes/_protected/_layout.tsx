@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
-export { loader } from "./_protected.loader";
+export { loader } from "./_functions/loader";
 export default function Route() {
   return (
     <div>
