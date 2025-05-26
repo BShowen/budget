@@ -1,4 +1,8 @@
 import { Link } from "react-router";
+
+// Loaders and Actions
+export { loader } from "./_functions/loader";
+
 export default function Route() {
   return (
     <main className="max-w-7xl w-full mx-auto">

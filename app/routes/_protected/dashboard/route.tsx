@@ -1,11 +1,16 @@
-import { SignOutButton } from "@clerk/react-router";
+// Components
+import { useState } from "react";
+import { Header } from "./components/header";
+
 export default function Route() {
+  const [activeTab, setActiveTab] = useState<"Planned" | "Spent" | "Remaining">("Remaining");
+
   return (
-    <main>
-      <p>Dashboard</p>
-      <SignOutButton>
-        <button className="btn btn-sm btn-error">Sign out!</button>
-      </SignOutButton>
-    </main>
+    <>
+      <Header activeTab={activeTab} setActiveTab={setActiveTab} />
+      <main className="mt-24">
+        <p>Hello, Dashboard</p>
+      </main>
+    </>
   );
 }
