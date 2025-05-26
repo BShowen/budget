@@ -1,11 +1,18 @@
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
+import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData, type LoaderFunctionArgs } from "react-router";
 import { Toaster } from "sonner";
 import { useDynamicToastPosition } from "./utils/hooks/useDynamicToastPosition";
+import { ClerkProvider } from "@clerk/react-router";
+import { rootAuthLoader } from "@clerk/react-router/ssr.server";
 
 import "./app.css";
 
+export function loader(args: LoaderFunctionArgs) {
+  return rootAuthLoader(args);
+}
+
 export default function Root() {
   const position = useDynamicToastPosition();
+  const loaderData = useLoaderData();
   return (
     <html lang="en">
       <head>
@@ -25,7 +32,9 @@ export default function Root() {
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
       <body>
-        <Outlet />
+        <ClerkProvider loaderData={loaderData}>
+          <Outlet />
+        </ClerkProvider>
         <ScrollRestoration />
         <Scripts />
         <Toaster

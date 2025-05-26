@@ -4,11 +4,12 @@
   "type": "module",
   "scripts": {
     "build": "react-router build",
-    "dev": "react-router dev",
+    "dev": "react-router dev --host",
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
+    "@clerk/react-router": "^1.4.6",
     "@react-router/fs-routes": "^7.6.1",
     "@react-router/node": "^7.5.3",
     "@react-router/serve": "^7.5.3",
