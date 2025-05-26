@@ -17,7 +17,7 @@ import { Loader } from "../components/Loader";
 // architecture.
 export const App = () => {
   const [timestamp, setTimestamp] = useState(getTimestampFromLocalStorage());
-  console.log({ timestamp, date: new Date(timestamp) });
+
   const { isLoading: isLoadingAppData, currentBudget } = useAppData({
     timestamp,
   });
@@ -46,25 +46,19 @@ export const App = () => {
       {isLoading ? (
         <Loader key={0} />
       ) : (
-        <AppContent
-          key={1}
-          setTimestamp={handleTimestampChange}
-          currentBudget={currentBudget}
-        />
+        <AppContent key={1} setTimestamp={handleTimestampChange} currentBudget={currentBudget} />
       )}
     </AnimatePresence>
   );
 };
 
 function getTimestampFromLocalStorage() {
-  let timestamp = window.localStorage.getItem("currentBudgetTimestamp") || "";
-  if (new Date(Number.parseInt(timestamp)) == "Invalid Date") {
-    timestamp = new Date(
-      new Date().getFullYear(),
-      new Date().getMonth(),
-      1
-    ).getTime();
-    window.localStorage.setItem("currentBudgetTimestamp", timestamp);
+  window.localStorage.removeItem("currentBudgetTimestamp");
+  let utcTimestamp = window.localStorage.getItem("currentBudgetTimestamp") || "";
+  if (new Date(Number.parseInt(utcTimestamp)) == "Invalid Date") {
+    const now = new Date();
+    utcTimestamp = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1);
+    window.localStorage.setItem("currentBudgetTimestamp", utcTimestamp);
   }
-  return Number.parseInt(timestamp);
+  return Number.parseInt(utcTimestamp);
 }
