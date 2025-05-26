@@ -130,21 +130,10 @@ h4 {
   @apply text-sm font-semibold leading-normal;
 }
 
-/* h1 {
-  @apply text-2xl font-bold;
+/* Remove clerk ads */
+.cl-footer {
+  display: none;
 }
-
-h2 {
-  @apply text-lg font-semibold;
-}
-
-h3 {
-  @apply font-medium;
-}
-
-h4 {
-  @apply text-sm font-semibold;
-} */
 
 /* Borders for quick testing in Dev. */
 .b-red {
